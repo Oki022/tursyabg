@@ -13,6 +13,7 @@ import { ClientOnly } from "@tanstack/react-router";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
 import { Toaster } from "@/components/ui/sonner";
+import { AuthProvider } from "@/lib/auth";
 
 function NotFoundComponent() {
   return (
@@ -116,12 +117,14 @@ function RootComponent() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <div className="flex min-h-screen flex-col bg-background">
-        <SiteHeader />
-        <main className="flex-1"><Outlet /></main>
-        <SiteFooter />
-      </div>
-      <ClientOnly fallback={null}><Toaster /></ClientOnly>
+      <AuthProvider>
+        <div className="flex min-h-screen flex-col bg-background">
+          <SiteHeader />
+          <main className="flex-1"><Outlet /></main>
+          <SiteFooter />
+        </div>
+        <ClientOnly fallback={null}><Toaster /></ClientOnly>
+      </AuthProvider>
     </QueryClientProvider>
   );
 }
