@@ -136,8 +136,8 @@ function PostPage() {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="city">Населено място</Label>
-            <Select value={city} onValueChange={setCity}>
+            <Label htmlFor="city">Град</Label>
+            <Select value={city} onValueChange={(v) => { setCity(v); setNeighborhood(undefined); }}>
               <SelectTrigger id="city" className="h-11">
                 <SelectValue placeholder="Избери град" />
               </SelectTrigger>
@@ -146,6 +146,22 @@ function PostPage() {
               </SelectContent>
             </Select>
           </div>
+        </div>
+
+        <div className="space-y-2">
+          <Label htmlFor="neighborhood">Квартал / Район</Label>
+          <Select value={neighborhood} onValueChange={setNeighborhood} disabled={!city}>
+            <SelectTrigger id="neighborhood" className="h-11">
+              <SelectValue placeholder={city ? "Избери квартал" : "Първо избери град"} />
+            </SelectTrigger>
+            <SelectContent>
+              {neighborhoods.map((n) => <SelectItem key={n} value={n}>{n}</SelectItem>)}
+            </SelectContent>
+          </Select>
+          <p className="flex items-center gap-1.5 text-xs text-muted-foreground">
+            <Lock className="h-3.5 w-3.5" />
+            Точният ви адрес е скрит. Ще се показва само вашият квартал.
+          </p>
         </div>
 
         <div className="flex flex-col-reverse gap-3 border-t border-border pt-6 sm:flex-row sm:items-center sm:justify-between">
