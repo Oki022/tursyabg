@@ -45,7 +45,7 @@ function PostPage() {
 
   const onSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!title || !category || !description || !budget || !city) {
+    if (!title || !category || !description || !budget || !city || !neighborhood) {
       toast.error("Моля, попълни всички полета");
       return;
     }
