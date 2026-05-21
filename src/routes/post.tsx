@@ -26,8 +26,11 @@ function PostPage() {
   const [description, setDescription] = useState("");
   const [budget, setBudget] = useState("");
   const [city, setCity] = useState<string | undefined>(undefined);
+  const [neighborhood, setNeighborhood] = useState<string | undefined>(undefined);
   const [autoPicked, setAutoPicked] = useState(false);
   const [manuallyTouched, setManuallyTouched] = useState(false);
+
+  const neighborhoods = useMemo(() => (city ? neighborhoodsByCity[city] ?? [] : []), [city]);
 
   useEffect(() => {
     if (manuallyTouched) return;
