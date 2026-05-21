@@ -42,7 +42,7 @@ function TasksPage() {
   }, [search]);
 
   const update = (next: Partial<Search>) =>
-    navigate({ search: (prev) => ({ ...prev, ...next }) });
+    navigate({ search: (prev: Search) => ({ ...prev, ...next }) });
 
   const activeFilters = [search.category, search.city, search.q].filter(Boolean).length;
 
