@@ -113,23 +113,13 @@ function TasksPage() {
 
           <div>
             <h3 className="mb-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-              Населено място
+              Локация
             </h3>
-            <div className="space-y-1">
-              {cities.map((city) => {
-                const active = search.city === city;
-                return (
-                  <button
-                    key={city}
-                    onClick={() => update({ city: active ? undefined : city })}
-                    className={`flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-sm transition-colors ${active ? "bg-primary/10 text-primary font-medium" : "text-foreground hover:bg-secondary"}`}
-                  >
-                    <MapPin className="h-4 w-4" />
-                    {city}
-                  </button>
-                );
-              })}
-            </div>
+            <LocationCombobox
+              value={search.location}
+              onChange={(v) => update({ location: v })}
+              allowClear
+            />
           </div>
         </aside>
 
@@ -143,10 +133,10 @@ function TasksPage() {
                   <button onClick={() => update({ category: undefined })}><X className="h-3 w-3" /></button>
                 </Badge>
               )}
-              {search.city && (
+              {search.location && (
                 <Badge variant="secondary" className="gap-1.5">
-                  {search.city}
-                  <button onClick={() => update({ city: undefined })}><X className="h-3 w-3" /></button>
+                  {search.location}
+                  <button onClick={() => update({ location: undefined })}><X className="h-3 w-3" /></button>
                 </Badge>
               )}
               {search.q && (
