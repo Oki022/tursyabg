@@ -1,12 +1,13 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { Sparkles, CheckCircle2, Lock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { categories, cities, neighborhoodsByCity, detectCategory } from "@/lib/mock-data";
+import { categories, detectCategory } from "@/lib/mock-data";
+import { LocationCombobox } from "@/components/location-combobox";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/post")({
@@ -25,12 +26,9 @@ function PostPage() {
   const [category, setCategory] = useState<string | undefined>(undefined);
   const [description, setDescription] = useState("");
   const [budget, setBudget] = useState("");
-  const [city, setCity] = useState<string | undefined>(undefined);
-  const [neighborhood, setNeighborhood] = useState<string | undefined>(undefined);
+  const [location, setLocation] = useState<string | undefined>(undefined);
   const [autoPicked, setAutoPicked] = useState(false);
   const [manuallyTouched, setManuallyTouched] = useState(false);
-
-  const neighborhoods = useMemo(() => (city ? neighborhoodsByCity[city] ?? [] : []), [city]);
 
   useEffect(() => {
     if (manuallyTouched) return;
@@ -45,7 +43,7 @@ function PostPage() {
 
   const onSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!title || !category || !description || !budget || !city || !neighborhood) {
+    if (!title || !category || !description || !budget || !location) {
       toast.error("Моля, попълни всички полета");
       return;
     }
@@ -118,46 +116,25 @@ function PostPage() {
           />
         </div>
 
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-          <div className="space-y-2">
-            <Label htmlFor="budget">Бюджет (€)</Label>
-            <div className="relative">
-              <Input
-                id="budget"
-                type="number"
-                min={0}
-                placeholder="Напр. 500"
-                value={budget}
-                onChange={(e) => setBudget(e.target.value)}
-                className="h-11 pr-10"
-              />
-              <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">€</span>
-            </div>
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="city">Град</Label>
-            <Select value={city} onValueChange={(v) => { setCity(v); setNeighborhood(undefined); }}>
-              <SelectTrigger id="city" className="h-11">
-                <SelectValue placeholder="Избери град" />
-              </SelectTrigger>
-              <SelectContent>
-                {cities.map((c) => <SelectItem key={c} value={c}>{c}</SelectItem>)}
-              </SelectContent>
-            </Select>
+        <div className="space-y-2">
+          <Label htmlFor="budget">Бюджет (€)</Label>
+          <div className="relative">
+            <Input
+              id="budget"
+              type="number"
+              min={0}
+              placeholder="Напр. 500"
+              value={budget}
+              onChange={(e) => setBudget(e.target.value)}
+              className="h-11 pr-10"
+            />
+            <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">€</span>
           </div>
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="neighborhood">Квартал / Район</Label>
-          <Select value={neighborhood} onValueChange={setNeighborhood} disabled={!city}>
-            <SelectTrigger id="neighborhood" className="h-11">
-              <SelectValue placeholder={city ? "Избери квартал" : "Първо избери град"} />
-            </SelectTrigger>
-            <SelectContent>
-              {neighborhoods.map((n) => <SelectItem key={n} value={n}>{n}</SelectItem>)}
-            </SelectContent>
-          </Select>
+          <Label htmlFor="location">Град и квартал</Label>
+          <LocationCombobox id="location" value={location} onChange={setLocation} />
           <p className="flex items-center gap-1.5 text-xs text-muted-foreground">
             <Lock className="h-3.5 w-3.5" />
             Точният ви адрес е скрит. Ще се показва само вашият квартал.

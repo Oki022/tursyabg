@@ -1,13 +1,14 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
-import { Search, MapPin, SlidersHorizontal, X } from "lucide-react";
+import { Search, SlidersHorizontal, X } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { TaskCard } from "@/components/task-card";
-import { categories, cities, mockTasks, getCategory } from "@/lib/mock-data";
+import { LocationCombobox } from "@/components/location-combobox";
+import { categories, mockTasks, getCategory } from "@/lib/mock-data";
 
-type Search = { q?: string; category?: string; city?: string };
+type Search = { q?: string; category?: string; location?: string };
 
 export const Route = createFileRoute("/tasks")({
   head: () => ({
@@ -19,7 +20,7 @@ export const Route = createFileRoute("/tasks")({
   validateSearch: (s: Record<string, unknown>): Search => ({
     q: typeof s.q === "string" ? s.q : undefined,
     category: typeof s.category === "string" ? s.category : undefined,
-    city: typeof s.city === "string" ? s.city : undefined,
+    location: typeof s.location === "string" ? s.location : undefined,
   }),
   component: TasksPage,
 });
@@ -32,7 +33,7 @@ function TasksPage() {
   const filtered = useMemo(() => {
     return mockTasks.filter((t) => {
       if (search.category && t.category !== search.category) return false;
-      if (search.city && t.city !== search.city) return false;
+      if (search.location && t.location !== search.location) return false;
       if (search.q) {
         const q = search.q.toLowerCase();
         if (!t.title.toLowerCase().includes(q) && !t.description.toLowerCase().includes(q)) return false;
@@ -44,7 +45,7 @@ function TasksPage() {
   const update = (next: Partial<Search>) =>
     navigate({ search: (prev: Search) => ({ ...prev, ...next }) });
 
-  const activeFilters = [search.category, search.city, search.q].filter(Boolean).length;
+  const activeFilters = [search.category, search.location, search.q].filter(Boolean).length;
 
   return (
     <div className="container mx-auto px-4 py-8 md:py-12">
@@ -112,23 +113,13 @@ function TasksPage() {
 
           <div>
             <h3 className="mb-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-              Населено място
+              Локация
             </h3>
-            <div className="space-y-1">
-              {cities.map((city) => {
-                const active = search.city === city;
-                return (
-                  <button
-                    key={city}
-                    onClick={() => update({ city: active ? undefined : city })}
-                    className={`flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-sm transition-colors ${active ? "bg-primary/10 text-primary font-medium" : "text-foreground hover:bg-secondary"}`}
-                  >
-                    <MapPin className="h-4 w-4" />
-                    {city}
-                  </button>
-                );
-              })}
-            </div>
+            <LocationCombobox
+              value={search.location}
+              onChange={(v) => update({ location: v })}
+              allowClear
+            />
           </div>
         </aside>
 
@@ -142,10 +133,10 @@ function TasksPage() {
                   <button onClick={() => update({ category: undefined })}><X className="h-3 w-3" /></button>
                 </Badge>
               )}
-              {search.city && (
+              {search.location && (
                 <Badge variant="secondary" className="gap-1.5">
-                  {search.city}
-                  <button onClick={() => update({ city: undefined })}><X className="h-3 w-3" /></button>
+                  {search.location}
+                  <button onClick={() => update({ location: undefined })}><X className="h-3 w-3" /></button>
                 </Badge>
               )}
               {search.q && (
