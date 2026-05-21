@@ -1,6 +1,7 @@
 import { Link } from "@tanstack/react-router";
-import { ClipboardList, Plus } from "lucide-react";
+import { ClipboardList, Plus, MessageCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { NotificationBell } from "@/components/notification-bell";
 
 export function SiteHeader() {
   return (
@@ -22,8 +23,17 @@ export function SiteHeader() {
           <Link to="/post" className="rounded-md px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground" activeProps={{ className: "rounded-md px-3 py-2 text-sm font-medium text-foreground" }}>
             Възложи задача
           </Link>
+          <Link to="/messages" className="rounded-md px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground" activeProps={{ className: "rounded-md px-3 py-2 text-sm font-medium text-foreground" }}>
+            Съобщения
+          </Link>
         </nav>
         <div className="flex items-center gap-2">
+          <NotificationBell />
+          <Button asChild variant="ghost" size="icon" className="md:hidden" aria-label="Съобщения">
+            <Link to="/messages">
+              <MessageCircle className="h-5 w-5" />
+            </Link>
+          </Button>
           <Button asChild size="sm" className="gap-1.5">
             <Link to="/post">
               <Plus className="h-4 w-4" />
