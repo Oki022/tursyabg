@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as TasksRouteImport } from './routes/tasks'
+import { Route as ProfileRouteImport } from './routes/profile'
 import { Route as PostRouteImport } from './routes/post'
 import { Route as MessagesRouteImport } from './routes/messages'
 import { Route as AuthRouteImport } from './routes/auth'
@@ -19,6 +20,11 @@ import { Route as TasksTaskIdRouteImport } from './routes/tasks.$taskId'
 const TasksRoute = TasksRouteImport.update({
   id: '/tasks',
   path: '/tasks',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProfileRoute = ProfileRouteImport.update({
+  id: '/profile',
+  path: '/profile',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PostRoute = PostRouteImport.update({
@@ -52,6 +58,7 @@ export interface FileRoutesByFullPath {
   '/auth': typeof AuthRoute
   '/messages': typeof MessagesRoute
   '/post': typeof PostRoute
+  '/profile': typeof ProfileRoute
   '/tasks': typeof TasksRouteWithChildren
   '/tasks/$taskId': typeof TasksTaskIdRoute
 }
@@ -60,6 +67,7 @@ export interface FileRoutesByTo {
   '/auth': typeof AuthRoute
   '/messages': typeof MessagesRoute
   '/post': typeof PostRoute
+  '/profile': typeof ProfileRoute
   '/tasks': typeof TasksRouteWithChildren
   '/tasks/$taskId': typeof TasksTaskIdRoute
 }
@@ -69,20 +77,36 @@ export interface FileRoutesById {
   '/auth': typeof AuthRoute
   '/messages': typeof MessagesRoute
   '/post': typeof PostRoute
+  '/profile': typeof ProfileRoute
   '/tasks': typeof TasksRouteWithChildren
   '/tasks/$taskId': typeof TasksTaskIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/auth' | '/messages' | '/post' | '/tasks' | '/tasks/$taskId'
+  fullPaths:
+    | '/'
+    | '/auth'
+    | '/messages'
+    | '/post'
+    | '/profile'
+    | '/tasks'
+    | '/tasks/$taskId'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/auth' | '/messages' | '/post' | '/tasks' | '/tasks/$taskId'
+  to:
+    | '/'
+    | '/auth'
+    | '/messages'
+    | '/post'
+    | '/profile'
+    | '/tasks'
+    | '/tasks/$taskId'
   id:
     | '__root__'
     | '/'
     | '/auth'
     | '/messages'
     | '/post'
+    | '/profile'
     | '/tasks'
     | '/tasks/$taskId'
   fileRoutesById: FileRoutesById
@@ -92,6 +116,7 @@ export interface RootRouteChildren {
   AuthRoute: typeof AuthRoute
   MessagesRoute: typeof MessagesRoute
   PostRoute: typeof PostRoute
+  ProfileRoute: typeof ProfileRoute
   TasksRoute: typeof TasksRouteWithChildren
 }
 
@@ -102,6 +127,13 @@ declare module '@tanstack/react-router' {
       path: '/tasks'
       fullPath: '/tasks'
       preLoaderRoute: typeof TasksRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/profile': {
+      id: '/profile'
+      path: '/profile'
+      fullPath: '/profile'
+      preLoaderRoute: typeof ProfileRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/post': {
@@ -157,6 +189,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthRoute: AuthRoute,
   MessagesRoute: MessagesRoute,
   PostRoute: PostRoute,
+  ProfileRoute: ProfileRoute,
   TasksRoute: TasksRouteWithChildren,
 }
 export const routeTree = rootRouteImport
