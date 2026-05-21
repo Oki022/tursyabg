@@ -1,12 +1,12 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
-import { Sparkles, CheckCircle2 } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
+import { Sparkles, CheckCircle2, Lock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { categories, cities, detectCategory } from "@/lib/mock-data";
+import { categories, cities, neighborhoodsByCity, detectCategory } from "@/lib/mock-data";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/post")({
