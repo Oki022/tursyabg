@@ -1,13 +1,14 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
-import { Search, MapPin, SlidersHorizontal, X } from "lucide-react";
+import { Search, SlidersHorizontal, X } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { TaskCard } from "@/components/task-card";
-import { categories, cities, mockTasks, getCategory } from "@/lib/mock-data";
+import { LocationCombobox } from "@/components/location-combobox";
+import { categories, mockTasks, getCategory } from "@/lib/mock-data";
 
-type Search = { q?: string; category?: string; city?: string };
+type Search = { q?: string; category?: string; location?: string };
 
 export const Route = createFileRoute("/tasks")({
   head: () => ({
@@ -19,7 +20,7 @@ export const Route = createFileRoute("/tasks")({
   validateSearch: (s: Record<string, unknown>): Search => ({
     q: typeof s.q === "string" ? s.q : undefined,
     category: typeof s.category === "string" ? s.category : undefined,
-    city: typeof s.city === "string" ? s.city : undefined,
+    location: typeof s.location === "string" ? s.location : undefined,
   }),
   component: TasksPage,
 });
@@ -32,7 +33,7 @@ function TasksPage() {
   const filtered = useMemo(() => {
     return mockTasks.filter((t) => {
       if (search.category && t.category !== search.category) return false;
-      if (search.city && t.city !== search.city) return false;
+      if (search.location && t.location !== search.location) return false;
       if (search.q) {
         const q = search.q.toLowerCase();
         if (!t.title.toLowerCase().includes(q) && !t.description.toLowerCase().includes(q)) return false;
@@ -44,7 +45,7 @@ function TasksPage() {
   const update = (next: Partial<Search>) =>
     navigate({ search: (prev: Search) => ({ ...prev, ...next }) });
 
-  const activeFilters = [search.category, search.city, search.q].filter(Boolean).length;
+  const activeFilters = [search.category, search.location, search.q].filter(Boolean).length;
 
   return (
     <div className="container mx-auto px-4 py-8 md:py-12">
