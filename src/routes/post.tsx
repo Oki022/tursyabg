@@ -1,12 +1,12 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
-import { Sparkles, CheckCircle2 } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
+import { Sparkles, CheckCircle2, Lock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { categories, cities, detectCategory } from "@/lib/mock-data";
+import { categories, cities, neighborhoodsByCity, detectCategory } from "@/lib/mock-data";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/post")({
@@ -26,8 +26,11 @@ function PostPage() {
   const [description, setDescription] = useState("");
   const [budget, setBudget] = useState("");
   const [city, setCity] = useState<string | undefined>(undefined);
+  const [neighborhood, setNeighborhood] = useState<string | undefined>(undefined);
   const [autoPicked, setAutoPicked] = useState(false);
   const [manuallyTouched, setManuallyTouched] = useState(false);
+
+  const neighborhoods = useMemo(() => (city ? neighborhoodsByCity[city] ?? [] : []), [city]);
 
   useEffect(() => {
     if (manuallyTouched) return;
@@ -42,7 +45,7 @@ function PostPage() {
 
   const onSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!title || !category || !description || !budget || !city) {
+    if (!title || !category || !description || !budget || !city || !neighborhood) {
       toast.error("Моля, попълни всички полета");
       return;
     }
@@ -133,8 +136,8 @@ function PostPage() {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="city">Населено място</Label>
-            <Select value={city} onValueChange={setCity}>
+            <Label htmlFor="city">Град</Label>
+            <Select value={city} onValueChange={(v) => { setCity(v); setNeighborhood(undefined); }}>
               <SelectTrigger id="city" className="h-11">
                 <SelectValue placeholder="Избери град" />
               </SelectTrigger>
@@ -143,6 +146,22 @@ function PostPage() {
               </SelectContent>
             </Select>
           </div>
+        </div>
+
+        <div className="space-y-2">
+          <Label htmlFor="neighborhood">Квартал / Район</Label>
+          <Select value={neighborhood} onValueChange={setNeighborhood} disabled={!city}>
+            <SelectTrigger id="neighborhood" className="h-11">
+              <SelectValue placeholder={city ? "Избери квартал" : "Първо избери град"} />
+            </SelectTrigger>
+            <SelectContent>
+              {neighborhoods.map((n) => <SelectItem key={n} value={n}>{n}</SelectItem>)}
+            </SelectContent>
+          </Select>
+          <p className="flex items-center gap-1.5 text-xs text-muted-foreground">
+            <Lock className="h-3.5 w-3.5" />
+            Точният ви адрес е скрит. Ще се показва само вашият квартал.
+          </p>
         </div>
 
         <div className="flex flex-col-reverse gap-3 border-t border-border pt-6 sm:flex-row sm:items-center sm:justify-between">

@@ -37,7 +37,7 @@ function TaskDetail() {
             {task.title}
           </h1>
           <div className="mt-3 flex flex-wrap gap-4 text-sm text-muted-foreground">
-            <span className="inline-flex items-center gap-1.5"><MapPin className="h-4 w-4" />{task.city}</span>
+            <span className="inline-flex items-center gap-1.5"><MapPin className="h-4 w-4" />{task.city}, кв. {task.neighborhood}</span>
             <span className="inline-flex items-center gap-1.5"><Clock className="h-4 w-4" />{task.postedAt}</span>
             <span className="inline-flex items-center gap-1.5"><User className="h-4 w-4" />{task.author}</span>
           </div>

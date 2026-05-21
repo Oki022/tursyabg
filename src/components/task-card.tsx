@@ -26,7 +26,7 @@ export function TaskCard({ task }: { task: Task }) {
         <div className="flex items-center gap-3">
           <span className="inline-flex items-center gap-1">
             <MapPin className="h-3.5 w-3.5" />
-            {task.city}
+            {task.city}, кв. {task.neighborhood}
           </span>
           <span className="inline-flex items-center gap-1">
             <Clock className="h-3.5 w-3.5" />
