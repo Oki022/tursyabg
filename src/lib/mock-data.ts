@@ -118,17 +118,6 @@ export const mockTasks: Task[] = [
   { id: "12", title: "Уроци по английски за начинаещи", category: "uroci", location: "Пловдив, Център", budget: 25, description: "Възрастен ученик, начално ниво. Онлайн или присъствено.", postedAt: "преди 5 дни", author: "Радостина К.", image: img("photo-1503676260728-1c00da094a0b") },
 ];
 
-export function addTask(task: Omit<Task, "id" | "postedAt"> & { id?: string; postedAt?: string }): Task {
-  const newTask: Task = {
-    id: task.id ?? `t-${Date.now()}`,
-    postedAt: task.postedAt ?? "току-що",
-    image: task.image ?? CATEGORY_IMAGES[task.category] ?? CATEGORY_IMAGES.drugi,
-    ...task,
-  };
-  mockTasks.unshift(newTask);
-  return newTask;
-}
-
 export function getCategory(id: string) {
   return categories.find((c) => c.id === id) ?? categories[categories.length - 1];
 }

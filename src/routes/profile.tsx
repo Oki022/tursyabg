@@ -14,7 +14,8 @@ import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { useAuth, getInitials } from "@/lib/auth";
-import { categories, mockTasks, getCategory } from "@/lib/mock-data";
+import { categories, getCategory } from "@/lib/mock-data";
+import { useTasks } from "@/lib/tasks-context";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/profile")({
@@ -23,6 +24,7 @@ export const Route = createFileRoute("/profile")({
 
 function ProfilePage() {
   const { user, logout, updateUser } = useAuth();
+  const { tasks } = useTasks();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -46,7 +48,7 @@ function ProfilePage() {
   }
 
   const isWorker = user.role === "worker";
-  const myTasks = mockTasks.slice(0, 3);
+  const myTasks = tasks.slice(0, 3);
 
   const handleLogout = () => {
     logout();
