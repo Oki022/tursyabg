@@ -53,7 +53,10 @@ function TaskDetail() {
   if (!task) throw notFound();
   const cat = getCategory(task.category);
   const Icon = cat.icon;
-  const images = GALLERY_BY_CATEGORY[task.category] ?? GALLERY_BY_CATEGORY.default;
+  const baseImages = GALLERY_BY_CATEGORY[task.category] ?? GALLERY_BY_CATEGORY.default;
+  const images = task.image
+    ? [task.image, ...baseImages.filter((u) => u !== task.image)]
+    : baseImages;
   const [active, setActive] = useState(0);
   const prev = () => setActive((i) => (i - 1 + images.length) % images.length);
   const next = () => setActive((i) => (i + 1) % images.length);
