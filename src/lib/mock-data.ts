@@ -86,22 +86,48 @@ export type Task = {
   description: string;
   postedAt: string;
   author: string;
+  image?: string;
+};
+
+const img = (id: string) => `https://images.unsplash.com/${id}?auto=format&fit=crop&w=800&q=80`;
+
+export const CATEGORY_IMAGES: Record<string, string> = {
+  remonti: img("photo-1581578731548-c64695cc6952"),
+  pochistvane: img("photo-1527515637462-cff94eecc1ac"),
+  prevoz: img("photo-1600585154340-be6161a56a0c"),
+  it: img("photo-1517336714731-489689fd1ca8"),
+  uroci: img("photo-1503676260728-1c00da094a0b"),
+  gradina: img("photo-1416879595882-3373a0480b5b"),
+  domashni: img("photo-1450778869180-41d0601e046e"),
+  foto: img("photo-1519741497674-611481863552"),
+  drugi: img("photo-1505691938895-1758d7feb511"),
 };
 
 export const mockTasks: Task[] = [
-  { id: "1", title: "Ремонт на баня — смяна на плочки", category: "remonti", location: "София, кв. Младост", budget: 1800, description: "Малка баня, около 4 кв.м. Необходима е пълна подмяна на плочките по стени и под. Материалите ще бъдат осигурени.", postedAt: "преди 2 часа", author: "Мария Петрова" },
-  { id: "2", title: "Основно почистване на апартамент след ремонт", category: "pochistvane", location: "Пловдив, кв. Тракия", budget: 120, description: "Двустаен апартамент, 75 кв.м. Необходимо е почистване на прах, прозорци и измиване на подове.", postedAt: "преди 4 часа", author: "Иван Георгиев" },
-  { id: "3", title: "Пренасяне на мебели в нов апартамент", category: "prevoz", location: "София, кв. Лозенец", budget: 200, description: "Нужни са 2-ма хамали и бус. Разстояние около 8 км в София.", postedAt: "преди 6 часа", author: "Стефан Димитров" },
-  { id: "4", title: "Уроци по математика за 11. клас", category: "uroci", location: "Варна, кв. Чайка", budget: 30, description: "Търся учител за подготовка за матура. 2 часа седмично.", postedAt: "вчера", author: "Елена Тодорова" },
-  { id: "5", title: "Косене на трева и подрязване на храсти", category: "gradina", location: "Бургас, кв. Изгрев", budget: 80, description: "Двор около 300 кв.м. Има налична косачка.", postedAt: "вчера", author: "Петър Николов" },
-  { id: "6", title: "Поправка на бавен лаптоп", category: "it", location: "София, кв. Студентски град", budget: 50, description: "Лаптопът работи много бавно. Необходима е диагностика и евентуално преинсталиране на Windows.", postedAt: "преди 2 дни", author: "Анна Стоянова" },
-  { id: "7", title: "Боядисване на хол и спалня", category: "remonti", location: "Пловдив, кв. Кършияка", budget: 450, description: "Около 45 кв.м обща площ. Бялата боя е осигурена.", postedAt: "преди 2 дни", author: "Георги Илиев" },
-  { id: "8", title: "Разходка на куче 3 пъти седмично", category: "domashni", location: "София, кв. Витоша", budget: 60, description: "Лабрадор, 4 години, спокоен. Разходки по 45 минути.", postedAt: "преди 3 дни", author: "Светла Маринова" },
-  { id: "9", title: "Сватбен фотограф за 12 юли", category: "foto", location: "Варна, Център", budget: 900, description: "Цял ден заснемане — церемония и парти.", postedAt: "преди 3 дни", author: "Николай Христов" },
-  { id: "10", title: "Монтаж на климатик", category: "remonti", location: "София, кв. Дружба", budget: 150, description: "Сплит система, 12000 BTU. Имам всички необходими материали.", postedAt: "преди 4 дни", author: "Виктор Иванов" },
-  { id: "11", title: "Седмично почистване на офис", category: "pochistvane", location: "София, Център", budget: 200, description: "Офис около 80 кв.м, веднъж седмично.", postedAt: "преди 5 дни", author: "Динамо ООД" },
-  { id: "12", title: "Уроци по английски за начинаещи", category: "uroci", location: "Пловдив, Център", budget: 25, description: "Възрастен ученик, начално ниво. Онлайн или присъствено.", postedAt: "преди 5 дни", author: "Радостина К." },
+  { id: "1", title: "Ремонт на баня — смяна на плочки", category: "remonti", location: "София, кв. Младост", budget: 1800, description: "Малка баня, около 4 кв.м. Необходима е пълна подмяна на плочките по стени и под. Материалите ще бъдат осигурени.", postedAt: "преди 2 часа", author: "Мария Петрова", image: img("photo-1581578731548-c64695cc6952") },
+  { id: "2", title: "Основно почистване на апартамент след ремонт", category: "pochistvane", location: "Пловдив, кв. Тракия", budget: 120, description: "Двустаен апартамент, 75 кв.м. Необходимо е почистване на прах, прозорци и измиване на подове.", postedAt: "преди 4 часа", author: "Иван Георгиев", image: img("photo-1527515637462-cff94eecc1ac") },
+  { id: "3", title: "Пренасяне на мебели в нов апартамент", category: "prevoz", location: "София, кв. Лозенец", budget: 200, description: "Нужни са 2-ма хамали и бус. Разстояние около 8 км в София.", postedAt: "преди 6 часа", author: "Стефан Димитров", image: img("photo-1600585154340-be6161a56a0c") },
+  { id: "4", title: "Уроци по математика за 11. клас", category: "uroci", location: "Варна, кв. Чайка", budget: 30, description: "Търся учител за подготовка за матура. 2 часа седмично.", postedAt: "вчера", author: "Елена Тодорова", image: img("photo-1503676260728-1c00da094a0b") },
+  { id: "5", title: "Косене на трева и подрязване на храсти", category: "gradina", location: "Бургас, кв. Изгрев", budget: 80, description: "Двор около 300 кв.м. Има налична косачка.", postedAt: "вчера", author: "Петър Николов", image: img("photo-1416879595882-3373a0480b5b") },
+  { id: "6", title: "Поправка на бавен лаптоп", category: "it", location: "София, кв. Студентски град", budget: 50, description: "Лаптопът работи много бавно. Необходима е диагностика и евентуално преинсталиране на Windows.", postedAt: "преди 2 дни", author: "Анна Стоянова", image: img("photo-1517336714731-489689fd1ca8") },
+  { id: "7", title: "Боядисване на хол и спалня", category: "remonti", location: "Пловдив, кв. Кършияка", budget: 450, description: "Около 45 кв.м обща площ. Бялата боя е осигурена.", postedAt: "преди 2 дни", author: "Георги Илиев", image: img("photo-1604147706283-d7119b5b822c") },
+  { id: "8", title: "Разходка на куче 3 пъти седмично", category: "domashni", location: "София, кв. Витоша", budget: 60, description: "Лабрадор, 4 години, спокоен. Разходки по 45 минути.", postedAt: "преди 3 дни", author: "Светла Маринова", image: img("photo-1450778869180-41d0601e046e") },
+  { id: "9", title: "Сватбен фотограф за 12 юли", category: "foto", location: "Варна, Център", budget: 900, description: "Цял ден заснемане — церемония и парти.", postedAt: "преди 3 дни", author: "Николай Христов", image: img("photo-1519741497674-611481863552") },
+  { id: "10", title: "Монтаж на климатик", category: "remonti", location: "София, кв. Дружба", budget: 150, description: "Сплит система, 12000 BTU. Имам всички необходими материали.", postedAt: "преди 4 дни", author: "Виктор Иванов", image: img("photo-1556909114-f6e7ad7d3136") },
+  { id: "11", title: "Седмично почистване на офис", category: "pochistvane", location: "София, Център", budget: 200, description: "Офис около 80 кв.м, веднъж седмично.", postedAt: "преди 5 дни", author: "Динамо ООД", image: img("photo-1581578731548-c64695cc6952") },
+  { id: "12", title: "Уроци по английски за начинаещи", category: "uroci", location: "Пловдив, Център", budget: 25, description: "Възрастен ученик, начално ниво. Онлайн или присъствено.", postedAt: "преди 5 дни", author: "Радостина К.", image: img("photo-1503676260728-1c00da094a0b") },
 ];
+
+export function addTask(task: Omit<Task, "id" | "postedAt"> & { id?: string; postedAt?: string }): Task {
+  const newTask: Task = {
+    id: task.id ?? `t-${Date.now()}`,
+    postedAt: task.postedAt ?? "току-що",
+    image: task.image ?? CATEGORY_IMAGES[task.category] ?? CATEGORY_IMAGES.drugi,
+    ...task,
+  };
+  mockTasks.unshift(newTask);
+  return newTask;
+}
 
 export function getCategory(id: string) {
   return categories.find((c) => c.id === id) ?? categories[categories.length - 1];
