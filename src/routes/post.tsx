@@ -1,6 +1,6 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
-import { Sparkles, CheckCircle2, Lock } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import { Sparkles, CheckCircle2, Lock, ImagePlus, X, UploadCloud } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -29,6 +29,27 @@ function PostPage() {
   const [location, setLocation] = useState<string | undefined>(undefined);
   const [autoPicked, setAutoPicked] = useState(false);
   const [manuallyTouched, setManuallyTouched] = useState(false);
+  const [photos, setPhotos] = useState<{ id: string; url: string; name: string }[]>([]);
+  const [dragOver, setDragOver] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const addFiles = (files: FileList | File[]) => {
+    const arr = Array.from(files).filter((f) => f.type.startsWith("image/"));
+    const next = arr.map((f) => ({
+      id: `${f.name}-${f.size}-${Math.random().toString(36).slice(2, 8)}`,
+      url: URL.createObjectURL(f),
+      name: f.name,
+    }));
+    setPhotos((p) => [...p, ...next].slice(0, 8));
+  };
+
+  const removePhoto = (id: string) => {
+    setPhotos((p) => {
+      const target = p.find((x) => x.id === id);
+      if (target) URL.revokeObjectURL(target.url);
+      return p.filter((x) => x.id !== id);
+    });
+  };
 
   useEffect(() => {
     if (manuallyTouched) return;
@@ -114,6 +135,72 @@ function PostPage() {
             onChange={(e) => setDescription(e.target.value)}
             rows={6}
           />
+        </div>
+
+        <div className="space-y-2">
+          <Label>Добави снимки (по избор)</Label>
+          <p className="text-xs text-muted-foreground">
+            Снимките помагат на майсторите да разберат по-добре какво трябва да се направи.
+          </p>
+          <div
+            onDragOver={(e) => { e.preventDefault(); setDragOver(true); }}
+            onDragLeave={() => setDragOver(false)}
+            onDrop={(e) => {
+              e.preventDefault();
+              setDragOver(false);
+              if (e.dataTransfer.files?.length) addFiles(e.dataTransfer.files);
+            }}
+            onClick={() => fileInputRef.current?.click()}
+            className={`group relative flex cursor-pointer flex-col items-center justify-center gap-2 rounded-2xl border-2 border-dashed p-8 text-center transition-all ${
+              dragOver
+                ? "border-primary bg-primary/5"
+                : "border-border bg-secondary/40 hover:border-primary/50 hover:bg-primary/5"
+            }`}
+          >
+            <span className="grid h-12 w-12 place-items-center rounded-full bg-background shadow-sm ring-1 ring-border">
+              <UploadCloud className="h-6 w-6 text-primary" />
+            </span>
+            <div className="text-sm font-medium text-foreground">
+              Пусни снимките тук или <span className="text-primary underline-offset-2 group-hover:underline">избери от устройството</span>
+            </div>
+            <div className="text-xs text-muted-foreground">PNG, JPG до 10MB · максимум 8 снимки</div>
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/*"
+              multiple
+              className="hidden"
+              onChange={(e) => e.target.files && addFiles(e.target.files)}
+            />
+          </div>
+
+          {photos.length > 0 && (
+            <div className="grid grid-cols-3 gap-3 pt-2 sm:grid-cols-4">
+              {photos.map((p) => (
+                <div key={p.id} className="group relative aspect-square overflow-hidden rounded-xl border border-border bg-muted">
+                  <img src={p.url} alt={p.name} className="h-full w-full object-cover" />
+                  <button
+                    type="button"
+                    onClick={(e) => { e.stopPropagation(); removePhoto(p.id); }}
+                    className="absolute right-1.5 top-1.5 grid h-7 w-7 place-items-center rounded-full bg-black/60 text-white opacity-0 transition-opacity hover:bg-black/80 group-hover:opacity-100"
+                    aria-label="Премахни снимката"
+                  >
+                    <X className="h-3.5 w-3.5" />
+                  </button>
+                </div>
+              ))}
+              {photos.length < 8 && (
+                <button
+                  type="button"
+                  onClick={() => fileInputRef.current?.click()}
+                  className="flex aspect-square flex-col items-center justify-center gap-1 rounded-xl border-2 border-dashed border-border text-muted-foreground transition-colors hover:border-primary/50 hover:text-primary"
+                >
+                  <ImagePlus className="h-5 w-5" />
+                  <span className="text-xs font-medium">Още</span>
+                </button>
+              )}
+            </div>
+          )}
         </div>
 
         <div className="space-y-2">
