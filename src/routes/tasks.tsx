@@ -6,7 +6,8 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { TaskCard } from "@/components/task-card";
 import { LocationCombobox } from "@/components/location-combobox";
-import { categories, mockTasks, getCategory } from "@/lib/mock-data";
+import { categories, getCategory } from "@/lib/mock-data";
+import { useTasks } from "@/lib/tasks-context";
 
 type Search = { q?: string; category?: string; location?: string };
 
@@ -28,10 +29,11 @@ export const Route = createFileRoute("/tasks")({
 function TasksPage() {
   const search = Route.useSearch();
   const navigate = Route.useNavigate();
+  const { tasks } = useTasks();
   const [query, setQuery] = useState(search.q ?? "");
 
   const filtered = useMemo(() => {
-    return mockTasks.filter((t) => {
+    return tasks.filter((t) => {
       if (search.category && t.category !== search.category) return false;
       if (search.location && t.location !== search.location) return false;
       if (search.q) {
@@ -40,7 +42,7 @@ function TasksPage() {
       }
       return true;
     });
-  }, [search]);
+  }, [search, tasks]);
 
   const update = (next: Partial<Search>) =>
     navigate({ search: (prev: Search) => ({ ...prev, ...next }) });

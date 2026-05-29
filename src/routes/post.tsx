@@ -6,8 +6,9 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { categories, detectCategory, addTask } from "@/lib/mock-data";
+import { categories, detectCategory } from "@/lib/mock-data";
 import { useAuth } from "@/lib/auth";
+import { useTasks } from "@/lib/tasks-context";
 import { LocationCombobox } from "@/components/location-combobox";
 import { toast } from "sonner";
 
@@ -24,6 +25,7 @@ export const Route = createFileRoute("/post")({
 function PostPage() {
   const navigate = useNavigate();
   const { user } = useAuth();
+  const { addTask } = useTasks();
   const [title, setTitle] = useState("");
   const [category, setCategory] = useState<string | undefined>(undefined);
   const [description, setDescription] = useState("");
