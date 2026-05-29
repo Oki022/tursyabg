@@ -38,17 +38,17 @@ function Index() {
               Опиши задачата си и намери точния човек, който да я изпълни.
             </p>
 
-            <form onSubmit={onSearch} className="mx-auto mt-8 flex max-w-2xl flex-col gap-2 rounded-2xl border border-border bg-card p-2 shadow-sm sm:flex-row sm:items-center">
+            <form onSubmit={onSearch} className="mx-auto mt-8 flex max-w-2xl flex-col gap-2 rounded-3xl border border-border/60 bg-card p-2 shadow-2xl shadow-primary/10 ring-1 ring-black/[0.02] sm:flex-row sm:items-center sm:rounded-full sm:pl-3">
               <div className="flex flex-1 items-center gap-2 px-3">
                 <Search className="h-5 w-5 text-muted-foreground" />
                 <Input
                   value={query}
                   onChange={(e) => setQuery(e.target.value)}
                   placeholder="Напр. ремонт на баня, почистване, преместване..."
-                  className="border-0 bg-transparent px-0 shadow-none focus-visible:ring-0"
+                  className="h-11 border-0 bg-transparent px-0 text-base shadow-none focus-visible:ring-0"
                 />
               </div>
-              <Button type="submit" size="lg" className="h-11">Търси</Button>
+              <Button type="submit" size="lg">Търси</Button>
             </form>
 
             <div className="mt-6 flex flex-col items-center justify-center gap-3 sm:flex-row">
