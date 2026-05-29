@@ -13,14 +13,14 @@ export function TaskCard({ task }: { task: Task }) {
       <Link
         to="/tasks/$taskId"
         params={{ taskId: task.id }}
-        className="relative block aspect-[16/10] w-full overflow-hidden bg-muted"
+        className="relative block w-full overflow-hidden bg-slate-100"
         aria-label={task.title}
       >
         <img
           src={thumb}
           alt={task.title}
           loading="lazy"
-          className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+          className="mx-auto block h-[240px] w-full object-contain transition-transform duration-500 group-hover:scale-[1.03]"
         />
         <span className="absolute left-3 top-3">
           <Badge variant="secondary" className="gap-1.5 rounded-full bg-white/95 px-2.5 py-1 font-medium text-slate-900 shadow-sm backdrop-blur">

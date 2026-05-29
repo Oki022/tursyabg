@@ -71,15 +71,15 @@ function TaskDetail() {
         {/* Left column */}
         <div className="min-w-0">
           {/* Gallery */}
-          <div className="group relative overflow-hidden rounded-2xl bg-muted shadow-sm ring-1 ring-black/5">
-            <div className="relative aspect-[16/10] w-full">
+          <div className="group relative overflow-hidden rounded-2xl bg-slate-100 shadow-sm ring-1 ring-black/5">
+            <div className="relative h-[320px] w-full sm:h-[420px] md:h-[480px]">
               {images.map((src, i) => (
                 <img
                   key={src}
                   src={src}
                   alt={`${task.title} — снимка ${i + 1}`}
                   loading={i === 0 ? "eager" : "lazy"}
-                  className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-300 ${i === active ? "opacity-100" : "opacity-0"}`}
+                  className={`absolute inset-0 mx-auto h-full w-full object-contain transition-opacity duration-300 ${i === active ? "opacity-100" : "opacity-0"}`}
                 />
               ))}
               {images.length > 1 && (
