@@ -6,7 +6,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { categories, detectCategory } from "@/lib/mock-data";
+import { categories, detectCategory, addTask } from "@/lib/mock-data";
+import { useAuth } from "@/lib/auth";
 import { LocationCombobox } from "@/components/location-combobox";
 import { toast } from "sonner";
 
@@ -22,6 +23,7 @@ export const Route = createFileRoute("/post")({
 
 function PostPage() {
   const navigate = useNavigate();
+  const { user } = useAuth();
   const [title, setTitle] = useState("");
   const [category, setCategory] = useState<string | undefined>(undefined);
   const [description, setDescription] = useState("");
@@ -68,8 +70,18 @@ function PostPage() {
       toast.error("Моля, попълни всички полета");
       return;
     }
-    toast.success("Задачата е публикувана!", { description: "Скоро ще получиш първите предложения." });
-    setTimeout(() => navigate({ to: "/tasks" }), 600);
+    addTask({
+      title,
+      category: category!,
+      description,
+      budget: Number(budget) || 0,
+      location: location!,
+      author: user?.name ?? "Анонимен потребител",
+    });
+    toast.success("🎉 Задачата е публикувана успешно!", {
+      description: "Скоро ще получиш първите предложения.",
+    });
+    navigate({ to: "/tasks" });
   };
 
   return (
