@@ -4,7 +4,8 @@ import { ArrowLeft, MapPin, Clock, MessageSquare, Phone, ChevronLeft, ChevronRig
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { mockTasks, getCategory } from "@/lib/mock-data";
+import { getCategory } from "@/lib/mock-data";
+import { useTasks } from "@/lib/tasks-context";
 import { getInitials } from "@/lib/auth";
 import { toast } from "sonner";
 
@@ -49,7 +50,8 @@ export const Route = createFileRoute("/tasks/$taskId")({
 
 function TaskDetail() {
   const { taskId } = Route.useParams();
-  const task = mockTasks.find((t) => t.id === taskId);
+  const { getTaskById } = useTasks();
+  const task = getTaskById(taskId);
   if (!task) throw notFound();
   const cat = getCategory(task.category);
   const Icon = cat.icon;

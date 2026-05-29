@@ -5,7 +5,8 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { TaskCard } from "@/components/task-card";
-import { mockTasks, categories } from "@/lib/mock-data";
+import { categories } from "@/lib/mock-data";
+import { useTasks } from "@/lib/tasks-context";
 
 export const Route = createFileRoute("/")({
   component: Index,
@@ -14,7 +15,8 @@ export const Route = createFileRoute("/")({
 function Index() {
   const [query, setQuery] = useState("");
   const navigate = useNavigate();
-  const recent = mockTasks.slice(0, 6);
+  const { tasks } = useTasks();
+  const recent = tasks.slice(0, 6);
 
   const onSearch = (e: React.FormEvent) => {
     e.preventDefault();
