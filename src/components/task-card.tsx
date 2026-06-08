@@ -11,8 +11,8 @@ export function TaskCard({ task }: { task: Task }) {
   return (
     <article className="group flex h-full flex-col overflow-hidden rounded-2xl border border-border/60 bg-card shadow-sm transition-all hover:-translate-y-1 hover:border-primary/40 hover:shadow-xl hover:shadow-primary/10">
       <Link
-        to="/tasks/$taskId"
-        params={{ taskId: task.id }}
+        to="/task/$id"
+        params={{ id: task.id }}
         className="relative block w-full overflow-hidden bg-slate-100"
         aria-label={task.title}
       >
@@ -49,7 +49,7 @@ export function TaskCard({ task }: { task: Task }) {
         </div>
         <p className="mb-4 text-sm text-muted-foreground line-clamp-2">{task.description}</p>
         <Button asChild size="sm" className="mt-auto w-full gap-1.5">
-          <Link to="/tasks/$taskId" params={{ taskId: task.id }}>
+          <Link to="/task/$id" params={{ id: task.id }}>
             Виж задачата <ArrowRight className="h-3.5 w-3.5" />
           </Link>
         </Button>
