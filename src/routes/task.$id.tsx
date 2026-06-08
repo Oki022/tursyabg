@@ -10,10 +10,20 @@ import {
   MessageSquare,
   Phone,
   ShieldCheck,
+  ShieldAlert,
 } from "lucide-react";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Textarea } from "@/components/ui/textarea";
 import { getInitials } from "@/lib/auth";
 import { getCategory } from "@/lib/mock-data";
 import { useTasks } from "@/lib/tasks-context";
@@ -68,9 +78,23 @@ function TaskDetails() {
     ? [task.image, ...baseImages.filter((image) => image !== task.image)]
     : baseImages;
   const [active, setActive] = useState(0);
+  const [messageOpen, setMessageOpen] = useState(false);
+  const [messageText, setMessageText] = useState("");
 
   const prev = () => setActive((index) => (index - 1 + images.length) % images.length);
   const next = () => setActive((index) => (index + 1) % images.length);
+
+  const handleSendMessage = () => {
+    if (!messageText.trim()) {
+      toast.error("Моля въведете съобщение");
+      return;
+    }
+    setMessageOpen(false);
+    setMessageText("");
+    toast.success("✅ Съобщението е изпратено успешно!", {
+      description: `${task.author} ще получи известие.`,
+    });
+  };
 
   return (
     <div className="container mx-auto max-w-6xl px-4 py-6 md:py-10">
@@ -175,7 +199,7 @@ function TaskDetails() {
               <Button
                 size="lg"
                 className="w-full gap-2"
-                onClick={() => toast.success("Съобщението е изпратено!", { description: "Възложителят ще получи известие." })}
+                onClick={() => setMessageOpen(true)}
               >
                 <MessageSquare className="h-4 w-4" /> Изпрати съобщение
               </Button>
@@ -224,6 +248,56 @@ function TaskDetails() {
           </div>
         </aside>
       </div>
+
+      <Dialog open={messageOpen} onOpenChange={setMessageOpen}>
+        <DialogContent className="sm:max-w-lg">
+          <DialogHeader>
+            <DialogTitle className="text-xl">
+              Изпрати съобщение до {task.author}
+            </DialogTitle>
+            <DialogDescription>
+              Започнете разговор относно тази задача.
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="rounded-xl bg-slate-100 px-4 py-3 ring-1 ring-border/60">
+            <div className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+              Задача
+            </div>
+            <div className="mt-1 line-clamp-2 text-sm font-semibold text-slate-900">
+              {task.title}
+            </div>
+          </div>
+
+          <Textarea
+            value={messageText}
+            onChange={(event) => setMessageText(event.target.value)}
+            placeholder="Напишете вашето съобщение тук..."
+            rows={6}
+            className="resize-none"
+          />
+
+          <div className="flex items-start gap-3 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
+            <ShieldAlert className="mt-0.5 h-5 w-5 flex-shrink-0 text-amber-600" />
+            <p className="leading-relaxed">
+              <span className="font-semibold">За вашата сигурност</span>, общувайте и плащайте само през платформата.
+            </p>
+          </div>
+
+          <DialogFooter className="gap-2 sm:gap-2">
+            <Button
+              variant="outline"
+              onClick={() => setMessageOpen(false)}
+              className="sm:flex-1"
+            >
+              Отказ
+            </Button>
+            <Button onClick={handleSendMessage} className="sm:flex-1 gap-2">
+              <MessageSquare className="h-4 w-4" /> Изпрати
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
