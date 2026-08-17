@@ -162,7 +162,7 @@ function ProfilePage() {
       {/* Role-specific sections */}
       <div className="mt-6 grid gap-6">
         {/* Твоите задачи */}
-        <section className="rounded-2xl border border-border/60 bg-card p-5 shadow-sm md:p-7">
+        <section className="min-w-0 rounded-2xl border border-border/60 bg-card p-5 shadow-sm md:p-7">
           <div className="flex items-center justify-between gap-3">
             <h2 className="text-lg font-semibold text-foreground">Твоите задачи</h2>
             <Button asChild size="sm" variant="outline">
@@ -205,7 +205,7 @@ function ProfilePage() {
         </section>
 
         {/* Настройки */}
-        <section className="rounded-2xl border border-border/60 bg-card p-5 shadow-sm md:p-7">
+        <section className="min-w-0 rounded-2xl border border-border/60 bg-card p-5 shadow-sm md:p-7">
           <h2 className="text-lg font-semibold text-foreground">Настройки</h2>
           <div className="mt-4 grid gap-2 sm:grid-cols-2">
             {SETTINGS_ITEMS.map((item) => {
@@ -231,7 +231,7 @@ function ProfilePage() {
 
         {isWorker && (
           <>
-            <section className="rounded-2xl border border-border/60 bg-card p-5 shadow-sm md:p-7">
+            <section className="min-w-0 rounded-2xl border border-border/60 bg-card p-5 shadow-sm md:p-7">
               <h2 className="text-lg font-semibold text-foreground">Моите умения</h2>
               <p className="mt-1 text-sm text-muted-foreground">
                 Избери категориите, в които предлагаш услуги.
@@ -258,7 +258,7 @@ function ProfilePage() {
               </div>
             </section>
 
-            <section className="rounded-2xl border border-border/60 bg-card p-5 shadow-sm md:p-7">
+            <section className="min-w-0 rounded-2xl border border-border/60 bg-card p-5 shadow-sm md:p-7">
               <h2 className="text-lg font-semibold text-foreground">Проверка на самоличността</h2>
               <p className="mt-1 text-sm text-muted-foreground">
                 Качи документ за самоличност, за да получиш синя значка и повече доверие.
