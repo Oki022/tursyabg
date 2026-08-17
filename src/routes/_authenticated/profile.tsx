@@ -1,5 +1,5 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import {
   BadgeCheck,
   Mail,
@@ -26,7 +26,7 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { TaskCard } from "@/components/task-card";
 import { useAuth, getInitials } from "@/lib/auth";
 import { categories, type TaskStatus } from "@/lib/mock-data";
-import { useTasks } from "@/lib/tasks-context";
+import { useMyTasks } from "@/lib/tasks-api";
 import { toast } from "sonner";
 
 const TASK_TABS: { value: TaskStatus; label: string; empty: string }[] = [
@@ -51,13 +51,13 @@ const SETTINGS_ITEMS: { icon: typeof Wallet; label: string; to: string }[] = [
   { icon: Settings2, label: "Действия по моя профил", to: "/profile" },
 ];
 
-export const Route = createFileRoute("/profile")({
+export const Route = createFileRoute("/_authenticated/profile")({
   component: ProfilePage,
 });
 
 function ProfilePage() {
   const { user, logout, updateUser } = useAuth();
-  const { tasks } = useTasks();
+  const { data: tasks = [] } = useMyTasks(user?.id);
   const navigate = useNavigate();
   const [tab, setTab] = useState<TaskStatus>("active");
 
@@ -76,18 +76,6 @@ function ProfilePage() {
     return map;
   }, [tasks, user]);
 
-  useEffect(() => {
-    if (typeof window !== "undefined" && user === null) {
-      // small delay to allow hydration of auth state
-      const t = setTimeout(() => {
-        if (!localStorage.getItem("zadacha-net-auth-user")) {
-          navigate({ to: "/auth", search: { mode: "login" } });
-        }
-      }, 50);
-      return () => clearTimeout(t);
-    }
-  }, [user, navigate]);
-
   if (!user) {
     return (
       <div className="container mx-auto px-4 py-16 text-center text-sm text-muted-foreground">
@@ -98,8 +86,8 @@ function ProfilePage() {
 
   const isWorker = user.role === "worker";
 
-  const handleLogout = () => {
-    logout();
+  const handleLogout = async () => {
+    await logout();
     toast.success("Излязохте от профила си.");
     navigate({ to: "/" });
   };

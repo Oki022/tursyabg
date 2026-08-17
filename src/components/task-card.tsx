@@ -49,3 +49,16 @@ export function TaskCard({ task }: { task: Task }) {
     </Link>
   );
 }
+export function TaskCardSkeleton() {
+  return (
+    <div className="flex h-full flex-col overflow-hidden rounded-xl border border-border/50 bg-card shadow-sm">
+      <div className="aspect-[4/3] w-full animate-pulse bg-muted" />
+      <div className="flex flex-1 flex-col gap-2 p-2.5">
+        <div className="h-3 w-full animate-pulse rounded bg-muted" />
+        <div className="h-3 w-2/3 animate-pulse rounded bg-muted" />
+        <div className="h-4 w-1/3 animate-pulse rounded bg-muted" />
+        <div className="mt-auto h-3 w-1/2 animate-pulse rounded bg-muted" />
+      </div>
+    </div>
+  );
+}

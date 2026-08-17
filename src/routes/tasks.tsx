@@ -1,13 +1,13 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useMemo, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Search, SlidersHorizontal, X } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { TaskCard } from "@/components/task-card";
+import { TaskCard, TaskCardSkeleton } from "@/components/task-card";
 import { LocationCombobox } from "@/components/location-combobox";
 import { categories, getCategory } from "@/lib/mock-data";
-import { useTasks } from "@/lib/tasks-context";
+import { useTasksFeed } from "@/lib/tasks-api";
 
 type Search = { q?: string; category?: string; location?: string };
 
@@ -29,20 +29,24 @@ export const Route = createFileRoute("/tasks")({
 function TasksPage() {
   const search = Route.useSearch();
   const navigate = Route.useNavigate();
-  const { tasks } = useTasks();
   const [query, setQuery] = useState(search.q ?? "");
+  const { data, isLoading, fetchNextPage, hasNextPage, isFetchingNextPage } = useTasksFeed({
+    q: search.q,
+    category: search.category,
+    location: search.location,
+  });
+  const filtered = data?.pages.flatMap((p) => p.items) ?? [];
+  const sentinelRef = useRef<HTMLDivElement | null>(null);
 
-  const filtered = useMemo(() => {
-    return tasks.filter((t) => {
-      if (search.category && t.category !== search.category) return false;
-      if (search.location && t.location !== search.location) return false;
-      if (search.q) {
-        const q = search.q.toLowerCase();
-        if (!t.title.toLowerCase().includes(q) && !t.description.toLowerCase().includes(q)) return false;
-      }
-      return true;
-    });
-  }, [search, tasks]);
+  useEffect(() => {
+    const el = sentinelRef.current;
+    if (!el || !hasNextPage) return;
+    const observer = new IntersectionObserver((entries) => {
+      if (entries[0]?.isIntersecting && !isFetchingNextPage) void fetchNextPage();
+    }, { rootMargin: "400px" });
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
 
   const update = (next: Partial<Search>) =>
     navigate({ search: (prev: Search) => ({ ...prev, ...next }) });
@@ -56,7 +60,7 @@ function TasksPage() {
           Борса за задачи
         </h1>
         <p className="mt-2 text-muted-foreground">
-          {filtered.length} {filtered.length === 1 ? "активна задача" : "активни задачи"}
+          {isLoading ? "Зареждане..." : `${filtered.length}${hasNextPage ? "+" : ""} ${filtered.length === 1 ? "активна задача" : "активни задачи"}`}
         </p>
       </div>
 
@@ -150,7 +154,11 @@ function TasksPage() {
             </div>
           )}
 
-          {filtered.length === 0 ? (
+          {isLoading ? (
+            <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:gap-4 xl:grid-cols-4">
+              {Array.from({ length: 8 }).map((_, i) => <TaskCardSkeleton key={i} />)}
+            </div>
+          ) : filtered.length === 0 ? (
             <div className="rounded-2xl border border-dashed border-border bg-card p-12 text-center">
               <p className="text-foreground font-medium">Няма намерени задачи</p>
               <p className="mt-1 text-sm text-muted-foreground">Опитай с по-малко филтри или публикувай своя задача.</p>
@@ -159,9 +167,13 @@ function TasksPage() {
               </Button>
             </div>
           ) : (
-            <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:gap-4 xl:grid-cols-4">
-              {filtered.map((t) => <TaskCard key={t.id} task={t} />)}
-            </div>
+            <>
+              <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:gap-4 xl:grid-cols-4">
+                {filtered.map((t) => <TaskCard key={t.id} task={t} />)}
+                {isFetchingNextPage && Array.from({ length: 4 }).map((_, i) => <TaskCardSkeleton key={`s${i}`} />)}
+              </div>
+              <div ref={sentinelRef} className="h-10" />
+            </>
           )}
         </div>
       </div>
