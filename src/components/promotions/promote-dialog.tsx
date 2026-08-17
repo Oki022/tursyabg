@@ -130,8 +130,13 @@ export function PromoteDialog({
                       {PROMO_DESCRIPTIONS[p.type]}
                     </span>
                     {activeUntil && (
-                      <span className="mt-1 block text-xs font-medium text-emerald-600">
-                        {PROMO_LABELS[p.type]}: {remainingLabel(activeUntil)}
+                      <span className="mt-1 flex flex-wrap items-center gap-1.5">
+                        <span className="rounded-full bg-emerald-100 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-emerald-700">
+                          Активна
+                        </span>
+                        <span className="text-xs font-medium text-emerald-600">
+                          {PROMO_LABELS[p.type]} — {remainingLabel(activeUntil)}
+                        </span>
                       </span>
                     )}
                     {bumpBlocked && (
@@ -140,7 +145,12 @@ export function PromoteDialog({
                       </span>
                     )}
                   </span>
-                  <span className="shrink-0 text-sm font-bold text-primary">{formatEur(p.priceEur)}</span>
+                  <span className="flex shrink-0 flex-col items-end">
+                    <span className="text-sm font-bold text-primary">{formatEur(p.priceEur)}</span>
+                    <span className="text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">
+                      {activeUntil ? "Удължи" : "Купи"}
+                    </span>
+                  </span>
                 </button>
               );
             })}
