@@ -1419,7 +1419,9 @@ export type Database = {
       }
       can_bump_task: { Args: { _task_id: string }; Returns: boolean }
       claim_engagement: { Args: { _task_id: string }; Returns: Json }
-      close_task: { Args: { _task_id: string }; Returns: Json }
+      close_task:
+        | { Args: { _task_id: string }; Returns: Json }
+        | { Args: { _outcome?: string; _task_id: string }; Returns: Json }
       complete_payment: {
         Args: {
           _payment_intent: string
@@ -1646,6 +1648,7 @@ export type Database = {
       task_unlockers: {
         Args: { _task_id: string }
         Returns: {
+          avatar_url: string
           full_name: string
           has_engagement: boolean
           rating_as_pro: number
