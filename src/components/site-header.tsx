@@ -3,7 +3,7 @@ import { UnreadBadge } from "@/components/unread-badge";
 import { ClipboardList, Plus, CircleUserRound, LogOut, BadgeCheck, MessageCircle, Settings } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { NotificationBell } from "@/components/notification-bell";
-import { useAuth, getInitials } from "@/lib/auth";
+import { useAuth } from "@/lib/auth";
 import { useCreditBalance } from "@/lib/credits-api";
 import {
   DropdownMenu,
