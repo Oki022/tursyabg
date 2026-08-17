@@ -1,120 +1,108 @@
 import { useState } from "react";
 import { Link } from "@tanstack/react-router";
-import { Bell, Hammer, Sparkles, MessageSquare, Clock } from "lucide-react";
+import { Bell } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
+import { useIsMobile } from "@/hooks/use-mobile";
+import { useAuth } from "@/lib/auth";
+import { NotificationList } from "@/components/notifications/notification-list";
+import {
+  useMarkAllNotificationsRead,
+  useNotifications,
+  useUnreadNotifications,
+} from "@/lib/notifications-api";
 
-type Notification = {
-  id: string;
-  icon: React.ComponentType<{ className?: string }>;
-  title: string;
-  description: string;
-  time: string;
-  delayed?: boolean;
-  unread?: boolean;
-};
+function BellButton({ unread }: { unread: number }) {
+  return (
+    <Button variant="ghost" size="icon" className="relative text-slate-700" aria-label="Известия">
+      <Bell className="h-5 w-5" strokeWidth={2.25} />
+      {unread > 0 && (
+        <span className="absolute -right-0.5 -top-0.5 grid h-[18px] min-w-[18px] place-items-center rounded-full bg-gradient-to-r from-orange-500 to-rose-500 px-1 text-[10px] font-bold leading-none text-white ring-2 ring-background">
+          {unread > 9 ? "9+" : unread}
+        </span>
+      )}
+    </Button>
+  );
+}
 
-const NOTIFICATIONS: Notification[] = [
-  {
-    id: "n1",
-    icon: Hammer,
-    title: "Нова задача във вашия район",
-    description: "Ремонт на баня — София, Лозенец (Изпратено с 5 мин. закъснение)",
-    time: "преди 2 мин",
-    delayed: true,
-    unread: true,
-  },
-  {
-    id: "n2",
-    icon: MessageSquare,
-    title: "Ново съобщение от Иван Петров",
-    description: "Кога бихте могли да започнете?",
-    time: "преди 18 мин",
-    unread: true,
-  },
-  {
-    id: "n3",
-    icon: Sparkles,
-    title: "Вашата задача е публикувана",
-    description: "Почистване на апартамент — видима за изпълнители.",
-    time: "преди 1 ч",
-  },
-];
+function PanelHeader({ onMarkAll, canMarkAll }: { onMarkAll: () => void; canMarkAll: boolean }) {
+  return (
+    <div className="flex items-center justify-between gap-2 border-b border-border px-3 py-2.5">
+      <span className="text-sm font-semibold">Известия</span>
+      {canMarkAll && (
+        <button onClick={onMarkAll} className="text-xs text-muted-foreground hover:text-foreground">
+          Маркирай всички като прочетени
+        </button>
+      )}
+    </div>
+  );
+}
+
+function PanelFooter({ onNavigate }: { onNavigate: () => void }) {
+  return (
+    <div className="border-t border-border p-2">
+      <Link
+        to="/notifications"
+        onClick={onNavigate}
+        className="block rounded-md px-3 py-2 text-center text-sm font-medium text-primary hover:bg-accent"
+      >
+        Виж всички
+      </Link>
+    </div>
+  );
+}
 
 export function NotificationBell() {
   const [open, setOpen] = useState(false);
-  const unread = NOTIFICATIONS.filter((n) => n.unread).length;
+  const isMobile = useIsMobile();
+  const { user } = useAuth();
+  const enabled = Boolean(user);
+  const unreadQuery = useUnreadNotifications(enabled);
+  const listQuery = useNotifications(enabled && open, 20);
+  const markAll = useMarkAllNotificationsRead();
+  const unread = unreadQuery.data ?? 0;
+  const items = listQuery.data ?? [];
+
+  const body = (
+    <>
+      <PanelHeader onMarkAll={() => markAll.mutate()} canMarkAll={unread > 0} />
+      <div className="max-h-[60vh] flex-1 overflow-y-auto md:max-h-[380px]">
+        <NotificationList items={items} isLoading={listQuery.isLoading} onNavigate={() => setOpen(false)} />
+      </div>
+      <PanelFooter onNavigate={() => setOpen(false)} />
+    </>
+  );
+
+  if (isMobile) {
+    return (
+      <Sheet open={open} onOpenChange={setOpen}>
+        <SheetTrigger asChild>
+          <span>
+            <BellButton unread={unread} />
+          </span>
+        </SheetTrigger>
+        <SheetContent side="right" className="flex w-full max-w-full flex-col gap-0 p-0 sm:max-w-md">
+          <SheetTitle className="sr-only">Известия</SheetTitle>
+          {body}
+        </SheetContent>
+      </Sheet>
+    );
+  }
 
   return (
     <DropdownMenu open={open} onOpenChange={setOpen}>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" size="icon" className="relative" aria-label="Известия">
-          <Bell className="h-5 w-5" />
-          {unread > 0 && (
-            <span className="absolute right-1.5 top-1.5 grid h-4 min-w-4 place-items-center rounded-full bg-primary px-1 text-[10px] font-semibold text-primary-foreground">
-              {unread}
-            </span>
-          )}
-        </Button>
+        <span>
+          <BellButton unread={unread} />
+        </span>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-[min(340px,calc(100vw-1.5rem))] p-0">
-        <div className="flex items-center justify-between border-b border-border px-3 py-2.5">
-          <span className="text-sm font-semibold">Известия</span>
-          <button className="text-xs text-muted-foreground hover:text-foreground">
-            Маркирай всички като прочетени
-          </button>
-        </div>
-        <div className="max-h-[360px] overflow-y-auto">
-          {NOTIFICATIONS.map((n) => {
-            const Icon = n.icon;
-            return (
-              <div
-                key={n.id}
-                className={`flex items-start gap-3 border-b border-border/60 px-3 py-3 last:border-b-0 ${
-                  n.unread ? "bg-primary/5" : ""
-                }`}
-              >
-                <div className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-primary/10 text-primary">
-                  <Icon className="h-4 w-4" />
-                </div>
-                <div className="min-w-0 flex-1">
-                  <div className="flex items-start justify-between gap-2">
-                    <p className="text-sm font-medium text-foreground">{n.title}</p>
-                    {n.unread && (
-                      <span className="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-primary" />
-                    )}
-                  </div>
-                  <p className="mt-0.5 text-xs text-muted-foreground">{n.description}</p>
-                  <div className="mt-1.5 flex items-center gap-2 text-[11px] text-muted-foreground">
-                    <Clock className="h-3 w-3" />
-                    <span>{n.time}</span>
-                    {n.delayed && (
-                      <span className="rounded-full bg-amber-100 px-1.5 py-0.5 text-[10px] font-medium text-amber-800 dark:bg-amber-950/50 dark:text-amber-200">
-                        5 мин. закъснение
-                      </span>
-                    )}
-                  </div>
-                </div>
-              </div>
-            );
-          })}
-        </div>
-        <div className="border-t border-border bg-muted/40 px-3 py-2 text-[11px] text-muted-foreground">
-          Новите задачи се изпращат на изпълнителите с 5 минути закъснение, за да дадем приоритет на възложителите.
-        </div>
-        <div className="border-t border-border p-2">
-          <Link
-            to="/messages"
-            onClick={() => setOpen(false)}
-            className="block rounded-md px-3 py-2 text-center text-sm font-medium text-primary hover:bg-accent"
-          >
-            Отвори съобщенията
-          </Link>
-        </div>
+      <DropdownMenuContent align="end" className="w-[min(360px,calc(100vw-1.5rem))] p-0">
+        {body}
       </DropdownMenuContent>
     </DropdownMenu>
   );
