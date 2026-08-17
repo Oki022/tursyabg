@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -15,12 +16,24 @@ import { useRequestRefund } from "@/lib/credits-api";
 import type { RefundReason } from "@/services/credits";
 import { toast } from "sonner";
 
-const REASONS: { value: RefundReason; label: string }[] = [
-  { value: "fake_task", label: "Фалшива или подвеждаща задача" },
-  { value: "already_taken", label: "Задачата вече е възложена" },
-  { value: "no_response", label: "Клиентът не отговаря" },
-  { value: "wrong_category", label: "Грешна категория" },
-  { value: "other", label: "Друга причина" },
+const REASONS: { value: RefundReason; label: string; hint: string }[] = [
+  {
+    value: "fake_task",
+    label: "Фалшива или подвеждаща задача",
+    hint: "Ако 3+ различни потребители са докладвали задачата, връщането е автоматично.",
+  },
+  {
+    value: "already_taken",
+    label: "Задачата вече е възложена",
+    hint: "Ако възложителят е затворил задачата след твоето отключване, връщането е автоматично.",
+  },
+  {
+    value: "no_response",
+    label: "Клиентът не отговаря",
+    hint: "Изпрати съобщение и изчакай 5 дни — без отговор кредитите се връщат автоматично.",
+  },
+  { value: "wrong_category", label: "Грешна категория", hint: "Разглежда се от екипа ни." },
+  { value: "other", label: "Друга причина", hint: "Разглежда се от екипа ни." },
 ];
 
 export function RefundRequestDialog({
@@ -35,6 +48,7 @@ export function RefundRequestDialog({
   const [reason, setReason] = useState<RefundReason | undefined>(undefined);
   const [details, setDetails] = useState("");
   const refund = useRequestRefund();
+  const hint = REASONS.find((r) => r.value === reason)?.hint;
 
   const submit = async () => {
     if (!unlockId || !reason) {
@@ -42,17 +56,42 @@ export function RefundRequestDialog({
       return;
     }
     try {
-      await refund.mutateAsync({ unlockId, reason, details: details.trim().slice(0, 1000) });
-      toast.success("Заявката за връщане е изпратена.", {
-        description: "Ще я разгледаме до 3 работни дни.",
-      });
+      const res = await refund.mutateAsync({ unlockId, reason, details: details.trim().slice(0, 1000) });
+      if (!res.ok) {
+        if (res.error === "TOO_EARLY") {
+          const when = res.availableAt
+            ? new Date(res.availableAt).toLocaleDateString("bg-BG", { day: "numeric", month: "long" })
+            : null;
+          toast.error("Още е рано за тази заявка.", {
+            description: when
+              ? `Изчакай 5 дни след отключването — можеш да заявиш от ${when}.`
+              : "Изчакай 5 дни след отключването на контакта.",
+          });
+          return;
+        }
+        const map: Record<string, string> = {
+          DUPLICATE: "Вече си подал заявка за това отключване.",
+          WINDOW_EXPIRED: "Срокът от 14 дни е изтекъл.",
+          NOT_FOUND: "Отключването не беше намерено.",
+          NOT_AUTHENTICATED: "Трябва да си влязъл в профила си.",
+        };
+        toast.error(map[res.error] ?? "Заявката не беше изпратена.");
+        return;
+      }
+      if (res.auto) {
+        toast.success("Кредитите ти са върнати веднага.", {
+          description: `Възстановени: ${res.credits ?? 0} кредита.`,
+        });
+      } else {
+        toast.success("Заявката за връщане е изпратена.", {
+          description: "Ще я разгледаме до 3 работни дни.",
+        });
+      }
       onOpenChange(false);
       setReason(undefined);
       setDetails("");
     } catch {
-      toast.error("Заявката не беше изпратена.", {
-        description: "Възможно е вече да си подал заявка или срокът от 14 дни да е изтекъл.",
-      });
+      toast.error("Заявката не беше изпратена. Опитай отново.");
     }
   };
 
@@ -62,7 +101,11 @@ export function RefundRequestDialog({
         <DialogHeader>
           <DialogTitle>Заяви връщане на кредити</DialogTitle>
           <DialogDescription>
-            Ако задачата е некоректна, можеш да поискаш връщане на изразходваните кредити в рамките на 14 дни.
+            Ако задачата е некоректна, можеш да поискаш връщане в рамките на 14 дни. Част от случаите се
+            одобряват автоматично.{" "}
+            <Link to="/refund-policy" className="font-medium text-primary hover:underline">
+              Правила
+            </Link>
           </DialogDescription>
         </DialogHeader>
 
@@ -80,6 +123,7 @@ export function RefundRequestDialog({
               ))}
             </SelectContent>
           </Select>
+          {hint ? <p className="text-xs text-muted-foreground">{hint}</p> : null}
         </div>
 
         <div className="space-y-2">
