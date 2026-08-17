@@ -343,13 +343,16 @@ export type Database = {
           credits: number
           currency: string
           id: string
+          kind: string
           package_id: string | null
+          promo_product_id: string | null
           provider: string
           receipt_url: string | null
           refunded_at: string | null
           status: string
           stripe_payment_intent_id: string | null
           stripe_session_id: string | null
+          task_id: string | null
           user_id: string
         }
         Insert: {
@@ -359,13 +362,16 @@ export type Database = {
           credits?: number
           currency?: string
           id?: string
+          kind?: string
           package_id?: string | null
+          promo_product_id?: string | null
           provider?: string
           receipt_url?: string | null
           refunded_at?: string | null
           status?: string
           stripe_payment_intent_id?: string | null
           stripe_session_id?: string | null
+          task_id?: string | null
           user_id: string
         }
         Update: {
@@ -375,13 +381,16 @@ export type Database = {
           credits?: number
           currency?: string
           id?: string
+          kind?: string
           package_id?: string | null
+          promo_product_id?: string | null
           provider?: string
           receipt_url?: string | null
           refunded_at?: string | null
           status?: string
           stripe_payment_intent_id?: string | null
           stripe_session_id?: string | null
+          task_id?: string | null
           user_id?: string
         }
         Relationships: [
@@ -390,6 +399,20 @@ export type Database = {
             columns: ["package_id"]
             isOneToOne: false
             referencedRelation: "credit_packages"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "payments_promo_product_id_fkey"
+            columns: ["promo_product_id"]
+            isOneToOne: false
+            referencedRelation: "promo_products"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "payments_task_id_fkey"
+            columns: ["task_id"]
+            isOneToOne: false
+            referencedRelation: "tasks"
             referencedColumns: ["id"]
           },
         ]
@@ -468,6 +491,45 @@ export type Database = {
         }
         Relationships: []
       }
+      promo_products: {
+        Row: {
+          code: string
+          created_at: string
+          duration_days: number
+          id: string
+          is_active: boolean
+          name_bg: string
+          price_eur: number
+          sort_order: number
+          type: Database["public"]["Enums"]["promo_type"]
+          updated_at: string
+        }
+        Insert: {
+          code: string
+          created_at?: string
+          duration_days?: number
+          id?: string
+          is_active?: boolean
+          name_bg: string
+          price_eur: number
+          sort_order?: number
+          type: Database["public"]["Enums"]["promo_type"]
+          updated_at?: string
+        }
+        Update: {
+          code?: string
+          created_at?: string
+          duration_days?: number
+          id?: string
+          is_active?: boolean
+          name_bg?: string
+          price_eur?: number
+          sort_order?: number
+          type?: Database["public"]["Enums"]["promo_type"]
+          updated_at?: string
+        }
+        Relationships: []
+      }
       task_images: {
         Row: {
           created_at: string
@@ -496,6 +558,64 @@ export type Database = {
             columns: ["task_id"]
             isOneToOne: false
             referencedRelation: "tasks"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      task_promotions: {
+        Row: {
+          created_at: string
+          expires_at: string
+          id: string
+          price_paid_eur: number
+          promo_product_id: string | null
+          starts_at: string
+          task_id: string
+          type: Database["public"]["Enums"]["promo_type"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          expires_at?: string
+          id?: string
+          price_paid_eur?: number
+          promo_product_id?: string | null
+          starts_at?: string
+          task_id: string
+          type: Database["public"]["Enums"]["promo_type"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          expires_at?: string
+          id?: string
+          price_paid_eur?: number
+          promo_product_id?: string | null
+          starts_at?: string
+          task_id?: string
+          type?: Database["public"]["Enums"]["promo_type"]
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "task_promotions_promo_product_id_fkey"
+            columns: ["promo_product_id"]
+            isOneToOne: false
+            referencedRelation: "promo_products"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "task_promotions_task_id_fkey"
+            columns: ["task_id"]
+            isOneToOne: false
+            referencedRelation: "tasks"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "task_promotions_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
         ]
@@ -590,6 +710,7 @@ export type Database = {
       tasks: {
         Row: {
           budget: number
+          bumped_at: string
           category: string
           city: string | null
           created_at: string
@@ -607,6 +728,7 @@ export type Database = {
         }
         Insert: {
           budget?: number
+          bumped_at?: string
           category: string
           city?: string | null
           created_at?: string
@@ -624,6 +746,7 @@ export type Database = {
         }
         Update: {
           budget?: number
+          bumped_at?: string
           category?: string
           city?: string | null
           created_at?: string
@@ -726,6 +849,7 @@ export type Database = {
         }
         Returns: Json
       }
+      can_bump_task: { Args: { _task_id: string }; Returns: boolean }
       complete_payment: {
         Args: {
           _payment_intent: string
@@ -733,6 +857,46 @@ export type Database = {
           _session_id: string
         }
         Returns: Json
+      }
+      complete_promotion_payment: {
+        Args: {
+          _payment_intent: string
+          _receipt_url: string
+          _session_id: string
+        }
+        Returns: Json
+      }
+      feed_tasks: {
+        Args: {
+          _category?: string
+          _city?: string
+          _cursor?: string
+          _limit?: number
+          _neighborhood?: string
+          _promo_offset?: number
+          _q?: string
+          _seed?: string
+        }
+        Returns: {
+          author: string
+          budget: number
+          bumped_at: string
+          category: string
+          city: string
+          created_at: string
+          description: string
+          id: string
+          images: string[]
+          is_top: boolean
+          is_urgent: boolean
+          neighborhood: string
+          promo_expires_at: string
+          promoted_slot: boolean
+          status: Database["public"]["Enums"]["task_status"]
+          title: string
+          unlock_cost: number
+          user_id: string
+        }[]
       }
       find_or_create_conversation: {
         Args: { _other_user: string; _task_id: string }
@@ -771,6 +935,7 @@ export type Database = {
         | "refund"
         | "bonus"
         | "promo_spend"
+      promo_type: "bump" | "urgent" | "top"
       refund_reason:
         | "fake_task"
         | "already_taken"
@@ -922,6 +1087,7 @@ export const Constants = {
         "bonus",
         "promo_spend",
       ],
+      promo_type: ["bump", "urgent", "top"],
       refund_reason: [
         "fake_task",
         "already_taken",
