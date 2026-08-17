@@ -76,17 +76,16 @@ export async function moderateImage(
   const user = process.env["SIGHTENGINE_API_USER"];
   const secret = process.env["SIGHTENGINE_API_SECRET"];
 
-  const offline = (reason: string): ImageModerationResult => ({
+  const offline = (): ImageModerationResult => ({
     verdict: "review",
     score: 0,
     labels: {},
     category: null,
     provider: PROVIDER,
     unavailable: true,
-    ...(reason ? {} : {}),
   });
 
-  if (!user || !secret) return offline("missing-credentials");
+  if (!user || !secret) return offline();
 
   try {
     const form = new FormData();
@@ -100,10 +99,10 @@ export async function moderateImage(
       method: "POST",
       body: form,
     });
-    if (!res.ok) return offline("http-" + res.status);
+    if (!res.ok) return offline();
 
     const json = (await res.json()) as Record<string, any>;
-    if (json["status"] !== "success") return offline("api-error");
+    if (json["status"] !== "success") return offline();
 
     const labels = extractLabels(json);
     const { category, score } = pickMax(labels);
@@ -111,6 +110,6 @@ export async function moderateImage(
 
     return { verdict, score, labels, category, provider: PROVIDER, unavailable: false };
   } catch {
-    return offline("network");
+    return offline();
   }
 }
