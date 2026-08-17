@@ -6,6 +6,7 @@ import {
   Users,
   CreditCard,
   ScrollText,
+  Star,
   ArrowLeft,
 } from "lucide-react";
 import { toast } from "sonner";
