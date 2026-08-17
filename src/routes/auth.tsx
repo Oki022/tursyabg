@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useAuth, type UserRole } from "@/lib/auth";
 import { toast } from "sonner";
+import { Checkbox } from "@/components/ui/checkbox";
 
 type AuthSearch = { mode?: "login" | "register"; redirect?: string };
 
@@ -38,11 +39,16 @@ function AuthPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [role, setRole] = useState<UserRole>("customer");
+  const [acceptedTerms, setAcceptedTerms] = useState(false);
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     if (!email || !password || (isRegister && !name)) {
       toast.error("Моля, попълнете всички полета.");
+      return;
+    }
+    if (isRegister && !acceptedTerms) {
+      toast.error("Трябва да приемеш Общите условия и Политиката за поверителност.");
       return;
     }
     setBusy(true);
@@ -200,7 +206,29 @@ function AuthPage() {
             </button>
           )}
 
-          <Button type="submit" className="h-11" disabled={busy}>
+          {isRegister && (
+            <label className="flex items-start gap-2.5 text-xs leading-relaxed text-muted-foreground">
+              <Checkbox
+                checked={acceptedTerms}
+                onCheckedChange={(v) => setAcceptedTerms(v === true)}
+                className="mt-0.5"
+                aria-label="Приемам Общите условия и Политиката за поверителност"
+              />
+              <span>
+                Приемам{" "}
+                <Link to="/terms" className="font-medium text-primary hover:underline">
+                  Общите условия
+                </Link>{" "}
+                и{" "}
+                <Link to="/privacy" className="font-medium text-primary hover:underline">
+                  Политиката за поверителност
+                </Link>
+                .
+              </span>
+            </label>
+          )}
+
+          <Button type="submit" className="h-11" disabled={busy || (isRegister && !acceptedTerms)}>
             {busy ? "Моля изчакай..." : isRegister ? "Създай профил" : "Вход"}
           </Button>
         </form>
