@@ -1,12 +1,14 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
-import { Coins, Package, FileText, History, KeyRound } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
+import { Package, FileText, History, KeyRound, Receipt, CreditCard } from "lucide-react";
 import { SettingsPageShell } from "@/components/settings-page-shell";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/lib/auth";
 import { useCreditBalance, useCreditPackages, useCreditTransactions } from "@/lib/credits-api";
 import { creditsLabel, formatEur } from "@/services/credits";
-import { toast } from "sonner";
+import { getMyPayments, type Payment } from "@/services/payments";
+import { BuyCreditsDialog } from "@/components/credits/buy-credits-dialog";
 
 export const Route = createFileRoute("/_authenticated/settings/billing")({
   head: () => ({
@@ -29,11 +31,10 @@ function SettingsBillingPage() {
   const [page, setPage] = useState(0);
   const txQuery = useCreditTransactions(page);
   const balance = balanceQuery.data ?? user?.credits ?? 0;
-
-  const buy = () =>
-    toast("Плащанията се настройват", {
-      description: "Скоро ще можеш да купуваш кредити с карта.",
-    });
+  const paymentsQuery = useQuery({ queryKey: ["payments", "mine"], queryFn: getMyPayments });
+  const [buying, setBuying] = useState<{ id: string; name: string; credits: number; priceEur: number } | null>(
+    null,
+  );
 
   return (
     <SettingsPageShell
@@ -67,17 +68,54 @@ function SettingsBillingPage() {
         </div>
         <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
           {(packagesQuery.data ?? []).map((p) => (
-            <div key={p.id} className="rounded-xl border border-border bg-background p-4">
+            <div key={p.id} className="relative rounded-xl border border-border bg-background p-4">
+              {p.credits === 150 && (
+                <span className="absolute -top-2 right-3 rounded-full bg-primary px-2 py-0.5 text-[10px] font-semibold text-primary-foreground">
+                  Най-изгодно
+                </span>
+              )}
               <p className="text-sm font-semibold text-foreground">{p.name}</p>
               <p className="mt-1 text-xl font-bold text-foreground">{formatEur(p.priceEur)}</p>
               <p className="mt-1 text-xs text-muted-foreground">{creditsLabel(p.credits)}</p>
-              <Button variant="outline" size="sm" className="mt-3 w-full" onClick={buy}>
+              <Button
+                variant="outline"
+                size="sm"
+                className="mt-3 w-full"
+                onClick={() => setBuying({ id: p.id, name: p.name, credits: p.credits, priceEur: p.priceEur })}
+              >
                 Купи пакет
               </Button>
             </div>
           ))}
           {packagesQuery.isLoading &&
             [0, 1, 2, 3].map((i) => <div key={i} className="h-32 animate-pulse rounded-xl bg-muted" />)}
+        </div>
+        <p className="mt-3 text-xs text-muted-foreground">
+          Плащане с карта. С покупката приемаш{" "}
+          <Link to="/terms" className="underline hover:text-foreground">
+            Общите условия
+          </Link>{" "}
+          и{" "}
+          <Link to="/refund-policy" className="underline hover:text-foreground">
+            Политиката за връщане на кредити
+          </Link>
+          .
+        </p>
+      </div>
+
+      <div className="rounded-2xl border border-border/60 bg-card p-5 shadow-sm md:p-6">
+        <div className="flex items-center gap-2">
+          <CreditCard className="h-4 w-4 text-primary" />
+          <h2 className="text-lg font-semibold text-foreground">Плащания и фактури</h2>
+        </div>
+        <div className="mt-4 divide-y divide-border/60">
+          {(paymentsQuery.data ?? []).map((p) => (
+            <PaymentRow key={p.id} payment={p} />
+          ))}
+          {!paymentsQuery.isLoading && (paymentsQuery.data?.length ?? 0) === 0 && (
+            <p className="py-6 text-center text-sm text-muted-foreground">Още нямаш плащания.</p>
+          )}
+          {paymentsQuery.isLoading && <div className="h-16 animate-pulse rounded-xl bg-muted" />}
         </div>
       </div>
 
@@ -144,6 +182,46 @@ function SettingsBillingPage() {
           Добави данни за фактура
         </Button>
       </div>
+
+      <BuyCreditsDialog pkg={buying} onOpenChange={(open) => !open && setBuying(null)} />
     </SettingsPageShell>
+  );
+}
+
+const statusLabels: Record<string, string> = {
+  pending: "Изчаква потвърждение",
+  completed: "Платено",
+  refunded: "Възстановено",
+  disputed: "Оспорено",
+  failed: "Неуспешно",
+};
+
+function PaymentRow({ payment }: { payment: Payment }) {
+  return (
+    <div className="flex items-center justify-between gap-3 py-3">
+      <div className="min-w-0">
+        <p className="truncate text-sm font-medium text-foreground">
+          {creditsLabel(payment.credits)} · {formatEur(payment.amountEur)}
+        </p>
+        <p className="text-xs text-muted-foreground">
+          {new Date(payment.createdAt).toLocaleDateString("bg-BG", {
+            day: "numeric",
+            month: "short",
+            year: "numeric",
+          })}{" "}
+          · {statusLabels[payment.status] ?? payment.status}
+        </p>
+      </div>
+      {payment.receiptUrl ? (
+        <Button asChild variant="ghost" size="sm" className="gap-1.5">
+          <a href={payment.receiptUrl} target="_blank" rel="noopener noreferrer">
+            <Receipt className="h-4 w-4" />
+            Изтегли фактура
+          </a>
+        </Button>
+      ) : (
+        <span className="text-xs text-muted-foreground">—</span>
+      )}
+    </div>
   );
 }
