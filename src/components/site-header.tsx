@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { ClipboardList, Plus, User as UserIcon, LogOut, BadgeCheck } from "lucide-react";
+import { ClipboardList, Plus, CircleUserRound, LogOut, BadgeCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { NotificationBell } from "@/components/notification-bell";
 import { useAuth, getInitials } from "@/lib/auth";
@@ -63,7 +63,7 @@ export function SiteHeader() {
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <button
-                    className="ml-0.5 rounded-full ring-offset-background transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                    className="ml-0.5 hidden rounded-full ring-offset-background transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 md:block"
                     aria-label="Меню на профила"
                   >
                     <Avatar className="h-9 w-9 border border-border">
@@ -83,7 +83,7 @@ export function SiteHeader() {
                   <DropdownMenuSeparator />
                   <DropdownMenuItem asChild>
                     <Link to="/profile" className="cursor-pointer">
-                      <UserIcon className="mr-2 h-4 w-4" />
+                      <CircleUserRound className="mr-2 h-4 w-4" />
                       Моят профил
                     </Link>
                   </DropdownMenuItem>
