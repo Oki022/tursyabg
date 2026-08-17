@@ -1,4 +1,4 @@
-import { createFileRoute, Link, notFound } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
 import {
   ArrowLeft,
@@ -24,9 +24,10 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
-import { getInitials } from "@/lib/auth";
+import { getInitials, useAuth } from "@/lib/auth";
+import { supabase } from "@/integrations/supabase/client";
 import { getCategory } from "@/lib/mock-data";
-import { useTasks } from "@/lib/tasks-context";
+import { useTask } from "@/lib/tasks-api";
 import { toast } from "sonner";
 
 const GALLERY_BY_CATEGORY: Record<string, string[]> = {
@@ -67,26 +68,62 @@ export const Route = createFileRoute("/task/$id")({
 
 function TaskDetails() {
   const { id } = Route.useParams();
-  const { getTaskById } = useTasks();
-  const task = getTaskById(id);
-  if (!task) throw notFound();
+  const { data: task, isLoading } = useTask(id);
+  const { user } = useAuth();
+  const [active, setActive] = useState(0);
+  const [messageOpen, setMessageOpen] = useState(false);
+  const [messageText, setMessageText] = useState("");
+  const [sending, setSending] = useState(false);
+
+  if (isLoading) {
+    return (
+      <div className="container mx-auto max-w-6xl px-4 py-10">
+        <div className="h-[320px] w-full animate-pulse rounded-3xl bg-muted sm:h-[420px]" />
+        <div className="mt-6 h-8 w-2/3 animate-pulse rounded bg-muted" />
+        <div className="mt-3 h-4 w-full animate-pulse rounded bg-muted" />
+      </div>
+    );
+  }
+
+  if (!task) {
+    return (
+      <div className="container mx-auto px-4 py-24 text-center">
+        <h1 className="text-2xl font-semibold text-slate-900">Задачата не е намерена</h1>
+        <Button asChild className="mt-4">
+          <Link to="/tasks">Назад</Link>
+        </Button>
+      </div>
+    );
+  }
 
   const cat = getCategory(task.category);
   const Icon = cat.icon;
   const baseImages = GALLERY_BY_CATEGORY[task.category] ?? GALLERY_BY_CATEGORY.default;
-  const images = task.image
-    ? [task.image, ...baseImages.filter((image) => image !== task.image)]
-    : baseImages;
-  const [active, setActive] = useState(0);
-  const [messageOpen, setMessageOpen] = useState(false);
-  const [messageText, setMessageText] = useState("");
+  const images = task.gallery && task.gallery.length > 0 ? task.gallery : baseImages;
 
   const prev = () => setActive((index) => (index - 1 + images.length) % images.length);
   const next = () => setActive((index) => (index + 1) % images.length);
 
-  const handleSendMessage = () => {
+  const handleSendMessage = async () => {
     if (!messageText.trim()) {
       toast.error("Моля въведете съобщение");
+      return;
+    }
+    if (!user) {
+      toast.error("Влез в профила си, за да изпратиш съобщение.");
+      return;
+    }
+    if (!task.userId) return;
+    setSending(true);
+    const { error } = await supabase.from("messages").insert({
+      task_id: task.id,
+      sender_id: user.id,
+      receiver_id: task.userId,
+      content: messageText.trim(),
+    });
+    setSending(false);
+    if (error) {
+      toast.error("Съобщението не беше изпратено.");
       return;
     }
     setMessageOpen(false);
@@ -292,7 +329,7 @@ function TaskDetails() {
             >
               Отказ
             </Button>
-            <Button onClick={handleSendMessage} className="sm:flex-1 gap-2">
+            <Button onClick={handleSendMessage} disabled={sending} className="sm:flex-1 gap-2">
               <MessageSquare className="h-4 w-4" /> Изпрати
             </Button>
           </DialogFooter>

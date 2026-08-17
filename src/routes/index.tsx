@@ -4,9 +4,9 @@ import { Search, Plus, Briefcase, Zap, ArrowRight } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { TaskCard } from "@/components/task-card";
+import { TaskCard, TaskCardSkeleton } from "@/components/task-card";
 import { categories } from "@/lib/mock-data";
-import { useTasks } from "@/lib/tasks-context";
+import { useTasksFeed } from "@/lib/tasks-api";
 
 export const Route = createFileRoute("/")({
   component: Index,
@@ -15,8 +15,8 @@ export const Route = createFileRoute("/")({
 function Index() {
   const [query, setQuery] = useState("");
   const navigate = useNavigate();
-  const { tasks } = useTasks();
-  const recent = tasks.slice(0, 10);
+  const { data, isLoading } = useTasksFeed();
+  const recent = (data?.pages.flatMap((p) => p.items) ?? []).slice(0, 10);
 
   const onSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -106,7 +106,9 @@ function Index() {
           </Button>
         </div>
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:gap-4 lg:grid-cols-4 xl:grid-cols-5">
-          {recent.map((t) => <TaskCard key={t.id} task={t} />)}
+          {isLoading
+            ? Array.from({ length: 10 }).map((_, i) => <TaskCardSkeleton key={i} />)
+            : recent.map((t) => <TaskCard key={t.id} task={t} />)}
         </div>
       </section>
     </div>

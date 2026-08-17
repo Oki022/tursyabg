@@ -1,4 +1,6 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
+import type { Session } from "@supabase/supabase-js";
+import { supabase } from "@/integrations/supabase/client";
 
 export type UserRole = "customer" | "worker";
 
@@ -15,31 +17,17 @@ export type AuthUser = {
 
 type AuthContextValue = {
   user: AuthUser | null;
-  login: (email: string, _password: string) => void;
-  loginSocial: (provider: "google" | "facebook") => void;
-  register: (data: { name: string; email: string; password: string; role: UserRole }) => void;
-  logout: () => void;
-  updateUser: (patch: Partial<AuthUser>) => void;
+  loading: boolean;
+  login: (email: string, password: string) => Promise<void>;
+  loginSocial: (provider: "google") => Promise<void>;
+  register: (data: { name: string; email: string; password: string; role: UserRole }) => Promise<{ needsConfirmation: boolean }>;
+  resetPassword: (email: string) => Promise<void>;
+  updatePassword: (password: string) => Promise<void>;
+  logout: () => Promise<void>;
+  updateUser: (patch: Partial<AuthUser>) => Promise<void>;
 };
 
 const AuthContext = createContext<AuthContextValue | null>(null);
-const STORAGE_KEY = "zadacha-net-auth-user";
-
-function loadUser(): AuthUser | null {
-  if (typeof window === "undefined") return null;
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    return raw ? (JSON.parse(raw) as AuthUser) : null;
-  } catch {
-    return null;
-  }
-}
-
-function saveUser(user: AuthUser | null) {
-  if (typeof window === "undefined") return;
-  if (user) localStorage.setItem(STORAGE_KEY, JSON.stringify(user));
-  else localStorage.removeItem(STORAGE_KEY);
-}
 
 function initials(name: string) {
   return name
@@ -51,71 +39,139 @@ function initials(name: string) {
     .toUpperCase();
 }
 
+async function buildUser(session: Session): Promise<AuthUser> {
+  const meta = (session.user.user_metadata ?? {}) as Record<string, unknown>;
+  const { data: profile } = await supabase
+    .from("profiles")
+    .select("id, full_name, avatar_url, phone")
+    .eq("id", session.user.id)
+    .maybeSingle();
+
+  const name =
+    profile?.full_name ||
+    (typeof meta.full_name === "string" ? meta.full_name : "") ||
+    session.user.email?.split("@")[0] ||
+    "Потребител";
+
+  if (!profile) {
+    await supabase.from("profiles").insert({ id: session.user.id, full_name: name });
+  }
+
+  return {
+    id: session.user.id,
+    name,
+    email: session.user.email ?? "",
+    phone: profile?.phone ?? undefined,
+    role: meta.role === "worker" ? "worker" : "customer",
+    avatarUrl: profile?.avatar_url ?? undefined,
+    skills: Array.isArray(meta.skills) ? (meta.skills as string[]) : [],
+    verified: meta.verified === true,
+  };
+}
+
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<AuthUser | null>(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    setUser(loadUser());
+    let active = true;
+
+    const sync = async (session: Session | null) => {
+      if (!session) {
+        if (active) {
+          setUser(null);
+          setLoading(false);
+        }
+        return;
+      }
+      const next = await buildUser(session);
+      if (active) {
+        setUser(next);
+        setLoading(false);
+      }
+    };
+
+    supabase.auth.getSession().then(({ data }) => sync(data.session));
+
+    const { data: sub } = supabase.auth.onAuthStateChange((_event, session) => {
+      void sync(session);
+    });
+
+    return () => {
+      active = false;
+      sub.subscription.unsubscribe();
+    };
   }, []);
 
-  const login: AuthContextValue["login"] = (email) => {
-    const u: AuthUser = {
-      id: "u_" + Date.now(),
-      name: email.split("@")[0].replace(/[._-]/g, " ").replace(/\b\w/g, (c) => c.toUpperCase()) || "Потребител",
+  const login: AuthContextValue["login"] = async (email, password) => {
+    const { error } = await supabase.auth.signInWithPassword({ email, password });
+    if (error) throw error;
+  };
+
+  const loginSocial: AuthContextValue["loginSocial"] = async () => {
+    const { lovable } = await import("@/integrations/lovable/index");
+    const result = await lovable.auth.signInWithOAuth("google", {
+      redirect_uri: window.location.origin,
+    });
+    if (result.error) throw new Error(result.error.message ?? "Неуспешен вход с Google");
+  };
+
+  const register: AuthContextValue["register"] = async ({ name, email, password, role }) => {
+    const { data, error } = await supabase.auth.signUp({
       email,
-      phone: "+359 88 123 4567",
-      role: "customer",
-      skills: [],
-      verified: false,
-    };
-    saveUser(u);
-    setUser(u);
+      password,
+      options: {
+        emailRedirectTo: `${window.location.origin}/`,
+        data: { full_name: name, role },
+      },
+    });
+    if (error) throw error;
+    return { needsConfirmation: !data.session };
   };
 
-  const loginSocial: AuthContextValue["loginSocial"] = (provider) => {
-    const u: AuthUser = {
-      id: "u_" + Date.now(),
-      name: provider === "google" ? "Георги Иванов" : "Иван Петров",
-      email: provider === "google" ? "georgi@gmail.com" : "ivan@facebook.com",
-      phone: "+359 88 765 4321",
-      role: "worker",
-      skills: ["remonti", "pochistvane"],
-      verified: true,
-    };
-    saveUser(u);
-    setUser(u);
+  const resetPassword: AuthContextValue["resetPassword"] = async (email) => {
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: `${window.location.origin}/reset-password`,
+    });
+    if (error) throw error;
   };
 
-  const register: AuthContextValue["register"] = ({ name, email, role }) => {
-    const u: AuthUser = {
-      id: "u_" + Date.now(),
-      name: name || "Нов потребител",
-      email,
-      phone: "",
-      role,
-      skills: role === "worker" ? [] : undefined,
-      verified: false,
-    };
-    saveUser(u);
-    setUser(u);
+  const updatePassword: AuthContextValue["updatePassword"] = async (password) => {
+    const { error } = await supabase.auth.updateUser({ password });
+    if (error) throw error;
   };
 
-  const logout = () => {
-    saveUser(null);
+  const logout = async () => {
+    await supabase.auth.signOut();
     setUser(null);
   };
 
-  const updateUser: AuthContextValue["updateUser"] = (patch) => {
-    setUser((prev) => {
-      if (!prev) return prev;
-      const next = { ...prev, ...patch };
-      saveUser(next);
-      return next;
-    });
+  const updateUser: AuthContextValue["updateUser"] = async (patch) => {
+    if (!user) return;
+    const next = { ...user, ...patch };
+    setUser(next);
+
+    if (patch.name !== undefined || patch.phone !== undefined || patch.avatarUrl !== undefined) {
+      await supabase
+        .from("profiles")
+        .update({
+          full_name: next.name,
+          phone: next.phone ?? null,
+          avatar_url: next.avatarUrl ?? null,
+        })
+        .eq("id", user.id);
+    }
+    if (patch.skills !== undefined || patch.verified !== undefined || patch.role !== undefined || patch.name !== undefined) {
+      await supabase.auth.updateUser({
+        data: { full_name: next.name, role: next.role, skills: next.skills ?? [], verified: next.verified === true },
+      });
+    }
   };
 
   return (
-    <AuthContext.Provider value={{ user, login, loginSocial, register, logout, updateUser }}>
+    <AuthContext.Provider
+      value={{ user, loading, login, loginSocial, register, resetPassword, updatePassword, logout, updateUser }}
+    >
       {children}
     </AuthContext.Provider>
   );
