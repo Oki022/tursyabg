@@ -7,6 +7,7 @@ import {
 import { useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { CATEGORY_IMAGES, type Task, type TaskStatus } from "@/lib/mock-data";
+import { resolveImageUrls } from "@/services/storage";
 
 export const PAGE_SIZE = 20;
 const BUCKET = "task-images";
@@ -43,19 +44,6 @@ export function timeAgoBg(iso: string) {
   return `преди ${m} мес.`;
 }
 
-async function signPaths(paths: string[]): Promise<Record<string, string>> {
-  const unique = Array.from(new Set(paths.filter(Boolean)));
-  if (unique.length === 0) return {};
-  const { data, error } = await supabase.storage.from(BUCKET).createSignedUrls(unique, 60 * 60 * 24);
-  if (error || !data) return {};
-  const map: Record<string, string> = {};
-  data.forEach((entry, i) => {
-    const path = entry.path ?? unique[i];
-    if (entry.signedUrl && path) map[path] = entry.signedUrl;
-  });
-  return map;
-}
-
 function mapRow(row: Row, signed: Record<string, string>): Task {
   const images = [...(row.task_images ?? [])].sort((a, b) => a.sort_order - b.sort_order);
   const gallery = images
@@ -80,7 +68,7 @@ function mapRow(row: Row, signed: Record<string, string>): Task {
 
 async function mapRows(rows: Row[]): Promise<Task[]> {
   const paths = rows.flatMap((r) => (r.task_images ?? []).map((i) => i.image_url)).filter((p) => !p.startsWith("http"));
-  const signed = await signPaths(paths);
+  const signed = await resolveImageUrls(paths);
   return rows.map((r) => mapRow(r, signed));
 }
 
