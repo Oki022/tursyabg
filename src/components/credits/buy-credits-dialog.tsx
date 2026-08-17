@@ -32,7 +32,7 @@ export function BuyCreditsDialog({
 
         {pkg && CheckoutSurface && (
           <div className="rounded-xl border border-border/60 bg-background p-1">
-            <CheckoutSurface packageId={pkg.id} />
+            <CheckoutSurface target={{ kind: "credits", packageId: pkg.id }} />
           </div>
         )}
 

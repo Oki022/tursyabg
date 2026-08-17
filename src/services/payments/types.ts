@@ -11,6 +11,10 @@ export type Payment = {
   amountEur: number;
   provider: PaymentProvider;
   status: PaymentStatus;
+  /** What the payment bought. */
+  kind: "credits" | "promotion";
+  taskId: string | null;
+  promoProductId: string | null;
   receiptUrl: string | null;
   createdAt: string;
   completedAt: string | null;
@@ -23,13 +27,18 @@ export type CheckoutStart =
   | { kind: "embedded"; clientSecret: string }
   | { kind: "redirect"; url: string };
 
-export type CheckoutSurfaceProps = { packageId: string; returnUrl?: string };
+/** What is being purchased — providers never need to know the product domain. */
+export type CheckoutTarget =
+  | { kind: "credits"; packageId: string }
+  | { kind: "promotion"; promoProductId: string; taskId: string };
+
+export type CheckoutSurfaceProps = { target: CheckoutTarget; returnUrl?: string };
 
 export interface PaymentProviderAdapter {
   id: PaymentProvider;
   label: string;
   available: boolean;
-  startCheckout(packageId: string, returnUrl: string): Promise<CheckoutStart>;
+  startCheckout(target: CheckoutTarget, returnUrl: string): Promise<CheckoutStart>;
   /** Optional inline UI for providers that render a payment form in place. */
   CheckoutSurface?: ComponentType<CheckoutSurfaceProps>;
 }
