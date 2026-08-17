@@ -116,6 +116,15 @@ function AdminUsers() {
                         {u.isAdmin && <Badge className="rounded bg-slate-900">админ</Badge>}
                         {u.isModerator && <Badge variant="secondary" className="rounded">модератор</Badge>}
                         {u.bannedAt && <Badge className="rounded bg-rose-600">блокиран</Badge>}
+                        {u.refundFlagged && (
+                          <Badge
+                            variant="outline"
+                            className="rounded border-amber-300 text-amber-700"
+                            title={`${u.refundCount} заявки от ${u.unlockCount} отключвания`}
+                          >
+                            висок дял връщания
+                          </Badge>
+                        )}
                       </div>
                       <div className="text-xs text-slate-500">{u.email ?? "—"}</div>
                       {u.banReason ? <div className="text-xs text-rose-600">{u.banReason}</div> : null}
