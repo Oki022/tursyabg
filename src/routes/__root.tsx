@@ -119,7 +119,7 @@ function RootComponent() {
   return (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
-        <div className="flex min-h-screen w-full max-w-full flex-col overflow-x-hidden bg-background pb-20 md:pb-0">
+        <div className="flex min-h-screen w-full max-w-full flex-col overflow-x-hidden bg-background pb-24 md:pb-0">
             <SiteHeader />
             <main className="w-full max-w-full flex-1"><Outlet /></main>
             <SiteFooter />
