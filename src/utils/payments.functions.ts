@@ -1,6 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
-import { createStripeCheckout } from "@/lib/payments.server";
+import { createPromotionStripeCheckout, createStripeCheckout } from "@/lib/payments.server";
 import { getStripeErrorMessage, type StripeEnv } from "@/lib/stripe.server";
 
 export const createCheckoutSession = createServerFn({ method: "POST" })
@@ -19,6 +19,39 @@ export const createCheckoutSession = createServerFn({ method: "POST" })
       } = await supabase.auth.getUser();
       return await createStripeCheckout({
         packageId: data.packageId,
+        environment: data.environment,
+        returnUrl: data.returnUrl,
+        userId,
+        email: user?.email ?? undefined,
+      });
+    } catch (error) {
+      return { error: getStripeErrorMessage(error) };
+    }
+  });
+
+export const createPromotionCheckoutSession = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator(
+    (data: { promoProductId: string; taskId: string; environment: StripeEnv; returnUrl: string }) => {
+      if (typeof data.promoProductId !== "string" || data.promoProductId.length < 10) {
+        throw new Error("Невалидна промоция.");
+      }
+      if (typeof data.taskId !== "string" || data.taskId.length < 10) {
+        throw new Error("Невалидна задача.");
+      }
+      return data;
+    },
+  )
+  .handler(async ({ data, context }): Promise<{ clientSecret: string } | { error: string }> => {
+    try {
+      // The owner is always derived from the verified bearer token, never from the request body.
+      const { userId, supabase } = context;
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      return await createPromotionStripeCheckout({
+        promoProductId: data.promoProductId,
+        taskId: data.taskId,
         environment: data.environment,
         returnUrl: data.returnUrl,
         userId,
