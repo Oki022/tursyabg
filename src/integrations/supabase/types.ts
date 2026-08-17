@@ -1419,9 +1419,10 @@ export type Database = {
       }
       can_bump_task: { Args: { _task_id: string }; Returns: boolean }
       claim_engagement: { Args: { _task_id: string }; Returns: Json }
-      close_task:
-        | { Args: { _task_id: string }; Returns: Json }
-        | { Args: { _outcome?: string; _task_id: string }; Returns: Json }
+      close_task: {
+        Args: { _outcome?: string; _task_id: string }
+        Returns: Json
+      }
       complete_payment: {
         Args: {
           _payment_intent: string
