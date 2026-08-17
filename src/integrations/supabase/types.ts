@@ -17,7 +17,7 @@ export type Database = {
       admin_actions: {
         Row: {
           action_type: string
-          admin_id: string
+          admin_id: string | null
           created_at: string
           details: Json
           id: string
@@ -26,7 +26,7 @@ export type Database = {
         }
         Insert: {
           action_type: string
-          admin_id: string
+          admin_id?: string | null
           created_at?: string
           details?: Json
           id?: string
@@ -35,7 +35,7 @@ export type Database = {
         }
         Update: {
           action_type?: string
-          admin_id?: string
+          admin_id?: string | null
           created_at?: string
           details?: Json
           id?: string
@@ -129,10 +129,12 @@ export type Database = {
       credit_refund_requests: {
         Row: {
           admin_note: string
+          auto_rule: string | null
           created_at: string
           details: string
           id: string
           reason: Database["public"]["Enums"]["refund_reason"]
+          resolution: string
           resolved_at: string | null
           resolved_by: string | null
           status: Database["public"]["Enums"]["refund_status"]
@@ -141,10 +143,12 @@ export type Database = {
         }
         Insert: {
           admin_note?: string
+          auto_rule?: string | null
           created_at?: string
           details?: string
           id?: string
           reason: Database["public"]["Enums"]["refund_reason"]
+          resolution?: string
           resolved_at?: string | null
           resolved_by?: string | null
           status?: Database["public"]["Enums"]["refund_status"]
@@ -153,10 +157,12 @@ export type Database = {
         }
         Update: {
           admin_note?: string
+          auto_rule?: string | null
           created_at?: string
           details?: string
           id?: string
           reason?: Database["public"]["Enums"]["refund_reason"]
+          resolution?: string
           resolved_at?: string | null
           resolved_by?: string | null
           status?: Database["public"]["Enums"]["refund_status"]
@@ -760,55 +766,73 @@ export type Database = {
       }
       tasks: {
         Row: {
+          assigned_at: string | null
           budget: number
           bumped_at: string
           category: string
+          category_corrected_at: string | null
           city: string | null
           created_at: string
           currency: string
           description: string
           expires_at: string
+          freshness_prompt_at: string | null
           id: string
+          max_unlocks: number
           neighborhood: string | null
           status: Database["public"]["Enums"]["task_status"]
+          status_changed_at: string
           title: string
           unlock_cost: number | null
+          unlock_count: number
           updated_at: string
           user_id: string
           view_count: number
         }
         Insert: {
+          assigned_at?: string | null
           budget?: number
           bumped_at?: string
           category: string
+          category_corrected_at?: string | null
           city?: string | null
           created_at?: string
           currency?: string
           description?: string
           expires_at?: string
+          freshness_prompt_at?: string | null
           id?: string
+          max_unlocks?: number
           neighborhood?: string | null
           status?: Database["public"]["Enums"]["task_status"]
+          status_changed_at?: string
           title: string
           unlock_cost?: number | null
+          unlock_count?: number
           updated_at?: string
           user_id: string
           view_count?: number
         }
         Update: {
+          assigned_at?: string | null
           budget?: number
           bumped_at?: string
           category?: string
+          category_corrected_at?: string | null
           city?: string | null
           created_at?: string
           currency?: string
           description?: string
           expires_at?: string
+          freshness_prompt_at?: string | null
           id?: string
+          max_unlocks?: number
           neighborhood?: string | null
           status?: Database["public"]["Enums"]["task_status"]
+          status_changed_at?: string
           title?: string
           unlock_cost?: number | null
+          unlock_count?: number
           updated_at?: string
           user_id?: string
           view_count?: number
@@ -853,6 +877,10 @@ export type Database = {
         Args: { _amount: number; _reason: string; _user_id: string }
         Returns: Json
       }
+      admin_correct_task_category: {
+        Args: { _category: string; _task_id: string }
+        Returns: Json
+      }
       admin_daily_series: {
         Args: never
         Returns: {
@@ -862,10 +890,12 @@ export type Database = {
         }[]
       }
       admin_dashboard_stats: { Args: never; Returns: Json }
-      admin_delete_task: {
-        Args: { _reason: string; _task_id: string }
-        Returns: Json
-      }
+      admin_delete_task:
+        | { Args: { _reason: string; _task_id: string }; Returns: Json }
+        | {
+            Args: { _fraudulent?: boolean; _reason: string; _task_id: string }
+            Returns: Json
+          }
       admin_list_users: {
         Args: { _limit?: number; _search: string }
         Returns: {
@@ -878,12 +908,15 @@ export type Database = {
           id: string
           is_admin: boolean
           is_moderator: boolean
+          refund_count: number
+          refund_flagged: boolean
           task_count: number
           total_paid_eur: number
           total_spent_credits: number
           unlock_count: number
         }[]
       }
+      admin_refund_evidence: { Args: { _request_id: string }; Returns: Json }
       admin_resolve_refund: {
         Args: { _approve: boolean; _note: string; _request_id: string }
         Returns: Json
@@ -901,6 +934,7 @@ export type Database = {
         Returns: Json
       }
       can_bump_task: { Args: { _task_id: string }; Returns: boolean }
+      close_task: { Args: { _task_id: string }; Returns: Json }
       complete_payment: {
         Args: {
           _payment_intent: string
@@ -916,6 +950,14 @@ export type Database = {
           _session_id: string
         }
         Returns: Json
+      }
+      confirm_task_active: { Args: { _task_id: string }; Returns: Json }
+      evaluate_refund_rule: {
+        Args: {
+          _reason: Database["public"]["Enums"]["refund_reason"]
+          _unlock_id: string
+        }
+        Returns: string
       }
       feed_tasks: {
         Args: {
@@ -940,12 +982,14 @@ export type Database = {
           images: string[]
           is_top: boolean
           is_urgent: boolean
+          max_unlocks: number
           neighborhood: string
           promo_expires_at: string
           promoted_slot: boolean
           status: Database["public"]["Enums"]["task_status"]
           title: string
           unlock_cost: number
+          unlock_count: number
           user_id: string
         }[]
       }
@@ -961,6 +1005,7 @@ export type Database = {
         }
         Returns: boolean
       }
+      is_refund_flagged: { Args: { _user_id: string }; Returns: boolean }
       is_staff: { Args: { _user_id: string }; Returns: boolean }
       is_valid_bg_phone: { Args: { _phone: string }; Returns: boolean }
       log_admin_action: {
@@ -986,6 +1031,24 @@ export type Database = {
       }
       refund_payment: {
         Args: { _payment_intent: string; _status: string }
+        Returns: Json
+      }
+      request_credit_refund: {
+        Args: {
+          _details: string
+          _reason: Database["public"]["Enums"]["refund_reason"]
+          _unlock_id: string
+        }
+        Returns: Json
+      }
+      settle_refund: {
+        Args: {
+          _approve: boolean
+          _auto: boolean
+          _note: string
+          _request_id: string
+          _rule: string
+        }
         Returns: Json
       }
       sweep_expiry_notifications: { Args: never; Returns: undefined }
