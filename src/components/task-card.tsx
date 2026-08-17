@@ -27,13 +27,13 @@ export function TaskCard({ task }: { task: Task }) {
         <div className="pointer-events-none absolute inset-x-0 top-0 flex items-start justify-between gap-1.5 p-1.5">
           <Badge
             variant="secondary"
-            className="min-w-0 max-w-[52%] gap-1 rounded-full bg-background/90 px-2 py-0.5 text-[10px] font-medium leading-tight shadow-sm backdrop-blur"
+            className="min-w-0 max-w-[60%] gap-1 rounded-full bg-background/90 px-1.5 py-0.5 text-[9px] font-medium leading-tight shadow-sm backdrop-blur sm:px-2 sm:text-[11px]"
           >
-            <Icon className="h-3 w-3 shrink-0" />
+            <Icon className="hidden h-3 w-3 shrink-0 sm:block" />
             <span className="truncate">{cat.name}</span>
           </Badge>
           {(task.isTop || task.isUrgent) && (
-            <div className="flex min-w-0 max-w-[46%] flex-col items-end gap-1">
+            <div className="flex min-w-0 max-w-[40%] flex-col items-end gap-1">
               {task.isTop && <TopBadge />}
               {task.isUrgent && <UrgentBadge />}
             </div>
