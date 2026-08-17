@@ -162,6 +162,74 @@ function ProfilePage() {
 
       {/* Role-specific sections */}
       <div className="mt-6 grid gap-6">
+        {/* Твоите задачи */}
+        <section className="rounded-2xl border border-border/60 bg-card p-5 shadow-sm md:p-7">
+          <div className="flex items-center justify-between gap-3">
+            <h2 className="text-lg font-semibold text-foreground">Твоите задачи</h2>
+            <Button asChild size="sm" variant="outline">
+              <Link to="/post">Възложи нова</Link>
+            </Button>
+          </div>
+          <Tabs
+            value={tab}
+            onValueChange={(v) => setTab(v as TaskStatus)}
+            className="mt-4"
+          >
+            <TabsList className="flex h-auto w-full flex-wrap justify-start gap-1 rounded-xl bg-muted/60 p-1">
+              {TASK_TABS.map((t) => (
+                <TabsTrigger
+                  key={t.value}
+                  value={t.value}
+                  className="rounded-lg px-3 py-1.5 text-xs md:text-sm"
+                >
+                  {t.label} ({byStatus[t.value].length})
+                </TabsTrigger>
+              ))}
+            </TabsList>
+            {TASK_TABS.map((t) => (
+              <TabsContent key={t.value} value={t.value} className="mt-4">
+                {byStatus[t.value].length > 0 ? (
+                  <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
+                    {byStatus[t.value].map((task) => (
+                      <TaskCard key={task.id} task={task} />
+                    ))}
+                  </div>
+                ) : (
+                  <div className="rounded-xl border border-dashed border-border bg-muted/30 p-8 text-center text-sm text-muted-foreground">
+                    <ClipboardList className="mx-auto mb-2 h-6 w-6 opacity-60" />
+                    {t.empty}
+                  </div>
+                )}
+              </TabsContent>
+            ))}
+          </Tabs>
+        </section>
+
+        {/* Настройки */}
+        <section className="rounded-2xl border border-border/60 bg-card p-5 shadow-sm md:p-7">
+          <h2 className="text-lg font-semibold text-foreground">Настройки</h2>
+          <div className="mt-4 grid gap-2 sm:grid-cols-2">
+            {SETTINGS_ITEMS.map((item) => {
+              const Icon = item.icon;
+              return (
+                <Link
+                  key={item.label}
+                  to={item.to}
+                  className="flex items-center gap-3 rounded-xl border border-border bg-background px-3 py-3 transition-colors hover:bg-accent/40"
+                >
+                  <span className="grid h-9 w-9 shrink-0 place-items-center rounded-lg bg-primary/10 text-primary">
+                    <Icon className="h-4 w-4" />
+                  </span>
+                  <span className="min-w-0 flex-1 truncate text-sm font-medium text-foreground">
+                    {item.label}
+                  </span>
+                  <ChevronRight className="h-4 w-4 shrink-0 text-muted-foreground" />
+                </Link>
+              );
+            })}
+          </div>
+        </section>
+
         {isWorker ? (
           <>
             <section className="rounded-2xl border border-border/60 bg-card p-5 shadow-sm md:p-7">
