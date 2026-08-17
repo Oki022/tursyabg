@@ -1,5 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { Home, Search, PlusCircle, MessageCircle, CircleUserRound } from "lucide-react";
+import { UnreadBadge } from "@/components/unread-badge";
 
 const items = [
   { to: "/", label: "Начало", icon: Home, exact: true },
@@ -30,7 +31,10 @@ export function MobileNav() {
             activeOptions={exact ? { exact: true } : undefined}
             activeProps={{ className: active }}
           >
-            <Icon className="h-5 w-5 shrink-0" />
+            <span className="relative">
+              <Icon className="h-5 w-5 shrink-0" />
+              {to === "/messages" && <UnreadBadge className="absolute -right-2.5 -top-1.5" />}
+            </span>
             <span className="w-full truncate text-center">{label}</span>
           </Link>
         ))}

@@ -7,11 +7,12 @@ import { Label } from "@/components/ui/label";
 import { useAuth, type UserRole } from "@/lib/auth";
 import { toast } from "sonner";
 
-type AuthSearch = { mode?: "login" | "register" };
+type AuthSearch = { mode?: "login" | "register"; redirect?: string };
 
 export const Route = createFileRoute("/auth")({
   validateSearch: (s: Record<string, unknown>): AuthSearch => ({
     mode: s.mode === "register" ? "register" : "login",
+    redirect: typeof s.redirect === "string" && s.redirect.startsWith("/") ? s.redirect : undefined,
   }),
   head: () => ({
     meta: [
@@ -27,7 +28,7 @@ export const Route = createFileRoute("/auth")({
 });
 
 function AuthPage() {
-  const { mode } = useSearch({ from: "/auth" });
+  const { mode, redirect } = useSearch({ from: "/auth" });
   const navigate = useNavigate();
   const { login, loginSocial, register, resetPassword } = useAuth();
   const [busy, setBusy] = useState(false);
@@ -59,7 +60,7 @@ function AuthPage() {
         await login(email, password);
         toast.success("Добре дошли!");
       }
-      navigate({ to: "/profile" });
+      navigate({ to: redirect ?? "/profile" });
     } catch (err) {
       toast.error("Неуспешен опит", {
         description: err instanceof Error ? err.message : "Провери данните и опитай отново.",
