@@ -11,6 +11,7 @@ import {
 import appCss from "../styles.css?url";
 import { ClientOnly } from "@tanstack/react-router";
 import { SiteHeader } from "@/components/site-header";
+import { MobileNav } from "@/components/mobile-nav";
 import { SiteFooter } from "@/components/site-footer";
 import { Toaster } from "@/components/ui/sonner";
 import { AuthProvider } from "@/lib/auth";
@@ -120,10 +121,11 @@ function RootComponent() {
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
         <TasksProvider>
-          <div className="flex min-h-screen flex-col bg-background pb-20 md:pb-0">
+          <div className="flex min-h-screen w-full max-w-full flex-col overflow-x-hidden bg-background pb-20 md:pb-0">
             <SiteHeader />
-            <main className="flex-1"><Outlet /></main>
+            <main className="w-full max-w-full flex-1"><Outlet /></main>
             <SiteFooter />
+            <MobileNav />
           </div>
         </TasksProvider>
         <ClientOnly fallback={null}><Toaster /></ClientOnly>
