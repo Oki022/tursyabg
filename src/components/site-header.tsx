@@ -17,10 +17,10 @@ export function SiteHeader() {
   const { user, logout } = useAuth();
   return (
     <header
-      className="fixed bottom-0 left-0 right-0 z-50 w-full border-t border-border/60 shadow-2xl md:sticky md:bottom-auto md:top-0 md:z-40 md:border-b md:border-t-0 md:shadow-none bg-background/80 backdrop-blur supports-[backdrop-filter]:bg-background/60"
-      style={{ paddingBottom: "env(safe-area-inset-bottom)" }}
+      className="sticky top-0 z-40 w-full max-w-full border-b border-border/60 bg-background/80 backdrop-blur supports-[backdrop-filter]:bg-background/60"
+      style={{ paddingTop: "env(safe-area-inset-top)" }}
     >
-      <div className="container mx-auto flex h-16 items-center justify-between px-4">
+      <div className="mx-auto flex h-16 w-full max-w-7xl items-center justify-between gap-2 px-4">
         <Link to="/" className="flex items-center gap-2 font-semibold text-foreground">
           <span className="grid h-9 w-9 place-items-center rounded-lg bg-primary text-primary-foreground">
             <ClipboardList className="h-5 w-5" />
