@@ -78,6 +78,15 @@ export const locations: string[] = [
 
 export const cities = ["София", "Пловдив", "Варна", "Бургас", "Русе", "Стара Загора", "Плевен"];
 
+export type TaskStatus = "active" | "pending" | "pending_payment" | "inactive";
+
+export const TASK_STATUS_LABELS: Record<TaskStatus, string> = {
+  active: "Активни",
+  pending: "Изчакващи",
+  pending_payment: "Изчакващи плащане",
+  inactive: "Неактивни",
+};
+
 export type Task = {
   id: string;
   title: string;
@@ -88,6 +97,7 @@ export type Task = {
   postedAt: string;
   author: string;
   image?: string;
+  status?: TaskStatus;
 };
 
 const img = (id: string) => `https://images.unsplash.com/${id}?auto=format&fit=crop&w=800&q=80`;
