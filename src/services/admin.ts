@@ -30,6 +30,10 @@ export type DashboardStats = {
   revenue_30d: number;
   unlocks_total: number;
   pending_refunds: number;
+  auto_refunds_30d: number;
+  manual_refunds_30d: number;
+  flagged_users: number;
+  assigned_tasks: number;
   pending_reports: number;
 };
 
@@ -53,6 +57,8 @@ export type AdminRefundRequest = {
   reason: string;
   details: string;
   adminNote: string;
+  resolution: string;
+  autoRule: string | null;
   createdAt: string;
   resolvedAt: string | null;
   userId: string;
@@ -70,11 +76,17 @@ export const REFUND_REASON_BG: Record<string, string> = {
   other: "Друго",
 };
 
+export const AUTO_RULE_BG: Record<string, string> = {
+  already_taken_closed: "Задачата е затворена след отключването",
+  no_response_confirmed: "Няма отговор след 5 дни и изпратено съобщение",
+  fake_task_reported: "Задачата е докладвана от 3+ потребители",
+};
+
 export async function getRefundRequests(status: RefundStatus | "all"): Promise<AdminRefundRequest[]> {
   let query = supabase
     .from("credit_refund_requests")
     .select(
-      "id, status, reason, details, admin_note, created_at, resolved_at, user_id, unlock_id, profiles(full_name), task_unlocks(credits_spent, task_id, tasks(title))",
+      "id, status, reason, details, admin_note, resolution, auto_rule, created_at, resolved_at, user_id, unlock_id, profiles(full_name), task_unlocks(credits_spent, task_id, tasks(title))",
     )
     .order("created_at", { ascending: false });
   if (status !== "all") query = query.eq("status", status);
@@ -86,6 +98,8 @@ export async function getRefundRequests(status: RefundStatus | "all"): Promise<A
     reason: string;
     details: string;
     admin_note: string;
+    resolution: string;
+    auto_rule: string | null;
     created_at: string;
     resolved_at: string | null;
     user_id: string;
@@ -98,6 +112,8 @@ export async function getRefundRequests(status: RefundStatus | "all"): Promise<A
     reason: r.reason,
     details: r.details,
     adminNote: r.admin_note ?? "",
+    resolution: r.resolution ?? "manual",
+    autoRule: r.auto_rule,
     createdAt: r.created_at,
     resolvedAt: r.resolved_at,
     userId: r.user_id,
@@ -230,21 +246,44 @@ export async function activateTask(taskId: string) {
 }
 
 export async function updateTaskCategory(taskId: string, category: string) {
-  const { error } = await supabase.from("tasks").update({ category }).eq("id", taskId);
-  if (error) throw error;
-  await supabase.rpc("log_admin_action", {
-    _action_type: "task_category_changed",
-    _target_type: "task",
-    _target_id: taskId,
-    _details: { category },
+  const { data, error } = await supabase.rpc("admin_correct_task_category", {
+    _task_id: taskId,
+    _category: category,
   });
-}
-
-export async function deleteTask(taskId: string, reason: string) {
-  const { data, error } = await supabase.rpc("admin_delete_task", { _task_id: taskId, _reason: reason });
   if (error) throw error;
   const r = data as Record<string, unknown>;
   if (!r?.["ok"]) throw new Error(String(r?.["error"] ?? "UNKNOWN"));
+}
+
+export async function deleteTask(taskId: string, reason: string, fraudulent = false) {
+  const { data, error } = await supabase.rpc("admin_delete_task", {
+    _task_id: taskId,
+    _reason: reason,
+    _fraudulent: fraudulent,
+  });
+  if (error) throw error;
+  const r = data as Record<string, unknown>;
+  if (!r?.["ok"]) throw new Error(String(r?.["error"] ?? "UNKNOWN"));
+}
+
+/** Context the admin needs to judge a refund request without leaving the queue. */
+export type RefundEvidence = {
+  found: boolean;
+  task_status?: string;
+  days_since_unlock?: number;
+  messages_sent?: number;
+  owner_replies?: number;
+  report_count?: number;
+  auto_refunds_30d?: number;
+  user_unlocks?: number;
+  user_refund_requests?: number;
+  flagged?: boolean;
+};
+
+export async function getRefundEvidence(requestId: string): Promise<RefundEvidence> {
+  const { data, error } = await supabase.rpc("admin_refund_evidence", { _request_id: requestId });
+  if (error) throw error;
+  return (data ?? { found: false }) as unknown as RefundEvidence;
 }
 
 /* ---------------- reports ---------------- */
