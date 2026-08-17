@@ -1,10 +1,11 @@
 import { createFileRoute, Link, useNavigate, useSearch } from "@tanstack/react-router";
-import { useState, type FormEvent } from "react";
-import { Mail, Lock, User as UserIcon, HandHeart, Wrench } from "lucide-react";
+import { useMemo, useState, type FormEvent } from "react";
+import { Mail, Lock, User as UserIcon, HandHeart, Wrench, Eye, EyeOff, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useAuth, type UserRole } from "@/lib/auth";
+import { authErrorMessage, emailError, nameError, passwordError } from "@/lib/auth-errors";
 import { toast } from "sonner";
 import { Checkbox } from "@/components/ui/checkbox";
 
@@ -40,11 +41,22 @@ function AuthPage() {
   const [password, setPassword] = useState("");
   const [role, setRole] = useState<UserRole>("customer");
   const [acceptedTerms, setAcceptedTerms] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [touched, setTouched] = useState<{ name?: boolean; email?: boolean; password?: boolean }>({});
+
+  const nameMsg = useMemo(() => (touched.name ? nameError(name) : null), [touched.name, name]);
+  const emailMsg = useMemo(() => (touched.email ? emailError(email) : null), [touched.email, email]);
+  const passwordMsg = useMemo(() => (touched.password ? passwordError(password) : null), [touched.password, password]);
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
+    setTouched({ name: true, email: true, password: true });
     if (!email || !password || (isRegister && !name)) {
       toast.error("Моля, попълнете всички полета.");
+      return;
+    }
+    if (emailError(email) || passwordError(password) || (isRegister && nameError(name))) {
+      toast.error("Провери маркираните полета.");
       return;
     }
     if (isRegister && !acceptedTerms) {
@@ -54,23 +66,26 @@ function AuthPage() {
     setBusy(true);
     try {
       if (isRegister) {
+        // PRE-LAUNCH TODO: потвърждението на имейл е изключено за разработка.
+        // Когато се включи отново, needsConfirmation ще е true и трябва да пренасочим към
+        // /auth/verify?email=... (цялата страница е вече готова) вместо да влизаме директно.
         const { needsConfirmation } = await register({ name, email, password, role });
         if (needsConfirmation) {
-          toast.success("Провери имейла си", {
-            description: "Изпратихме ти линк за потвърждение на регистрацията.",
-          });
+          navigate({ to: "/auth/verify", search: { email } });
           return;
         }
-        toast.success("Регистрацията е успешна!");
+        toast.success(`Добре дошъл, ${name.split(" ")[0]}!`, {
+          description: "Профилът ти е готов. Публикуването на задачи е безплатно.",
+        });
+        navigate({ to: redirect ?? "/" });
+        return;
       } else {
         await login(email, password);
-        toast.success("Добре дошли!");
+        toast.success("Добре дошли отново!");
       }
       navigate({ to: redirect ?? "/profile" });
     } catch (err) {
-      toast.error("Неуспешен опит", {
-        description: err instanceof Error ? err.message : "Провери данните и опитай отново.",
-      });
+      toast.error(authErrorMessage(err));
     } finally {
       setBusy(false);
     }
@@ -85,7 +100,7 @@ function AuthPage() {
       await resetPassword(email);
       toast.success("Изпратихме ти имейл за смяна на паролата.");
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Опитай отново.");
+      toast.error(authErrorMessage(err));
     }
   };
 
@@ -93,7 +108,7 @@ function AuthPage() {
     try {
       await loginSocial("google");
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Неуспешен вход с Google.");
+      toast.error(authErrorMessage(err));
     }
   };
 
@@ -138,11 +153,16 @@ function AuthPage() {
                 <Input
                   id="name"
                   value={name}
-                  onChange={(e) => setName(e.target.value)}
+                  onChange={(e) => {
+                    setName(e.target.value);
+                    setTouched((t) => ({ ...t, name: true }));
+                  }}
                   placeholder="Иван Петров"
-                  className="h-10 pl-9"
+                  aria-invalid={Boolean(nameMsg)}
+                  className={`h-10 pl-9 ${nameMsg ? "border-destructive focus-visible:ring-destructive" : ""}`}
                 />
               </div>
+              {nameMsg && <p className="text-xs text-destructive">{nameMsg}</p>}
             </div>
           )}
           <div className="grid gap-1.5">
@@ -153,11 +173,16 @@ function AuthPage() {
                 id="email"
                 type="email"
                 value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                onChange={(e) => {
+                  setEmail(e.target.value);
+                  setTouched((t) => ({ ...t, email: true }));
+                }}
                 placeholder="ivan@example.bg"
-                className="h-10 pl-9"
+                aria-invalid={Boolean(emailMsg)}
+                className={`h-10 pl-9 ${emailMsg ? "border-destructive focus-visible:ring-destructive" : ""}`}
               />
             </div>
+            {emailMsg && <p className="text-xs text-destructive">{emailMsg}</p>}
           </div>
           <div className="grid gap-1.5">
             <Label htmlFor="password">Парола</Label>
@@ -165,13 +190,30 @@ function AuthPage() {
               <Lock className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
               <Input
                 id="password"
-                type="password"
+                type={showPassword ? "text" : "password"}
                 value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                onChange={(e) => {
+                  setPassword(e.target.value);
+                  setTouched((t) => ({ ...t, password: true }));
+                }}
                 placeholder="••••••••"
-                className="h-10 pl-9"
+                aria-invalid={Boolean(passwordMsg)}
+                className={`h-10 pl-9 pr-10 ${passwordMsg ? "border-destructive focus-visible:ring-destructive" : ""}`}
               />
+              <button
+                type="button"
+                onClick={() => setShowPassword((v) => !v)}
+                aria-label={showPassword ? "Скрий паролата" : "Покажи паролата"}
+                className="absolute right-2 top-1/2 grid h-7 w-7 -translate-y-1/2 place-items-center rounded-md text-muted-foreground transition-colors hover:text-foreground"
+              >
+                {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+              </button>
             </div>
+            {passwordMsg ? (
+              <p className="text-xs text-destructive">{passwordMsg}</p>
+            ) : (
+              isRegister && <p className="text-xs text-muted-foreground">Поне 6 символа.</p>
+            )}
           </div>
 
           {isRegister && (
@@ -228,7 +270,8 @@ function AuthPage() {
             </label>
           )}
 
-          <Button type="submit" className="h-11" disabled={busy || (isRegister && !acceptedTerms)}>
+          <Button type="submit" className="h-11 gap-2" disabled={busy || (isRegister && !acceptedTerms)}>
+            {busy && <Loader2 className="h-4 w-4 animate-spin" />}
             {busy ? "Моля изчакай..." : isRegister ? "Създай профил" : "Вход"}
           </Button>
         </form>
@@ -237,7 +280,7 @@ function AuthPage() {
           {isRegister ? "Вече имаш профил? " : "Нямаш профил? "}
           <Link
             to="/auth"
-            search={{ mode: isRegister ? "login" : "register" }}
+            search={{ mode: isRegister ? "login" : "register", redirect }}
             className="font-medium text-primary hover:underline"
           >
             {isRegister ? "Вход" : "Регистрирай се"}
