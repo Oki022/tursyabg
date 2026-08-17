@@ -12,7 +12,9 @@ export function TaskCard({ task }: { task: Task }) {
       to="/task/$id"
       params={{ id: task.id }}
       aria-label={task.title}
-      className="group flex h-full flex-col overflow-hidden rounded-xl border border-border/50 bg-card shadow-sm transition-all duration-200 hover:scale-[1.02] hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+      className={`group flex h-full flex-col overflow-hidden rounded-xl border bg-card shadow-sm transition-all duration-200 hover:scale-[1.02] hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${
+        task.isTop ? "border-primary/40 bg-primary/[0.04] shadow-primary/10" : "border-border/50"
+      }`}
     >
       <div className="relative w-full overflow-hidden bg-muted">
         <img
@@ -21,9 +23,23 @@ export function TaskCard({ task }: { task: Task }) {
           loading="lazy"
           className="aspect-[4/3] w-full object-cover"
         />
+        {(task.isTop || task.isUrgent) && (
+          <div className="absolute right-2 top-2 flex max-w-[60%] flex-wrap justify-end gap-1">
+            {task.isTop && (
+              <span className="rounded-full bg-gradient-to-r from-primary to-accent px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-primary-foreground shadow-sm">
+                ТОП
+              </span>
+            )}
+            {task.isUrgent && (
+              <span className="rounded-full bg-destructive px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-destructive-foreground shadow-sm">
+                Спешно
+              </span>
+            )}
+          </div>
+        )}
         <Badge
           variant="secondary"
-          className="absolute left-2 top-2 gap-1 rounded-full bg-background/90 px-2 py-0.5 text-[10px] font-medium shadow-sm backdrop-blur"
+          className="absolute left-2 top-2 max-w-[55%] gap-1 rounded-full bg-background/90 px-2 py-0.5 text-[10px] font-medium shadow-sm backdrop-blur"
         >
           <Icon className="h-3 w-3 shrink-0" />
           <span className="max-w-[80px] truncate">{cat.name}</span>

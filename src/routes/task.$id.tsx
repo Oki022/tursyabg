@@ -8,6 +8,7 @@ import {
   Clock,
   MapPin,
   MessageSquare,
+  Rocket,
   ShieldCheck,
   ShieldAlert,
 } from "lucide-react";
@@ -29,6 +30,9 @@ import { getCategory } from "@/lib/mock-data";
 import { useTask } from "@/lib/tasks-api";
 import { UnlockContactCard } from "@/components/credits/unlock-contact-card";
 import { ReportTaskDialog } from "@/components/report-task-dialog";
+import { PromoteDialog } from "@/components/promotions/promote-dialog";
+import { useTaskPromotions } from "@/lib/promotions-api";
+import { PROMO_LABELS, remainingLabel } from "@/services/promotions";
 import { toast } from "sonner";
 
 const GALLERY_BY_CATEGORY: Record<string, string[]> = {
@@ -82,6 +86,9 @@ function TaskDetails() {
   const previousMessages = (existingThread.data?.pages ?? []).flatMap((page) => page.items);
 
   const isOwner = Boolean(user && task?.userId && user.id === task.userId);
+  const [promoteOpen, setPromoteOpen] = useState(false);
+  const taskPromotions = useTaskPromotions(task?.id);
+  const activePromotions = taskPromotions.data ?? [];
 
   useEffect(() => {
     if (!messageOpen || !user || !task?.userId || user.id === task.userId) return;
@@ -254,6 +261,23 @@ function TaskDetails() {
             </div>
 
             <div className="mt-6 space-y-3">
+              {isOwner && (
+                <>
+                  <Button size="lg" className="w-full gap-2" onClick={() => setPromoteOpen(true)}>
+                    <Rocket className="h-4 w-4" /> Промотирай
+                  </Button>
+                  {activePromotions.length > 0 && (
+                    <div className="space-y-1 rounded-2xl bg-secondary/60 px-3 py-2 text-xs text-muted-foreground">
+                      {activePromotions.map((p) => (
+                        <div key={p.id} className="flex items-center justify-between gap-2">
+                          <span className="font-semibold text-foreground">{PROMO_LABELS[p.type]}</span>
+                          <span>{remainingLabel(p.expiresAt)}</span>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </>
+              )}
               {!isOwner && (
                 <UnlockContactCard
                   taskId={task.id}
@@ -278,6 +302,10 @@ function TaskDetails() {
               <div className="mt-3">
                 <ReportTaskDialog taskId={task.id} />
               </div>
+            )}
+
+            {isOwner && (
+              <PromoteDialog taskId={task.id} open={promoteOpen} onOpenChange={setPromoteOpen} />
             )}
 
             <div className="mt-6 border-t border-border/60 pt-5">

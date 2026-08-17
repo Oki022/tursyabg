@@ -2,6 +2,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { stripeProvider } from "./stripe-provider";
 import type {
   CheckoutStart,
+  CheckoutTarget,
   CheckoutSurfaceProps,
   Payment,
   PaymentProvider,
@@ -9,12 +10,12 @@ import type {
   PaymentStatus,
 } from "./types";
 
-export type { CheckoutStart, CheckoutSurfaceProps, Payment, PaymentProvider, PaymentProviderAdapter, PaymentStatus };
+export type { CheckoutStart, CheckoutTarget, CheckoutSurfaceProps, Payment, PaymentProvider, PaymentProviderAdapter, PaymentStatus };
 
 /** Column holding the opaque provider reference; kept behind this constant so callers stay provider-agnostic. */
 const REFERENCE_COLUMN = "stripe_session_id";
 const SELECT_COLUMNS =
-  "id, package_id, credits, amount_eur, provider, status, receipt_url, created_at, completed_at, stripe_session_id";
+  "id, package_id, credits, amount_eur, provider, status, receipt_url, created_at, completed_at, stripe_session_id, kind, task_id, promo_product_id";
 
 /** Registry — new providers (SMS, ePay/EasyPay) plug in here without touching callers. */
 const providers: Record<PaymentProvider, PaymentProviderAdapter | undefined> = {
@@ -41,13 +42,13 @@ export function defaultReturnUrl(): string {
 
 /** Single entry point for starting a purchase, regardless of provider. */
 export async function createCheckout(
-  packageId: string,
+  target: CheckoutTarget,
   provider: PaymentProvider = "stripe",
   returnUrl?: string,
 ): Promise<CheckoutStart> {
   const adapter = getProvider(provider);
   if (!adapter) throw new Error("Този метод на плащане още не е наличен.");
-  return adapter.startCheckout(packageId, returnUrl ?? defaultReturnUrl());
+  return adapter.startCheckout(target, returnUrl ?? defaultReturnUrl());
 }
 
 function toPayment(p: Record<string, any>): Payment {
@@ -61,6 +62,9 @@ function toPayment(p: Record<string, any>): Payment {
     receiptUrl: p["receipt_url"],
     createdAt: p["created_at"],
     completedAt: p["completed_at"],
+    kind: (p["kind"] as Payment["kind"]) ?? "credits",
+    taskId: p["task_id"] ?? null,
+    promoProductId: p["promo_product_id"] ?? null,
     externalReference: p[REFERENCE_COLUMN] ?? null,
   };
 }

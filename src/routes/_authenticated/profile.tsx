@@ -15,6 +15,8 @@ import {
   Bell,
   ChevronRight,
   KeyRound,
+  Eye,
+  Rocket,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
@@ -24,6 +26,10 @@ import { TaskCard } from "@/components/task-card";
 import { useAuth, getInitials } from "@/lib/auth";
 import { categories, type TaskStatus } from "@/lib/mock-data";
 import { useMyTasks } from "@/lib/tasks-api";
+import { useOwnerPromotions } from "@/lib/promotions-api";
+import { PROMO_LABELS, remainingLabel, type TaskPromotion } from "@/services/promotions";
+import { PromoteDialog } from "@/components/promotions/promote-dialog";
+import type { Task } from "@/lib/mock-data";
 import { toast } from "sonner";
 
 const TASK_TABS: { value: TaskStatus; label: string; empty: string }[] = [
@@ -52,6 +58,8 @@ export const Route = createFileRoute("/_authenticated/profile")({
 function ProfilePage() {
   const { user, logout, updateUser } = useAuth();
   const { data: tasks = [] } = useMyTasks(user?.id);
+  const { data: promotions = {} } = useOwnerPromotions(user?.id);
+  const [promoteTaskId, setPromoteTaskId] = useState<string | null>(null);
   const navigate = useNavigate();
   const [tab, setTab] = useState<TaskStatus>("active");
 
@@ -176,7 +184,12 @@ function ProfilePage() {
                 {byStatus[t.value].length > 0 ? (
                   <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
                     {byStatus[t.value].map((task) => (
-                      <TaskCard key={task.id} task={task} />
+                      <OwnerTaskCard
+                        key={task.id}
+                        task={task}
+                        promotions={promotions[task.id] ?? []}
+                        onPromote={() => setPromoteTaskId(task.id)}
+                      />
                     ))}
                   </div>
                 ) : (
@@ -188,6 +201,13 @@ function ProfilePage() {
               </TabsContent>
             ))}
           </Tabs>
+          {promoteTaskId && (
+            <PromoteDialog
+              taskId={promoteTaskId}
+              open={Boolean(promoteTaskId)}
+              onOpenChange={(open) => !open && setPromoteTaskId(null)}
+            />
+          )}
         </section>
 
         {/* Настройки */}
@@ -291,6 +311,44 @@ function InfoRow({
       <div className="min-w-0">
         <p className="text-[11px] uppercase tracking-wide text-muted-foreground">{label}</p>
         <p className="truncate text-sm font-medium text-foreground">{value}</p>
+      </div>
+    </div>
+  );
+}
+
+/** Owner view of a task: promo state, views and a promote shortcut. */
+function OwnerTaskCard({
+  task,
+  promotions,
+  onPromote,
+}: {
+  task: Task;
+  promotions: TaskPromotion[];
+  onPromote: () => void;
+}) {
+  return (
+    <div className="flex min-w-0 flex-col gap-2">
+      <TaskCard task={{ ...task, isTop: promotions.some((p) => p.type === "top"), isUrgent: promotions.some((p) => p.type === "urgent") }} />
+      <div className="min-w-0 rounded-xl border border-border/60 bg-card p-2 text-[11px]">
+        <div className="flex items-center gap-1 text-muted-foreground">
+          <Eye className="h-3 w-3 shrink-0" />
+          <span className="truncate">{task.viewCount ?? 0} преглеждания</span>
+        </div>
+        {promotions.length > 0 ? (
+          <div className="mt-1 space-y-0.5">
+            {promotions.map((p) => (
+              <div key={p.id} className="flex min-w-0 items-center justify-between gap-1">
+                <span className="shrink-0 font-semibold text-primary">{PROMO_LABELS[p.type]}</span>
+                <span className="truncate text-muted-foreground">{remainingLabel(p.expiresAt)}</span>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <p className="mt-1 text-muted-foreground">Няма активни промоции.</p>
+        )}
+        <Button size="sm" variant="outline" className="mt-2 h-7 w-full gap-1 text-[11px]" onClick={onPromote}>
+          <Rocket className="h-3 w-3" /> Промотирай
+        </Button>
       </div>
     </div>
   );

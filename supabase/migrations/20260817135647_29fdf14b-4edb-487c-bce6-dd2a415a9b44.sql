@@ -1,0 +1,2 @@
+REVOKE EXECUTE ON FUNCTION public.complete_promotion_payment(text, text, text) FROM anon, authenticated, public;
+GRANT EXECUTE ON FUNCTION public.complete_promotion_payment(text, text, text) TO service_role;

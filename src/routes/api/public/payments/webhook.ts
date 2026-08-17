@@ -37,6 +37,25 @@ async function handleCheckoutCompleted(session: any, env: StripeEnv) {
   }
 
   const admin = await getAdmin();
+
+  // Route to the right fulfilment RPC based on what the payment bought.
+  const { data: payment } = await admin
+    .from("payments")
+    .select("kind")
+    .eq("stripe_session_id", session.id as string)
+    .maybeSingle();
+
+  if (payment?.kind === "promotion") {
+    const { data: promoResult, error: promoError } = await admin.rpc("complete_promotion_payment", {
+      _session_id: session.id as string,
+      _payment_intent: paymentIntentId as unknown as string,
+      _receipt_url: receiptUrl as unknown as string,
+    });
+    if (promoError) throw new Error(promoError.message);
+    console.log("complete_promotion_payment:", JSON.stringify(promoResult));
+    return;
+  }
+
   const { data, error } = await admin.rpc("complete_payment", {
     _session_id: session.id as string,
     _payment_intent: paymentIntentId as unknown as string,

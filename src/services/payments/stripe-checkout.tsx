@@ -5,17 +5,18 @@ import { createCheckout } from "./index";
 import type { CheckoutSurfaceProps } from "./types";
 
 /** Stripe-specific rendering lives here — callers only use the adapter's CheckoutSurface. */
-export function StripeCheckoutSurface({ packageId, returnUrl }: CheckoutSurfaceProps) {
+export function StripeCheckoutSurface({ target, returnUrl }: CheckoutSurfaceProps) {
+  const targetKey = JSON.stringify(target);
   const fetchClientSecret = useCallback(async () => {
-    const start = await createCheckout(packageId, "stripe", returnUrl);
+    const start = await createCheckout(JSON.parse(targetKey), "stripe", returnUrl);
     if (start.kind !== "embedded") throw new Error("Неподдържан метод на плащане.");
     return start.clientSecret;
-  }, [packageId, returnUrl]);
+  }, [targetKey, returnUrl]);
 
   const options = useMemo(() => ({ fetchClientSecret }), [fetchClientSecret]);
 
   return (
-    <EmbeddedCheckoutProvider key={packageId} stripe={getStripe()} options={options}>
+    <EmbeddedCheckoutProvider key={targetKey} stripe={getStripe()} options={options}>
       <EmbeddedCheckout />
     </EmbeddedCheckoutProvider>
   );

@@ -101,6 +101,12 @@ export type Task = {
   status?: TaskStatus;
   unlockCost?: number;
   gallery?: string[];
+  /** Promotion state (from the server-side feed ordering). */
+  isTop?: boolean;
+  isUrgent?: boolean;
+  promoExpiresAt?: string | null;
+  bumpedAt?: string;
+  viewCount?: number;
 };
 
 const img = (id: string) => `https://images.unsplash.com/${id}?auto=format&fit=crop&w=800&q=80`;

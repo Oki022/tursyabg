@@ -57,6 +57,8 @@ function BillingSuccessPage() {
     if (confirmed) {
       void qc.invalidateQueries({ queryKey: ["credits"] });
       void qc.invalidateQueries({ queryKey: ["payments"] });
+      void qc.invalidateQueries({ queryKey: ["promotions"] });
+      void qc.invalidateQueries({ queryKey: ["tasks"] });
     }
   }, [confirmed, qc]);
 
@@ -81,8 +83,17 @@ function BillingSuccessPage() {
     return (
       <Shell icon={<CheckCircle2 className="h-12 w-12 text-emerald-600" />} title="Плащането е успешно!">
         <p className="text-sm text-muted-foreground">
-          Добавихме {creditsLabel(payment.credits)} по баланса ти. Платена сума: {formatEur(payment.amountEur)}.
+          {payment.kind === "promotion"
+            ? `Промоцията е активна и вече се вижда в борсата. Платена сума: ${formatEur(payment.amountEur)}.`
+            : `Добавихме ${creditsLabel(payment.credits)} по баланса ти. Платена сума: ${formatEur(payment.amountEur)}.`}
         </p>
+        {payment.kind === "promotion" && payment.taskId && (
+          <Button asChild variant="outline" className="mt-1">
+            <Link to="/task/$id" params={{ id: payment.taskId }}>
+              Виж задачата
+            </Link>
+          </Button>
+        )}
         {payment.receiptUrl && (
           <Button asChild variant="outline" className="mt-2 gap-2">
             <a href={payment.receiptUrl} target="_blank" rel="noopener noreferrer">
@@ -100,7 +111,7 @@ function BillingSuccessPage() {
     return (
       <Shell icon={<TriangleAlert className="h-12 w-12 text-amber-500" />} title="Потвърждението се забави">
         <p className="text-sm text-muted-foreground">
-          Плащането ти може вече да е прието, но потвърждението още не е пристигнало. Кредитите се добавят
+          Плащането ти може вече да е прието, но потвърждението още не е пристигнало. Покупката се активира
           автоматично — провери баланса си след няколко минути или ни пиши, ако нещо не е наред.
         </p>
         <Actions />
