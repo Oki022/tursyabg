@@ -1009,6 +1009,9 @@ export type Database = {
         | "refund_approved"
         | "refund_rejected"
         | "task_reported"
+        | "task_still_open"
+        | "task_freshness"
+        | "refund_auto_approved"
       promo_type: "bump" | "urgent" | "top"
       refund_reason:
         | "fake_task"
@@ -1025,7 +1028,12 @@ export type Database = {
         | "duplicate"
         | "other"
       report_status: "pending" | "reviewed" | "dismissed"
-      task_status: "active" | "pending" | "pending_payment" | "inactive"
+      task_status:
+        | "active"
+        | "pending"
+        | "pending_payment"
+        | "inactive"
+        | "assigned"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -1171,6 +1179,9 @@ export const Constants = {
         "refund_approved",
         "refund_rejected",
         "task_reported",
+        "task_still_open",
+        "task_freshness",
+        "refund_auto_approved",
       ],
       promo_type: ["bump", "urgent", "top"],
       refund_reason: [
@@ -1190,7 +1201,13 @@ export const Constants = {
         "other",
       ],
       report_status: ["pending", "reviewed", "dismissed"],
-      task_status: ["active", "pending", "pending_payment", "inactive"],
+      task_status: [
+        "active",
+        "pending",
+        "pending_payment",
+        "inactive",
+        "assigned",
+      ],
     },
   },
 } as const
