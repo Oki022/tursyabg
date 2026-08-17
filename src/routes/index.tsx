@@ -109,31 +109,6 @@ function Index() {
           {recent.map((t) => <TaskCard key={t.id} task={t} />)}
         </div>
       </section>
-
-      {/* How it works */}
-      <section className="border-t border-border/60 bg-secondary/40">
-        <div className="container mx-auto px-4 py-16">
-          <div className="mx-auto max-w-2xl text-center">
-            <h2 className="text-2xl font-bold tracking-tight md:text-3xl">Как работи</h2>
-            <p className="mt-2 text-sm text-muted-foreground">Три прости стъпки до свършена работа.</p>
-          </div>
-          <div className="mx-auto mt-10 grid max-w-5xl grid-cols-1 gap-6 md:grid-cols-3">
-            {[
-              { icon: Plus, title: "1. Опиши задачата", desc: "Кажи какво трябва да се направи, кога и за какъв бюджет." },
-              { icon: Briefcase, title: "2. Получи предложения", desc: "Подходящи изпълнители ще ти пишат с цени и въпроси." },
-              { icon: ShieldCheck, title: "3. Избери и плати", desc: "Избери най-подходящия и плати само когато си доволен." },
-            ].map((s) => (
-              <div key={s.title} className="rounded-2xl border border-border bg-card p-6">
-                <span className="grid h-10 w-10 place-items-center rounded-lg bg-primary text-primary-foreground">
-                  <s.icon className="h-5 w-5" />
-                </span>
-                <h3 className="mt-4 text-base font-semibold">{s.title}</h3>
-                <p className="mt-1 text-sm text-muted-foreground">{s.desc}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
     </div>
   );
 }

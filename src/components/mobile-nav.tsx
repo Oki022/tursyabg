@@ -1,11 +1,12 @@
 import { Link } from "@tanstack/react-router";
-import { Home, Search, PlusCircle, MessageCircle } from "lucide-react";
+import { Home, Search, PlusCircle, MessageCircle, CircleUserRound } from "lucide-react";
 
 const items = [
   { to: "/", label: "Начало", icon: Home, exact: true },
   { to: "/tasks", label: "Задачи", icon: Search, exact: false },
   { to: "/post", label: "Възложи", icon: PlusCircle, exact: false },
   { to: "/messages", label: "Съобщения", icon: MessageCircle, exact: false },
+  { to: "/profile", label: "Профил", icon: CircleUserRound, exact: false },
 ] as const;
 
 const base =
