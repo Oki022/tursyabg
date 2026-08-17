@@ -412,12 +412,20 @@ function TaskDetails() {
             </div>
           )}
 
+          {user && !hasPhone && (
+            <RequirePhoneNotice
+              title="Добави телефон, за да пишеш съобщения"
+              description="Телефонът остава скрит и се вижда само след платено отключване."
+            />
+          )}
+
           <Textarea
             value={messageText}
             onChange={(event) => setMessageText(event.target.value)}
             placeholder="Напишете вашето съобщение тук..."
             rows={6}
-            className="resize-none"
+            disabled={!hasPhone}
+            className="resize-none disabled:opacity-60"
           />
 
           <div className="flex items-start gap-3 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
@@ -435,7 +443,7 @@ function TaskDetails() {
             >
               Отказ
             </Button>
-            <Button onClick={handleSendMessage} disabled={sending} className="sm:flex-1 gap-2">
+            <Button onClick={handleSendMessage} disabled={sending || !hasPhone} className="sm:flex-1 gap-2">
               <MessageSquare className="h-4 w-4" /> Изпрати
             </Button>
           </DialogFooter>
