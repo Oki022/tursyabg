@@ -36,6 +36,8 @@ import { PROMO_LABELS, remainingLabel } from "@/services/promotions";
 import { TopBadge, UrgentBadge } from "@/components/promotions/promo-badges";
 import { Crown, Siren, ArrowUpCircle } from "lucide-react";
 import { toast } from "sonner";
+import { CONTACT_MASK_WARNING, containsContactInfo, isValidBgPhone } from "@/lib/phone";
+import { RequirePhoneNotice } from "@/components/require-phone-notice";
 
 const GALLERY_BY_CATEGORY: Record<string, string[]> = {
   remonti: [
@@ -88,6 +90,7 @@ function TaskDetails() {
   const previousMessages = (existingThread.data?.pages ?? []).flatMap((page) => page.items);
 
   const isOwner = Boolean(user && task?.userId && user.id === task.userId);
+  const hasPhone = Boolean(user?.phone && isValidBgPhone(user.phone));
   const [promoteOpen, setPromoteOpen] = useState(false);
   const taskPromotions = useTaskPromotions(task?.id);
   const activePromotions = taskPromotions.data ?? [];
@@ -150,6 +153,10 @@ function TaskDetails() {
       return;
     }
     if (!user || !task.userId) return;
+    if (!hasPhone) {
+      toast.error("Добави телефон в профила си, за да пишеш съобщения.");
+      return;
+    }
     setSending(true);
     try {
       const convId = conversationId ?? (await findOrCreateConversation(task.id, task.userId));
@@ -166,6 +173,9 @@ function TaskDetails() {
         description: "Виж разговора в Съобщения.",
         action: { label: "Отвори", onClick: () => void navigate({ to: "/messages" }) },
       });
+      if (containsContactInfo(messageText)) {
+        toast.warning("Контактите са скрити автоматично", { description: CONTACT_MASK_WARNING });
+      }
     } catch {
       toast.error("Съобщението не беше изпратено.");
     } finally {
