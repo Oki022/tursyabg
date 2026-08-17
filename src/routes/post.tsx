@@ -79,6 +79,8 @@ function PostPage() {
       budget: Number(budget) || 0,
       location: location!,
       author: user?.name ?? "Анонимен потребител",
+      userId: user?.id,
+      status: "active",
     });
     toast.success("🎉 Задачата е публикувана успешно!", {
       description: "Скоро ще получиш първите предложения.",

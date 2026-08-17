@@ -3,6 +3,8 @@ import { CATEGORY_IMAGES, mockTasks, type Task } from "@/lib/mock-data";
 
 type NewTaskInput = Pick<Task, "title" | "category" | "description" | "budget" | "location" | "author"> & {
   image?: string;
+  userId?: string;
+  status?: Task["status"];
 };
 
 type TasksContextValue = {
@@ -11,7 +13,7 @@ type TasksContextValue = {
   getTaskById: (id: string) => Task | undefined;
 };
 
-const STORAGE_KEY = "zadachanet.tasks";
+const STORAGE_KEY = "zadachanet.tasks.v2";
 
 const TasksContext = createContext<TasksContextValue | undefined>(undefined);
 
@@ -27,6 +29,8 @@ function createTask(input: NewTaskInput): Task {
     budget: input.budget,
     location: input.location,
     author: input.author,
+    userId: input.userId,
+    status: input.status ?? "active",
     postedAt: "току-що",
     image: input.image ?? CATEGORY_IMAGES[input.category] ?? CATEGORY_IMAGES.drugi,
   };
