@@ -62,6 +62,7 @@ function AdminTasks() {
   const [deactivateTarget, setDeactivateTarget] = useState<AdminTask | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<AdminTask | null>(null);
   const [reason, setReason] = useState("");
+  const [fraudulent, setFraudulent] = useState(false);
 
   const list = useQuery({ queryKey: ["admin", "tasks", filters], queryFn: () => getAdminTasks(filters) });
   const reports = useQuery({ queryKey: ["admin", "reports"], queryFn: getPendingReports });
@@ -89,11 +90,12 @@ function AdminTasks() {
   });
 
   const mDelete = useMutation({
-    mutationFn: () => deleteTask(deleteTarget!.id, reason),
+    mutationFn: () => deleteTask(deleteTarget!.id, reason, fraudulent),
     onSuccess: () => {
       toast.success("Задачата е изтрита.");
       setDeleteTarget(null);
       setReason("");
+      setFraudulent(false);
       invalidate();
     },
     onError: () => toast.error("Изтриването не беше изпълнено."),
@@ -290,9 +292,20 @@ function AdminTasks() {
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Изтрий задачата</DialogTitle>
-            <DialogDescription>Действието е необратимо. Причината се записва в одит лога.</DialogDescription>
+            <DialogDescription>
+              Действието е необратимо. Причината се записва в одит лога.
+            </DialogDescription>
           </DialogHeader>
           <Textarea value={reason} onChange={(e) => setReason(e.target.value)} rows={3} placeholder="Причина" />
+          <label className="flex items-start gap-2 text-sm text-slate-700">
+            <input
+              type="checkbox"
+              checked={fraudulent}
+              onChange={(e) => setFraudulent(e.target.checked)}
+              className="mt-0.5 h-4 w-4 rounded border-slate-300"
+            />
+            Задачата е измамна — върни кредитите на всички отключили я потребители.
+          </label>
           <DialogFooter>
             <Button variant="outline" className="rounded-md" onClick={() => setDeleteTarget(null)}>Отказ</Button>
             <Button variant="destructive" className="rounded-md" disabled={!reason.trim() || mDelete.isPending} onClick={() => mDelete.mutate()}>
