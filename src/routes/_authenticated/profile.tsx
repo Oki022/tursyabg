@@ -40,6 +40,7 @@ const SETTINGS_ITEMS: { icon: typeof Wallet; label: string; to: string }[] = [
   { icon: UserCog, label: "Редакция на профил", to: "/settings/profile" },
   { icon: ShieldCheck, label: "Влизане и сигурност", to: "/settings/security" },
   { icon: Wallet, label: "Баланс и плащания", to: "/settings/billing" },
+  { icon: KeyRound, label: "Отключени задачи", to: "/unlocked" },
   { icon: Bell, label: "Нотификации", to: "/settings/notifications" },
 ];
 
