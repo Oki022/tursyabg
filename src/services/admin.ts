@@ -35,6 +35,9 @@ export type DashboardStats = {
   flagged_users: number;
   assigned_tasks: number;
   pending_reports: number;
+  moderation_pending: number;
+  moderation_oldest: string | null;
+  violations_30d: number;
 };
 
 export async function getDashboardStats(): Promise<DashboardStats> {
