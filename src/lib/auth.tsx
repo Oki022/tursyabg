@@ -124,6 +124,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const register: AuthContextValue["register"] = async ({ name, email, password, role }) => {
+    // PRE-LAUNCH TODO: потвърждението на имейл е ИЗКЛЮЧЕНО (auto-confirm) за периода на разработка,
+    // затова signUp връща активна сесия и потребителят влиза веднага.
+    // Преди пускане на живо: включи отново "Confirm email" с истински SMTP доставчик
+    // (Resend/Postmark) — публичен маркетплейс се нуждае от верифицирани имейли срещу спам профили.
+    // Когато го включиш, register ще върне needsConfirmation: true и потребителят
+    // трябва да се насочи към /auth/verify?email=... (страницата вече е готова).
     const { data, error } = await supabase.auth.signUp({
       email,
       password,
