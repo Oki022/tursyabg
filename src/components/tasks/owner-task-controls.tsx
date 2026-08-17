@@ -1,10 +1,11 @@
 import { useState } from "react";
-import { CheckCircle2, Info, RefreshCw, Users } from "lucide-react";
+import { CheckCircle2, HelpCircle, Info, RefreshCw, Users } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { useCloseTask, useConfirmTaskActive } from "@/lib/tasks-api";
-import { AssignProfessionalDialog } from "@/components/tasks/assign-professional-dialog";
+import { useConfirmTaskActive } from "@/lib/tasks-api";
+import { useMyEngagements } from "@/lib/reviews-api";
+import { CloseTaskDialog } from "@/components/tasks/close-task-dialog";
 import type { Task } from "@/lib/mock-data";
 
 const LIMIT_HELP =
@@ -12,12 +13,15 @@ const LIMIT_HELP =
 
 /** Owner-only controls: close the task when assigned, or confirm it is still open. */
 export function OwnerTaskControls({ task, compact = false }: { task: Task; compact?: boolean }) {
-  const close = useCloseTask();
   const confirm = useConfirmTaskActive();
+  const [closeOpen, setCloseOpen] = useState(false);
   const [assignOpen, setAssignOpen] = useState(false);
+  const [dismissed, setDismissed] = useState(false);
   const unlockCount = task.unlockCount ?? 0;
   const maxUnlocks = task.maxUnlocks ?? 5;
   const isAssigned = task.status === "assigned";
+  const { data: engagements = [] } = useMyEngagements(isAssigned);
+  const hasEngagement = engagements.some((e) => e.taskId === task.id);
 
   const run = async (fn: () => Promise<void>, ok: string) => {
     try {
@@ -79,7 +83,39 @@ export function OwnerTaskControls({ task, compact = false }: { task: Task; compa
         </p>
       )}
       {isAssigned ? (
-        <Button
+        <div className="w-full min-w-0 space-y-2">
+          {!hasEngagement && !dismissed && (
+            <div className="min-w-0 space-y-1.5 rounded-xl bg-secondary/60 p-2">
+              <p className="flex items-start gap-1.5 text-[11px] leading-snug text-muted-foreground">
+                <HelpCircle className="mt-0.5 h-3.5 w-3.5 shrink-0 text-primary" />
+                Кой свърши задачата? Посочи изпълнителя, за да можете да си оставите отзиви.
+              </p>
+              <div className="flex gap-1.5">
+                <Button
+                  size="sm"
+                  className="h-auto flex-1 py-1.5 text-[11px] leading-snug"
+                  onClick={() => setAssignOpen(true)}
+                >
+                  Посочи изпълнител
+                </Button>
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  className="h-auto py-1.5 text-[11px] leading-snug"
+                  onClick={() => setDismissed(true)}
+                >
+                  Скрий
+                </Button>
+              </div>
+              <CloseTaskDialog
+                taskId={task.id}
+                open={assignOpen}
+                onOpenChange={setAssignOpen}
+                assignOnly
+              />
+            </div>
+          )}
+          <Button
           variant="outline"
           size={compact ? "sm" : "lg"}
           className={`w-full min-w-0 gap-1.5 whitespace-normal ${compact ? "h-auto py-1.5 text-[11px] leading-snug" : "gap-2"}`}
@@ -88,20 +124,15 @@ export function OwnerTaskControls({ task, compact = false }: { task: Task; compa
         >
           <RefreshCw className={compact ? "h-3 w-3 shrink-0" : "h-4 w-4"} />
           Активирай отново
-        </Button>
+          </Button>
+        </div>
       ) : (
         <div className="w-full min-w-0 space-y-1">
           <Button
             variant="outline"
             size={compact ? "sm" : "lg"}
             className={`w-full min-w-0 gap-1.5 whitespace-normal ${compact ? "h-auto py-1.5 text-[11px] leading-snug" : "gap-2"}`}
-            disabled={close.isPending}
-            onClick={() =>
-              void run(async () => {
-                await close.mutateAsync(task.id);
-                setAssignOpen(true);
-              }, "Задачата е затворена.")
-            }
+            onClick={() => setCloseOpen(true)}
           >
             <CheckCircle2 className={compact ? "h-3 w-3 shrink-0" : "h-4 w-4"} />
             Затвори задачата
@@ -109,7 +140,7 @@ export function OwnerTaskControls({ task, compact = false }: { task: Task; compa
           <p className={`text-muted-foreground ${compact ? "text-[10px] leading-snug" : "text-xs"}`}>
             Ако си намерил изпълнител.
           </p>
-          <AssignProfessionalDialog taskId={task.id} open={assignOpen} onOpenChange={setAssignOpen} />
+          <CloseTaskDialog taskId={task.id} open={closeOpen} onOpenChange={setCloseOpen} />
         </div>
       )}
     </div>

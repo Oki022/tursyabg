@@ -45,6 +45,7 @@ export type PublicReview = {
 export type TaskUnlocker = {
   userId: string;
   fullName: string | null;
+  avatarUrl: string | null;
   unlockedAt: string;
   ratingAsPro: number | null;
   reviewCountAsPro: number;
@@ -176,6 +177,7 @@ export async function getTaskUnlockers(taskId: string): Promise<TaskUnlocker[]> 
   return ((data ?? []) as any[]).map((r) => ({
     userId: r.user_id,
     fullName: r.full_name,
+    avatarUrl: r.avatar_url ?? null,
     unlockedAt: r.unlocked_at,
     ratingAsPro: r.rating_as_pro == null ? null : Number(r.rating_as_pro),
     reviewCountAsPro: Number(r.review_count_as_pro ?? 0),

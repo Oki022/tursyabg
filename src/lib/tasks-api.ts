@@ -241,18 +241,26 @@ export function useMyTasks(userId?: string) {
   });
 }
 
-async function callTaskRpc(fn: "close_task" | "confirm_task_active", taskId: string) {
-  const { data, error } = await supabase.rpc(fn, { _task_id: taskId });
+async function callTaskRpc(
+  fn: "close_task" | "confirm_task_active",
+  taskId: string,
+  extra: Record<string, unknown> = {},
+) {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const { data, error } = await supabase.rpc(fn as any, { _task_id: taskId, ...extra } as any);
   if (error) throw error;
   const r = (data ?? {}) as Record<string, unknown>;
   if (!r["ok"]) throw new Error(String(r["error"] ?? "UNKNOWN"));
 }
 
-/** Owner marks the task as taken — it leaves the feed and stops consuming unlock slots. */
+export type CloseOutcome = "external" | "cancelled";
+
+/** Owner closes the task: hired outside the platform, or gave up on it. */
 export function useCloseTask() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (taskId: string) => callTaskRpc("close_task", taskId),
+    mutationFn: (v: { taskId: string; outcome: CloseOutcome }) =>
+      callTaskRpc("close_task", v.taskId, { _outcome: v.outcome }),
     onSuccess: () => void queryClient.invalidateQueries({ queryKey: ["tasks"] }),
   });
 }
