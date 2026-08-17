@@ -1,5 +1,5 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useEffect } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   BadgeCheck,
   Mail,
@@ -9,14 +9,47 @@ import {
   ClipboardList,
   Wrench,
   HandHeart,
+  Wallet,
+  Package,
+  Info,
+  ShieldCheck,
+  UserCog,
+  Bell,
+  FileText,
+  Settings2,
+  ChevronRight,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import { TaskCard } from "@/components/task-card";
 import { useAuth, getInitials } from "@/lib/auth";
-import { categories, getCategory } from "@/lib/mock-data";
+import { categories, getCategory, type TaskStatus } from "@/lib/mock-data";
 import { useTasks } from "@/lib/tasks-context";
 import { toast } from "sonner";
+
+const TASK_TABS: { value: TaskStatus; label: string; empty: string }[] = [
+  { value: "active", label: "Активни", empty: "Нямаш активни задачи в момента." },
+  { value: "pending", label: "Изчакващи", empty: "Нямаш задачи, чакащи одобрение." },
+  {
+    value: "pending_payment",
+    label: "Изчакващи плащане",
+    empty: "Нямаш задачи, чакащи плащане.",
+  },
+  { value: "inactive", label: "Неактивни", empty: "Нямаш неактивни задачи." },
+];
+
+const SETTINGS_ITEMS: { icon: typeof Wallet; label: string; to: string }[] = [
+  { icon: Wallet, label: "Зареди баланс", to: "/profile" },
+  { icon: Package, label: "Купи пакет", to: "/profile" },
+  { icon: Info, label: "Научи повече", to: "/profile" },
+  { icon: ShieldCheck, label: "Влизане и сигурност", to: "/profile" },
+  { icon: UserCog, label: "Редакция на профил", to: "/profile" },
+  { icon: Bell, label: "Управлявай нотификации", to: "/profile" },
+  { icon: FileText, label: "Данни за фактура", to: "/profile" },
+  { icon: Settings2, label: "Действия по моя профил", to: "/profile" },
+];
 
 export const Route = createFileRoute("/profile")({
   component: ProfilePage,
@@ -26,6 +59,18 @@ function ProfilePage() {
   const { user, logout, updateUser } = useAuth();
   const { tasks } = useTasks();
   const navigate = useNavigate();
+  const [tab, setTab] = useState<TaskStatus>("active");
+
+  const byStatus = useMemo(() => {
+    const map: Record<TaskStatus, typeof tasks> = {
+      active: [],
+      pending: [],
+      pending_payment: [],
+      inactive: [],
+    };
+    for (const t of tasks) map[t.status ?? "active"].push(t);
+    return map;
+  }, [tasks]);
 
   useEffect(() => {
     if (typeof window !== "undefined" && user === null) {
