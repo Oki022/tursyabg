@@ -15,6 +15,7 @@ import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as TaskIdRouteImport } from './routes/task.$id'
+import { Route as AuthenticatedUnlockedRouteImport } from './routes/_authenticated/unlocked'
 import { Route as AuthenticatedProfileRouteImport } from './routes/_authenticated/profile'
 import { Route as AuthenticatedPostRouteImport } from './routes/_authenticated/post'
 import { Route as AuthenticatedMessagesIndexRouteImport } from './routes/_authenticated/messages.index'
@@ -52,6 +53,11 @@ const TaskIdRoute = TaskIdRouteImport.update({
   id: '/task/$id',
   path: '/task/$id',
   getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedUnlockedRoute = AuthenticatedUnlockedRouteImport.update({
+  id: '/unlocked',
+  path: '/unlocked',
+  getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedProfileRoute = AuthenticatedProfileRouteImport.update({
   id: '/profile',
@@ -107,6 +113,7 @@ export interface FileRoutesByFullPath {
   '/tasks': typeof TasksRoute
   '/post': typeof AuthenticatedPostRoute
   '/profile': typeof AuthenticatedProfileRoute
+  '/unlocked': typeof AuthenticatedUnlockedRoute
   '/task/$id': typeof TaskIdRoute
   '/messages/$conversationId': typeof AuthenticatedMessagesConversationIdRoute
   '/settings/billing': typeof AuthenticatedSettingsBillingRoute
@@ -122,6 +129,7 @@ export interface FileRoutesByTo {
   '/tasks': typeof TasksRoute
   '/post': typeof AuthenticatedPostRoute
   '/profile': typeof AuthenticatedProfileRoute
+  '/unlocked': typeof AuthenticatedUnlockedRoute
   '/task/$id': typeof TaskIdRoute
   '/messages/$conversationId': typeof AuthenticatedMessagesConversationIdRoute
   '/settings/billing': typeof AuthenticatedSettingsBillingRoute
@@ -139,6 +147,7 @@ export interface FileRoutesById {
   '/tasks': typeof TasksRoute
   '/_authenticated/post': typeof AuthenticatedPostRoute
   '/_authenticated/profile': typeof AuthenticatedProfileRoute
+  '/_authenticated/unlocked': typeof AuthenticatedUnlockedRoute
   '/task/$id': typeof TaskIdRoute
   '/_authenticated/messages/$conversationId': typeof AuthenticatedMessagesConversationIdRoute
   '/_authenticated/settings/billing': typeof AuthenticatedSettingsBillingRoute
@@ -156,6 +165,7 @@ export interface FileRouteTypes {
     | '/tasks'
     | '/post'
     | '/profile'
+    | '/unlocked'
     | '/task/$id'
     | '/messages/$conversationId'
     | '/settings/billing'
@@ -171,6 +181,7 @@ export interface FileRouteTypes {
     | '/tasks'
     | '/post'
     | '/profile'
+    | '/unlocked'
     | '/task/$id'
     | '/messages/$conversationId'
     | '/settings/billing'
@@ -187,6 +198,7 @@ export interface FileRouteTypes {
     | '/tasks'
     | '/_authenticated/post'
     | '/_authenticated/profile'
+    | '/_authenticated/unlocked'
     | '/task/$id'
     | '/_authenticated/messages/$conversationId'
     | '/_authenticated/settings/billing'
@@ -248,6 +260,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/task/$id'
       preLoaderRoute: typeof TaskIdRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/unlocked': {
+      id: '/_authenticated/unlocked'
+      path: '/unlocked'
+      fullPath: '/unlocked'
+      preLoaderRoute: typeof AuthenticatedUnlockedRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/profile': {
       id: '/_authenticated/profile'
@@ -311,6 +330,7 @@ declare module '@tanstack/react-router' {
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedPostRoute: typeof AuthenticatedPostRoute
   AuthenticatedProfileRoute: typeof AuthenticatedProfileRoute
+  AuthenticatedUnlockedRoute: typeof AuthenticatedUnlockedRoute
   AuthenticatedMessagesConversationIdRoute: typeof AuthenticatedMessagesConversationIdRoute
   AuthenticatedSettingsBillingRoute: typeof AuthenticatedSettingsBillingRoute
   AuthenticatedSettingsNotificationsRoute: typeof AuthenticatedSettingsNotificationsRoute
@@ -322,6 +342,7 @@ interface AuthenticatedRouteRouteChildren {
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedPostRoute: AuthenticatedPostRoute,
   AuthenticatedProfileRoute: AuthenticatedProfileRoute,
+  AuthenticatedUnlockedRoute: AuthenticatedUnlockedRoute,
   AuthenticatedMessagesConversationIdRoute:
     AuthenticatedMessagesConversationIdRoute,
   AuthenticatedSettingsBillingRoute: AuthenticatedSettingsBillingRoute,
