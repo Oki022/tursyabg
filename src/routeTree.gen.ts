@@ -19,6 +19,7 @@ import { Route as AdminRouteImport } from './routes/admin'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
+import { Route as UserIdRouteImport } from './routes/user.$id'
 import { Route as TaskIdRouteImport } from './routes/task.$id'
 import { Route as BillingCancelRouteImport } from './routes/billing.cancel'
 import { Route as AuthVerifyRouteImport } from './routes/auth.verify'
@@ -89,6 +90,11 @@ const AdminIndexRoute = AdminIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => AdminRoute,
+} as any)
+const UserIdRoute = UserIdRouteImport.update({
+  id: '/user/$id',
+  path: '/user/$id',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const TaskIdRoute = TaskIdRouteImport.update({
   id: '/task/$id',
@@ -226,6 +232,7 @@ export interface FileRoutesByFullPath {
   '/auth/verify': typeof AuthVerifyRoute
   '/billing/cancel': typeof BillingCancelRoute
   '/task/$id': typeof TaskIdRoute
+  '/user/$id': typeof UserIdRoute
   '/admin/': typeof AdminIndexRoute
   '/billing/success': typeof AuthenticatedBillingSuccessRoute
   '/messages/$conversationId': typeof AuthenticatedMessagesConversationIdRoute
@@ -257,6 +264,7 @@ export interface FileRoutesByTo {
   '/auth/verify': typeof AuthVerifyRoute
   '/billing/cancel': typeof BillingCancelRoute
   '/task/$id': typeof TaskIdRoute
+  '/user/$id': typeof UserIdRoute
   '/admin': typeof AdminIndexRoute
   '/billing/success': typeof AuthenticatedBillingSuccessRoute
   '/messages/$conversationId': typeof AuthenticatedMessagesConversationIdRoute
@@ -291,6 +299,7 @@ export interface FileRoutesById {
   '/auth/verify': typeof AuthVerifyRoute
   '/billing/cancel': typeof BillingCancelRoute
   '/task/$id': typeof TaskIdRoute
+  '/user/$id': typeof UserIdRoute
   '/admin/': typeof AdminIndexRoute
   '/_authenticated/billing/success': typeof AuthenticatedBillingSuccessRoute
   '/_authenticated/messages/$conversationId': typeof AuthenticatedMessagesConversationIdRoute
@@ -325,6 +334,7 @@ export interface FileRouteTypes {
     | '/auth/verify'
     | '/billing/cancel'
     | '/task/$id'
+    | '/user/$id'
     | '/admin/'
     | '/billing/success'
     | '/messages/$conversationId'
@@ -356,6 +366,7 @@ export interface FileRouteTypes {
     | '/auth/verify'
     | '/billing/cancel'
     | '/task/$id'
+    | '/user/$id'
     | '/admin'
     | '/billing/success'
     | '/messages/$conversationId'
@@ -389,6 +400,7 @@ export interface FileRouteTypes {
     | '/auth/verify'
     | '/billing/cancel'
     | '/task/$id'
+    | '/user/$id'
     | '/admin/'
     | '/_authenticated/billing/success'
     | '/_authenticated/messages/$conversationId'
@@ -413,6 +425,7 @@ export interface RootRouteChildren {
   TermsRoute: typeof TermsRoute
   BillingCancelRoute: typeof BillingCancelRoute
   TaskIdRoute: typeof TaskIdRoute
+  UserIdRoute: typeof UserIdRoute
   ApiPublicPaymentsWebhookRoute: typeof ApiPublicPaymentsWebhookRoute
 }
 
@@ -487,6 +500,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/admin/'
       preLoaderRoute: typeof AdminIndexRouteImport
       parentRoute: typeof AdminRoute
+    }
+    '/user/$id': {
+      id: '/user/$id'
+      path: '/user/$id'
+      fullPath: '/user/$id'
+      preLoaderRoute: typeof UserIdRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/task/$id': {
       id: '/task/$id'
@@ -715,6 +735,7 @@ const rootRouteChildren: RootRouteChildren = {
   TermsRoute: TermsRoute,
   BillingCancelRoute: BillingCancelRoute,
   TaskIdRoute: TaskIdRoute,
+  UserIdRoute: UserIdRoute,
   ApiPublicPaymentsWebhookRoute: ApiPublicPaymentsWebhookRoute,
 }
 export const routeTree = rootRouteImport
