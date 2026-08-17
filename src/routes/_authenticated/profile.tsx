@@ -1,5 +1,5 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import {
   BadgeCheck,
   Mail,
@@ -76,18 +76,6 @@ function ProfilePage() {
     return map;
   }, [tasks, user]);
 
-  useEffect(() => {
-    if (typeof window !== "undefined" && user === null) {
-      // small delay to allow hydration of auth state
-      const t = setTimeout(() => {
-        if (!localStorage.getItem("zadacha-net-auth-user")) {
-          navigate({ to: "/auth", search: { mode: "login" } });
-        }
-      }, 50);
-      return () => clearTimeout(t);
-    }
-  }, [user, navigate]);
-
   if (!user) {
     return (
       <div className="container mx-auto px-4 py-16 text-center text-sm text-muted-foreground">
@@ -98,8 +86,8 @@ function ProfilePage() {
 
   const isWorker = user.role === "worker";
 
-  const handleLogout = () => {
-    logout();
+  const handleLogout = async () => {
+    await logout();
     toast.success("Излязохте от профила си.");
     navigate({ to: "/" });
   };
