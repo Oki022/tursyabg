@@ -26,7 +26,7 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { TaskCard } from "@/components/task-card";
 import { useAuth, getInitials } from "@/lib/auth";
 import { categories, type TaskStatus } from "@/lib/mock-data";
-import { useTasks } from "@/lib/tasks-context";
+import { useMyTasks } from "@/lib/tasks-api";
 import { toast } from "sonner";
 
 const TASK_TABS: { value: TaskStatus; label: string; empty: string }[] = [
@@ -57,7 +57,7 @@ export const Route = createFileRoute("/profile")({
 
 function ProfilePage() {
   const { user, logout, updateUser } = useAuth();
-  const { tasks } = useTasks();
+  const { data: tasks = [] } = useMyTasks(user?.id);
   const navigate = useNavigate();
   const [tab, setTab] = useState<TaskStatus>("active");
 

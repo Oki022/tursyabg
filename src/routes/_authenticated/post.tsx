@@ -7,8 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { categories, detectCategory } from "@/lib/mock-data";
-import { useAuth } from "@/lib/auth";
-import { useTasks } from "@/lib/tasks-context";
+import { useCreateTask } from "@/lib/tasks-api";
 import { LocationCombobox } from "@/components/location-combobox";
 import { toast } from "sonner";
 
@@ -24,8 +23,7 @@ export const Route = createFileRoute("/post")({
 
 function PostPage() {
   const navigate = useNavigate();
-  const { user } = useAuth();
-  const { addTask } = useTasks();
+  const createTask = useCreateTask();
   const [title, setTitle] = useState("");
   const [category, setCategory] = useState<string | undefined>(undefined);
   const [description, setDescription] = useState("");
@@ -33,7 +31,7 @@ function PostPage() {
   const [location, setLocation] = useState<string | undefined>(undefined);
   const [autoPicked, setAutoPicked] = useState(false);
   const [manuallyTouched, setManuallyTouched] = useState(false);
-  const [photos, setPhotos] = useState<{ id: string; url: string; name: string }[]>([]);
+  const [photos, setPhotos] = useState<{ id: string; url: string; name: string; file: File }[]>([]);
   const [dragOver, setDragOver] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -43,6 +41,7 @@ function PostPage() {
       id: `${f.name}-${f.size}-${Math.random().toString(36).slice(2, 8)}`,
       url: URL.createObjectURL(f),
       name: f.name,
+      file: f,
     }));
     setPhotos((p) => [...p, ...next].slice(0, 8));
   };
@@ -66,26 +65,30 @@ function PostPage() {
     }
   }, [title]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const onSubmit = (e: React.FormEvent) => {
+  const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!title || !category || !description || !budget || !location) {
       toast.error("Моля, попълни всички полета");
       return;
     }
-    addTask({
-      title,
-      category: category!,
-      description,
-      budget: Number(budget) || 0,
-      location: location!,
-      author: user?.name ?? "Анонимен потребител",
-      userId: user?.id,
-      status: "active",
-    });
-    toast.success("🎉 Задачата е публикувана успешно!", {
-      description: "Скоро ще получиш първите предложения.",
-    });
-    navigate({ to: "/tasks" });
+    try {
+      const id = await createTask.mutateAsync({
+        title,
+        category: category!,
+        description,
+        budget: Number(budget) || 0,
+        location: location!,
+        files: photos.map((p) => p.file),
+      });
+      toast.success("🎉 Задачата е публикувана успешно!", {
+        description: "Скоро ще получиш първите предложения.",
+      });
+      navigate({ to: "/task/$id", params: { id } });
+    } catch (err) {
+      toast.error("Задачата не беше публикувана.", {
+        description: err instanceof Error ? err.message : undefined,
+      });
+    }
   };
 
   return (
@@ -248,7 +251,7 @@ function PostPage() {
           <p className="text-xs text-muted-foreground">
             С публикуването приемаш Условията за ползване.
           </p>
-          <Button type="submit" size="lg" className="sm:px-8">Публикувай задачата</Button>
+          <Button type="submit" size="lg" disabled={createTask.isPending} className="sm:px-8">{createTask.isPending ? "Публикуване..." : "Публикувай задачата"}</Button>
         </div>
       </form>
     </div>
