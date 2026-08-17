@@ -148,6 +148,14 @@ function ProfilePage() {
           </Button>
         </div>
 
+        <div className="mt-4">
+          <Button asChild variant="ghost" size="sm" className="gap-1.5 px-2">
+            <Link to="/user/$id" params={{ id: user.id }}>
+              <Eye className="h-4 w-4" /> Виж публичния ми профил и отзиви
+            </Link>
+          </Button>
+        </div>
+
         <div className="mt-6 grid gap-3 sm:grid-cols-2">
           <InfoRow icon={<Mail className="h-4 w-4" />} label="Имейл" value={user.email} />
           <InfoRow
