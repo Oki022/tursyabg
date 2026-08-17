@@ -28,6 +28,7 @@ import { findOrCreateConversation, useSendMessage, useThread } from "@/lib/messa
 import { getCategory } from "@/lib/mock-data";
 import { useTask } from "@/lib/tasks-api";
 import { UnlockContactCard } from "@/components/credits/unlock-contact-card";
+import { ReportTaskDialog } from "@/components/report-task-dialog";
 import { toast } from "sonner";
 
 const GALLERY_BY_CATEGORY: Record<string, string[]> = {
@@ -272,6 +273,12 @@ function TaskDetails() {
               <ShieldCheck className="h-3.5 w-3.5 text-primary" />
               Безопасно общуване през платформата.
             </div>
+
+            {!isOwner && (
+              <div className="mt-3">
+                <ReportTaskDialog taskId={task.id} />
+              </div>
+            )}
 
             <div className="mt-6 border-t border-border/60 pt-5">
               <div className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
