@@ -101,6 +101,7 @@ export const CATEGORY_IMAGES: Record<string, string> = {
   gradina: img("photo-1416879595882-3373a0480b5b"),
   domashni: img("photo-1450778869180-41d0601e046e"),
   foto: img("photo-1519741497674-611481863552"),
+  "krasota-zdrave": img("photo-1560750588-73207b1ef5b8"),
   drugi: img("photo-1505691938895-1758d7feb511"),
 };
 
