@@ -170,7 +170,8 @@ function ProfilePage() {
               </div>
             </section>
           </>
-        ) : (
+        ) : null}
+        {false && !isWorker && (
           <section className="rounded-2xl border border-border/60 bg-card p-5 shadow-sm md:p-7">
             <div className="flex items-center justify-between gap-3">
               <h2 className="text-lg font-semibold text-foreground">Моите активни задачи</h2>
