@@ -30,6 +30,8 @@ export function UnlockContactCard({
   const [revealed, setRevealed] = useState<string | null>(null);
 
   const isUnlocked = Boolean(unlockQuery.data);
+  const balance = balanceQuery.data ?? user?.credits ?? 0;
+  const canAfford = balance >= cost;
   const contactQuery = useQuery({
     queryKey: ["credits", "contact", ownerId, isUnlocked],
     enabled: Boolean(isUnlocked && ownerId),
@@ -42,16 +44,17 @@ export function UnlockContactCard({
       void navigate({ to: "/auth", search: { redirect: `/task/${taskId}` } });
       return;
     }
+    if (!canAfford) {
+      void navigate({ to: "/settings/billing" });
+      return;
+    }
     try {
       const res = await unlock.mutateAsync(taskId);
       if (res.ok) {
         setRevealed(res.phone);
         if (!res.already) toast.success(`Контактът е отключен за ${creditsLabel(res.creditsSpent)}.`);
       } else if (res.error === "INSUFFICIENT_CREDITS") {
-        toast.error("Нямаш достатъчно кредити.", {
-          description: `Нужни: ${creditsLabel(res.cost ?? cost)} · Наличност: ${creditsLabel(res.balance ?? 0)}`,
-          action: { label: "Купи кредити", onClick: () => void navigate({ to: "/settings/billing" }) },
-        });
+        void navigate({ to: "/settings/billing" });
       } else if (res.error === "TASK_NOT_ACTIVE") {
         toast.error("Задачата вече не е активна.");
       } else {
@@ -96,15 +99,35 @@ export function UnlockContactCard({
 
   return (
     <div className="rounded-2xl border border-border/60 bg-secondary/40 p-4">
-      <Button size="lg" className="w-full gap-2" onClick={handleUnlock} disabled={unlock.isPending}>
-        <Lock className="h-4 w-4" />
-        {unlock.isPending ? "Отключване..." : `Отключи контакта (${creditsLabel(cost)})`}
-      </Button>
-      <div className="mt-3 flex items-center justify-between text-xs text-muted-foreground">
-        <span className="inline-flex items-center gap-1">
-          <Coins className="h-3.5 w-3.5 text-primary" />
-          Твой баланс: {creditsLabel(balanceQuery.data ?? user?.credits ?? 0)}
+      <Button
+        size="lg"
+        className="h-auto min-h-14 w-full whitespace-normal break-words px-5 py-3 text-center text-sm leading-snug"
+        onClick={handleUnlock}
+        disabled={unlock.isPending}
+      >
+        <span className="inline-flex items-center justify-center gap-2">
+          {user && canAfford && <Lock className="h-4 w-4 shrink-0" />}
+          {!user
+            ? "Влез, за да отключиш контакта"
+            : !canAfford
+              ? "Купи кредити"
+              : unlock.isPending
+                ? "Отключване..."
+                : `Отключи контакта (${creditsLabel(cost)})`}
         </span>
+      </Button>
+      <div className="mt-3 flex flex-wrap items-center justify-between gap-2 text-xs text-muted-foreground">
+        {user && !canAfford ? (
+          <span className="inline-flex items-center gap-1 break-words">
+            <Coins className="h-3.5 w-3.5 shrink-0 text-primary" />
+            Нужни са ти {creditsLabel(cost)} · Имаш {balance}
+          </span>
+        ) : (
+          <span className="inline-flex items-center gap-1 break-words">
+            <Coins className="h-3.5 w-3.5 shrink-0 text-primary" />
+            Твой баланс: {creditsLabel(balance)}
+          </span>
+        )}
         <Link to="/settings/billing" className="font-medium text-primary hover:underline">
           Купи кредити
         </Link>
