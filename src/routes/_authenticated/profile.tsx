@@ -31,6 +31,7 @@ import { PROMO_LABELS, remainingLabel, type TaskPromotion } from "@/services/pro
 import { PromoteDialog } from "@/components/promotions/promote-dialog";
 import { PromotedBadge, TopBadge, UrgentBadge } from "@/components/promotions/promo-badges";
 import { OwnerTaskControls } from "@/components/tasks/owner-task-controls";
+import { EngagementInbox } from "@/components/reviews/engagement-cards";
 import type { Task } from "@/lib/mock-data";
 import { toast } from "sonner";
 
@@ -159,6 +160,8 @@ function ProfilePage() {
 
       {/* Role-specific sections */}
       <div className="mt-6 grid gap-6">
+        <EngagementInbox />
+
         {/* Твоите задачи */}
         <section className="min-w-0 rounded-2xl border border-border/60 bg-card p-5 shadow-sm md:p-7">
           <div className="flex items-center justify-between gap-3">
