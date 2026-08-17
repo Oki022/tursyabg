@@ -69,6 +69,16 @@ function AdminDashboard() {
         <Stat label="Приходи (общо)" value={s ? formatEur(Number(s.revenue_total)) : "—"} />
         <Stat label="Приходи 7 дни" value={s ? formatEur(Number(s.revenue_7d)) : "—"} />
         <Stat label="Приходи 30 дни" value={s ? formatEur(Number(s.revenue_30d)) : "—"} />
+        <Stat
+          label="Възстановявания 30 дни"
+          value={String((s?.auto_refunds_30d ?? 0) + (s?.manual_refunds_30d ?? 0))}
+          hint={`${s?.auto_refunds_30d ?? 0} автоматични · ${s?.manual_refunds_30d ?? 0} ръчни`}
+        />
+        <Stat
+          label="Маркирани профили"
+          value={String(s?.flagged_users ?? 0)}
+          hint="Висок дял заявки за връщане"
+        />
       </div>
 
       <AdminCard className="p-4">

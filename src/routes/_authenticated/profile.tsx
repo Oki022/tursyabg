@@ -30,11 +30,13 @@ import { useOwnerPromotions } from "@/lib/promotions-api";
 import { PROMO_LABELS, remainingLabel, type TaskPromotion } from "@/services/promotions";
 import { PromoteDialog } from "@/components/promotions/promote-dialog";
 import { PromotedBadge, TopBadge, UrgentBadge } from "@/components/promotions/promo-badges";
+import { OwnerTaskControls } from "@/components/tasks/owner-task-controls";
 import type { Task } from "@/lib/mock-data";
 import { toast } from "sonner";
 
 const TASK_TABS: { value: TaskStatus; label: string; empty: string }[] = [
   { value: "active", label: "Активни", empty: "Нямаш активни задачи в момента." },
+  { value: "assigned", label: "Възложени", empty: "Нямаш възложени задачи." },
   { value: "pending", label: "Изчакващи", empty: "Нямаш задачи, чакащи одобрение." },
   {
     value: "pending_payment",
@@ -67,6 +69,7 @@ function ProfilePage() {
   const byStatus = useMemo(() => {
     const map: Record<TaskStatus, typeof tasks> = {
       active: [],
+      assigned: [],
       pending: [],
       pending_payment: [],
       inactive: [],
@@ -362,6 +365,11 @@ function OwnerTaskCard({
           <Rocket className="h-3 w-3" />
           {promotions.length > 0 ? "Управлявай" : "Промотирай"}
         </Button>
+        {(task.status === "active" || task.status === "assigned") && (
+          <div className="mt-2">
+            <OwnerTaskControls task={task} compact />
+          </div>
+        )}
       </div>
     </div>
   );

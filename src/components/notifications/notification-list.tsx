@@ -10,6 +10,9 @@ import {
   XCircle,
   Flag,
   BellOff,
+  HelpCircle,
+  RefreshCw,
+  BadgeCheck,
 } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { relativeTimeBg, type AppNotification, type NotificationType } from "@/services/notifications";
@@ -25,6 +28,9 @@ const ICONS: Record<NotificationType, React.ComponentType<{ className?: string }
   refund_approved: CheckCircle2,
   refund_rejected: XCircle,
   task_reported: Flag,
+  task_still_open: HelpCircle,
+  task_freshness: RefreshCw,
+  refund_auto_approved: BadgeCheck,
 };
 
 export function NotificationList({

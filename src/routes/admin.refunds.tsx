@@ -18,8 +18,10 @@ import {
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import {
   formatDateBg,
+  getRefundEvidence,
   getRefundRequests,
   REFUND_REASON_BG,
+  AUTO_RULE_BG,
   resolveRefund,
   type AdminRefundRequest,
   type RefundStatus,
@@ -41,8 +43,36 @@ export const Route = createFileRoute("/admin/refunds")({
 
 const STATUS_BG: Record<string, string> = { pending: "Чакаща", approved: "Одобрена", rejected: "Отказана" };
 
+function EvidenceCell({ requestId }: { requestId: string }) {
+  const { data } = useQuery({
+    queryKey: ["admin", "refund-evidence", requestId],
+    queryFn: () => getRefundEvidence(requestId),
+  });
+  if (!data?.found) return <span className="text-xs text-slate-400">—</span>;
+  return (
+    <div className="space-y-0.5 text-xs text-slate-600">
+      <div>Статус на задачата: {data.task_status ?? "—"}</div>
+      <div>
+        Съобщения: {data.messages_sent ?? 0} · Отговори: {data.owner_replies ?? 0}
+      </div>
+      <div>
+        Доклади: {data.report_count ?? 0} · Дни от отключване: {data.days_since_unlock ?? 0}
+      </div>
+      <div>
+        Заявки на потребителя: {data.user_refund_requests ?? 0} от {data.user_unlocks ?? 0} отключвания
+      </div>
+      {data.flagged ? (
+        <Badge variant="outline" className="rounded border-rose-300 text-rose-700">
+          Съмнително поведение
+        </Badge>
+      ) : null}
+    </div>
+  );
+}
+
 function AdminRefunds() {
   const [status, setStatus] = useState<RefundStatus | "all">("pending");
+  const [view, setView] = useState<"manual" | "auto">("manual");
   const [target, setTarget] = useState<{ req: AdminRefundRequest; approve: boolean } | null>(null);
   const [note, setNote] = useState("");
   const qc = useQueryClient();
@@ -67,13 +97,32 @@ function AdminRefunds() {
     },
   });
 
-  const rows = list.data ?? [];
+  const all = list.data ?? [];
+  const rows = all.filter((r) => (view === "auto" ? r.resolution === "auto" : r.resolution !== "auto"));
+  const autoCount = all.filter((r) => r.resolution === "auto").length;
 
   return (
     <AdminPage
       title="Заявки за възстановяване"
-      description="Одобрението връща кредитите автоматично и се записва в одит лога."
+      description="Ясните случаи се одобряват автоматично от системата. Тук преглеждаш само тези за ръчна проверка."
       actions={
+        <div className="flex items-center gap-2">
+          <div className="flex rounded-md border border-slate-200 bg-white p-0.5">
+            <button
+              type="button"
+              onClick={() => setView("manual")}
+              className={`rounded px-2.5 py-1 text-xs font-medium ${view === "manual" ? "bg-slate-900 text-white" : "text-slate-600"}`}
+            >
+              За проверка
+            </button>
+            <button
+              type="button"
+              onClick={() => setView("auto")}
+              className={`rounded px-2.5 py-1 text-xs font-medium ${view === "auto" ? "bg-slate-900 text-white" : "text-slate-600"}`}
+            >
+              Автоматични ({autoCount})
+            </button>
+          </div>
         <Select value={status} onValueChange={(v) => setStatus(v as RefundStatus | "all")}>
           <SelectTrigger className="h-9 w-44 rounded-md bg-white">
             <SelectValue />
@@ -85,6 +134,7 @@ function AdminRefunds() {
             <SelectItem value="all">Всички</SelectItem>
           </SelectContent>
         </Select>
+        </div>
       }
     >
       <AdminCard>
@@ -100,6 +150,7 @@ function AdminRefunds() {
                   <TableHead>Потребител</TableHead>
                   <TableHead>Задача</TableHead>
                   <TableHead>Причина</TableHead>
+                  <TableHead>Данни</TableHead>
                   <TableHead className="text-right">Кредити</TableHead>
                   <TableHead>Дата</TableHead>
                   <TableHead>Статус</TableHead>
@@ -123,6 +174,14 @@ function AdminRefunds() {
                       <div className="font-medium text-slate-800">{REFUND_REASON_BG[r.reason] ?? r.reason}</div>
                       {r.details ? <div className="mt-0.5 text-xs text-slate-500">{r.details}</div> : null}
                       {r.adminNote ? <div className="mt-1 text-xs italic text-slate-500">Бележка: {r.adminNote}</div> : null}
+                      {r.autoRule ? (
+                        <div className="mt-1 text-xs font-medium text-emerald-700">
+                          Авто правило: {AUTO_RULE_BG[r.autoRule] ?? r.autoRule}
+                        </div>
+                      ) : null}
+                    </TableCell>
+                    <TableCell className="max-w-[240px]">
+                      <EvidenceCell requestId={r.id} />
                     </TableCell>
                     <TableCell className="text-right tabular-nums">{r.credits}</TableCell>
                     <TableCell className="whitespace-nowrap text-xs text-slate-500">{formatDateBg(r.createdAt)}</TableCell>

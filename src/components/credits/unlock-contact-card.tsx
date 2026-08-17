@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, useNavigate } from "@tanstack/react-router";
-import { Lock, Phone, RotateCcw, Coins } from "lucide-react";
+import { Lock, Phone, RotateCcw, Coins, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/lib/auth";
 import { useCreditBalance, useMyUnlock, useUnlockTask } from "@/lib/credits-api";
@@ -14,11 +14,17 @@ export function UnlockContactCard({
   ownerId,
   budget,
   unlockCost,
+  unlockCount = 0,
+  maxUnlocks = 5,
+  taskStatus = "active",
 }: {
   taskId: string;
   ownerId?: string;
   budget: number;
   unlockCost?: number;
+  unlockCount?: number;
+  maxUnlocks?: number;
+  taskStatus?: string;
 }) {
   const { user } = useAuth();
   const navigate = useNavigate();
@@ -32,6 +38,9 @@ export function UnlockContactCard({
   const isUnlocked = Boolean(unlockQuery.data);
   const balance = balanceQuery.data ?? user?.credits ?? 0;
   const canAfford = balance >= cost;
+  const slotsLeft = Math.max(maxUnlocks - unlockCount, 0);
+  const slotsFull = slotsLeft === 0;
+  const taskClosed = taskStatus !== "active";
   const contactQuery = useQuery({
     queryKey: ["credits", "contact", ownerId, isUnlocked],
     enabled: Boolean(isUnlocked && ownerId),
@@ -99,15 +108,33 @@ export function UnlockContactCard({
 
   return (
     <div className="rounded-2xl border border-border/60 bg-secondary/40 p-4">
+      {taskClosed ? (
+        <p className="mb-3 rounded-xl bg-background px-3 py-2 text-xs text-muted-foreground">
+          Задачата вече не приема нови кандидати.
+        </p>
+      ) : slotsFull ? (
+        <p className="mb-3 rounded-xl bg-background px-3 py-2 text-xs text-muted-foreground">
+          Достигнат е лимитът от {maxUnlocks} отключвания. Така всеки изпълнител има реален шанс.
+        </p>
+      ) : (
+        <p className="mb-3 inline-flex items-center gap-1.5 text-xs font-medium text-muted-foreground">
+          <Users className="h-3.5 w-3.5 shrink-0 text-primary" />
+          Остават {slotsLeft} от {maxUnlocks} места за изпълнители
+        </p>
+      )}
       <Button
         size="lg"
         className="h-auto min-h-14 w-full whitespace-normal break-words px-5 py-3 text-center text-sm leading-snug"
         onClick={handleUnlock}
-        disabled={unlock.isPending}
+        disabled={unlock.isPending || slotsFull || taskClosed}
       >
         <span className="inline-flex items-center justify-center gap-2">
-          {user && canAfford && <Lock className="h-4 w-4 shrink-0" />}
-          {!user
+          {user && canAfford && !slotsFull && !taskClosed && <Lock className="h-4 w-4 shrink-0" />}
+          {taskClosed
+            ? "Задачата е затворена"
+            : slotsFull
+            ? "Местата са запълнени"
+            : !user
             ? "Влез, за да отключиш контакта"
             : !canAfford
               ? "Купи кредити"

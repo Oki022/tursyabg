@@ -25,13 +25,15 @@ type Row = {
   created_at: string;
   bumped_at?: string;
   view_count?: number;
+  unlock_count?: number;
+  max_unlocks?: number;
   user_id: string;
   task_images?: { image_url: string; sort_order: number }[] | null;
   profiles?: { full_name: string | null } | null;
 };
 
 const SELECT =
-  "id, title, description, category, budget, city, neighborhood, status, unlock_cost, created_at, bumped_at, view_count, user_id, task_images(image_url, sort_order), profiles(full_name)";
+  "id, title, description, category, budget, city, neighborhood, status, unlock_cost, created_at, bumped_at, view_count, unlock_count, max_unlocks, user_id, task_images(image_url, sort_order), profiles(full_name)";
 
 export function timeAgoBg(iso: string) {
   const diff = Date.now() - new Date(iso).getTime();
@@ -69,6 +71,8 @@ function mapRow(row: Row, signed: Record<string, string>): Task {
     gallery,
     bumpedAt: row.bumped_at ?? row.created_at,
     viewCount: row.view_count ?? 0,
+    unlockCount: row.unlock_count ?? 0,
+    maxUnlocks: row.max_unlocks ?? 5,
   };
 }
 
@@ -99,6 +103,8 @@ type FeedRow = {
   is_urgent: boolean;
   promo_expires_at: string | null;
   promoted_slot: boolean;
+  unlock_count: number | null;
+  max_unlocks: number | null;
 };
 
 /** Stable per-session seed so the promoted rotation stays consistent while paginating. */
@@ -138,6 +144,8 @@ async function mapFeedRows(rows: FeedRow[]): Promise<Task[]> {
       isUrgent: row.is_urgent,
       promoExpiresAt: row.promo_expires_at,
       bumpedAt: row.bumped_at,
+      unlockCount: row.unlock_count ?? 0,
+      maxUnlocks: row.max_unlocks ?? 5,
     } satisfies Task;
   });
 }
@@ -230,6 +238,31 @@ export function useMyTasks(userId?: string) {
       if (error) throw error;
       return mapRows((data ?? []) as unknown as Row[]);
     },
+  });
+}
+
+async function callTaskRpc(fn: "close_task" | "confirm_task_active", taskId: string) {
+  const { data, error } = await supabase.rpc(fn, { _task_id: taskId });
+  if (error) throw error;
+  const r = (data ?? {}) as Record<string, unknown>;
+  if (!r["ok"]) throw new Error(String(r["error"] ?? "UNKNOWN"));
+}
+
+/** Owner marks the task as taken — it leaves the feed and stops consuming unlock slots. */
+export function useCloseTask() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (taskId: string) => callTaskRpc("close_task", taskId),
+    onSuccess: () => void queryClient.invalidateQueries({ queryKey: ["tasks"] }),
+  });
+}
+
+/** Owner confirms the task is still open — refreshes it in the feed. */
+export function useConfirmTaskActive() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (taskId: string) => callTaskRpc("confirm_task_active", taskId),
+    onSuccess: () => void queryClient.invalidateQueries({ queryKey: ["tasks"] }),
   });
 }
 

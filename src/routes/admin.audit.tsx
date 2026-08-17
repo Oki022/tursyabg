@@ -29,7 +29,7 @@ function AdminAudit() {
 
   const admins = useMemo(() => {
     const map = new Map<string, string>();
-    (all.data ?? []).forEach((e) => map.set(e.adminId, e.adminName));
+    (all.data ?? []).forEach((e) => map.set(e.adminId ?? "system", e.adminName));
     return [...map.entries()];
   }, [all.data]);
 

@@ -186,15 +186,32 @@ export async function getMyUnlockedTasks(): Promise<UnlockedTask[]> {
   }));
 }
 
-export async function requestRefund(input: { unlockId: string; reason: RefundReason; details: string }) {
-  const { data: auth } = await supabase.auth.getUser();
-  const userId = auth.user?.id;
-  if (!userId) throw new Error("Трябва да си влязъл в профила си.");
-  const { error } = await supabase.from("credit_refund_requests").insert({
-    unlock_id: input.unlockId,
-    user_id: userId,
-    reason: input.reason,
-    details: input.details,
+export type RefundRequestResult =
+  | { ok: true; auto: boolean; credits?: number }
+  | { ok: false; error: string; availableAt?: string };
+
+/**
+ * Submits a refund request through the server-side rule engine, which can
+ * auto-approve clear-cut cases (closed task, confirmed silence, mass-reported task).
+ */
+export async function requestRefund(input: {
+  unlockId: string;
+  reason: RefundReason;
+  details: string;
+}): Promise<RefundRequestResult> {
+  const { data, error } = await supabase.rpc("request_credit_refund", {
+    _unlock_id: input.unlockId,
+    _reason: input.reason,
+    _details: input.details,
   });
   if (error) throw error;
+  const r = (data ?? {}) as Record<string, unknown>;
+  if (r["ok"]) {
+    return { ok: true, auto: Boolean(r["auto"]), credits: Number(r["credits"] ?? 0) };
+  }
+  return {
+    ok: false,
+    error: String(r["error"] ?? "UNKNOWN"),
+    availableAt: (r["available_at"] as string | undefined) ?? undefined,
+  };
 }
