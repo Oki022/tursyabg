@@ -1,4 +1,5 @@
 import { Link } from "@tanstack/react-router";
+import { UnreadBadge } from "@/components/unread-badge";
 import { ClipboardList, Plus, CircleUserRound, LogOut, BadgeCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { NotificationBell } from "@/components/notification-bell";
@@ -37,8 +38,9 @@ export function SiteHeader() {
           <Link to="/post" className="rounded-md px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground" activeProps={{ className: "rounded-md px-3 py-2 text-sm font-medium text-foreground" }}>
             Възложи задача
           </Link>
-          <Link to="/messages" className="rounded-md px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground" activeProps={{ className: "rounded-md px-3 py-2 text-sm font-medium text-foreground" }}>
+          <Link to="/messages" className="flex items-center gap-1.5 rounded-md px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground" activeProps={{ className: "flex items-center gap-1.5 rounded-md px-3 py-2 text-sm font-medium text-foreground" }}>
             Съобщения
+            <UnreadBadge />
           </Link>
         </nav>
         <div className="flex items-center gap-2">
