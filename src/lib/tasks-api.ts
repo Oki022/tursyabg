@@ -156,13 +156,13 @@ async function fetchTasksPage({
 
   const { data, error } = await supabase.rpc("feed_tasks", {
     _limit: PAGE_SIZE,
-    _cursor: page.cursor ?? null,
+    ...(page.cursor ? { _cursor: page.cursor } : {}),
     _seed: feedSeed(),
     _promo_offset: page.promoOffset,
-    _category: filters.category || null,
-    _city: city || null,
-    _neighborhood: neighborhood || null,
-    _q: filters.q || null,
+    ...(filters.category ? { _category: filters.category } : {}),
+    ...(city ? { _city: city } : {}),
+    ...(neighborhood ? { _neighborhood: neighborhood } : {}),
+    ...(filters.q ? { _q: filters.q } : {}),
   });
   if (error) throw error;
 
