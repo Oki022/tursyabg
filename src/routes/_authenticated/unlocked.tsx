@@ -7,6 +7,7 @@ import { useUnlockedTasks } from "@/lib/credits-api";
 import { creditsLabel } from "@/services/credits";
 import { getCategory } from "@/lib/mock-data";
 import { RefundRequestDialog } from "@/components/credits/refund-request-dialog";
+import { ClaimTaskButton } from "@/components/tasks/claim-task-button";
 
 export const Route = createFileRoute("/_authenticated/unlocked")({
   head: () => ({
@@ -96,6 +97,10 @@ function UnlockedPage() {
                     </a>
                   </Button>
                 )}
+              </div>
+
+              <div className="mt-3">
+                <ClaimTaskButton taskId={u.taskId} size="sm" />
               </div>
 
               {u.hasRefundRequest ? (
