@@ -25,6 +25,7 @@ import {
   formatDateBg,
   getAdminTasks,
   getPendingReports,
+  getTaskDeletePreview,
   REPORT_REASON_BG,
   setReportStatus,
   updateTaskCategory,
@@ -54,6 +55,16 @@ const STATUS_BG: Record<string, string> = {
 
 const PAGE_SIZE = 10;
 
+/** Deletion always requires an explicit reason; only `fraud` triggers automatic refunds. */
+const DELETE_REASONS: { key: string; label: string; fraudulent: boolean }[] = [
+  { key: "fraud", label: "Измамна задача (кредитите се връщат)", fraudulent: true },
+  { key: "spam", label: "Спам", fraudulent: false },
+  { key: "inappropriate", label: "Неподходящо съдържание", fraudulent: false },
+  { key: "duplicate", label: "Дублирана задача", fraudulent: false },
+  { key: "owner_request", label: "По искане на възложителя", fraudulent: false },
+  { key: "other", label: "Друга причина", fraudulent: false },
+];
+
 function AdminTasks() {
   const qc = useQueryClient();
   const [filters, setFilters] = useState({ status: "all", category: "all", city: "all", days: "all", reportedOnly: false });
@@ -62,7 +73,17 @@ function AdminTasks() {
   const [deactivateTarget, setDeactivateTarget] = useState<AdminTask | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<AdminTask | null>(null);
   const [reason, setReason] = useState("");
-  const [fraudulent, setFraudulent] = useState(false);
+  const [deleteReasonKey, setDeleteReasonKey] = useState("");
+  const [deleteNote, setDeleteNote] = useState("");
+
+  const deleteReason = DELETE_REASONS.find((r) => r.key === deleteReasonKey);
+  const fraudulent = deleteReason?.fraudulent ?? false;
+
+  const preview = useQuery({
+    queryKey: ["admin", "delete-preview", deleteTarget?.id],
+    queryFn: () => getTaskDeletePreview(deleteTarget!.id),
+    enabled: Boolean(deleteTarget),
+  });
 
   const list = useQuery({ queryKey: ["admin", "tasks", filters], queryFn: () => getAdminTasks(filters) });
   const reports = useQuery({ queryKey: ["admin", "reports"], queryFn: getPendingReports });
@@ -90,12 +111,21 @@ function AdminTasks() {
   });
 
   const mDelete = useMutation({
-    mutationFn: () => deleteTask(deleteTarget!.id, reason, fraudulent),
-    onSuccess: () => {
-      toast.success("Задачата е изтрита.");
+    mutationFn: () =>
+      deleteTask(
+        deleteTarget!.id,
+        [deleteReason?.label ?? "", deleteNote.trim()].filter(Boolean).join(" — "),
+        fraudulent,
+      ),
+    onSuccess: (res) => {
+      toast.success(
+        res.refundedUsers > 0
+          ? `Задачата е изтрита. Върнати са ${res.refundedCredits} кредита на ${res.refundedUsers} потребители.`
+          : "Задачата е изтрита.",
+      );
       setDeleteTarget(null);
-      setReason("");
-      setFraudulent(false);
+      setDeleteReasonKey("");
+      setDeleteNote("");
       invalidate();
     },
     onError: () => toast.error("Изтриването не беше изпълнено."),
