@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { ClipboardList, Plus, MessageCircle, User as UserIcon, LogOut, BadgeCheck } from "lucide-react";
+import { ClipboardList, Plus, User as UserIcon, LogOut, BadgeCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { NotificationBell } from "@/components/notification-bell";
 import { useAuth, getInitials } from "@/lib/auth";
