@@ -43,8 +43,13 @@ async function buildUser(session: Session): Promise<AuthUser> {
   const meta = (session.user.user_metadata ?? {}) as Record<string, unknown>;
   const { data: profile } = await supabase
     .from("profiles")
-    .select("id, full_name, avatar_url, phone")
+    .select("id, full_name, avatar_url, credits")
     .eq("id", session.user.id)
+    .maybeSingle();
+  const { data: contact } = await supabase
+    .from("profile_contacts")
+    .select("phone")
+    .eq("user_id", session.user.id)
     .maybeSingle();
 
   const name =
@@ -61,7 +66,8 @@ async function buildUser(session: Session): Promise<AuthUser> {
     id: session.user.id,
     name,
     email: session.user.email ?? "",
-    phone: profile?.phone ?? undefined,
+    phone: contact?.phone ?? undefined,
+    credits: profile?.credits ?? 0,
     role: meta.role === "worker" ? "worker" : "customer",
     avatarUrl: profile?.avatar_url ?? undefined,
     skills: Array.isArray(meta.skills) ? (meta.skills as string[]) : [],
@@ -151,15 +157,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const next = { ...user, ...patch };
     setUser(next);
 
-    if (patch.name !== undefined || patch.phone !== undefined || patch.avatarUrl !== undefined) {
+    if (patch.name !== undefined || patch.avatarUrl !== undefined) {
       await supabase
         .from("profiles")
         .update({
           full_name: next.name,
-          phone: next.phone ?? null,
           avatar_url: next.avatarUrl ?? null,
         })
         .eq("id", user.id);
+    }
+    if (patch.phone !== undefined) {
+      await supabase
+        .from("profile_contacts")
+        .upsert({ user_id: user.id, phone: next.phone ?? null }, { onConflict: "user_id" });
     }
     if (patch.skills !== undefined || patch.verified !== undefined || patch.role !== undefined || patch.name !== undefined) {
       await supabase.auth.updateUser({
