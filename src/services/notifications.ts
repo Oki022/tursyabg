@@ -9,7 +9,10 @@ export type NotificationType =
   | "credits_low"
   | "refund_approved"
   | "refund_rejected"
-  | "task_reported";
+  | "task_reported"
+  | "task_still_open"
+  | "task_freshness"
+  | "refund_auto_approved";
 
 export type AppNotification = {
   id: string;
