@@ -39,6 +39,8 @@ import { Crown, Siren, ArrowUpCircle } from "lucide-react";
 import { toast } from "sonner";
 import { CONTACT_MASK_WARNING, containsContactInfo, isValidBgPhone } from "@/lib/phone";
 import { RequirePhoneNotice } from "@/components/require-phone-notice";
+import { ClaimTaskButton } from "@/components/tasks/claim-task-button";
+import { EngagementInbox } from "@/components/reviews/engagement-cards";
 
 const GALLERY_BY_CATEGORY: Record<string, string[]> = {
   remonti: [
@@ -323,6 +325,11 @@ function TaskDetails() {
                   <MessageSquare className="h-4 w-4" /> Изпрати съобщение
                 </Button>
               )}
+              {!isOwner && user && <ClaimTaskButton taskId={task.id} size="lg" />}
+            </div>
+
+            <div className="mt-4">
+              <EngagementInbox taskId={task.id} />
             </div>
 
             <div className="mt-5 flex items-center gap-1.5 rounded-2xl bg-secondary/60 px-3 py-2 text-xs text-muted-foreground">
