@@ -33,6 +33,8 @@ import { ReportTaskDialog } from "@/components/report-task-dialog";
 import { PromoteDialog } from "@/components/promotions/promote-dialog";
 import { useTaskPromotions } from "@/lib/promotions-api";
 import { PROMO_LABELS, remainingLabel } from "@/services/promotions";
+import { TopBadge, UrgentBadge } from "@/components/promotions/promo-badges";
+import { Crown, Siren, ArrowUpCircle } from "lucide-react";
 import { toast } from "sonner";
 
 const GALLERY_BY_CATEGORY: Record<string, string[]> = {
@@ -89,6 +91,8 @@ function TaskDetails() {
   const [promoteOpen, setPromoteOpen] = useState(false);
   const taskPromotions = useTaskPromotions(task?.id);
   const activePromotions = taskPromotions.data ?? [];
+  const hasTop = activePromotions.some((p) => p.type === "top");
+  const hasUrgent = activePromotions.some((p) => p.type === "urgent");
 
   useEffect(() => {
     if (!messageOpen || !user || !task?.userId || user.id === task.userId) return;
@@ -236,13 +240,20 @@ function TaskDetails() {
             </span>
           </div>
 
-          <h1 className="mt-4 text-3xl font-bold tracking-tight text-slate-900 md:text-4xl">
+          {(hasTop || hasUrgent) && (
+            <div className="mt-4 flex flex-wrap items-center gap-2">
+              {hasUrgent && <UrgentBadge className="px-3 py-1 text-[11px]" />}
+              {hasTop && <TopBadge className="px-3 py-1 text-[11px]" />}
+            </div>
+          )}
+
+          <h1 className="mt-4 break-words text-3xl font-bold tracking-tight text-slate-900 md:text-4xl">
             {task.title}
           </h1>
 
           <section className="mt-8 rounded-3xl border border-border/60 bg-card p-6 shadow-sm md:p-7">
             <h2 className="text-lg font-semibold text-slate-900">Описание</h2>
-            <p className="mt-3 whitespace-pre-line text-[15px] leading-relaxed text-foreground/90">
+            <p className="mt-3 whitespace-pre-line break-words text-[15px] leading-relaxed text-foreground/90">
               {task.description}
             </p>
           </section>
@@ -264,16 +275,22 @@ function TaskDetails() {
               {isOwner && (
                 <>
                   <Button size="lg" className="w-full gap-2" onClick={() => setPromoteOpen(true)}>
-                    <Rocket className="h-4 w-4" /> Промотирай
+                    <Rocket className="h-4 w-4" />
+                    {activePromotions.length > 0 ? "Управлявай промоциите" : "Промотирай"}
                   </Button>
                   {activePromotions.length > 0 && (
-                    <div className="space-y-1 rounded-2xl bg-secondary/60 px-3 py-2 text-xs text-muted-foreground">
-                      {activePromotions.map((p) => (
-                        <div key={p.id} className="flex items-center justify-between gap-2">
-                          <span className="font-semibold text-foreground">{PROMO_LABELS[p.type]}</span>
-                          <span>{remainingLabel(p.expiresAt)}</span>
-                        </div>
-                      ))}
+                    <div className="space-y-1.5 rounded-2xl bg-secondary/60 px-3 py-2 text-xs text-muted-foreground">
+                      {activePromotions.map((p) => {
+                        const PromoIcon =
+                          p.type === "top" ? Crown : p.type === "urgent" ? Siren : ArrowUpCircle;
+                        return (
+                          <div key={p.id} className="flex flex-wrap items-center gap-x-1.5 gap-y-0.5">
+                            <PromoIcon className="h-3.5 w-3.5 shrink-0 text-primary" />
+                            <span className="font-semibold text-foreground">{PROMO_LABELS[p.type]}</span>
+                            <span>— {remainingLabel(p.expiresAt)}</span>
+                          </div>
+                        );
+                      })}
                     </div>
                   )}
                 </>
