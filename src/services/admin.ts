@@ -255,7 +255,18 @@ export async function updateTaskCategory(taskId: string, category: string) {
   if (!r?.["ok"]) throw new Error(String(r?.["error"] ?? "UNKNOWN"));
 }
 
-export async function deleteTask(taskId: string, reason: string, fraudulent = false) {
+export type TaskDeletePreview = { unlockers: number; credits: number };
+
+/** How many unlockers would be refunded (and how many credits) if this task is deleted as fraudulent. */
+export async function getTaskDeletePreview(taskId: string): Promise<TaskDeletePreview> {
+  const { data, error } = await supabase.rpc("admin_task_delete_preview", { _task_id: taskId });
+  if (error) throw error;
+  const r = (data ?? {}) as Record<string, unknown>;
+  return { unlockers: Number(r["unlockers"] ?? 0), credits: Number(r["credits"] ?? 0) };
+}
+
+/** `fraudulent` is required on purpose: it decides whether unlockers get refunded. */
+export async function deleteTask(taskId: string, reason: string, fraudulent: boolean) {
   const { data, error } = await supabase.rpc("admin_delete_task", {
     _task_id: taskId,
     _reason: reason,
@@ -264,6 +275,29 @@ export async function deleteTask(taskId: string, reason: string, fraudulent = fa
   if (error) throw error;
   const r = data as Record<string, unknown>;
   if (!r?.["ok"]) throw new Error(String(r?.["error"] ?? "UNKNOWN"));
+  return { refundedUsers: Number(r["refunded_users"] ?? 0), refundedCredits: Number(r["refunded_credits"] ?? 0) };
+}
+
+/* ---------------- scheduler health ---------------- */
+
+export type CronHealth = {
+  job_name: string;
+  last_success: string | null;
+  last_run: string | null;
+  last_error: string | null;
+  rows_processed: number | null;
+  stale: boolean;
+};
+
+export const CRON_JOB_BG: Record<string, string> = {
+  sweep_expiry_notifications: "Изтичане на задачи и напомняния",
+  sweep_engagements: "Ангажименти и отзиви",
+};
+
+export async function getCronHealth(): Promise<CronHealth[]> {
+  const { data, error } = await supabase.rpc("admin_cron_health");
+  if (error) throw error;
+  return (data ?? []) as CronHealth[];
 }
 
 /** Context the admin needs to judge a refund request without leaving the queue. */
