@@ -9,6 +9,7 @@ export type AuthUser = {
   name: string;
   email: string;
   phone?: string;
+  credits?: number;
   role: UserRole;
   avatarUrl?: string;
   skills?: string[];
