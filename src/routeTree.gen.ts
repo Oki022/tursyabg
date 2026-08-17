@@ -37,6 +37,7 @@ import { Route as AuthenticatedSettingsSecurityRouteImport } from './routes/_aut
 import { Route as AuthenticatedSettingsProfileRouteImport } from './routes/_authenticated/settings.profile'
 import { Route as AuthenticatedSettingsNotificationsRouteImport } from './routes/_authenticated/settings.notifications'
 import { Route as AuthenticatedSettingsBillingRouteImport } from './routes/_authenticated/settings.billing'
+import { Route as AuthenticatedReviewEngagementIdRouteImport } from './routes/_authenticated/review.$engagementId'
 import { Route as AuthenticatedPostedIdRouteImport } from './routes/_authenticated/posted.$id'
 import { Route as AuthenticatedMessagesConversationIdRouteImport } from './routes/_authenticated/messages.$conversationId'
 import { Route as AuthenticatedBillingSuccessRouteImport } from './routes/_authenticated/billing.success'
@@ -187,6 +188,12 @@ const AuthenticatedSettingsBillingRoute =
     path: '/settings/billing',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedReviewEngagementIdRoute =
+  AuthenticatedReviewEngagementIdRouteImport.update({
+    id: '/review/$engagementId',
+    path: '/review/$engagementId',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedPostedIdRoute = AuthenticatedPostedIdRouteImport.update({
   id: '/posted/$id',
   path: '/posted/$id',
@@ -237,6 +244,7 @@ export interface FileRoutesByFullPath {
   '/billing/success': typeof AuthenticatedBillingSuccessRoute
   '/messages/$conversationId': typeof AuthenticatedMessagesConversationIdRoute
   '/posted/$id': typeof AuthenticatedPostedIdRoute
+  '/review/$engagementId': typeof AuthenticatedReviewEngagementIdRoute
   '/settings/billing': typeof AuthenticatedSettingsBillingRoute
   '/settings/notifications': typeof AuthenticatedSettingsNotificationsRoute
   '/settings/profile': typeof AuthenticatedSettingsProfileRoute
@@ -269,6 +277,7 @@ export interface FileRoutesByTo {
   '/billing/success': typeof AuthenticatedBillingSuccessRoute
   '/messages/$conversationId': typeof AuthenticatedMessagesConversationIdRoute
   '/posted/$id': typeof AuthenticatedPostedIdRoute
+  '/review/$engagementId': typeof AuthenticatedReviewEngagementIdRoute
   '/settings/billing': typeof AuthenticatedSettingsBillingRoute
   '/settings/notifications': typeof AuthenticatedSettingsNotificationsRoute
   '/settings/profile': typeof AuthenticatedSettingsProfileRoute
@@ -304,6 +313,7 @@ export interface FileRoutesById {
   '/_authenticated/billing/success': typeof AuthenticatedBillingSuccessRoute
   '/_authenticated/messages/$conversationId': typeof AuthenticatedMessagesConversationIdRoute
   '/_authenticated/posted/$id': typeof AuthenticatedPostedIdRoute
+  '/_authenticated/review/$engagementId': typeof AuthenticatedReviewEngagementIdRoute
   '/_authenticated/settings/billing': typeof AuthenticatedSettingsBillingRoute
   '/_authenticated/settings/notifications': typeof AuthenticatedSettingsNotificationsRoute
   '/_authenticated/settings/profile': typeof AuthenticatedSettingsProfileRoute
@@ -339,6 +349,7 @@ export interface FileRouteTypes {
     | '/billing/success'
     | '/messages/$conversationId'
     | '/posted/$id'
+    | '/review/$engagementId'
     | '/settings/billing'
     | '/settings/notifications'
     | '/settings/profile'
@@ -371,6 +382,7 @@ export interface FileRouteTypes {
     | '/billing/success'
     | '/messages/$conversationId'
     | '/posted/$id'
+    | '/review/$engagementId'
     | '/settings/billing'
     | '/settings/notifications'
     | '/settings/profile'
@@ -405,6 +417,7 @@ export interface FileRouteTypes {
     | '/_authenticated/billing/success'
     | '/_authenticated/messages/$conversationId'
     | '/_authenticated/posted/$id'
+    | '/_authenticated/review/$engagementId'
     | '/_authenticated/settings/billing'
     | '/_authenticated/settings/notifications'
     | '/_authenticated/settings/profile'
@@ -627,6 +640,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedSettingsBillingRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/review/$engagementId': {
+      id: '/_authenticated/review/$engagementId'
+      path: '/review/$engagementId'
+      fullPath: '/review/$engagementId'
+      preLoaderRoute: typeof AuthenticatedReviewEngagementIdRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/posted/$id': {
       id: '/_authenticated/posted/$id'
       path: '/posted/$id'
@@ -666,6 +686,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedBillingSuccessRoute: typeof AuthenticatedBillingSuccessRoute
   AuthenticatedMessagesConversationIdRoute: typeof AuthenticatedMessagesConversationIdRoute
   AuthenticatedPostedIdRoute: typeof AuthenticatedPostedIdRoute
+  AuthenticatedReviewEngagementIdRoute: typeof AuthenticatedReviewEngagementIdRoute
   AuthenticatedSettingsBillingRoute: typeof AuthenticatedSettingsBillingRoute
   AuthenticatedSettingsNotificationsRoute: typeof AuthenticatedSettingsNotificationsRoute
   AuthenticatedSettingsProfileRoute: typeof AuthenticatedSettingsProfileRoute
@@ -682,6 +703,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedMessagesConversationIdRoute:
     AuthenticatedMessagesConversationIdRoute,
   AuthenticatedPostedIdRoute: AuthenticatedPostedIdRoute,
+  AuthenticatedReviewEngagementIdRoute: AuthenticatedReviewEngagementIdRoute,
   AuthenticatedSettingsBillingRoute: AuthenticatedSettingsBillingRoute,
   AuthenticatedSettingsNotificationsRoute:
     AuthenticatedSettingsNotificationsRoute,
