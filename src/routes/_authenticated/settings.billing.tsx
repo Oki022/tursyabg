@@ -2,7 +2,6 @@ import { createFileRoute } from "@tanstack/react-router";
 import { Wallet, Package, FileText, Info } from "lucide-react";
 import { SettingsPageShell } from "@/components/settings-page-shell";
 import { Button } from "@/components/ui/button";
-import { useAuth } from "@/lib/auth";
 
 const PACKAGES = [
   { name: "Старт", price: "9,90 €", perk: "5 промотирани задачи" },
@@ -25,8 +24,7 @@ export const Route = createFileRoute("/_authenticated/settings/billing")({
 });
 
 function SettingsBillingPage() {
-  const { user } = useAuth();
-  const balance = user?.balance ?? 0;
+  const balance = 0;
 
   return (
     <SettingsPageShell
