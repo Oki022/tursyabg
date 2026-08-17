@@ -1,13 +1,12 @@
-import { createFileRoute } from "@tanstack/react-router";
-import { Wallet, Package, FileText, Info } from "lucide-react";
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { useState } from "react";
+import { Coins, Package, FileText, History, KeyRound } from "lucide-react";
 import { SettingsPageShell } from "@/components/settings-page-shell";
 import { Button } from "@/components/ui/button";
-
-const PACKAGES = [
-  { name: "Старт", price: "9,90 €", perk: "5 промотирани задачи" },
-  { name: "Про", price: "24,90 €", perk: "20 промотирани задачи + приоритет" },
-  { name: "Бизнес", price: "49,90 €", perk: "Неограничени задачи + значка" },
-];
+import { useAuth } from "@/lib/auth";
+import { useCreditBalance, useCreditPackages, useCreditTransactions } from "@/lib/credits-api";
+import { creditsLabel, formatEur } from "@/services/credits";
+import { toast } from "sonner";
 
 export const Route = createFileRoute("/_authenticated/settings/billing")({
   head: () => ({
@@ -24,57 +23,115 @@ export const Route = createFileRoute("/_authenticated/settings/billing")({
 });
 
 function SettingsBillingPage() {
-  const balance = 0;
+  const { user } = useAuth();
+  const balanceQuery = useCreditBalance(user?.id);
+  const packagesQuery = useCreditPackages();
+  const [page, setPage] = useState(0);
+  const txQuery = useCreditTransactions(page);
+  const balance = balanceQuery.data ?? user?.credits ?? 0;
+
+  const buy = () =>
+    toast("Плащанията се настройват", {
+      description: "Скоро ще можеш да купуваш кредити с карта.",
+    });
 
   return (
     <SettingsPageShell
       title="Баланс и плащания"
-      description="Зареждай баланс, купувай пакети и управлявай данните си за фактура на едно място."
+      description="Виж кредитите си, купувай пакети и следи всички движения по сметката."
     >
-      {/* Текущ баланс */}
       <div className="rounded-2xl border border-border/60 bg-card p-5 shadow-sm md:p-6">
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div className="min-w-0">
-            <p className="text-sm text-muted-foreground">Текущ баланс</p>
+            <p className="text-sm text-muted-foreground">Наличност кредити</p>
             <p className="mt-1 text-3xl font-bold tracking-tight text-foreground">
-              {balance.toFixed(2)} €
+              {balanceQuery.isLoading ? "—" : creditsLabel(balance)}
+            </p>
+            <p className="mt-1 text-xs text-muted-foreground">
+              Публикуването на задачи е безплатно. Кредитите се използват за отключване на контакти.
             </p>
           </div>
-          <Button className="gap-2">
-            <Wallet className="h-4 w-4" />
-            Зареди баланс
+          <Button asChild variant="outline" className="gap-2">
+            <Link to="/unlocked">
+              <KeyRound className="h-4 w-4" />
+              Отключени задачи
+            </Link>
           </Button>
         </div>
       </div>
 
-      {/* Пакети */}
       <div className="rounded-2xl border border-border/60 bg-card p-5 shadow-sm md:p-6">
         <div className="flex items-center gap-2">
           <Package className="h-4 w-4 text-primary" />
-          <h2 className="text-lg font-semibold text-foreground">Пакети</h2>
+          <h2 className="text-lg font-semibold text-foreground">Пакети кредити</h2>
         </div>
-        <div className="mt-4 grid gap-3 sm:grid-cols-3">
-          {PACKAGES.map((p) => (
-            <div key={p.name} className="rounded-xl border border-border bg-background p-4">
+        <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+          {(packagesQuery.data ?? []).map((p) => (
+            <div key={p.id} className="rounded-xl border border-border bg-background p-4">
               <p className="text-sm font-semibold text-foreground">{p.name}</p>
-              <p className="mt-1 text-xl font-bold text-foreground">{p.price}</p>
-              <p className="mt-1 text-xs text-muted-foreground">{p.perk}</p>
-              <Button variant="outline" size="sm" className="mt-3 w-full">
+              <p className="mt-1 text-xl font-bold text-foreground">{formatEur(p.priceEur)}</p>
+              <p className="mt-1 text-xs text-muted-foreground">{creditsLabel(p.credits)}</p>
+              <Button variant="outline" size="sm" className="mt-3 w-full" onClick={buy}>
                 Купи пакет
               </Button>
             </div>
           ))}
+          {packagesQuery.isLoading &&
+            [0, 1, 2, 3].map((i) => <div key={i} className="h-32 animate-pulse rounded-xl bg-muted" />)}
         </div>
-        <a
-          href="#"
-          className="mt-4 inline-flex items-center gap-1 text-sm font-medium text-primary hover:underline"
-        >
-          <Info className="h-4 w-4" />
-          Научи повече за пакетите
-        </a>
       </div>
 
-      {/* Данни за фактура */}
+      <div className="rounded-2xl border border-border/60 bg-card p-5 shadow-sm md:p-6">
+        <div className="flex items-center gap-2">
+          <History className="h-4 w-4 text-primary" />
+          <h2 className="text-lg font-semibold text-foreground">История на движенията</h2>
+        </div>
+        <div className="mt-4 divide-y divide-border/60">
+          {(txQuery.data?.items ?? []).map((t) => (
+            <div key={t.id} className="flex items-center justify-between gap-3 py-3">
+              <div className="min-w-0">
+                <p className="truncate text-sm font-medium text-foreground">{t.description || "Движение"}</p>
+                <p className="text-xs text-muted-foreground">
+                  {new Date(t.createdAt).toLocaleDateString("bg-BG", {
+                    day: "numeric",
+                    month: "short",
+                    year: "numeric",
+                  })}
+                </p>
+              </div>
+              <div className="text-right">
+                <p
+                  className={`text-sm font-semibold ${t.amount < 0 ? "text-rose-600" : "text-emerald-600"}`}
+                >
+                  {t.amount > 0 ? "+" : ""}
+                  {t.amount}
+                </p>
+                <p className="text-xs text-muted-foreground">баланс: {t.balanceAfter}</p>
+              </div>
+            </div>
+          ))}
+          {!txQuery.isLoading && (txQuery.data?.items.length ?? 0) === 0 && (
+            <p className="py-6 text-center text-sm text-muted-foreground">Все още няма движения по сметката.</p>
+          )}
+          {txQuery.isLoading && <div className="h-24 animate-pulse rounded-xl bg-muted" />}
+        </div>
+        {(page > 0 || txQuery.data?.hasMore) && (
+          <div className="mt-4 flex items-center justify-between">
+            <Button variant="ghost" size="sm" disabled={page === 0} onClick={() => setPage((p) => p - 1)}>
+              Назад
+            </Button>
+            <Button
+              variant="ghost"
+              size="sm"
+              disabled={!txQuery.data?.hasMore}
+              onClick={() => setPage((p) => p + 1)}
+            >
+              Напред
+            </Button>
+          </div>
+        )}
+      </div>
+
       <div className="rounded-2xl border border-border/60 bg-card p-5 shadow-sm md:p-6">
         <div className="flex items-center gap-2">
           <FileText className="h-4 w-4 text-primary" />

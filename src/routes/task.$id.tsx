@@ -8,7 +8,6 @@ import {
   Clock,
   MapPin,
   MessageSquare,
-  Phone,
   ShieldCheck,
   ShieldAlert,
 } from "lucide-react";
@@ -28,6 +27,7 @@ import { getInitials, useAuth } from "@/lib/auth";
 import { findOrCreateConversation, useSendMessage, useThread } from "@/lib/messages-api";
 import { getCategory } from "@/lib/mock-data";
 import { useTask } from "@/lib/tasks-api";
+import { UnlockContactCard } from "@/components/credits/unlock-contact-card";
 import { toast } from "sonner";
 
 const GALLERY_BY_CATEGORY: Record<string, string[]> = {
@@ -253,14 +253,14 @@ function TaskDetails() {
             </div>
 
             <div className="mt-6 space-y-3">
-              <Button
-                size="lg"
-                variant="outline"
-                className="w-full gap-2"
-                onClick={() => toast("Свържи се чрез чата", { description: "Първото съобщение е безплатно." })}
-              >
-                <Phone className="h-4 w-4" /> Обади се
-              </Button>
+              {!isOwner && (
+                <UnlockContactCard
+                  taskId={task.id}
+                  ownerId={task.userId}
+                  budget={task.budget}
+                  unlockCost={task.unlockCost}
+                />
+              )}
               {!isOwner && (
                 <Button size="lg" className="w-full gap-2" onClick={openMessageModal}>
                   <MessageSquare className="h-4 w-4" /> Изпрати съобщение
