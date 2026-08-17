@@ -264,6 +264,100 @@ export type Database = {
           },
         ]
       }
+      payment_events: {
+        Row: {
+          event_id: string
+          event_type: string
+          id: string
+          payment_id: string | null
+          processed_at: string
+          provider: string
+        }
+        Insert: {
+          event_id: string
+          event_type: string
+          id?: string
+          payment_id?: string | null
+          processed_at?: string
+          provider?: string
+        }
+        Update: {
+          event_id?: string
+          event_type?: string
+          id?: string
+          payment_id?: string | null
+          processed_at?: string
+          provider?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "payment_events_payment_id_fkey"
+            columns: ["payment_id"]
+            isOneToOne: false
+            referencedRelation: "payments"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      payments: {
+        Row: {
+          amount_eur: number
+          completed_at: string | null
+          created_at: string
+          credits: number
+          currency: string
+          id: string
+          package_id: string | null
+          provider: string
+          receipt_url: string | null
+          refunded_at: string | null
+          status: string
+          stripe_payment_intent_id: string | null
+          stripe_session_id: string | null
+          user_id: string
+        }
+        Insert: {
+          amount_eur: number
+          completed_at?: string | null
+          created_at?: string
+          credits?: number
+          currency?: string
+          id?: string
+          package_id?: string | null
+          provider?: string
+          receipt_url?: string | null
+          refunded_at?: string | null
+          status?: string
+          stripe_payment_intent_id?: string | null
+          stripe_session_id?: string | null
+          user_id: string
+        }
+        Update: {
+          amount_eur?: number
+          completed_at?: string | null
+          created_at?: string
+          credits?: number
+          currency?: string
+          id?: string
+          package_id?: string | null
+          provider?: string
+          receipt_url?: string | null
+          refunded_at?: string | null
+          status?: string
+          stripe_payment_intent_id?: string | null
+          stripe_session_id?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "payments_package_id_fkey"
+            columns: ["package_id"]
+            isOneToOne: false
+            referencedRelation: "credit_packages"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profile_contacts: {
         Row: {
           created_at: string
@@ -473,12 +567,24 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      complete_payment: {
+        Args: {
+          _payment_intent: string
+          _receipt_url: string
+          _session_id: string
+        }
+        Returns: Json
+      }
       find_or_create_conversation: {
         Args: { _other_user: string; _task_id: string }
         Returns: string
       }
       get_unlock_cost: { Args: { task_budget: number }; Returns: number }
       mask_contacts: { Args: { input: string }; Returns: string }
+      refund_payment: {
+        Args: { _payment_intent: string; _status: string }
+        Returns: Json
+      }
       unlock_task_contact: { Args: { _task_id: string }; Returns: Json }
     }
     Enums: {
