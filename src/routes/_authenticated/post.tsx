@@ -85,9 +85,12 @@ function PostPage() {
       });
       navigate({ to: "/task/$id", params: { id } });
     } catch (err) {
-      toast.error("Задачата не беше публикувана.", {
-        description: err instanceof Error ? err.message : undefined,
-      });
+      const raw = err instanceof Error ? err.message : "";
+      const limitReached = raw.includes("FREE_TASK_LIMIT") || raw.includes("лимит");
+      toast.error(
+        limitReached ? "Достигна лимита от 5 безплатни задачи този месец." : "Задачата не беше публикувана.",
+        { description: limitReached ? "Опитай отново следващия месец." : raw || undefined },
+      );
     }
   };
 
