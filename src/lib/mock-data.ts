@@ -99,6 +99,7 @@ export type Task = {
   userId?: string;
   image?: string;
   status?: TaskStatus;
+  unlockCost?: number;
   gallery?: string[];
 };
 
