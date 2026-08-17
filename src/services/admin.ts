@@ -447,7 +447,7 @@ export async function getAdminPayments(): Promise<AdminPayment[]> {
 
 export type AuditEntry = {
   id: string;
-  adminId: string;
+  adminId: string | null;
   adminName: string;
   actionType: string;
   targetType: string;
@@ -467,7 +467,7 @@ export async function getAuditLog(filters: { admin: string; actionType: string }
   const { data, error } = await query;
   if (error) throw error;
   const rows = data ?? [];
-  const ids = [...new Set(rows.map((r) => r.admin_id))];
+  const ids = [...new Set(rows.map((r) => r.admin_id).filter((v): v is string => Boolean(v)))];
   const names = new Map<string, string>();
   if (ids.length) {
     const { data: profiles } = await supabase.from("profiles").select("id, full_name").in("id", ids);
@@ -476,7 +476,7 @@ export async function getAuditLog(filters: { admin: string; actionType: string }
   return rows.map((r) => ({
     id: r.id,
     adminId: r.admin_id,
-    adminName: names.get(r.admin_id) ?? "Админ",
+    adminName: r.admin_id ? (names.get(r.admin_id) ?? "Админ") : "Системата",
     actionType: r.action_type,
     targetType: r.target_type,
     targetId: r.target_id,
