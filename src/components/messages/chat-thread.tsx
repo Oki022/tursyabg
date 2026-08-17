@@ -194,6 +194,14 @@ export function ChatThread({ conversationId }: { conversationId: string }) {
         }}
         className="sticky bottom-0 z-10 flex shrink-0 items-center gap-2 border-t border-border/60 bg-background/95 px-3 py-3 backdrop-blur"
       >
+        {user && (!user.phone || !isValidBgPhone(user.phone)) ? (
+          <RequirePhoneNotice
+            className="w-full"
+            title="Добави телефон, за да пишеш съобщения"
+            description="Телефонът остава скрит — служи само за потвърждаване на профила ти."
+          />
+        ) : (
+          <>
         <Input
           value={text}
           onChange={(e) => setText(e.target.value)}
@@ -209,6 +217,8 @@ export function ChatThread({ conversationId }: { conversationId: string }) {
         >
           {send.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
         </Button>
+          </>
+        )}
       </form>
     </div>
   );
