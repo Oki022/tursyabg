@@ -25,7 +25,7 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { TaskCard } from "@/components/task-card";
 import { useAuth, getInitials } from "@/lib/auth";
-import { categories, getCategory, type TaskStatus } from "@/lib/mock-data";
+import { categories, type TaskStatus } from "@/lib/mock-data";
 import { useTasks } from "@/lib/tasks-context";
 import { toast } from "sonner";
 
@@ -93,7 +93,6 @@ function ProfilePage() {
   }
 
   const isWorker = user.role === "worker";
-  const myTasks = tasks.slice(0, 3);
 
   const handleLogout = () => {
     logout();
@@ -163,7 +162,7 @@ function ProfilePage() {
       {/* Role-specific sections */}
       <div className="mt-6 grid gap-6">
         {/* Твоите задачи */}
-        <section className="rounded-2xl border border-border/60 bg-card p-5 shadow-sm md:p-7">
+        <section className="min-w-0 rounded-2xl border border-border/60 bg-card p-5 shadow-sm md:p-7">
           <div className="flex items-center justify-between gap-3">
             <h2 className="text-lg font-semibold text-foreground">Твоите задачи</h2>
             <Button asChild size="sm" variant="outline">
@@ -175,12 +174,12 @@ function ProfilePage() {
             onValueChange={(v) => setTab(v as TaskStatus)}
             className="mt-4"
           >
-            <TabsList className="flex h-auto w-full flex-wrap justify-start gap-1 rounded-xl bg-muted/60 p-1">
+            <TabsList className="flex h-auto w-full max-w-full justify-start gap-1 overflow-x-auto rounded-xl bg-muted/60 p-1 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
               {TASK_TABS.map((t) => (
                 <TabsTrigger
                   key={t.value}
                   value={t.value}
-                  className="rounded-lg px-3 py-1.5 text-xs md:text-sm"
+                  className="shrink-0 whitespace-nowrap rounded-lg px-3 py-1.5 text-xs md:text-sm"
                 >
                   {t.label} ({byStatus[t.value].length})
                 </TabsTrigger>
@@ -206,7 +205,7 @@ function ProfilePage() {
         </section>
 
         {/* Настройки */}
-        <section className="rounded-2xl border border-border/60 bg-card p-5 shadow-sm md:p-7">
+        <section className="min-w-0 rounded-2xl border border-border/60 bg-card p-5 shadow-sm md:p-7">
           <h2 className="text-lg font-semibold text-foreground">Настройки</h2>
           <div className="mt-4 grid gap-2 sm:grid-cols-2">
             {SETTINGS_ITEMS.map((item) => {
@@ -230,9 +229,9 @@ function ProfilePage() {
           </div>
         </section>
 
-        {isWorker ? (
+        {isWorker && (
           <>
-            <section className="rounded-2xl border border-border/60 bg-card p-5 shadow-sm md:p-7">
+            <section className="min-w-0 rounded-2xl border border-border/60 bg-card p-5 shadow-sm md:p-7">
               <h2 className="text-lg font-semibold text-foreground">Моите умения</h2>
               <p className="mt-1 text-sm text-muted-foreground">
                 Избери категориите, в които предлагаш услуги.
@@ -259,7 +258,7 @@ function ProfilePage() {
               </div>
             </section>
 
-            <section className="rounded-2xl border border-border/60 bg-card p-5 shadow-sm md:p-7">
+            <section className="min-w-0 rounded-2xl border border-border/60 bg-card p-5 shadow-sm md:p-7">
               <h2 className="text-lg font-semibold text-foreground">Проверка на самоличността</h2>
               <p className="mt-1 text-sm text-muted-foreground">
                 Качи документ за самоличност, за да получиш синя значка и повече доверие.
@@ -283,48 +282,6 @@ function ProfilePage() {
               </div>
             </section>
           </>
-        ) : (
-          <section className="rounded-2xl border border-border/60 bg-card p-5 shadow-sm md:p-7">
-            <div className="flex items-center justify-between gap-3">
-              <h2 className="text-lg font-semibold text-foreground">Моите активни задачи</h2>
-              <Button asChild size="sm" variant="outline">
-                <Link to="/post">Възложи нова</Link>
-              </Button>
-            </div>
-            <div className="mt-4 grid gap-3">
-              {myTasks.map((t) => {
-                const cat = getCategory(t.category);
-                const Icon = cat.icon;
-                return (
-                  <Link
-                    key={t.id}
-                    to="/tasks/$taskId"
-                    params={{ taskId: t.id }}
-                    className="flex items-center gap-3 rounded-lg border border-border bg-background p-3 transition-colors hover:bg-accent/40"
-                  >
-                    <span className="grid h-10 w-10 shrink-0 place-items-center rounded-md bg-primary/10 text-primary">
-                      <Icon className="h-4 w-4" />
-                    </span>
-                    <div className="min-w-0 flex-1">
-                      <p className="truncate text-sm font-medium text-foreground">{t.title}</p>
-                      <p className="truncate text-xs text-muted-foreground">
-                        {t.location} · {t.postedAt}
-                      </p>
-                    </div>
-                    <span className="shrink-0 text-sm font-semibold text-foreground">
-                      {t.budget} €
-                    </span>
-                  </Link>
-                );
-              })}
-              {myTasks.length === 0 && (
-                <div className="rounded-lg border border-dashed border-border p-6 text-center text-sm text-muted-foreground">
-                  <ClipboardList className="mx-auto mb-2 h-6 w-6 opacity-60" />
-                  Все още нямаш активни задачи.
-                </div>
-              )}
-            </div>
-          </section>
         )}
       </div>
     </div>
