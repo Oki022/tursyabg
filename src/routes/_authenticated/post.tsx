@@ -8,6 +8,12 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { categories, detectCategory } from "@/lib/mock-data";
 import { useCreateTask } from "@/lib/tasks-api";
+import {
+  IMAGE_HELD_BG,
+  IMAGE_REJECT_BG,
+  categoryBg,
+  moderationErrorBg,
+} from "@/lib/moderation-messages";
 import { LocationCombobox } from "@/components/location-combobox";
 import { toast } from "sonner";
 import { useAuth } from "@/lib/auth";
@@ -81,7 +87,7 @@ function PostPage() {
       return;
     }
     try {
-      const id = await createTask.mutateAsync({
+      const result = await createTask.mutateAsync({
         title,
         category: category!,
         description,
@@ -89,15 +95,35 @@ function PostPage() {
         location: location!,
         files: photos.map((p) => p.file),
       });
-      toast.success("🎉 Задачата е публикувана успешно!", {
-        description: "Скоро ще получиш първите предложения.",
-      });
+      if (result.rejected.length > 0) {
+        toast.error(`${result.rejected.length} снимка(и) не бяха приети`, {
+          description: `${IMAGE_REJECT_BG} Причина: ${categoryBg(result.rejected[0])}.`,
+        });
+      }
+      if (result.held > 0) {
+        toast.warning("Снимки в проверка", { description: IMAGE_HELD_BG });
+      }
+      if (result.pending) {
+        toast.warning("Задачата чака преглед", {
+          description:
+            "Проверяваме съдържанието, преди задачата да стане публична. Обикновено отнема до няколко часа.",
+        });
+      } else {
+        toast.success("🎉 Задачата е публикувана успешно!", {
+          description: "Скоро ще получиш първите предложения.",
+        });
+      }
       if (containsContactInfo(`${title} ${description}`)) {
         toast.warning("Контактите са скрити автоматично", { description: CONTACT_MASK_WARNING });
       }
-      navigate({ to: "/posted/$id", params: { id } });
+      navigate({ to: "/posted/$id", params: { id: result.id } });
     } catch (err) {
       const raw = err instanceof Error ? err.message : "";
+      const moderation = moderationErrorBg(raw);
+      if (moderation) {
+        toast.error(moderation.title, { description: moderation.description });
+        return;
+      }
       const limitReached = raw.includes("FREE_TASK_LIMIT") || raw.includes("лимит");
       if (raw.includes("PHONE_REQUIRED")) {
         toast.error("Добави телефон в профила си, за да публикуваш задача.");
