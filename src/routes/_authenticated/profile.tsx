@@ -10,13 +10,9 @@ import {
   Wrench,
   HandHeart,
   Wallet,
-  Package,
-  Info,
-  ShieldCheck,
   UserCog,
+  ShieldCheck,
   Bell,
-  FileText,
-  Settings2,
   ChevronRight,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -41,14 +37,10 @@ const TASK_TABS: { value: TaskStatus; label: string; empty: string }[] = [
 ];
 
 const SETTINGS_ITEMS: { icon: typeof Wallet; label: string; to: string }[] = [
-  { icon: Wallet, label: "Зареди баланс", to: "/profile" },
-  { icon: Package, label: "Купи пакет", to: "/profile" },
-  { icon: Info, label: "Научи повече", to: "/profile" },
-  { icon: ShieldCheck, label: "Влизане и сигурност", to: "/profile" },
-  { icon: UserCog, label: "Редакция на профил", to: "/profile" },
-  { icon: Bell, label: "Управлявай нотификации", to: "/profile" },
-  { icon: FileText, label: "Данни за фактура", to: "/profile" },
-  { icon: Settings2, label: "Действия по моя профил", to: "/profile" },
+  { icon: UserCog, label: "Редакция на профил", to: "/settings/profile" },
+  { icon: ShieldCheck, label: "Влизане и сигурност", to: "/settings/security" },
+  { icon: Wallet, label: "Баланс и плащания", to: "/settings/billing" },
+  { icon: Bell, label: "Нотификации", to: "/settings/notifications" },
 ];
 
 export const Route = createFileRoute("/_authenticated/profile")({
