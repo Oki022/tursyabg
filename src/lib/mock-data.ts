@@ -1,4 +1,4 @@
-import { Wrench, Sparkles, Truck, Laptop, GraduationCap, Trees, PawPrint, Camera, Package } from "lucide-react";
+import { Wrench, Sparkles, Truck, Laptop, GraduationCap, Trees, PawPrint, Camera, Package, HeartPulse } from "lucide-react";
 
 export type Category = {
   id: string;
@@ -16,6 +16,7 @@ export const categories: Category[] = [
   { id: "gradina", name: "Градина и двор", icon: Trees, keywords: ["градина", "двор", "трева", "косене", "дървета", "храсти"] },
   { id: "domashni", name: "Домашни любимци", icon: PawPrint, keywords: ["куче", "котка", "разходка", "питомец", "любимец"] },
   { id: "foto", name: "Фото и видео", icon: Camera, keywords: ["снимки", "фото", "видео", "сватба", "заснемане"] },
+  { id: "krasota-zdrave", name: "Красота и здраве", icon: HeartPulse, keywords: ["коса", "фризьор", "маникюр", "грим", "масаж", "козметик", "красота", "здраве"] },
   { id: "drugi", name: "Други", icon: Package, keywords: [] },
 ];
 
