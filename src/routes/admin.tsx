@@ -34,7 +34,7 @@ const NAV = [
   { to: "/admin/users", label: "Потребители", icon: Users },
   { to: "/admin/payments", label: "Плащания", icon: CreditCard },
   { to: "/admin/audit", label: "Одит лог", icon: ScrollText },
-] as const;
+] as { to: string; label: string; icon: typeof LayoutDashboard; exact?: boolean }[];
 
 function AdminLayout() {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
