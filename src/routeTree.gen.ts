@@ -22,8 +22,11 @@ import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as TaskIdRouteImport } from './routes/task.$id'
 import { Route as BillingCancelRouteImport } from './routes/billing.cancel'
 import { Route as AuthVerifyRouteImport } from './routes/auth.verify'
+import { Route as AdminUsersRouteImport } from './routes/admin.users'
 import { Route as AdminTasksRouteImport } from './routes/admin.tasks'
 import { Route as AdminRefundsRouteImport } from './routes/admin.refunds'
+import { Route as AdminPaymentsRouteImport } from './routes/admin.payments'
+import { Route as AdminAuditRouteImport } from './routes/admin.audit'
 import { Route as AuthenticatedUnlockedRouteImport } from './routes/_authenticated/unlocked'
 import { Route as AuthenticatedProfileRouteImport } from './routes/_authenticated/profile'
 import { Route as AuthenticatedPostRouteImport } from './routes/_authenticated/post'
@@ -100,6 +103,11 @@ const AuthVerifyRoute = AuthVerifyRouteImport.update({
   path: '/verify',
   getParentRoute: () => AuthRoute,
 } as any)
+const AdminUsersRoute = AdminUsersRouteImport.update({
+  id: '/users',
+  path: '/users',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminTasksRoute = AdminTasksRouteImport.update({
   id: '/tasks',
   path: '/tasks',
@@ -108,6 +116,16 @@ const AdminTasksRoute = AdminTasksRouteImport.update({
 const AdminRefundsRoute = AdminRefundsRouteImport.update({
   id: '/refunds',
   path: '/refunds',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminPaymentsRoute = AdminPaymentsRouteImport.update({
+  id: '/payments',
+  path: '/payments',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminAuditRoute = AdminAuditRouteImport.update({
+  id: '/audit',
+  path: '/audit',
   getParentRoute: () => AdminRoute,
 } as any)
 const AuthenticatedUnlockedRoute = AuthenticatedUnlockedRouteImport.update({
@@ -186,8 +204,11 @@ export interface FileRoutesByFullPath {
   '/post': typeof AuthenticatedPostRoute
   '/profile': typeof AuthenticatedProfileRoute
   '/unlocked': typeof AuthenticatedUnlockedRoute
+  '/admin/audit': typeof AdminAuditRoute
+  '/admin/payments': typeof AdminPaymentsRoute
   '/admin/refunds': typeof AdminRefundsRoute
   '/admin/tasks': typeof AdminTasksRoute
+  '/admin/users': typeof AdminUsersRoute
   '/auth/verify': typeof AuthVerifyRoute
   '/billing/cancel': typeof BillingCancelRoute
   '/task/$id': typeof TaskIdRoute
@@ -212,8 +233,11 @@ export interface FileRoutesByTo {
   '/post': typeof AuthenticatedPostRoute
   '/profile': typeof AuthenticatedProfileRoute
   '/unlocked': typeof AuthenticatedUnlockedRoute
+  '/admin/audit': typeof AdminAuditRoute
+  '/admin/payments': typeof AdminPaymentsRoute
   '/admin/refunds': typeof AdminRefundsRoute
   '/admin/tasks': typeof AdminTasksRoute
+  '/admin/users': typeof AdminUsersRoute
   '/auth/verify': typeof AuthVerifyRoute
   '/billing/cancel': typeof BillingCancelRoute
   '/task/$id': typeof TaskIdRoute
@@ -241,8 +265,11 @@ export interface FileRoutesById {
   '/_authenticated/post': typeof AuthenticatedPostRoute
   '/_authenticated/profile': typeof AuthenticatedProfileRoute
   '/_authenticated/unlocked': typeof AuthenticatedUnlockedRoute
+  '/admin/audit': typeof AdminAuditRoute
+  '/admin/payments': typeof AdminPaymentsRoute
   '/admin/refunds': typeof AdminRefundsRoute
   '/admin/tasks': typeof AdminTasksRoute
+  '/admin/users': typeof AdminUsersRoute
   '/auth/verify': typeof AuthVerifyRoute
   '/billing/cancel': typeof BillingCancelRoute
   '/task/$id': typeof TaskIdRoute
@@ -270,8 +297,11 @@ export interface FileRouteTypes {
     | '/post'
     | '/profile'
     | '/unlocked'
+    | '/admin/audit'
+    | '/admin/payments'
     | '/admin/refunds'
     | '/admin/tasks'
+    | '/admin/users'
     | '/auth/verify'
     | '/billing/cancel'
     | '/task/$id'
@@ -296,8 +326,11 @@ export interface FileRouteTypes {
     | '/post'
     | '/profile'
     | '/unlocked'
+    | '/admin/audit'
+    | '/admin/payments'
     | '/admin/refunds'
     | '/admin/tasks'
+    | '/admin/users'
     | '/auth/verify'
     | '/billing/cancel'
     | '/task/$id'
@@ -324,8 +357,11 @@ export interface FileRouteTypes {
     | '/_authenticated/post'
     | '/_authenticated/profile'
     | '/_authenticated/unlocked'
+    | '/admin/audit'
+    | '/admin/payments'
     | '/admin/refunds'
     | '/admin/tasks'
+    | '/admin/users'
     | '/auth/verify'
     | '/billing/cancel'
     | '/task/$id'
@@ -448,6 +484,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthVerifyRouteImport
       parentRoute: typeof AuthRoute
     }
+    '/admin/users': {
+      id: '/admin/users'
+      path: '/users'
+      fullPath: '/admin/users'
+      preLoaderRoute: typeof AdminUsersRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/tasks': {
       id: '/admin/tasks'
       path: '/tasks'
@@ -460,6 +503,20 @@ declare module '@tanstack/react-router' {
       path: '/refunds'
       fullPath: '/admin/refunds'
       preLoaderRoute: typeof AdminRefundsRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/payments': {
+      id: '/admin/payments'
+      path: '/payments'
+      fullPath: '/admin/payments'
+      preLoaderRoute: typeof AdminPaymentsRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/audit': {
+      id: '/admin/audit'
+      path: '/audit'
+      fullPath: '/admin/audit'
+      preLoaderRoute: typeof AdminAuditRouteImport
       parentRoute: typeof AdminRoute
     }
     '/_authenticated/unlocked': {
@@ -574,14 +631,20 @@ const AuthenticatedRouteRouteWithChildren =
   AuthenticatedRouteRoute._addFileChildren(AuthenticatedRouteRouteChildren)
 
 interface AdminRouteChildren {
+  AdminAuditRoute: typeof AdminAuditRoute
+  AdminPaymentsRoute: typeof AdminPaymentsRoute
   AdminRefundsRoute: typeof AdminRefundsRoute
   AdminTasksRoute: typeof AdminTasksRoute
+  AdminUsersRoute: typeof AdminUsersRoute
   AdminIndexRoute: typeof AdminIndexRoute
 }
 
 const AdminRouteChildren: AdminRouteChildren = {
+  AdminAuditRoute: AdminAuditRoute,
+  AdminPaymentsRoute: AdminPaymentsRoute,
   AdminRefundsRoute: AdminRefundsRoute,
   AdminTasksRoute: AdminTasksRoute,
+  AdminUsersRoute: AdminUsersRoute,
   AdminIndexRoute: AdminIndexRoute,
 }
 
