@@ -19,6 +19,7 @@ import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as TaskIdRouteImport } from './routes/task.$id'
 import { Route as BillingCancelRouteImport } from './routes/billing.cancel'
+import { Route as AuthVerifyRouteImport } from './routes/auth.verify'
 import { Route as AuthenticatedUnlockedRouteImport } from './routes/_authenticated/unlocked'
 import { Route as AuthenticatedProfileRouteImport } from './routes/_authenticated/profile'
 import { Route as AuthenticatedPostRouteImport } from './routes/_authenticated/post'
@@ -79,6 +80,11 @@ const BillingCancelRoute = BillingCancelRouteImport.update({
   id: '/billing/cancel',
   path: '/billing/cancel',
   getParentRoute: () => rootRouteImport,
+} as any)
+const AuthVerifyRoute = AuthVerifyRouteImport.update({
+  id: '/verify',
+  path: '/verify',
+  getParentRoute: () => AuthRoute,
 } as any)
 const AuthenticatedUnlockedRoute = AuthenticatedUnlockedRouteImport.update({
   id: '/unlocked',
@@ -146,7 +152,7 @@ const ApiPublicPaymentsWebhookRoute =
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/auth': typeof AuthRoute
+  '/auth': typeof AuthRouteWithChildren
   '/privacy': typeof PrivacyRoute
   '/refund-policy': typeof RefundPolicyRoute
   '/reset-password': typeof ResetPasswordRoute
@@ -155,6 +161,7 @@ export interface FileRoutesByFullPath {
   '/post': typeof AuthenticatedPostRoute
   '/profile': typeof AuthenticatedProfileRoute
   '/unlocked': typeof AuthenticatedUnlockedRoute
+  '/auth/verify': typeof AuthVerifyRoute
   '/billing/cancel': typeof BillingCancelRoute
   '/task/$id': typeof TaskIdRoute
   '/billing/success': typeof AuthenticatedBillingSuccessRoute
@@ -168,7 +175,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/auth': typeof AuthRoute
+  '/auth': typeof AuthRouteWithChildren
   '/privacy': typeof PrivacyRoute
   '/refund-policy': typeof RefundPolicyRoute
   '/reset-password': typeof ResetPasswordRoute
@@ -177,6 +184,7 @@ export interface FileRoutesByTo {
   '/post': typeof AuthenticatedPostRoute
   '/profile': typeof AuthenticatedProfileRoute
   '/unlocked': typeof AuthenticatedUnlockedRoute
+  '/auth/verify': typeof AuthVerifyRoute
   '/billing/cancel': typeof BillingCancelRoute
   '/task/$id': typeof TaskIdRoute
   '/billing/success': typeof AuthenticatedBillingSuccessRoute
@@ -192,7 +200,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
-  '/auth': typeof AuthRoute
+  '/auth': typeof AuthRouteWithChildren
   '/privacy': typeof PrivacyRoute
   '/refund-policy': typeof RefundPolicyRoute
   '/reset-password': typeof ResetPasswordRoute
@@ -201,6 +209,7 @@ export interface FileRoutesById {
   '/_authenticated/post': typeof AuthenticatedPostRoute
   '/_authenticated/profile': typeof AuthenticatedProfileRoute
   '/_authenticated/unlocked': typeof AuthenticatedUnlockedRoute
+  '/auth/verify': typeof AuthVerifyRoute
   '/billing/cancel': typeof BillingCancelRoute
   '/task/$id': typeof TaskIdRoute
   '/_authenticated/billing/success': typeof AuthenticatedBillingSuccessRoute
@@ -225,6 +234,7 @@ export interface FileRouteTypes {
     | '/post'
     | '/profile'
     | '/unlocked'
+    | '/auth/verify'
     | '/billing/cancel'
     | '/task/$id'
     | '/billing/success'
@@ -247,6 +257,7 @@ export interface FileRouteTypes {
     | '/post'
     | '/profile'
     | '/unlocked'
+    | '/auth/verify'
     | '/billing/cancel'
     | '/task/$id'
     | '/billing/success'
@@ -270,6 +281,7 @@ export interface FileRouteTypes {
     | '/_authenticated/post'
     | '/_authenticated/profile'
     | '/_authenticated/unlocked'
+    | '/auth/verify'
     | '/billing/cancel'
     | '/task/$id'
     | '/_authenticated/billing/success'
@@ -285,7 +297,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
-  AuthRoute: typeof AuthRoute
+  AuthRoute: typeof AuthRouteWithChildren
   PrivacyRoute: typeof PrivacyRoute
   RefundPolicyRoute: typeof RefundPolicyRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
@@ -367,6 +379,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/billing/cancel'
       preLoaderRoute: typeof BillingCancelRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/auth/verify': {
+      id: '/auth/verify'
+      path: '/verify'
+      fullPath: '/auth/verify'
+      preLoaderRoute: typeof AuthVerifyRouteImport
+      parentRoute: typeof AuthRoute
     }
     '/_authenticated/unlocked': {
       id: '/_authenticated/unlocked'
@@ -479,10 +498,20 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
 const AuthenticatedRouteRouteWithChildren =
   AuthenticatedRouteRoute._addFileChildren(AuthenticatedRouteRouteChildren)
 
+interface AuthRouteChildren {
+  AuthVerifyRoute: typeof AuthVerifyRoute
+}
+
+const AuthRouteChildren: AuthRouteChildren = {
+  AuthVerifyRoute: AuthVerifyRoute,
+}
+
+const AuthRouteWithChildren = AuthRoute._addFileChildren(AuthRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
-  AuthRoute: AuthRoute,
+  AuthRoute: AuthRouteWithChildren,
   PrivacyRoute: PrivacyRoute,
   RefundPolicyRoute: RefundPolicyRoute,
   ResetPasswordRoute: ResetPasswordRoute,
