@@ -120,7 +120,7 @@ function RootComponent() {
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
         <TasksProvider>
-          <div className="flex min-h-screen flex-col bg-background">
+          <div className="flex min-h-screen flex-col bg-background pb-20 md:pb-0">
             <SiteHeader />
             <main className="flex-1"><Outlet /></main>
             <SiteFooter />
