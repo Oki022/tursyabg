@@ -358,7 +358,17 @@ function TaskDetails() {
                   </AvatarFallback>
                 </Avatar>
                 <div className="min-w-0">
-                  <div className="truncate text-sm font-semibold text-slate-900">{task.author}</div>
+                  {task.userId ? (
+                    <Link
+                      to="/user/$id"
+                      params={{ id: task.userId }}
+                      className="block truncate text-sm font-semibold text-slate-900 hover:underline"
+                    >
+                      {task.author}
+                    </Link>
+                  ) : (
+                    <div className="truncate text-sm font-semibold text-slate-900">{task.author}</div>
+                  )}
                   <div className="mt-0.5 flex items-center gap-1 text-xs text-muted-foreground">
                     <CalendarDays className="h-3.5 w-3.5" /> Член от 2026 г.
                   </div>
