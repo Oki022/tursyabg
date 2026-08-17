@@ -230,6 +230,34 @@ function AuthPage() {
           </div>
 
           {isRegister && (
+            <div className="grid gap-1.5">
+              <Label htmlFor="phone">Телефон</Label>
+              <div className="relative">
+                <PhoneCall className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                <Input
+                  id="phone"
+                  inputMode="tel"
+                  value={phone}
+                  onChange={(e) => {
+                    setPhone(e.target.value);
+                    setTouched((t) => ({ ...t, phone: true }));
+                  }}
+                  placeholder="0888123456"
+                  aria-invalid={Boolean(phoneMsg)}
+                  className={`h-10 pl-9 ${phoneMsg ? "border-destructive focus-visible:ring-destructive" : ""}`}
+                />
+              </div>
+              {phoneMsg ? (
+                <p className="text-xs text-destructive">{phoneMsg}</p>
+              ) : (
+                <p className="text-xs text-muted-foreground">
+                  Скрит е за всички — вижда се само след отключване с кредити.
+                </p>
+              )}
+            </div>
+          )}
+
+          {isRegister && (
             <div className="grid gap-2">
               <Label>Каква е твоята роля?</Label>
               <div className="grid grid-cols-2 gap-2">
