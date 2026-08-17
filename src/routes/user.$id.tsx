@@ -8,6 +8,7 @@ import { getInitials } from "@/lib/auth";
 import { usePublicProfile, usePublicReviews } from "@/lib/reviews-api";
 import { ReviewList } from "@/components/reviews/review-list";
 import { Stars } from "@/components/reviews/stars";
+import { ReportContentDialog } from "@/components/moderation/report-content-dialog";
 import type { ReviewDirection } from "@/services/reviews";
 
 export const Route = createFileRoute("/user/$id")({
@@ -105,6 +106,10 @@ function PublicProfilePage() {
               <BadgeCheck className="h-4 w-4 text-primary" /> Нов потребител — още няма отзиви
             </span>
           )}
+        </div>
+
+        <div className="mt-3 flex justify-end">
+          <ReportContentDialog contentType="profile" contentId={profile.id} />
         </div>
       </section>
 
