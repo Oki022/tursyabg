@@ -1,5 +1,5 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
-import { useState } from "react";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { useEffect, useState } from "react";
 import {
   ArrowLeft,
   CalendarDays,
@@ -25,7 +25,7 @@ import {
 } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
 import { getInitials, useAuth } from "@/lib/auth";
-import { supabase } from "@/integrations/supabase/client";
+import { findOrCreateConversation, useSendMessage, useThread } from "@/lib/messages-api";
 import { getCategory } from "@/lib/mock-data";
 import { useTask } from "@/lib/tasks-api";
 import { toast } from "sonner";
@@ -74,6 +74,26 @@ function TaskDetails() {
   const [messageOpen, setMessageOpen] = useState(false);
   const [messageText, setMessageText] = useState("");
   const [sending, setSending] = useState(false);
+  const [conversationId, setConversationId] = useState<string | undefined>(undefined);
+  const navigate = useNavigate();
+  const send = useSendMessage();
+  const existingThread = useThread(conversationId);
+  const previousMessages = (existingThread.data?.pages ?? []).flatMap((page) => page.items);
+
+  const isOwner = Boolean(user && task?.userId && user.id === task.userId);
+
+  useEffect(() => {
+    if (!messageOpen || !user || !task?.userId || user.id === task.userId) return;
+    let cancelled = false;
+    findOrCreateConversation(task.id, task.userId)
+      .then((id) => {
+        if (!cancelled) setConversationId(id);
+      })
+      .catch(() => undefined);
+    return () => {
+      cancelled = true;
+    };
+  }, [messageOpen, user, task?.id, task?.userId]);
 
   if (isLoading) {
     return (
@@ -104,33 +124,41 @@ function TaskDetails() {
   const prev = () => setActive((index) => (index - 1 + images.length) % images.length);
   const next = () => setActive((index) => (index + 1) % images.length);
 
+  const openMessageModal = () => {
+    if (!user) {
+      void navigate({ to: "/auth", search: { redirect: `/task/${task.id}` } });
+      return;
+    }
+    setMessageOpen(true);
+  };
+
   const handleSendMessage = async () => {
     if (!messageText.trim()) {
       toast.error("Моля въведете съобщение");
       return;
     }
-    if (!user) {
-      toast.error("Влез в профила си, за да изпратиш съобщение.");
-      return;
-    }
-    if (!task.userId) return;
+    if (!user || !task.userId) return;
     setSending(true);
-    const { error } = await supabase.from("messages").insert({
-      task_id: task.id,
-      sender_id: user.id,
-      receiver_id: task.userId,
-      content: messageText.trim(),
-    });
-    setSending(false);
-    if (error) {
+    try {
+      const convId = conversationId ?? (await findOrCreateConversation(task.id, task.userId));
+      setConversationId(convId);
+      await send.mutateAsync({
+        conversationId: convId,
+        receiverId: task.userId,
+        taskId: task.id,
+        content: messageText,
+      });
+      setMessageOpen(false);
+      setMessageText("");
+      toast.success("✅ Съобщението е изпратено успешно!", {
+        description: "Виж разговора в Съобщения.",
+        action: { label: "Отвори", onClick: () => void navigate({ to: "/messages" }) },
+      });
+    } catch {
       toast.error("Съобщението не беше изпратено.");
-      return;
+    } finally {
+      setSending(false);
     }
-    setMessageOpen(false);
-    setMessageText("");
-    toast.success("✅ Съобщението е изпратено успешно!", {
-      description: `${task.author} ще получи известие.`,
-    });
   };
 
   return (
@@ -233,13 +261,11 @@ function TaskDetails() {
               >
                 <Phone className="h-4 w-4" /> Обади се
               </Button>
-              <Button
-                size="lg"
-                className="w-full gap-2"
-                onClick={() => setMessageOpen(true)}
-              >
-                <MessageSquare className="h-4 w-4" /> Изпрати съобщение
-              </Button>
+              {!isOwner && (
+                <Button size="lg" className="w-full gap-2" onClick={openMessageModal}>
+                  <MessageSquare className="h-4 w-4" /> Изпрати съобщение
+                </Button>
+              )}
             </div>
 
             <div className="mt-5 flex items-center gap-1.5 rounded-2xl bg-secondary/60 px-3 py-2 text-xs text-muted-foreground">
@@ -305,6 +331,24 @@ function TaskDetails() {
               {task.title}
             </div>
           </div>
+
+          {previousMessages.length > 0 && (
+            <div className="max-h-48 space-y-2 overflow-y-auto rounded-xl bg-slate-50 p-3 ring-1 ring-border/60">
+              {previousMessages.map((m) => (
+                <div key={m.id} className={`flex ${m.senderId === user?.id ? "justify-end" : "justify-start"}`}>
+                  <div
+                    className={`max-w-[80%] whitespace-pre-wrap break-words rounded-2xl px-3 py-2 text-sm ${
+                      m.senderId === user?.id
+                        ? "bg-gradient-to-r from-orange-500 to-rose-500 text-white"
+                        : "bg-white text-slate-900 ring-1 ring-border/60"
+                    }`}
+                  >
+                    {m.content}
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
 
           <Textarea
             value={messageText}
