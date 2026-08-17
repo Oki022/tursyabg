@@ -300,6 +300,57 @@ export type Database = {
           },
         ]
       }
+      notifications: {
+        Row: {
+          body: string
+          created_at: string
+          id: string
+          link: string | null
+          read_at: string | null
+          task_id: string | null
+          title: string
+          type: Database["public"]["Enums"]["notification_type"]
+          user_id: string
+        }
+        Insert: {
+          body?: string
+          created_at?: string
+          id?: string
+          link?: string | null
+          read_at?: string | null
+          task_id?: string | null
+          title: string
+          type: Database["public"]["Enums"]["notification_type"]
+          user_id: string
+        }
+        Update: {
+          body?: string
+          created_at?: string
+          id?: string
+          link?: string | null
+          read_at?: string | null
+          task_id?: string | null
+          title?: string
+          type?: Database["public"]["Enums"]["notification_type"]
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "notifications_task_id_fkey"
+            columns: ["task_id"]
+            isOneToOne: false
+            referencedRelation: "tasks"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "notifications_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       payment_events: {
         Row: {
           event_id: string
@@ -922,10 +973,22 @@ export type Database = {
         Returns: undefined
       }
       mask_contacts: { Args: { input: string }; Returns: string }
+      push_notification: {
+        Args: {
+          _body: string
+          _link: string
+          _task_id: string
+          _title: string
+          _type: Database["public"]["Enums"]["notification_type"]
+          _user_id: string
+        }
+        Returns: string
+      }
       refund_payment: {
         Args: { _payment_intent: string; _status: string }
         Returns: Json
       }
+      sweep_expiry_notifications: { Args: never; Returns: undefined }
       unlock_task_contact: { Args: { _task_id: string }; Returns: Json }
     }
     Enums: {
@@ -936,6 +999,16 @@ export type Database = {
         | "refund"
         | "bonus"
         | "promo_spend"
+      notification_type:
+        | "new_message"
+        | "contact_unlocked"
+        | "task_expiring"
+        | "task_expired"
+        | "promo_expiring"
+        | "credits_low"
+        | "refund_approved"
+        | "refund_rejected"
+        | "task_reported"
       promo_type: "bump" | "urgent" | "top"
       refund_reason:
         | "fake_task"
@@ -1087,6 +1160,17 @@ export const Constants = {
         "refund",
         "bonus",
         "promo_spend",
+      ],
+      notification_type: [
+        "new_message",
+        "contact_unlocked",
+        "task_expiring",
+        "task_expired",
+        "promo_expiring",
+        "credits_low",
+        "refund_approved",
+        "refund_rejected",
+        "task_reported",
       ],
       promo_type: ["bump", "urgent", "top"],
       refund_reason: [
