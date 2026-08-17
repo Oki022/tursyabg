@@ -8,6 +8,7 @@ import {
   ScrollText,
   Star,
   ArrowLeft,
+  ShieldAlert,
 } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
@@ -31,6 +32,7 @@ export const Route = createFileRoute("/admin")({
 const NAV = [
   { to: "/admin", label: "Табло", icon: LayoutDashboard, exact: true },
   { to: "/admin/refunds", label: "Възстановявания", icon: Receipt },
+  { to: "/admin/moderation", label: "Модерация", icon: ShieldAlert },
   { to: "/admin/tasks", label: "Задачи", icon: ClipboardList },
   { to: "/admin/reviews", label: "Отзиви", icon: Star },
   { to: "/admin/users", label: "Потребители", icon: Users },
