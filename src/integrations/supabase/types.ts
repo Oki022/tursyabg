@@ -1586,6 +1586,17 @@ export type Database = {
         }
         Returns: Json
       }
+      record_image_moderation: {
+        Args: {
+          _image_id: string
+          _labels: Json
+          _provider: string
+          _score: number
+          _status: string
+          _unavailable: boolean
+        }
+        Returns: Json
+      }
       refund_payment: {
         Args: { _payment_intent: string; _status: string }
         Returns: Json
