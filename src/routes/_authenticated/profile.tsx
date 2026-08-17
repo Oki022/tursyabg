@@ -330,16 +330,27 @@ function OwnerTaskCard({
     <div className="flex min-w-0 flex-col gap-2">
       <TaskCard task={{ ...task, isTop: promotions.some((p) => p.type === "top"), isUrgent: promotions.some((p) => p.type === "urgent") }} />
       <div className="min-w-0 rounded-xl border border-border/60 bg-card p-2 text-[11px]">
-        <div className="flex items-center gap-1 text-muted-foreground">
+        {promotions.length > 0 && <PromotedBadge className="mb-1" />}
+        <div className="flex flex-wrap items-center gap-1 text-muted-foreground">
           <Eye className="h-3 w-3 shrink-0" />
-          <span className="truncate">{task.viewCount ?? 0} преглеждания</span>
+          <span className="break-words">{task.viewCount ?? 0} преглеждания</span>
         </div>
         {promotions.length > 0 ? (
-          <div className="mt-1 space-y-0.5">
+          <div className="mt-1.5 flex flex-col gap-1">
             {promotions.map((p) => (
-              <div key={p.id} className="flex min-w-0 items-center justify-between gap-1">
-                <span className="shrink-0 font-semibold text-primary">{PROMO_LABELS[p.type]}</span>
-                <span className="truncate text-muted-foreground">{remainingLabel(p.expiresAt)}</span>
+              <div key={p.id} className="flex min-w-0 flex-wrap items-center gap-1">
+                {p.type === "top" ? (
+                  <TopBadge />
+                ) : p.type === "urgent" ? (
+                  <UrgentBadge />
+                ) : (
+                  <span className="rounded-full bg-secondary px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-foreground">
+                    {PROMO_LABELS[p.type]}
+                  </span>
+                )}
+                <span className="break-words text-muted-foreground">
+                  {remainingLabel(p.expiresAt).replace("Активна още ", "")}
+                </span>
               </div>
             ))}
           </div>
@@ -347,7 +358,8 @@ function OwnerTaskCard({
           <p className="mt-1 text-muted-foreground">Няма активни промоции.</p>
         )}
         <Button size="sm" variant="outline" className="mt-2 h-7 w-full gap-1 text-[11px]" onClick={onPromote}>
-          <Rocket className="h-3 w-3" /> Промотирай
+          <Rocket className="h-3 w-3" />
+          {promotions.length > 0 ? "Управлявай" : "Промотирай"}
         </Button>
       </div>
     </div>
