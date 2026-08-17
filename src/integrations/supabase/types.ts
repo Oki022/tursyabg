@@ -63,6 +63,145 @@ export type Database = {
           },
         ]
       }
+      credit_packages: {
+        Row: {
+          created_at: string
+          credits: number
+          id: string
+          is_active: boolean
+          name: string
+          price_eur: number
+          sort_order: number
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          credits: number
+          id?: string
+          is_active?: boolean
+          name: string
+          price_eur: number
+          sort_order?: number
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          credits?: number
+          id?: string
+          is_active?: boolean
+          name?: string
+          price_eur?: number
+          sort_order?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      credit_refund_requests: {
+        Row: {
+          created_at: string
+          details: string
+          id: string
+          reason: Database["public"]["Enums"]["refund_reason"]
+          resolved_at: string | null
+          status: Database["public"]["Enums"]["refund_status"]
+          unlock_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          details?: string
+          id?: string
+          reason: Database["public"]["Enums"]["refund_reason"]
+          resolved_at?: string | null
+          status?: Database["public"]["Enums"]["refund_status"]
+          unlock_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          details?: string
+          id?: string
+          reason?: Database["public"]["Enums"]["refund_reason"]
+          resolved_at?: string | null
+          status?: Database["public"]["Enums"]["refund_status"]
+          unlock_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "credit_refund_requests_unlock_id_fkey"
+            columns: ["unlock_id"]
+            isOneToOne: true
+            referencedRelation: "task_unlocks"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "credit_refund_requests_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      credit_transactions: {
+        Row: {
+          amount: number
+          balance_after: number
+          created_at: string
+          description: string
+          id: string
+          package_id: string | null
+          task_id: string | null
+          type: Database["public"]["Enums"]["credit_transaction_type"]
+          user_id: string
+        }
+        Insert: {
+          amount: number
+          balance_after: number
+          created_at?: string
+          description?: string
+          id?: string
+          package_id?: string | null
+          task_id?: string | null
+          type: Database["public"]["Enums"]["credit_transaction_type"]
+          user_id: string
+        }
+        Update: {
+          amount?: number
+          balance_after?: number
+          created_at?: string
+          description?: string
+          id?: string
+          package_id?: string | null
+          task_id?: string | null
+          type?: Database["public"]["Enums"]["credit_transaction_type"]
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "credit_transactions_package_id_fkey"
+            columns: ["package_id"]
+            isOneToOne: false
+            referencedRelation: "credit_packages"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "credit_transactions_task_id_fkey"
+            columns: ["task_id"]
+            isOneToOne: false
+            referencedRelation: "tasks"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "credit_transactions_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       messages: {
         Row: {
           content: string
@@ -125,36 +264,71 @@ export type Database = {
           },
         ]
       }
+      profile_contacts: {
+        Row: {
+          created_at: string
+          phone: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          phone?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          phone?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "profile_contacts_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: true
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           avatar_url: string | null
           balance: number
           city: string | null
           created_at: string
+          credits: number
+          free_tasks_reset_at: string
+          free_tasks_used_this_month: number
           full_name: string | null
           id: string
           neighborhood: string | null
-          phone: string | null
         }
         Insert: {
           avatar_url?: string | null
           balance?: number
           city?: string | null
           created_at?: string
+          credits?: number
+          free_tasks_reset_at?: string
+          free_tasks_used_this_month?: number
           full_name?: string | null
           id: string
           neighborhood?: string | null
-          phone?: string | null
         }
         Update: {
           avatar_url?: string | null
           balance?: number
           city?: string | null
           created_at?: string
+          credits?: number
+          free_tasks_reset_at?: string
+          free_tasks_used_this_month?: number
           full_name?: string | null
           id?: string
           neighborhood?: string | null
-          phone?: string | null
         }
         Relationships: []
       }
@@ -190,6 +364,48 @@ export type Database = {
           },
         ]
       }
+      task_unlocks: {
+        Row: {
+          credits_spent: number
+          expires_at: string
+          id: string
+          task_id: string
+          unlocked_at: string
+          user_id: string
+        }
+        Insert: {
+          credits_spent: number
+          expires_at?: string
+          id?: string
+          task_id: string
+          unlocked_at?: string
+          user_id: string
+        }
+        Update: {
+          credits_spent?: number
+          expires_at?: string
+          id?: string
+          task_id?: string
+          unlocked_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "task_unlocks_task_id_fkey"
+            columns: ["task_id"]
+            isOneToOne: false
+            referencedRelation: "tasks"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "task_unlocks_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       tasks: {
         Row: {
           budget: number
@@ -203,6 +419,7 @@ export type Database = {
           neighborhood: string | null
           status: Database["public"]["Enums"]["task_status"]
           title: string
+          unlock_cost: number | null
           updated_at: string
           user_id: string
           view_count: number
@@ -219,6 +436,7 @@ export type Database = {
           neighborhood?: string | null
           status?: Database["public"]["Enums"]["task_status"]
           title: string
+          unlock_cost?: number | null
           updated_at?: string
           user_id: string
           view_count?: number
@@ -235,6 +453,7 @@ export type Database = {
           neighborhood?: string | null
           status?: Database["public"]["Enums"]["task_status"]
           title?: string
+          unlock_cost?: number | null
           updated_at?: string
           user_id?: string
           view_count?: number
@@ -258,8 +477,24 @@ export type Database = {
         Args: { _other_user: string; _task_id: string }
         Returns: string
       }
+      get_unlock_cost: { Args: { task_budget: number }; Returns: number }
+      mask_contacts: { Args: { input: string }; Returns: string }
+      unlock_task_contact: { Args: { _task_id: string }; Returns: Json }
     }
     Enums: {
+      credit_transaction_type:
+        | "purchase"
+        | "unlock"
+        | "refund"
+        | "bonus"
+        | "promo_spend"
+      refund_reason:
+        | "fake_task"
+        | "already_taken"
+        | "no_response"
+        | "wrong_category"
+        | "other"
+      refund_status: "pending" | "approved" | "rejected"
       task_status: "active" | "pending" | "pending_payment" | "inactive"
     }
     CompositeTypes: {
@@ -388,6 +623,21 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
+      credit_transaction_type: [
+        "purchase",
+        "unlock",
+        "refund",
+        "bonus",
+        "promo_spend",
+      ],
+      refund_reason: [
+        "fake_task",
+        "already_taken",
+        "no_response",
+        "wrong_category",
+        "other",
+      ],
+      refund_status: ["pending", "approved", "rejected"],
       task_status: ["active", "pending", "pending_payment", "inactive"],
     },
   },
