@@ -1,10 +1,7 @@
-import { useCallback, useMemo } from "react";
-import { EmbeddedCheckout, EmbeddedCheckoutProvider } from "@stripe/react-stripe-js";
 import { Link, useNavigate } from "@tanstack/react-router";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { getStripe } from "@/lib/stripe";
-import { createCheckout } from "@/services/payments";
+import { getProvider, type PaymentProvider } from "@/services/payments";
 import { creditsLabel, formatEur } from "@/services/credits";
 import { toast } from "sonner";
 
@@ -13,21 +10,15 @@ type Pkg = { id: string; name: string; credits: number; priceEur: number };
 export function BuyCreditsDialog({
   pkg,
   onOpenChange,
+  provider = "stripe",
 }: {
   pkg: Pkg | null;
   onOpenChange: (open: boolean) => void;
+  provider?: PaymentProvider;
 }) {
   const navigate = useNavigate();
-  const packageId = pkg?.id ?? null;
-
-  const fetchClientSecret = useCallback(async () => {
-    if (!packageId) throw new Error("Няма избран пакет.");
-    const start = await createCheckout(packageId, "stripe");
-    if (start.kind !== "embedded") throw new Error("Неподдържан метод на плащане.");
-    return start.clientSecret;
-  }, [packageId]);
-
-  const options = useMemo(() => ({ fetchClientSecret }), [fetchClientSecret]);
+  const adapter = getProvider(provider);
+  const CheckoutSurface = adapter?.CheckoutSurface;
 
   return (
     <Dialog open={Boolean(pkg)} onOpenChange={onOpenChange}>
@@ -39,12 +30,16 @@ export function BuyCreditsDialog({
           </DialogDescription>
         </DialogHeader>
 
-        {pkg && (
+        {pkg && CheckoutSurface && (
           <div className="rounded-xl border border-border/60 bg-background p-1">
-            <EmbeddedCheckoutProvider key={pkg.id} stripe={getStripe()} options={options}>
-              <EmbeddedCheckout />
-            </EmbeddedCheckoutProvider>
+            <CheckoutSurface packageId={pkg.id} />
           </div>
+        )}
+
+        {pkg && !CheckoutSurface && (
+          <p className="rounded-xl border border-border/60 bg-background p-4 text-sm text-muted-foreground">
+            Този метод на плащане още не е наличен.
+          </p>
         )}
 
         <p className="text-xs text-muted-foreground">

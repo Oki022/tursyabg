@@ -3,15 +3,15 @@ import { useEffect, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { CheckCircle2, Loader2, Receipt, TriangleAlert } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { supabase } from "@/integrations/supabase/client";
-import { getPaymentBySession } from "@/services/payments";
+import { getPaymentByReference, subscribeToPayment } from "@/services/payments";
 import { creditsLabel, formatEur } from "@/services/credits";
 
-type SuccessSearch = { session_id?: string };
+type SuccessSearch = { session_id?: string; ref?: string };
 
 export const Route = createFileRoute("/_authenticated/billing/success")({
   validateSearch: (s: Record<string, unknown>): SuccessSearch => ({
     session_id: typeof s["session_id"] === "string" ? s["session_id"] : undefined,
+    ref: typeof s["ref"] === "string" ? s["ref"] : undefined,
   }),
   head: () => ({
     meta: [
@@ -29,14 +29,16 @@ export const Route = createFileRoute("/_authenticated/billing/success")({
 const MAX_WAIT_MS = 90_000;
 
 function BillingSuccessPage() {
-  const { session_id: sessionId } = Route.useSearch();
+  const search = Route.useSearch();
+  // Opaque provider reference — Stripe returns it as `session_id`, other providers use `ref`.
+  const reference = search.ref ?? search.session_id;
   const qc = useQueryClient();
   const [timedOut, setTimedOut] = useState(false);
 
   const paymentQuery = useQuery({
-    queryKey: ["payment", sessionId],
-    enabled: Boolean(sessionId) && !timedOut,
-    queryFn: () => getPaymentBySession(sessionId!),
+    queryKey: ["payment", reference],
+    enabled: Boolean(reference) && !timedOut,
+    queryFn: () => getPaymentByReference(reference!),
     refetchInterval: (q) => (q.state.data?.status === "completed" ? false : 2000),
   });
 
@@ -45,21 +47,11 @@ function BillingSuccessPage() {
 
   // Realtime: react the moment the webhook writes the row.
   useEffect(() => {
-    if (!sessionId || confirmed) return;
-    const channel = supabase
-      .channel(`payment-${sessionId}`)
-      .on(
-        "postgres_changes",
-        { event: "UPDATE", schema: "public", table: "payments", filter: `stripe_session_id=eq.${sessionId}` },
-        () => {
-          void paymentQuery.refetch();
-        },
-      )
-      .subscribe();
-    return () => {
-      void supabase.removeChannel(channel);
-    };
-  }, [sessionId, confirmed, paymentQuery]);
+    if (!reference || confirmed) return;
+    return subscribeToPayment(reference, () => {
+      void paymentQuery.refetch();
+    });
+  }, [reference, confirmed, paymentQuery]);
 
   useEffect(() => {
     if (confirmed) {
@@ -74,7 +66,7 @@ function BillingSuccessPage() {
     return () => clearTimeout(t);
   }, [confirmed]);
 
-  if (!sessionId) {
+  if (!reference) {
     return (
       <Shell icon={<TriangleAlert className="h-12 w-12 text-amber-500" />} title="Липсва информация за плащането">
         <p className="text-sm text-muted-foreground">
