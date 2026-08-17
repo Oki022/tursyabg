@@ -25,6 +25,7 @@ import {
   formatDateBg,
   getAdminTasks,
   getPendingReports,
+  getTaskDeletePreview,
   REPORT_REASON_BG,
   setReportStatus,
   updateTaskCategory,
@@ -54,6 +55,16 @@ const STATUS_BG: Record<string, string> = {
 
 const PAGE_SIZE = 10;
 
+/** Deletion always requires an explicit reason; only `fraud` triggers automatic refunds. */
+const DELETE_REASONS: { key: string; label: string; fraudulent: boolean }[] = [
+  { key: "fraud", label: "Измамна задача (кредитите се връщат)", fraudulent: true },
+  { key: "spam", label: "Спам", fraudulent: false },
+  { key: "inappropriate", label: "Неподходящо съдържание", fraudulent: false },
+  { key: "duplicate", label: "Дублирана задача", fraudulent: false },
+  { key: "owner_request", label: "По искане на възложителя", fraudulent: false },
+  { key: "other", label: "Друга причина", fraudulent: false },
+];
+
 function AdminTasks() {
   const qc = useQueryClient();
   const [filters, setFilters] = useState({ status: "all", category: "all", city: "all", days: "all", reportedOnly: false });
@@ -62,7 +73,17 @@ function AdminTasks() {
   const [deactivateTarget, setDeactivateTarget] = useState<AdminTask | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<AdminTask | null>(null);
   const [reason, setReason] = useState("");
-  const [fraudulent, setFraudulent] = useState(false);
+  const [deleteReasonKey, setDeleteReasonKey] = useState("");
+  const [deleteNote, setDeleteNote] = useState("");
+
+  const deleteReason = DELETE_REASONS.find((r) => r.key === deleteReasonKey);
+  const fraudulent = deleteReason?.fraudulent ?? false;
+
+  const preview = useQuery({
+    queryKey: ["admin", "delete-preview", deleteTarget?.id],
+    queryFn: () => getTaskDeletePreview(deleteTarget!.id),
+    enabled: Boolean(deleteTarget),
+  });
 
   const list = useQuery({ queryKey: ["admin", "tasks", filters], queryFn: () => getAdminTasks(filters) });
   const reports = useQuery({ queryKey: ["admin", "reports"], queryFn: getPendingReports });
@@ -90,12 +111,21 @@ function AdminTasks() {
   });
 
   const mDelete = useMutation({
-    mutationFn: () => deleteTask(deleteTarget!.id, reason, fraudulent),
-    onSuccess: () => {
-      toast.success("Задачата е изтрита.");
+    mutationFn: () =>
+      deleteTask(
+        deleteTarget!.id,
+        [deleteReason?.label ?? "", deleteNote.trim()].filter(Boolean).join(" — "),
+        fraudulent,
+      ),
+    onSuccess: (res) => {
+      toast.success(
+        res.refundedUsers > 0
+          ? `Задачата е изтрита. Върнати са ${res.refundedCredits} кредита на ${res.refundedUsers} потребители.`
+          : "Задачата е изтрита.",
+      );
       setDeleteTarget(null);
-      setReason("");
-      setFraudulent(false);
+      setDeleteReasonKey("");
+      setDeleteNote("");
       invalidate();
     },
     onError: () => toast.error("Изтриването не беше изпълнено."),
@@ -288,7 +318,16 @@ function AdminTasks() {
         </DialogContent>
       </Dialog>
 
-      <Dialog open={Boolean(deleteTarget)} onOpenChange={(o) => !o && setDeleteTarget(null)}>
+      <Dialog
+        open={Boolean(deleteTarget)}
+        onOpenChange={(o) => {
+          if (!o) {
+            setDeleteTarget(null);
+            setDeleteReasonKey("");
+            setDeleteNote("");
+          }
+        }}
+      >
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Изтрий задачата</DialogTitle>
@@ -296,20 +335,45 @@ function AdminTasks() {
               Действието е необратимо. Причината се записва в одит лога.
             </DialogDescription>
           </DialogHeader>
-          <Textarea value={reason} onChange={(e) => setReason(e.target.value)} rows={3} placeholder="Причина" />
-          <label className="flex items-start gap-2 text-sm text-slate-700">
-            <input
-              type="checkbox"
-              checked={fraudulent}
-              onChange={(e) => setFraudulent(e.target.checked)}
-              className="mt-0.5 h-4 w-4 rounded border-slate-300"
-            />
-            Задачата е измамна — върни кредитите на всички отключили я потребители.
-          </label>
+          <Select value={deleteReasonKey} onValueChange={setDeleteReasonKey}>
+            <SelectTrigger className="rounded-md">
+              <SelectValue placeholder="Избери причина за изтриване" />
+            </SelectTrigger>
+            <SelectContent>
+              {DELETE_REASONS.map((r) => (
+                <SelectItem key={r.key} value={r.key}>{r.label}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          <Textarea
+            value={deleteNote}
+            onChange={(e) => setDeleteNote(e.target.value)}
+            rows={3}
+            placeholder="Вътрешна бележка (по желание)"
+          />
+          <div className="rounded-md border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-700">
+            Контактът е отключен от <strong>{preview.data?.unlockers ?? 0}</strong> потребители
+            {" "}(общо <strong>{preview.data?.credits ?? 0}</strong> кредита).
+          </div>
+          {fraudulent ? (
+            <div className="rounded-md border border-amber-300 bg-amber-50 px-3 py-2 text-sm text-amber-900">
+              Задачата ще бъде премахната като измамна: {preview.data?.credits ?? 0} кредита ще бъдат върнати
+              автоматично на {preview.data?.unlockers ?? 0} потребители и те ще получат известие.
+            </div>
+          ) : (
+            <div className="rounded-md border border-slate-200 px-3 py-2 text-xs text-slate-600">
+              При тази причина кредити не се връщат. Ако задачата е измамна, избери „Измамна задача“.
+            </div>
+          )}
           <DialogFooter>
             <Button variant="outline" className="rounded-md" onClick={() => setDeleteTarget(null)}>Отказ</Button>
-            <Button variant="destructive" className="rounded-md" disabled={!reason.trim() || mDelete.isPending} onClick={() => mDelete.mutate()}>
-              Изтрий
+            <Button
+              variant="destructive"
+              className="rounded-md"
+              disabled={!deleteReasonKey || mDelete.isPending}
+              onClick={() => mDelete.mutate()}
+            >
+              {fraudulent ? "Изтрий и върни кредитите" : "Изтрий"}
             </Button>
           </DialogFooter>
         </DialogContent>

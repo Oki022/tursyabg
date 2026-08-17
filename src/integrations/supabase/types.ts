@@ -244,6 +244,33 @@ export type Database = {
           },
         ]
       }
+      cron_runs: {
+        Row: {
+          error: string | null
+          finished_at: string | null
+          id: string
+          job_name: string
+          rows_processed: number
+          started_at: string
+        }
+        Insert: {
+          error?: string | null
+          finished_at?: string | null
+          id?: string
+          job_name: string
+          rows_processed?: number
+          started_at?: string
+        }
+        Update: {
+          error?: string | null
+          finished_at?: string | null
+          id?: string
+          job_name?: string
+          rows_processed?: number
+          started_at?: string
+        }
+        Relationships: []
+      }
       engagements: {
         Row: {
           claimed_at: string
@@ -1076,6 +1103,17 @@ export type Database = {
         Args: { _category: string; _task_id: string }
         Returns: Json
       }
+      admin_cron_health: {
+        Args: never
+        Returns: {
+          job_name: string
+          last_error: string
+          last_run: string
+          last_success: string
+          rows_processed: number
+          stale: boolean
+        }[]
+      }
       admin_daily_series: {
         Args: never
         Returns: {
@@ -1085,12 +1123,10 @@ export type Database = {
         }[]
       }
       admin_dashboard_stats: { Args: never; Returns: Json }
-      admin_delete_task:
-        | { Args: { _reason: string; _task_id: string }; Returns: Json }
-        | {
-            Args: { _fraudulent?: boolean; _reason: string; _task_id: string }
-            Returns: Json
-          }
+      admin_delete_task: {
+        Args: { _fraudulent: boolean; _reason: string; _task_id: string }
+        Returns: Json
+      }
       admin_hide_review: {
         Args: { _reason: string; _review_id: string }
         Returns: Json
@@ -1153,6 +1189,7 @@ export type Database = {
         }
         Returns: Json
       }
+      admin_task_delete_preview: { Args: { _task_id: string }; Returns: Json }
       assign_engagement: {
         Args: { _professional_id: string; _task_id: string }
         Returns: Json
@@ -1317,6 +1354,7 @@ export type Database = {
         Args: { _engagement_id: string }
         Returns: number
       }
+      run_cron_job: { Args: { _job_name: string }; Returns: undefined }
       settle_refund: {
         Args: {
           _approve: boolean
@@ -1331,8 +1369,8 @@ export type Database = {
         Args: { _comment: string; _engagement_id: string; _rating: number }
         Returns: Json
       }
-      sweep_engagements: { Args: never; Returns: undefined }
-      sweep_expiry_notifications: { Args: never; Returns: undefined }
+      sweep_engagements: { Args: { _batch?: number }; Returns: number }
+      sweep_expiry_notifications: { Args: { _batch?: number }; Returns: number }
       task_unlockers: {
         Args: { _task_id: string }
         Returns: {

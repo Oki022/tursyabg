@@ -2,7 +2,15 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { AdminCard, AdminPage } from "@/components/admin/admin-page";
-import { getDailySeries, getDashboardStats, getPendingReports, REPORT_REASON_BG, formatDateBg } from "@/services/admin";
+import {
+  getDailySeries,
+  getDashboardStats,
+  getPendingReports,
+  getCronHealth,
+  CRON_JOB_BG,
+  REPORT_REASON_BG,
+  formatDateBg,
+} from "@/services/admin";
 import { formatEur } from "@/services/credits";
 import { Badge } from "@/components/ui/badge";
 
@@ -34,6 +42,8 @@ function AdminDashboard() {
   const stats = useQuery({ queryKey: ["admin", "stats"], queryFn: getDashboardStats });
   const series = useQuery({ queryKey: ["admin", "series"], queryFn: getDailySeries });
   const reports = useQuery({ queryKey: ["admin", "reports"], queryFn: getPendingReports });
+  const cron = useQuery({ queryKey: ["admin", "cron"], queryFn: getCronHealth, refetchInterval: 60_000 });
+  const staleJobs = (cron.data ?? []).filter((j) => j.stale);
 
   const s = stats.data;
 
@@ -59,6 +69,13 @@ function AdminDashboard() {
           )}
         </div>
       ) : null}
+
+      {staleJobs.length > 0 && (
+        <div className="rounded-md border border-rose-300 bg-rose-50 px-3 py-2 text-sm font-medium text-rose-900">
+          Внимание: {staleJobs.length === 1 ? "фонова задача не е изпълнявана" : "фонови задачи не са изпълнявани"} успешно
+          повече от 2 часа.
+        </div>
+      )}
 
       <div className="grid grid-cols-2 gap-3 md:grid-cols-3 xl:grid-cols-4">
         <Stat label="Потребители" value={String(s?.total_users ?? "—")} hint={`+${s?.new_users_7d ?? 0} за 7 дни · +${s?.new_users_30d ?? 0} за 30 дни`} />
@@ -99,6 +116,33 @@ function AdminDashboard() {
             </LineChart>
           </ResponsiveContainer>
         </div>
+      </AdminCard>
+
+      <AdminCard>
+        <div className="border-b border-slate-200 px-4 py-3 text-sm font-semibold text-slate-900">
+          Планировчик (фонови задачи)
+        </div>
+        <ul className="divide-y divide-slate-200">
+          {(cron.data ?? []).map((j) => (
+            <li key={j.job_name} className="flex flex-wrap items-center gap-2 px-4 py-3 text-sm">
+              <span className="font-medium text-slate-900">{CRON_JOB_BG[j.job_name] ?? j.job_name}</span>
+              {j.stale ? (
+                <Badge className="rounded bg-rose-100 text-rose-900 hover:bg-rose-100">Не е изпълнявана &gt; 2 ч.</Badge>
+              ) : (
+                <Badge className="rounded bg-emerald-100 text-emerald-900 hover:bg-emerald-100">Нормално</Badge>
+              )}
+              {j.last_error ? <span className="text-xs text-rose-700">Грешка: {j.last_error}</span> : null}
+              <span className="ml-auto text-xs text-slate-500">
+                {j.last_success
+                  ? `Последно успешно: ${formatDateBg(j.last_success)} · ${j.rows_processed ?? 0} обработени`
+                  : "Няма успешно изпълнение"}
+              </span>
+            </li>
+          ))}
+          {(cron.data ?? []).length === 0 && (
+            <li className="px-4 py-8 text-center text-sm text-slate-500">Няма данни за фонови задачи.</li>
+          )}
+        </ul>
       </AdminCard>
 
       <AdminCard>
