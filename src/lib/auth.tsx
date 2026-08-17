@@ -1,5 +1,6 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
 import type { Session } from "@supabase/supabase-js";
+import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 
 export type UserRole = "customer" | "worker";
@@ -14,6 +15,8 @@ export type AuthUser = {
   avatarUrl?: string;
   skills?: string[];
   verified?: boolean;
+  banned?: boolean;
+  banReason?: string | null;
 };
 
 type AuthContextValue = {
@@ -44,7 +47,7 @@ async function buildUser(session: Session): Promise<AuthUser> {
   const meta = (session.user.user_metadata ?? {}) as Record<string, unknown>;
   const { data: profile } = await supabase
     .from("profiles")
-    .select("id, full_name, avatar_url, credits")
+    .select("id, full_name, avatar_url, credits, banned_at, ban_reason")
     .eq("id", session.user.id)
     .maybeSingle();
   const { data: contact } = await supabase
@@ -73,6 +76,8 @@ async function buildUser(session: Session): Promise<AuthUser> {
     avatarUrl: profile?.avatar_url ?? undefined,
     skills: Array.isArray(meta.skills) ? (meta.skills as string[]) : [],
     verified: meta.verified === true,
+    banned: Boolean(profile?.banned_at),
+    banReason: profile?.ban_reason ?? null,
   };
 }
 
@@ -92,6 +97,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         return;
       }
       const next = await buildUser(session);
+      if (next.banned) {
+        toast.error(
+          next.banReason
+            ? `Профилът ти е блокиран: ${next.banReason}`
+            : "Профилът ти е блокиран. Свържи се с поддръжката.",
+        );
+        await supabase.auth.signOut();
+        if (active) {
+          setUser(null);
+          setLoading(false);
+        }
+        return;
+      }
       if (active) {
         setUser(next);
         setLoading(false);
