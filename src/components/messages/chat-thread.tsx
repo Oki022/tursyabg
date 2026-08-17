@@ -9,6 +9,8 @@ import { useConversation, useMarkAsRead, useSendMessage, useThread } from "@/lib
 import type { ChatMessage } from "@/services/messages";
 import { CONTACT_MASK_WARNING, containsContactInfo, isValidBgPhone } from "@/lib/phone";
 import { RequirePhoneNotice } from "@/components/require-phone-notice";
+import { ReportContentDialog } from "@/components/moderation/report-content-dialog";
+import { moderationErrorBg } from "@/lib/moderation-messages";
 import { toast } from "sonner";
 
 function dayLabel(iso: string) {
@@ -69,8 +71,13 @@ export function ChatThread({ conversationId }: { conversationId: string }) {
       if (containsContactInfo(content)) {
         toast.warning("Контактите са скрити автоматично", { description: CONTACT_MASK_WARNING });
       }
-    } catch {
+    } catch (err) {
       setText(content);
+      const moderation = moderationErrorBg(err instanceof Error ? err.message : "");
+      if (moderation) {
+        toast.error(moderation.title, { description: moderation.description });
+        return;
+      }
       toast.error("Съобщението не беше изпратено.");
     }
   };
@@ -165,7 +172,7 @@ export function ChatThread({ conversationId }: { conversationId: string }) {
                   </div>
                 )}
                 <div className={`flex ${mine ? "justify-end" : "justify-start"}`}>
-                  <div className="min-w-0 max-w-[80%]">
+                  <div className="group min-w-0 max-w-[80%]">
                     <div
                       className={`whitespace-pre-wrap break-words rounded-2xl px-4 py-2.5 text-sm ${
                         mine
@@ -175,8 +182,27 @@ export function ChatThread({ conversationId }: { conversationId: string }) {
                     >
                       {m.content}
                     </div>
-                    <div className={`mt-1 text-[11px] text-muted-foreground ${mine ? "text-right" : "text-left"}`}>
+                    <div
+                      className={`mt-1 flex items-center gap-1 text-[11px] text-muted-foreground ${
+                        mine ? "justify-end" : "justify-start"
+                      }`}
+                    >
                       {timeLabel(m.createdAt)}
+                      {!mine && (
+                        <ReportContentDialog
+                          contentType="message"
+                          contentId={m.id}
+                          trigger={
+                            <button
+                              type="button"
+                              aria-label="Докладвай съобщението"
+                              className="rounded p-0.5 text-muted-foreground/70 transition hover:text-foreground"
+                            >
+                              <Flag className="h-3 w-3" />
+                            </button>
+                          }
+                        />
+                      )}
                     </div>
                   </div>
                 </div>
