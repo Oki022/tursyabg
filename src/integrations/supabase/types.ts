@@ -44,6 +44,53 @@ export type Database = {
         }
         Relationships: []
       }
+      content_violations: {
+        Row: {
+          action_taken: string
+          auto_detected: boolean
+          content_id: string | null
+          content_type: string
+          created_at: string
+          id: string
+          reverted_at: string | null
+          severity: string
+          user_id: string
+          violation_type: string
+        }
+        Insert: {
+          action_taken?: string
+          auto_detected?: boolean
+          content_id?: string | null
+          content_type: string
+          created_at?: string
+          id?: string
+          reverted_at?: string | null
+          severity?: string
+          user_id: string
+          violation_type: string
+        }
+        Update: {
+          action_taken?: string
+          auto_detected?: boolean
+          content_id?: string | null
+          content_type?: string
+          created_at?: string
+          id?: string
+          reverted_at?: string | null
+          severity?: string
+          user_id?: string
+          violation_type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "content_violations_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       conversations: {
         Row: {
           created_at: string
@@ -394,6 +441,127 @@ export type Database = {
           },
         ]
       }
+      moderation_items: {
+        Row: {
+          category: string
+          content_id: string | null
+          content_type: string
+          created_at: string
+          details: Json
+          excerpt: string
+          id: string
+          kind: string
+          matched_pattern: string | null
+          reason: string
+          reporter_id: string | null
+          resolution_reason: string | null
+          resolved_at: string | null
+          resolved_by: string | null
+          severity: string
+          status: string
+          task_id: string | null
+          user_id: string | null
+        }
+        Insert: {
+          category?: string
+          content_id?: string | null
+          content_type: string
+          created_at?: string
+          details?: Json
+          excerpt?: string
+          id?: string
+          kind: string
+          matched_pattern?: string | null
+          reason?: string
+          reporter_id?: string | null
+          resolution_reason?: string | null
+          resolved_at?: string | null
+          resolved_by?: string | null
+          severity?: string
+          status?: string
+          task_id?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          category?: string
+          content_id?: string | null
+          content_type?: string
+          created_at?: string
+          details?: Json
+          excerpt?: string
+          id?: string
+          kind?: string
+          matched_pattern?: string | null
+          reason?: string
+          reporter_id?: string | null
+          resolution_reason?: string | null
+          resolved_at?: string | null
+          resolved_by?: string | null
+          severity?: string
+          status?: string
+          task_id?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "moderation_items_reporter_id_fkey"
+            columns: ["reporter_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "moderation_items_task_id_fkey"
+            columns: ["task_id"]
+            isOneToOne: false
+            referencedRelation: "tasks"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "moderation_items_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      moderation_rules: {
+        Row: {
+          category: string
+          created_at: string
+          id: string
+          is_active: boolean
+          lang: string
+          note: string
+          pattern: string
+          severity: string
+          updated_at: string
+        }
+        Insert: {
+          category: string
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          lang?: string
+          note?: string
+          pattern: string
+          severity: string
+          updated_at?: string
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          lang?: string
+          note?: string
+          pattern?: string
+          severity?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       notifications: {
         Row: {
           body: string
@@ -610,6 +778,8 @@ export type Database = {
           rating_as_pro: number | null
           review_count_as_client: number
           review_count_as_pro: number
+          suspended_until: string | null
+          trust_level: number
         }
         Insert: {
           avatar_url?: string | null
@@ -629,6 +799,8 @@ export type Database = {
           rating_as_pro?: number | null
           review_count_as_client?: number
           review_count_as_pro?: number
+          suspended_until?: string | null
+          trust_level?: number
         }
         Update: {
           avatar_url?: string | null
@@ -648,6 +820,8 @@ export type Database = {
           rating_as_pro?: number | null
           review_count_as_client?: number
           review_count_as_pro?: number
+          suspended_until?: string | null
+          trust_level?: number
         }
         Relationships: []
       }
@@ -814,6 +988,10 @@ export type Database = {
           created_at: string
           id: string
           image_url: string
+          moderation_labels: Json
+          moderation_provider: string | null
+          moderation_score: number | null
+          moderation_status: string
           sort_order: number
           task_id: string
         }
@@ -821,6 +999,10 @@ export type Database = {
           created_at?: string
           id?: string
           image_url: string
+          moderation_labels?: Json
+          moderation_provider?: string | null
+          moderation_score?: number | null
+          moderation_status?: string
           sort_order?: number
           task_id: string
         }
@@ -828,6 +1010,10 @@ export type Database = {
           created_at?: string
           id?: string
           image_url?: string
+          moderation_labels?: Json
+          moderation_provider?: string | null
+          moderation_score?: number | null
+          moderation_status?: string
           sort_order?: number
           task_id?: string
         }
@@ -1171,7 +1357,40 @@ export type Database = {
           unlock_count: number
         }[]
       }
+      admin_moderation_queue: {
+        Args: { _limit?: number; _status?: string }
+        Returns: {
+          account_age_days: number
+          category: string
+          content_id: string
+          content_type: string
+          created_at: string
+          details: Json
+          excerpt: string
+          id: string
+          image_path: string
+          kind: string
+          matched_pattern: string
+          moderation_labels: Json
+          moderation_score: number
+          prior_violations: number
+          reason: string
+          reporter_id: string
+          reporter_name: string
+          severity: string
+          status: string
+          task_id: string
+          task_title: string
+          trust_level: number
+          user_id: string
+          user_name: string
+        }[]
+      }
       admin_refund_evidence: { Args: { _request_id: string }; Returns: Json }
+      admin_resolve_moderation: {
+        Args: { _approve: boolean; _item_id: string; _reason: string }
+        Returns: Json
+      }
       admin_resolve_refund: {
         Args: { _approve: boolean; _note: string; _request_id: string }
         Returns: Json
@@ -1194,6 +1413,10 @@ export type Database = {
         Args: { _professional_id: string; _task_id: string }
         Returns: Json
       }
+      ban_user_cascade: {
+        Args: { _reason: string; _user_id: string }
+        Returns: Json
+      }
       can_bump_task: { Args: { _task_id: string }; Returns: boolean }
       claim_engagement: { Args: { _task_id: string }; Returns: Json }
       close_task: { Args: { _task_id: string }; Returns: Json }
@@ -1214,6 +1437,22 @@ export type Database = {
         Returns: Json
       }
       confirm_task_active: { Args: { _task_id: string }; Returns: Json }
+      enqueue_moderation: {
+        Args: {
+          _category: string
+          _content_id: string
+          _content_type: string
+          _details: Json
+          _excerpt: string
+          _kind: string
+          _pattern: string
+          _reason: string
+          _severity: string
+          _task_id: string
+          _user_id: string
+        }
+        Returns: string
+      }
       evaluate_refund_rule: {
         Args: {
           _reason: Database["public"]["Enums"]["refund_reason"]
@@ -1282,6 +1521,7 @@ export type Database = {
         Returns: undefined
       }
       mask_contacts: { Args: { input: string }; Returns: string }
+      moderate_text: { Args: { _text: string }; Returns: Json }
       my_engagements: {
         Args: never
         Returns: {
@@ -1301,6 +1541,7 @@ export type Database = {
           task_title: string
         }[]
       }
+      needs_prepublish_review: { Args: { _user_id: string }; Returns: boolean }
       public_profile: { Args: { _user_id: string }; Returns: Json }
       public_reviews: {
         Args: {
@@ -1334,8 +1575,28 @@ export type Database = {
         Args: { _user_id: string }
         Returns: undefined
       }
+      record_content_violation: {
+        Args: {
+          _auto: boolean
+          _content_id: string
+          _content_type: string
+          _severity: string
+          _user_id: string
+          _violation_type: string
+        }
+        Returns: Json
+      }
       refund_payment: {
         Args: { _payment_intent: string; _status: string }
+        Returns: Json
+      }
+      report_content: {
+        Args: {
+          _content_id: string
+          _content_type: string
+          _details: string
+          _reason: string
+        }
         Returns: Json
       }
       request_credit_refund: {
@@ -1383,6 +1644,7 @@ export type Database = {
         }[]
       }
       unlock_task_contact: { Args: { _task_id: string }; Returns: Json }
+      user_trust: { Args: { _user_id: string }; Returns: Json }
     }
     Enums: {
       app_role: "user" | "moderator" | "admin"
@@ -1413,6 +1675,12 @@ export type Database = {
         | "review_requested"
         | "review_reminder"
         | "review_published"
+        | "content_rejected"
+        | "content_held"
+        | "content_approved"
+        | "moderation_warning"
+        | "account_suspended"
+        | "account_banned"
       promo_type: "bump" | "urgent" | "top"
       refund_reason:
         | "fake_task"
@@ -1592,6 +1860,12 @@ export const Constants = {
         "review_requested",
         "review_reminder",
         "review_published",
+        "content_rejected",
+        "content_held",
+        "content_approved",
+        "moderation_warning",
+        "account_suspended",
+        "account_banned",
       ],
       promo_type: ["bump", "urgent", "top"],
       refund_reason: [
