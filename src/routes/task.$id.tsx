@@ -39,6 +39,8 @@ import { Crown, Siren, ArrowUpCircle } from "lucide-react";
 import { toast } from "sonner";
 import { CONTACT_MASK_WARNING, containsContactInfo, isValidBgPhone } from "@/lib/phone";
 import { RequirePhoneNotice } from "@/components/require-phone-notice";
+import { ClaimTaskButton } from "@/components/tasks/claim-task-button";
+import { EngagementInbox } from "@/components/reviews/engagement-cards";
 
 const GALLERY_BY_CATEGORY: Record<string, string[]> = {
   remonti: [
@@ -323,6 +325,11 @@ function TaskDetails() {
                   <MessageSquare className="h-4 w-4" /> Изпрати съобщение
                 </Button>
               )}
+              {!isOwner && user && <ClaimTaskButton taskId={task.id} size="lg" />}
+            </div>
+
+            <div className="mt-4">
+              <EngagementInbox taskId={task.id} />
             </div>
 
             <div className="mt-5 flex items-center gap-1.5 rounded-2xl bg-secondary/60 px-3 py-2 text-xs text-muted-foreground">
@@ -351,7 +358,17 @@ function TaskDetails() {
                   </AvatarFallback>
                 </Avatar>
                 <div className="min-w-0">
-                  <div className="truncate text-sm font-semibold text-slate-900">{task.author}</div>
+                  {task.userId ? (
+                    <Link
+                      to="/user/$id"
+                      params={{ id: task.userId }}
+                      className="block truncate text-sm font-semibold text-slate-900 hover:underline"
+                    >
+                      {task.author}
+                    </Link>
+                  ) : (
+                    <div className="truncate text-sm font-semibold text-slate-900">{task.author}</div>
+                  )}
                   <div className="mt-0.5 flex items-center gap-1 text-xs text-muted-foreground">
                     <CalendarDays className="h-3.5 w-3.5" /> Член от 2026 г.
                   </div>

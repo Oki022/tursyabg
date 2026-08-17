@@ -6,6 +6,7 @@ import {
   Users,
   CreditCard,
   ScrollText,
+  Star,
   ArrowLeft,
 } from "lucide-react";
 import { toast } from "sonner";
@@ -31,6 +32,7 @@ const NAV = [
   { to: "/admin", label: "Табло", icon: LayoutDashboard, exact: true },
   { to: "/admin/refunds", label: "Възстановявания", icon: Receipt },
   { to: "/admin/tasks", label: "Задачи", icon: ClipboardList },
+  { to: "/admin/reviews", label: "Отзиви", icon: Star },
   { to: "/admin/users", label: "Потребители", icon: Users },
   { to: "/admin/payments", label: "Плащания", icon: CreditCard },
   { to: "/admin/audit", label: "Одит лог", icon: ScrollText },

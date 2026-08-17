@@ -19,11 +19,13 @@ import { Route as AdminRouteImport } from './routes/admin'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
+import { Route as UserIdRouteImport } from './routes/user.$id'
 import { Route as TaskIdRouteImport } from './routes/task.$id'
 import { Route as BillingCancelRouteImport } from './routes/billing.cancel'
 import { Route as AuthVerifyRouteImport } from './routes/auth.verify'
 import { Route as AdminUsersRouteImport } from './routes/admin.users'
 import { Route as AdminTasksRouteImport } from './routes/admin.tasks'
+import { Route as AdminReviewsRouteImport } from './routes/admin.reviews'
 import { Route as AdminRefundsRouteImport } from './routes/admin.refunds'
 import { Route as AdminPaymentsRouteImport } from './routes/admin.payments'
 import { Route as AdminAuditRouteImport } from './routes/admin.audit'
@@ -36,6 +38,7 @@ import { Route as AuthenticatedSettingsSecurityRouteImport } from './routes/_aut
 import { Route as AuthenticatedSettingsProfileRouteImport } from './routes/_authenticated/settings.profile'
 import { Route as AuthenticatedSettingsNotificationsRouteImport } from './routes/_authenticated/settings.notifications'
 import { Route as AuthenticatedSettingsBillingRouteImport } from './routes/_authenticated/settings.billing'
+import { Route as AuthenticatedReviewEngagementIdRouteImport } from './routes/_authenticated/review.$engagementId'
 import { Route as AuthenticatedPostedIdRouteImport } from './routes/_authenticated/posted.$id'
 import { Route as AuthenticatedMessagesConversationIdRouteImport } from './routes/_authenticated/messages.$conversationId'
 import { Route as AuthenticatedBillingSuccessRouteImport } from './routes/_authenticated/billing.success'
@@ -90,6 +93,11 @@ const AdminIndexRoute = AdminIndexRouteImport.update({
   path: '/',
   getParentRoute: () => AdminRoute,
 } as any)
+const UserIdRoute = UserIdRouteImport.update({
+  id: '/user/$id',
+  path: '/user/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const TaskIdRoute = TaskIdRouteImport.update({
   id: '/task/$id',
   path: '/task/$id',
@@ -113,6 +121,11 @@ const AdminUsersRoute = AdminUsersRouteImport.update({
 const AdminTasksRoute = AdminTasksRouteImport.update({
   id: '/tasks',
   path: '/tasks',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminReviewsRoute = AdminReviewsRouteImport.update({
+  id: '/reviews',
+  path: '/reviews',
   getParentRoute: () => AdminRoute,
 } as any)
 const AdminRefundsRoute = AdminRefundsRouteImport.update({
@@ -181,6 +194,12 @@ const AuthenticatedSettingsBillingRoute =
     path: '/settings/billing',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedReviewEngagementIdRoute =
+  AuthenticatedReviewEngagementIdRouteImport.update({
+    id: '/review/$engagementId',
+    path: '/review/$engagementId',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedPostedIdRoute = AuthenticatedPostedIdRouteImport.update({
   id: '/posted/$id',
   path: '/posted/$id',
@@ -221,15 +240,18 @@ export interface FileRoutesByFullPath {
   '/admin/audit': typeof AdminAuditRoute
   '/admin/payments': typeof AdminPaymentsRoute
   '/admin/refunds': typeof AdminRefundsRoute
+  '/admin/reviews': typeof AdminReviewsRoute
   '/admin/tasks': typeof AdminTasksRoute
   '/admin/users': typeof AdminUsersRoute
   '/auth/verify': typeof AuthVerifyRoute
   '/billing/cancel': typeof BillingCancelRoute
   '/task/$id': typeof TaskIdRoute
+  '/user/$id': typeof UserIdRoute
   '/admin/': typeof AdminIndexRoute
   '/billing/success': typeof AuthenticatedBillingSuccessRoute
   '/messages/$conversationId': typeof AuthenticatedMessagesConversationIdRoute
   '/posted/$id': typeof AuthenticatedPostedIdRoute
+  '/review/$engagementId': typeof AuthenticatedReviewEngagementIdRoute
   '/settings/billing': typeof AuthenticatedSettingsBillingRoute
   '/settings/notifications': typeof AuthenticatedSettingsNotificationsRoute
   '/settings/profile': typeof AuthenticatedSettingsProfileRoute
@@ -252,15 +274,18 @@ export interface FileRoutesByTo {
   '/admin/audit': typeof AdminAuditRoute
   '/admin/payments': typeof AdminPaymentsRoute
   '/admin/refunds': typeof AdminRefundsRoute
+  '/admin/reviews': typeof AdminReviewsRoute
   '/admin/tasks': typeof AdminTasksRoute
   '/admin/users': typeof AdminUsersRoute
   '/auth/verify': typeof AuthVerifyRoute
   '/billing/cancel': typeof BillingCancelRoute
   '/task/$id': typeof TaskIdRoute
+  '/user/$id': typeof UserIdRoute
   '/admin': typeof AdminIndexRoute
   '/billing/success': typeof AuthenticatedBillingSuccessRoute
   '/messages/$conversationId': typeof AuthenticatedMessagesConversationIdRoute
   '/posted/$id': typeof AuthenticatedPostedIdRoute
+  '/review/$engagementId': typeof AuthenticatedReviewEngagementIdRoute
   '/settings/billing': typeof AuthenticatedSettingsBillingRoute
   '/settings/notifications': typeof AuthenticatedSettingsNotificationsRoute
   '/settings/profile': typeof AuthenticatedSettingsProfileRoute
@@ -286,15 +311,18 @@ export interface FileRoutesById {
   '/admin/audit': typeof AdminAuditRoute
   '/admin/payments': typeof AdminPaymentsRoute
   '/admin/refunds': typeof AdminRefundsRoute
+  '/admin/reviews': typeof AdminReviewsRoute
   '/admin/tasks': typeof AdminTasksRoute
   '/admin/users': typeof AdminUsersRoute
   '/auth/verify': typeof AuthVerifyRoute
   '/billing/cancel': typeof BillingCancelRoute
   '/task/$id': typeof TaskIdRoute
+  '/user/$id': typeof UserIdRoute
   '/admin/': typeof AdminIndexRoute
   '/_authenticated/billing/success': typeof AuthenticatedBillingSuccessRoute
   '/_authenticated/messages/$conversationId': typeof AuthenticatedMessagesConversationIdRoute
   '/_authenticated/posted/$id': typeof AuthenticatedPostedIdRoute
+  '/_authenticated/review/$engagementId': typeof AuthenticatedReviewEngagementIdRoute
   '/_authenticated/settings/billing': typeof AuthenticatedSettingsBillingRoute
   '/_authenticated/settings/notifications': typeof AuthenticatedSettingsNotificationsRoute
   '/_authenticated/settings/profile': typeof AuthenticatedSettingsProfileRoute
@@ -320,15 +348,18 @@ export interface FileRouteTypes {
     | '/admin/audit'
     | '/admin/payments'
     | '/admin/refunds'
+    | '/admin/reviews'
     | '/admin/tasks'
     | '/admin/users'
     | '/auth/verify'
     | '/billing/cancel'
     | '/task/$id'
+    | '/user/$id'
     | '/admin/'
     | '/billing/success'
     | '/messages/$conversationId'
     | '/posted/$id'
+    | '/review/$engagementId'
     | '/settings/billing'
     | '/settings/notifications'
     | '/settings/profile'
@@ -351,15 +382,18 @@ export interface FileRouteTypes {
     | '/admin/audit'
     | '/admin/payments'
     | '/admin/refunds'
+    | '/admin/reviews'
     | '/admin/tasks'
     | '/admin/users'
     | '/auth/verify'
     | '/billing/cancel'
     | '/task/$id'
+    | '/user/$id'
     | '/admin'
     | '/billing/success'
     | '/messages/$conversationId'
     | '/posted/$id'
+    | '/review/$engagementId'
     | '/settings/billing'
     | '/settings/notifications'
     | '/settings/profile'
@@ -384,15 +418,18 @@ export interface FileRouteTypes {
     | '/admin/audit'
     | '/admin/payments'
     | '/admin/refunds'
+    | '/admin/reviews'
     | '/admin/tasks'
     | '/admin/users'
     | '/auth/verify'
     | '/billing/cancel'
     | '/task/$id'
+    | '/user/$id'
     | '/admin/'
     | '/_authenticated/billing/success'
     | '/_authenticated/messages/$conversationId'
     | '/_authenticated/posted/$id'
+    | '/_authenticated/review/$engagementId'
     | '/_authenticated/settings/billing'
     | '/_authenticated/settings/notifications'
     | '/_authenticated/settings/profile'
@@ -413,6 +450,7 @@ export interface RootRouteChildren {
   TermsRoute: typeof TermsRoute
   BillingCancelRoute: typeof BillingCancelRoute
   TaskIdRoute: typeof TaskIdRoute
+  UserIdRoute: typeof UserIdRoute
   ApiPublicPaymentsWebhookRoute: typeof ApiPublicPaymentsWebhookRoute
 }
 
@@ -488,6 +526,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminIndexRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/user/$id': {
+      id: '/user/$id'
+      path: '/user/$id'
+      fullPath: '/user/$id'
+      preLoaderRoute: typeof UserIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/task/$id': {
       id: '/task/$id'
       path: '/task/$id'
@@ -521,6 +566,13 @@ declare module '@tanstack/react-router' {
       path: '/tasks'
       fullPath: '/admin/tasks'
       preLoaderRoute: typeof AdminTasksRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/reviews': {
+      id: '/admin/reviews'
+      path: '/reviews'
+      fullPath: '/admin/reviews'
+      preLoaderRoute: typeof AdminReviewsRouteImport
       parentRoute: typeof AdminRoute
     }
     '/admin/refunds': {
@@ -607,6 +659,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedSettingsBillingRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/review/$engagementId': {
+      id: '/_authenticated/review/$engagementId'
+      path: '/review/$engagementId'
+      fullPath: '/review/$engagementId'
+      preLoaderRoute: typeof AuthenticatedReviewEngagementIdRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/posted/$id': {
       id: '/_authenticated/posted/$id'
       path: '/posted/$id'
@@ -646,6 +705,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedBillingSuccessRoute: typeof AuthenticatedBillingSuccessRoute
   AuthenticatedMessagesConversationIdRoute: typeof AuthenticatedMessagesConversationIdRoute
   AuthenticatedPostedIdRoute: typeof AuthenticatedPostedIdRoute
+  AuthenticatedReviewEngagementIdRoute: typeof AuthenticatedReviewEngagementIdRoute
   AuthenticatedSettingsBillingRoute: typeof AuthenticatedSettingsBillingRoute
   AuthenticatedSettingsNotificationsRoute: typeof AuthenticatedSettingsNotificationsRoute
   AuthenticatedSettingsProfileRoute: typeof AuthenticatedSettingsProfileRoute
@@ -662,6 +722,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedMessagesConversationIdRoute:
     AuthenticatedMessagesConversationIdRoute,
   AuthenticatedPostedIdRoute: AuthenticatedPostedIdRoute,
+  AuthenticatedReviewEngagementIdRoute: AuthenticatedReviewEngagementIdRoute,
   AuthenticatedSettingsBillingRoute: AuthenticatedSettingsBillingRoute,
   AuthenticatedSettingsNotificationsRoute:
     AuthenticatedSettingsNotificationsRoute,
@@ -677,6 +738,7 @@ interface AdminRouteChildren {
   AdminAuditRoute: typeof AdminAuditRoute
   AdminPaymentsRoute: typeof AdminPaymentsRoute
   AdminRefundsRoute: typeof AdminRefundsRoute
+  AdminReviewsRoute: typeof AdminReviewsRoute
   AdminTasksRoute: typeof AdminTasksRoute
   AdminUsersRoute: typeof AdminUsersRoute
   AdminIndexRoute: typeof AdminIndexRoute
@@ -686,6 +748,7 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminAuditRoute: AdminAuditRoute,
   AdminPaymentsRoute: AdminPaymentsRoute,
   AdminRefundsRoute: AdminRefundsRoute,
+  AdminReviewsRoute: AdminReviewsRoute,
   AdminTasksRoute: AdminTasksRoute,
   AdminUsersRoute: AdminUsersRoute,
   AdminIndexRoute: AdminIndexRoute,
@@ -715,6 +778,7 @@ const rootRouteChildren: RootRouteChildren = {
   TermsRoute: TermsRoute,
   BillingCancelRoute: BillingCancelRoute,
   TaskIdRoute: TaskIdRoute,
+  UserIdRoute: UserIdRoute,
   ApiPublicPaymentsWebhookRoute: ApiPublicPaymentsWebhookRoute,
 }
 export const routeTree = rootRouteImport

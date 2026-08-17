@@ -244,6 +244,67 @@ export type Database = {
           },
         ]
       }
+      engagements: {
+        Row: {
+          claimed_at: string
+          client_id: string
+          confirmed_at: string | null
+          created_at: string
+          id: string
+          professional_id: string
+          reminded_at: string | null
+          review_deadline: string | null
+          status: Database["public"]["Enums"]["engagement_status"]
+          task_id: string
+        }
+        Insert: {
+          claimed_at?: string
+          client_id: string
+          confirmed_at?: string | null
+          created_at?: string
+          id?: string
+          professional_id: string
+          reminded_at?: string | null
+          review_deadline?: string | null
+          status?: Database["public"]["Enums"]["engagement_status"]
+          task_id: string
+        }
+        Update: {
+          claimed_at?: string
+          client_id?: string
+          confirmed_at?: string | null
+          created_at?: string
+          id?: string
+          professional_id?: string
+          reminded_at?: string | null
+          review_deadline?: string | null
+          status?: Database["public"]["Enums"]["engagement_status"]
+          task_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "engagements_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "engagements_professional_id_fkey"
+            columns: ["professional_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "engagements_task_id_fkey"
+            columns: ["task_id"]
+            isOneToOne: false
+            referencedRelation: "tasks"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       messages: {
         Row: {
           content: string
@@ -510,6 +571,7 @@ export type Database = {
           ban_reason: string | null
           banned_at: string | null
           city: string | null
+          completed_jobs: number
           created_at: string
           credits: number
           free_tasks_reset_at: string
@@ -517,6 +579,10 @@ export type Database = {
           full_name: string | null
           id: string
           neighborhood: string | null
+          rating_as_client: number | null
+          rating_as_pro: number | null
+          review_count_as_client: number
+          review_count_as_pro: number
         }
         Insert: {
           avatar_url?: string | null
@@ -524,6 +590,7 @@ export type Database = {
           ban_reason?: string | null
           banned_at?: string | null
           city?: string | null
+          completed_jobs?: number
           created_at?: string
           credits?: number
           free_tasks_reset_at?: string
@@ -531,6 +598,10 @@ export type Database = {
           full_name?: string | null
           id: string
           neighborhood?: string | null
+          rating_as_client?: number | null
+          rating_as_pro?: number | null
+          review_count_as_client?: number
+          review_count_as_pro?: number
         }
         Update: {
           avatar_url?: string | null
@@ -538,6 +609,7 @@ export type Database = {
           ban_reason?: string | null
           banned_at?: string | null
           city?: string | null
+          completed_jobs?: number
           created_at?: string
           credits?: number
           free_tasks_reset_at?: string
@@ -545,6 +617,10 @@ export type Database = {
           full_name?: string | null
           id?: string
           neighborhood?: string | null
+          rating_as_client?: number | null
+          rating_as_pro?: number | null
+          review_count_as_client?: number
+          review_count_as_pro?: number
         }
         Relationships: []
       }
@@ -586,6 +662,125 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
+      }
+      review_reports: {
+        Row: {
+          created_at: string
+          details: string
+          id: string
+          reason: Database["public"]["Enums"]["report_reason"]
+          reporter_id: string
+          review_id: string
+          status: Database["public"]["Enums"]["report_status"]
+        }
+        Insert: {
+          created_at?: string
+          details?: string
+          id?: string
+          reason: Database["public"]["Enums"]["report_reason"]
+          reporter_id: string
+          review_id: string
+          status?: Database["public"]["Enums"]["report_status"]
+        }
+        Update: {
+          created_at?: string
+          details?: string
+          id?: string
+          reason?: Database["public"]["Enums"]["report_reason"]
+          reporter_id?: string
+          review_id?: string
+          status?: Database["public"]["Enums"]["report_status"]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "review_reports_reporter_id_fkey"
+            columns: ["reporter_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "review_reports_review_id_fkey"
+            columns: ["review_id"]
+            isOneToOne: false
+            referencedRelation: "reviews"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      reviews: {
+        Row: {
+          comment: string
+          created_at: string
+          direction: Database["public"]["Enums"]["review_direction"]
+          engagement_id: string
+          hidden_at: string | null
+          hidden_reason: string | null
+          id: string
+          is_visible: boolean
+          rating: number
+          reviewee_id: string
+          reviewer_id: string
+          task_id: string
+        }
+        Insert: {
+          comment: string
+          created_at?: string
+          direction: Database["public"]["Enums"]["review_direction"]
+          engagement_id: string
+          hidden_at?: string | null
+          hidden_reason?: string | null
+          id?: string
+          is_visible?: boolean
+          rating: number
+          reviewee_id: string
+          reviewer_id: string
+          task_id: string
+        }
+        Update: {
+          comment?: string
+          created_at?: string
+          direction?: Database["public"]["Enums"]["review_direction"]
+          engagement_id?: string
+          hidden_at?: string | null
+          hidden_reason?: string | null
+          id?: string
+          is_visible?: boolean
+          rating?: number
+          reviewee_id?: string
+          reviewer_id?: string
+          task_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "reviews_engagement_id_fkey"
+            columns: ["engagement_id"]
+            isOneToOne: false
+            referencedRelation: "engagements"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "reviews_reviewee_id_fkey"
+            columns: ["reviewee_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "reviews_reviewer_id_fkey"
+            columns: ["reviewer_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "reviews_task_id_fkey"
+            columns: ["task_id"]
+            isOneToOne: false
+            referencedRelation: "tasks"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       task_images: {
         Row: {
@@ -896,6 +1091,30 @@ export type Database = {
             Args: { _fraudulent?: boolean; _reason: string; _task_id: string }
             Returns: Json
           }
+      admin_hide_review: {
+        Args: { _reason: string; _review_id: string }
+        Returns: Json
+      }
+      admin_list_reviews: {
+        Args: { _filter?: string; _limit?: number }
+        Returns: {
+          comment: string
+          created_at: string
+          direction: Database["public"]["Enums"]["review_direction"]
+          hidden_at: string
+          hidden_reason: string
+          id: string
+          is_visible: boolean
+          rating: number
+          report_count: number
+          reviewee_id: string
+          reviewee_name: string
+          reviewer_id: string
+          reviewer_name: string
+          task_id: string
+          task_title: string
+        }[]
+      }
       admin_list_users: {
         Args: { _limit?: number; _search: string }
         Returns: {
@@ -921,6 +1140,7 @@ export type Database = {
         Args: { _approve: boolean; _note: string; _request_id: string }
         Returns: Json
       }
+      admin_review_flags: { Args: never; Returns: Json }
       admin_set_ban: {
         Args: { _banned: boolean; _reason: string; _user_id: string }
         Returns: Json
@@ -933,7 +1153,12 @@ export type Database = {
         }
         Returns: Json
       }
+      assign_engagement: {
+        Args: { _professional_id: string; _task_id: string }
+        Returns: Json
+      }
       can_bump_task: { Args: { _task_id: string }; Returns: boolean }
+      claim_engagement: { Args: { _task_id: string }; Returns: Json }
       close_task: { Args: { _task_id: string }; Returns: Json }
       complete_payment: {
         Args: {
@@ -972,6 +1197,8 @@ export type Database = {
         }
         Returns: {
           author: string
+          author_rating: number
+          author_review_count: number
           budget: number
           bumped_at: string
           category: string
@@ -1018,6 +1245,43 @@ export type Database = {
         Returns: undefined
       }
       mask_contacts: { Args: { input: string }; Returns: string }
+      my_engagements: {
+        Args: never
+        Returns: {
+          claimed_at: string
+          client_id: string
+          client_name: string
+          confirmed_at: string
+          id: string
+          my_review_id: string
+          other_submitted: boolean
+          professional_id: string
+          professional_name: string
+          review_deadline: string
+          status: Database["public"]["Enums"]["engagement_status"]
+          task_category: string
+          task_id: string
+          task_title: string
+        }[]
+      }
+      public_profile: { Args: { _user_id: string }; Returns: Json }
+      public_reviews: {
+        Args: {
+          _direction: Database["public"]["Enums"]["review_direction"]
+          _limit?: number
+          _offset?: number
+          _user_id: string
+        }
+        Returns: {
+          category: string
+          comment: string
+          created_at: string
+          id: string
+          rating: number
+          reviewer_id: string
+          reviewer_name: string
+        }[]
+      }
       push_notification: {
         Args: {
           _body: string
@@ -1028,6 +1292,10 @@ export type Database = {
           _user_id: string
         }
         Returns: string
+      }
+      recompute_review_aggregates: {
+        Args: { _user_id: string }
+        Returns: undefined
       }
       refund_payment: {
         Args: { _payment_intent: string; _status: string }
@@ -1041,6 +1309,14 @@ export type Database = {
         }
         Returns: Json
       }
+      respond_engagement: {
+        Args: { _confirm: boolean; _engagement_id: string }
+        Returns: Json
+      }
+      reveal_engagement_reviews: {
+        Args: { _engagement_id: string }
+        Returns: number
+      }
       settle_refund: {
         Args: {
           _approve: boolean
@@ -1051,7 +1327,23 @@ export type Database = {
         }
         Returns: Json
       }
+      submit_review: {
+        Args: { _comment: string; _engagement_id: string; _rating: number }
+        Returns: Json
+      }
+      sweep_engagements: { Args: never; Returns: undefined }
       sweep_expiry_notifications: { Args: never; Returns: undefined }
+      task_unlockers: {
+        Args: { _task_id: string }
+        Returns: {
+          full_name: string
+          has_engagement: boolean
+          rating_as_pro: number
+          review_count_as_pro: number
+          unlocked_at: string
+          user_id: string
+        }[]
+      }
       unlock_task_contact: { Args: { _task_id: string }; Returns: Json }
     }
     Enums: {
@@ -1062,6 +1354,7 @@ export type Database = {
         | "refund"
         | "bonus"
         | "promo_spend"
+      engagement_status: "claimed" | "confirmed" | "rejected" | "expired"
       notification_type:
         | "new_message"
         | "contact_unlocked"
@@ -1075,6 +1368,13 @@ export type Database = {
         | "task_still_open"
         | "task_freshness"
         | "refund_auto_approved"
+        | "engagement_claimed"
+        | "engagement_confirmed"
+        | "engagement_rejected"
+        | "engagement_reminder"
+        | "review_requested"
+        | "review_reminder"
+        | "review_published"
       promo_type: "bump" | "urgent" | "top"
       refund_reason:
         | "fake_task"
@@ -1091,6 +1391,7 @@ export type Database = {
         | "duplicate"
         | "other"
       report_status: "pending" | "reviewed" | "dismissed"
+      review_direction: "client_to_pro" | "pro_to_client"
       task_status:
         | "active"
         | "pending"
@@ -1232,6 +1533,7 @@ export const Constants = {
         "bonus",
         "promo_spend",
       ],
+      engagement_status: ["claimed", "confirmed", "rejected", "expired"],
       notification_type: [
         "new_message",
         "contact_unlocked",
@@ -1245,6 +1547,13 @@ export const Constants = {
         "task_still_open",
         "task_freshness",
         "refund_auto_approved",
+        "engagement_claimed",
+        "engagement_confirmed",
+        "engagement_rejected",
+        "engagement_reminder",
+        "review_requested",
+        "review_reminder",
+        "review_published",
       ],
       promo_type: ["bump", "urgent", "top"],
       refund_reason: [
@@ -1264,6 +1573,7 @@ export const Constants = {
         "other",
       ],
       report_status: ["pending", "reviewed", "dismissed"],
+      review_direction: ["client_to_pro", "pro_to_client"],
       task_status: [
         "active",
         "pending",
