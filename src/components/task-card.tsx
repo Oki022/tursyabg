@@ -55,6 +55,13 @@ export function TaskCard({ task }: { task: Task }) {
             <Clock className="h-3 w-3 shrink-0" />
             <span className="truncate">{task.postedAt}</span>
           </span>
+          {typeof task.unlockCount === "number" && (task.maxUnlocks ?? 5) - task.unlockCount <= 2 && (
+            <span className="truncate font-semibold text-primary">
+              {(task.maxUnlocks ?? 5) - task.unlockCount > 0
+                ? `Остават ${(task.maxUnlocks ?? 5) - task.unlockCount} места`
+                : "Местата са запълнени"}
+            </span>
+          )}
         </div>
       </div>
     </Link>

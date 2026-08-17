@@ -311,8 +311,12 @@ function TaskDetails() {
                   ownerId={task.userId}
                   budget={task.budget}
                   unlockCost={task.unlockCost}
+                  unlockCount={task.unlockCount}
+                  maxUnlocks={task.maxUnlocks}
+                  taskStatus={task.status}
                 />
               )}
+              {isOwner && <OwnerTaskControls task={task} />}
               {!isOwner && (
                 <Button size="lg" className="w-full gap-2" onClick={openMessageModal}>
                   <MessageSquare className="h-4 w-4" /> Изпрати съобщение
