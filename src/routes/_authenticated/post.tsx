@@ -8,6 +8,12 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { categories, detectCategory } from "@/lib/mock-data";
 import { useCreateTask } from "@/lib/tasks-api";
+import {
+  IMAGE_HELD_BG,
+  IMAGE_REJECT_BG,
+  categoryBg,
+  moderationErrorBg,
+} from "@/lib/moderation-messages";
 import { LocationCombobox } from "@/components/location-combobox";
 import { toast } from "sonner";
 import { useAuth } from "@/lib/auth";
