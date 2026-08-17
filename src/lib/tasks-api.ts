@@ -23,13 +23,15 @@ type Row = {
   status: TaskStatus;
   unlock_cost?: number | null;
   created_at: string;
+  bumped_at?: string;
+  view_count?: number;
   user_id: string;
   task_images?: { image_url: string; sort_order: number }[] | null;
   profiles?: { full_name: string | null } | null;
 };
 
 const SELECT =
-  "id, title, description, category, budget, city, neighborhood, status, unlock_cost, created_at, user_id, task_images(image_url, sort_order), profiles(full_name)";
+  "id, title, description, category, budget, city, neighborhood, status, unlock_cost, created_at, bumped_at, view_count, user_id, task_images(image_url, sort_order), profiles(full_name)";
 
 export function timeAgoBg(iso: string) {
   const diff = Date.now() - new Date(iso).getTime();
@@ -65,6 +67,8 @@ function mapRow(row: Row, signed: Record<string, string>): Task {
     unlockCost: row.unlock_cost ?? undefined,
     image: gallery[0] ?? CATEGORY_IMAGES[row.category] ?? CATEGORY_IMAGES.drugi,
     gallery,
+    bumpedAt: row.bumped_at ?? row.created_at,
+    viewCount: row.view_count ?? 0,
   };
 }
 
@@ -76,39 +80,104 @@ async function mapRows(rows: Row[]): Promise<Task[]> {
 
 export type TaskFilters = { q?: string; category?: string; location?: string };
 
+type FeedRow = {
+  id: string;
+  title: string;
+  description: string;
+  category: string;
+  budget: number;
+  city: string | null;
+  neighborhood: string | null;
+  status: TaskStatus;
+  unlock_cost: number | null;
+  created_at: string;
+  bumped_at: string;
+  user_id: string;
+  author: string | null;
+  images: string[] | null;
+  is_top: boolean;
+  is_urgent: boolean;
+  promo_expires_at: string | null;
+  promoted_slot: boolean;
+};
+
+/** Stable per-session seed so the promoted rotation stays consistent while paginating. */
+function feedSeed(): string {
+  if (typeof window === "undefined") return "ssr";
+  const key = "feed-seed";
+  let seed = window.sessionStorage.getItem(key);
+  if (!seed) {
+    seed = Math.random().toString(36).slice(2);
+    window.sessionStorage.setItem(key, seed);
+  }
+  return seed;
+}
+
+async function mapFeedRows(rows: FeedRow[]): Promise<Task[]> {
+  const paths = rows.flatMap((r) => r.images ?? []).filter((p) => !p.startsWith("http"));
+  const signed = await resolveImageUrls(paths);
+  return rows.map((row) => {
+    const gallery = (row.images ?? [])
+      .map((p) => (p.startsWith("http") ? p : signed[p]))
+      .filter(Boolean) as string[];
+    return {
+      id: row.id,
+      title: row.title,
+      description: row.description,
+      category: row.category,
+      budget: Number(row.budget),
+      location: [row.city, row.neighborhood].filter(Boolean).join(", "),
+      postedAt: timeAgoBg(row.bumped_at),
+      author: row.author ?? "Потребител",
+      userId: row.user_id,
+      status: row.status,
+      unlockCost: row.unlock_cost ?? undefined,
+      image: gallery[0] ?? CATEGORY_IMAGES[row.category] ?? CATEGORY_IMAGES.drugi,
+      gallery,
+      isTop: row.is_top,
+      isUrgent: row.is_urgent,
+      promoExpiresAt: row.promo_expires_at,
+      bumpedAt: row.bumped_at,
+    } satisfies Task;
+  });
+}
+
+type FeedCursor = { cursor?: string; promoOffset: number };
+
+/** Server-side ordering: rotating promoted slots first (max 4), then tasks by bumped_at DESC. */
 async function fetchTasksPage({
-  cursor,
+  page,
   filters,
 }: {
-  cursor?: string;
+  page: FeedCursor;
   filters: TaskFilters;
-}): Promise<{ items: Task[]; nextCursor?: string }> {
-  let query = supabase
-    .from("tasks")
-    .select(SELECT)
-    .eq("status", "active")
-    .order("created_at", { ascending: false })
-    .limit(PAGE_SIZE);
+}): Promise<{ items: Task[]; nextCursor?: FeedCursor }> {
+  const [city, neighborhood] = (filters.location ?? "").split(",").map((s) => s.trim());
 
-  if (cursor) query = query.lt("created_at", cursor);
-  if (filters.category) query = query.eq("category", filters.category);
-  if (filters.location) {
-    const [city, neighborhood] = filters.location.split(",").map((s) => s.trim());
-    if (city) query = query.eq("city", city);
-    if (neighborhood) query = query.eq("neighborhood", neighborhood);
-  }
-  if (filters.q) {
-    const term = filters.q.replace(/[%,]/g, " ");
-    query = query.or(`title.ilike.%${term}%,description.ilike.%${term}%`);
-  }
-
-  const { data, error } = await query;
+  const { data, error } = await supabase.rpc("feed_tasks", {
+    _limit: PAGE_SIZE,
+    _cursor: page.cursor ?? null,
+    _seed: feedSeed(),
+    _promo_offset: page.promoOffset,
+    _category: filters.category || null,
+    _city: city || null,
+    _neighborhood: neighborhood || null,
+    _q: filters.q || null,
+  });
   if (error) throw error;
-  const rows = (data ?? []) as unknown as Row[];
-  const items = await mapRows(rows);
+
+  const rows = (data ?? []) as unknown as FeedRow[];
+  const items = await mapFeedRows(rows);
+  const normal = rows.filter((r) => !r.promoted_slot);
+  const promoted = rows.length - normal.length;
+  const last = normal[normal.length - 1];
+
   return {
     items,
-    nextCursor: rows.length === PAGE_SIZE ? rows[rows.length - 1].created_at : undefined,
+    nextCursor:
+      normal.length === PAGE_SIZE && last
+        ? { cursor: last.bumped_at, promoOffset: page.promoOffset + promoted }
+        : undefined,
   };
 }
 
@@ -129,8 +198,8 @@ export function useTasksFeed(filters: TaskFilters = {}) {
 
   return useInfiniteQuery({
     queryKey: ["tasks", "feed", filters],
-    initialPageParam: undefined as string | undefined,
-    queryFn: ({ pageParam }) => fetchTasksPage({ cursor: pageParam, filters }),
+    initialPageParam: { promoOffset: 0 } as FeedCursor,
+    queryFn: ({ pageParam }) => fetchTasksPage({ page: pageParam, filters }),
     getNextPageParam: (last) => last.nextCursor,
   });
 }
