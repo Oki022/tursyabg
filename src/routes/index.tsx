@@ -16,7 +16,7 @@ function Index() {
   const [query, setQuery] = useState("");
   const navigate = useNavigate();
   const { tasks } = useTasks();
-  const recent = tasks.slice(0, 6);
+  const recent = tasks.slice(0, 10);
 
   const onSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -105,7 +105,7 @@ function Index() {
             <Link to="/tasks">Виж всички <ArrowRight className="h-4 w-4" /></Link>
           </Button>
         </div>
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:gap-4 lg:grid-cols-4 xl:grid-cols-5">
           {recent.map((t) => <TaskCard key={t.id} task={t} />)}
         </div>
       </section>

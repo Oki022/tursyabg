@@ -159,7 +159,7 @@ function TasksPage() {
               </Button>
             </div>
           ) : (
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+            <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:gap-4 xl:grid-cols-4">
               {filtered.map((t) => <TaskCard key={t.id} task={t} />)}
             </div>
           )}
