@@ -29,6 +29,7 @@ import { findOrCreateConversation, useSendMessage, useThread } from "@/lib/messa
 import { getCategory } from "@/lib/mock-data";
 import { useTask } from "@/lib/tasks-api";
 import { UnlockContactCard } from "@/components/credits/unlock-contact-card";
+import { OwnerTaskControls } from "@/components/tasks/owner-task-controls";
 import { ReportTaskDialog } from "@/components/report-task-dialog";
 import { PromoteDialog } from "@/components/promotions/promote-dialog";
 import { useTaskPromotions } from "@/lib/promotions-api";
