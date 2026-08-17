@@ -15,11 +15,15 @@ import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as RefundPolicyRouteImport } from './routes/refund-policy'
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as AuthRouteImport } from './routes/auth'
+import { Route as AdminRouteImport } from './routes/admin'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as TaskIdRouteImport } from './routes/task.$id'
 import { Route as BillingCancelRouteImport } from './routes/billing.cancel'
 import { Route as AuthVerifyRouteImport } from './routes/auth.verify'
+import { Route as AdminTasksRouteImport } from './routes/admin.tasks'
+import { Route as AdminRefundsRouteImport } from './routes/admin.refunds'
 import { Route as AuthenticatedUnlockedRouteImport } from './routes/_authenticated/unlocked'
 import { Route as AuthenticatedProfileRouteImport } from './routes/_authenticated/profile'
 import { Route as AuthenticatedPostRouteImport } from './routes/_authenticated/post'
@@ -62,6 +66,11 @@ const AuthRoute = AuthRouteImport.update({
   path: '/auth',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminRoute = AdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
   id: '/_authenticated',
   getParentRoute: () => rootRouteImport,
@@ -70,6 +79,11 @@ const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
+} as any)
+const AdminIndexRoute = AdminIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AdminRoute,
 } as any)
 const TaskIdRoute = TaskIdRouteImport.update({
   id: '/task/$id',
@@ -85,6 +99,16 @@ const AuthVerifyRoute = AuthVerifyRouteImport.update({
   id: '/verify',
   path: '/verify',
   getParentRoute: () => AuthRoute,
+} as any)
+const AdminTasksRoute = AdminTasksRouteImport.update({
+  id: '/tasks',
+  path: '/tasks',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminRefundsRoute = AdminRefundsRouteImport.update({
+  id: '/refunds',
+  path: '/refunds',
+  getParentRoute: () => AdminRoute,
 } as any)
 const AuthenticatedUnlockedRoute = AuthenticatedUnlockedRouteImport.update({
   id: '/unlocked',
@@ -152,6 +176,7 @@ const ApiPublicPaymentsWebhookRoute =
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/admin': typeof AdminRouteWithChildren
   '/auth': typeof AuthRouteWithChildren
   '/privacy': typeof PrivacyRoute
   '/refund-policy': typeof RefundPolicyRoute
@@ -161,9 +186,12 @@ export interface FileRoutesByFullPath {
   '/post': typeof AuthenticatedPostRoute
   '/profile': typeof AuthenticatedProfileRoute
   '/unlocked': typeof AuthenticatedUnlockedRoute
+  '/admin/refunds': typeof AdminRefundsRoute
+  '/admin/tasks': typeof AdminTasksRoute
   '/auth/verify': typeof AuthVerifyRoute
   '/billing/cancel': typeof BillingCancelRoute
   '/task/$id': typeof TaskIdRoute
+  '/admin/': typeof AdminIndexRoute
   '/billing/success': typeof AuthenticatedBillingSuccessRoute
   '/messages/$conversationId': typeof AuthenticatedMessagesConversationIdRoute
   '/settings/billing': typeof AuthenticatedSettingsBillingRoute
@@ -184,9 +212,12 @@ export interface FileRoutesByTo {
   '/post': typeof AuthenticatedPostRoute
   '/profile': typeof AuthenticatedProfileRoute
   '/unlocked': typeof AuthenticatedUnlockedRoute
+  '/admin/refunds': typeof AdminRefundsRoute
+  '/admin/tasks': typeof AdminTasksRoute
   '/auth/verify': typeof AuthVerifyRoute
   '/billing/cancel': typeof BillingCancelRoute
   '/task/$id': typeof TaskIdRoute
+  '/admin': typeof AdminIndexRoute
   '/billing/success': typeof AuthenticatedBillingSuccessRoute
   '/messages/$conversationId': typeof AuthenticatedMessagesConversationIdRoute
   '/settings/billing': typeof AuthenticatedSettingsBillingRoute
@@ -200,6 +231,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
+  '/admin': typeof AdminRouteWithChildren
   '/auth': typeof AuthRouteWithChildren
   '/privacy': typeof PrivacyRoute
   '/refund-policy': typeof RefundPolicyRoute
@@ -209,9 +241,12 @@ export interface FileRoutesById {
   '/_authenticated/post': typeof AuthenticatedPostRoute
   '/_authenticated/profile': typeof AuthenticatedProfileRoute
   '/_authenticated/unlocked': typeof AuthenticatedUnlockedRoute
+  '/admin/refunds': typeof AdminRefundsRoute
+  '/admin/tasks': typeof AdminTasksRoute
   '/auth/verify': typeof AuthVerifyRoute
   '/billing/cancel': typeof BillingCancelRoute
   '/task/$id': typeof TaskIdRoute
+  '/admin/': typeof AdminIndexRoute
   '/_authenticated/billing/success': typeof AuthenticatedBillingSuccessRoute
   '/_authenticated/messages/$conversationId': typeof AuthenticatedMessagesConversationIdRoute
   '/_authenticated/settings/billing': typeof AuthenticatedSettingsBillingRoute
@@ -225,6 +260,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/admin'
     | '/auth'
     | '/privacy'
     | '/refund-policy'
@@ -234,9 +270,12 @@ export interface FileRouteTypes {
     | '/post'
     | '/profile'
     | '/unlocked'
+    | '/admin/refunds'
+    | '/admin/tasks'
     | '/auth/verify'
     | '/billing/cancel'
     | '/task/$id'
+    | '/admin/'
     | '/billing/success'
     | '/messages/$conversationId'
     | '/settings/billing'
@@ -257,9 +296,12 @@ export interface FileRouteTypes {
     | '/post'
     | '/profile'
     | '/unlocked'
+    | '/admin/refunds'
+    | '/admin/tasks'
     | '/auth/verify'
     | '/billing/cancel'
     | '/task/$id'
+    | '/admin'
     | '/billing/success'
     | '/messages/$conversationId'
     | '/settings/billing'
@@ -272,6 +314,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/_authenticated'
+    | '/admin'
     | '/auth'
     | '/privacy'
     | '/refund-policy'
@@ -281,9 +324,12 @@ export interface FileRouteTypes {
     | '/_authenticated/post'
     | '/_authenticated/profile'
     | '/_authenticated/unlocked'
+    | '/admin/refunds'
+    | '/admin/tasks'
     | '/auth/verify'
     | '/billing/cancel'
     | '/task/$id'
+    | '/admin/'
     | '/_authenticated/billing/success'
     | '/_authenticated/messages/$conversationId'
     | '/_authenticated/settings/billing'
@@ -297,6 +343,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
+  AdminRoute: typeof AdminRouteWithChildren
   AuthRoute: typeof AuthRouteWithChildren
   PrivacyRoute: typeof PrivacyRoute
   RefundPolicyRoute: typeof RefundPolicyRoute
@@ -352,6 +399,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin': {
+      id: '/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AdminRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_authenticated': {
       id: '/_authenticated'
       path: ''
@@ -365,6 +419,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/admin/': {
+      id: '/admin/'
+      path: '/'
+      fullPath: '/admin/'
+      preLoaderRoute: typeof AdminIndexRouteImport
+      parentRoute: typeof AdminRoute
     }
     '/task/$id': {
       id: '/task/$id'
@@ -386,6 +447,20 @@ declare module '@tanstack/react-router' {
       fullPath: '/auth/verify'
       preLoaderRoute: typeof AuthVerifyRouteImport
       parentRoute: typeof AuthRoute
+    }
+    '/admin/tasks': {
+      id: '/admin/tasks'
+      path: '/tasks'
+      fullPath: '/admin/tasks'
+      preLoaderRoute: typeof AdminTasksRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/refunds': {
+      id: '/admin/refunds'
+      path: '/refunds'
+      fullPath: '/admin/refunds'
+      preLoaderRoute: typeof AdminRefundsRouteImport
+      parentRoute: typeof AdminRoute
     }
     '/_authenticated/unlocked': {
       id: '/_authenticated/unlocked'
@@ -498,6 +573,20 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
 const AuthenticatedRouteRouteWithChildren =
   AuthenticatedRouteRoute._addFileChildren(AuthenticatedRouteRouteChildren)
 
+interface AdminRouteChildren {
+  AdminRefundsRoute: typeof AdminRefundsRoute
+  AdminTasksRoute: typeof AdminTasksRoute
+  AdminIndexRoute: typeof AdminIndexRoute
+}
+
+const AdminRouteChildren: AdminRouteChildren = {
+  AdminRefundsRoute: AdminRefundsRoute,
+  AdminTasksRoute: AdminTasksRoute,
+  AdminIndexRoute: AdminIndexRoute,
+}
+
+const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
+
 interface AuthRouteChildren {
   AuthVerifyRoute: typeof AuthVerifyRoute
 }
@@ -511,6 +600,7 @@ const AuthRouteWithChildren = AuthRoute._addFileChildren(AuthRouteChildren)
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
+  AdminRoute: AdminRouteWithChildren,
   AuthRoute: AuthRouteWithChildren,
   PrivacyRoute: PrivacyRoute,
   RefundPolicyRoute: RefundPolicyRoute,

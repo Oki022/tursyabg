@@ -1,0 +1,11 @@
+REVOKE EXECUTE ON FUNCTION public.has_role(uuid, public.app_role) FROM anon;
+REVOKE EXECUTE ON FUNCTION public.is_staff(uuid) FROM anon;
+REVOKE EXECUTE ON FUNCTION public.log_admin_action(text, text, uuid, jsonb) FROM anon, authenticated;
+REVOKE EXECUTE ON FUNCTION public.admin_resolve_refund(uuid, boolean, text) FROM anon;
+REVOKE EXECUTE ON FUNCTION public.admin_adjust_credits(uuid, int, text) FROM anon;
+REVOKE EXECUTE ON FUNCTION public.admin_set_ban(uuid, boolean, text) FROM anon;
+REVOKE EXECUTE ON FUNCTION public.admin_set_role(uuid, public.app_role, boolean) FROM anon;
+REVOKE EXECUTE ON FUNCTION public.admin_delete_task(uuid, text) FROM anon;
+REVOKE EXECUTE ON FUNCTION public.admin_list_users(text, int) FROM anon;
+REVOKE EXECUTE ON FUNCTION public.admin_dashboard_stats() FROM anon;
+REVOKE EXECUTE ON FUNCTION public.admin_daily_series() FROM anon;

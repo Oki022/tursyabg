@@ -14,6 +14,36 @@ export type Database = {
   }
   public: {
     Tables: {
+      admin_actions: {
+        Row: {
+          action_type: string
+          admin_id: string
+          created_at: string
+          details: Json
+          id: string
+          target_id: string | null
+          target_type: string
+        }
+        Insert: {
+          action_type: string
+          admin_id: string
+          created_at?: string
+          details?: Json
+          id?: string
+          target_id?: string | null
+          target_type: string
+        }
+        Update: {
+          action_type?: string
+          admin_id?: string
+          created_at?: string
+          details?: Json
+          id?: string
+          target_id?: string | null
+          target_type?: string
+        }
+        Relationships: []
+      }
       conversations: {
         Row: {
           created_at: string
@@ -98,31 +128,37 @@ export type Database = {
       }
       credit_refund_requests: {
         Row: {
+          admin_note: string
           created_at: string
           details: string
           id: string
           reason: Database["public"]["Enums"]["refund_reason"]
           resolved_at: string | null
+          resolved_by: string | null
           status: Database["public"]["Enums"]["refund_status"]
           unlock_id: string
           user_id: string
         }
         Insert: {
+          admin_note?: string
           created_at?: string
           details?: string
           id?: string
           reason: Database["public"]["Enums"]["refund_reason"]
           resolved_at?: string | null
+          resolved_by?: string | null
           status?: Database["public"]["Enums"]["refund_status"]
           unlock_id: string
           user_id: string
         }
         Update: {
+          admin_note?: string
           created_at?: string
           details?: string
           id?: string
           reason?: Database["public"]["Enums"]["refund_reason"]
           resolved_at?: string | null
+          resolved_by?: string | null
           status?: Database["public"]["Enums"]["refund_status"]
           unlock_id?: string
           user_id?: string
@@ -391,6 +427,8 @@ export type Database = {
         Row: {
           avatar_url: string | null
           balance: number
+          ban_reason: string | null
+          banned_at: string | null
           city: string | null
           created_at: string
           credits: number
@@ -403,6 +441,8 @@ export type Database = {
         Insert: {
           avatar_url?: string | null
           balance?: number
+          ban_reason?: string | null
+          banned_at?: string | null
           city?: string | null
           created_at?: string
           credits?: number
@@ -415,6 +455,8 @@ export type Database = {
         Update: {
           avatar_url?: string | null
           balance?: number
+          ban_reason?: string | null
+          banned_at?: string | null
           city?: string | null
           created_at?: string
           credits?: number
@@ -451,6 +493,51 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "task_images_task_id_fkey"
+            columns: ["task_id"]
+            isOneToOne: false
+            referencedRelation: "tasks"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      task_reports: {
+        Row: {
+          created_at: string
+          details: string
+          id: string
+          reason: Database["public"]["Enums"]["report_reason"]
+          reporter_id: string
+          status: Database["public"]["Enums"]["report_status"]
+          task_id: string
+        }
+        Insert: {
+          created_at?: string
+          details?: string
+          id?: string
+          reason: Database["public"]["Enums"]["report_reason"]
+          reporter_id: string
+          status?: Database["public"]["Enums"]["report_status"]
+          task_id: string
+        }
+        Update: {
+          created_at?: string
+          details?: string
+          id?: string
+          reason?: Database["public"]["Enums"]["report_reason"]
+          reporter_id?: string
+          status?: Database["public"]["Enums"]["report_status"]
+          task_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "task_reports_reporter_id_fkey"
+            columns: ["reporter_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "task_reports_task_id_fkey"
             columns: ["task_id"]
             isOneToOne: false
             referencedRelation: "tasks"
@@ -562,11 +649,83 @@ export type Database = {
           },
         ]
       }
+      user_roles: {
+        Row: {
+          created_at: string
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
+      admin_adjust_credits: {
+        Args: { _amount: number; _reason: string; _user_id: string }
+        Returns: Json
+      }
+      admin_daily_series: {
+        Args: never
+        Returns: {
+          day: string
+          signups: number
+          tasks: number
+        }[]
+      }
+      admin_dashboard_stats: { Args: never; Returns: Json }
+      admin_delete_task: {
+        Args: { _reason: string; _task_id: string }
+        Returns: Json
+      }
+      admin_list_users: {
+        Args: { _limit?: number; _search: string }
+        Returns: {
+          ban_reason: string
+          banned_at: string
+          created_at: string
+          credits: number
+          email: string
+          full_name: string
+          id: string
+          is_admin: boolean
+          is_moderator: boolean
+          task_count: number
+          total_paid_eur: number
+          total_spent_credits: number
+          unlock_count: number
+        }[]
+      }
+      admin_resolve_refund: {
+        Args: { _approve: boolean; _note: string; _request_id: string }
+        Returns: Json
+      }
+      admin_set_ban: {
+        Args: { _banned: boolean; _reason: string; _user_id: string }
+        Returns: Json
+      }
+      admin_set_role: {
+        Args: {
+          _grant: boolean
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: Json
+      }
       complete_payment: {
         Args: {
           _payment_intent: string
@@ -580,6 +739,23 @@ export type Database = {
         Returns: string
       }
       get_unlock_cost: { Args: { task_budget: number }; Returns: number }
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
+      is_staff: { Args: { _user_id: string }; Returns: boolean }
+      log_admin_action: {
+        Args: {
+          _action_type: string
+          _details: Json
+          _target_id: string
+          _target_type: string
+        }
+        Returns: undefined
+      }
       mask_contacts: { Args: { input: string }; Returns: string }
       refund_payment: {
         Args: { _payment_intent: string; _status: string }
@@ -588,6 +764,7 @@ export type Database = {
       unlock_task_contact: { Args: { _task_id: string }; Returns: Json }
     }
     Enums: {
+      app_role: "user" | "moderator" | "admin"
       credit_transaction_type:
         | "purchase"
         | "unlock"
@@ -601,6 +778,14 @@ export type Database = {
         | "wrong_category"
         | "other"
       refund_status: "pending" | "approved" | "rejected"
+      report_reason:
+        | "spam"
+        | "fraud"
+        | "inappropriate"
+        | "wrong_category"
+        | "duplicate"
+        | "other"
+      report_status: "pending" | "reviewed" | "dismissed"
       task_status: "active" | "pending" | "pending_payment" | "inactive"
     }
     CompositeTypes: {
@@ -729,6 +914,7 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
+      app_role: ["user", "moderator", "admin"],
       credit_transaction_type: [
         "purchase",
         "unlock",
@@ -744,6 +930,15 @@ export const Constants = {
         "other",
       ],
       refund_status: ["pending", "approved", "rejected"],
+      report_reason: [
+        "spam",
+        "fraud",
+        "inappropriate",
+        "wrong_category",
+        "duplicate",
+        "other",
+      ],
+      report_status: ["pending", "reviewed", "dismissed"],
       task_status: ["active", "pending", "pending_payment", "inactive"],
     },
   },
