@@ -61,7 +61,7 @@ export function NotificationBell() {
           )}
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-[340px] p-0">
+      <DropdownMenuContent align="end" className="w-[min(340px,calc(100vw-1.5rem))] p-0">
         <div className="flex items-center justify-between border-b border-border px-3 py-2.5">
           <span className="text-sm font-semibold">Известия</span>
           <button className="text-xs text-muted-foreground hover:text-foreground">

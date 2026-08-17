@@ -1,10 +1,10 @@
 import { Link } from "@tanstack/react-router";
 import { UnreadBadge } from "@/components/unread-badge";
-import { ClipboardList, Plus, CircleUserRound, LogOut, BadgeCheck } from "lucide-react";
+import { ClipboardList, Plus, CircleUserRound, LogOut, BadgeCheck, MessageCircle, Settings } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { NotificationBell } from "@/components/notification-bell";
-import { useAuth, getInitials } from "@/lib/auth";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { useAuth } from "@/lib/auth";
+import { useCreditBalance } from "@/lib/credits-api";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -16,6 +16,8 @@ import {
 
 export function SiteHeader() {
   const { user, logout } = useAuth();
+  const balance = useCreditBalance(user?.id);
+  const credits = balance.data ?? user?.credits ?? 0;
   return (
     <header
       className="sticky top-0 z-40 w-full max-w-full border-b border-border/60 bg-background/80 backdrop-blur supports-[backdrop-filter]:bg-background/60"
@@ -65,23 +67,30 @@ export function SiteHeader() {
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <button
-                    className="ml-0.5 hidden rounded-full ring-offset-background transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 md:block"
+                    className="ml-0.5 hidden rounded-full p-0.5 text-foreground ring-offset-background transition hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 md:block"
                     aria-label="Меню на профила"
                   >
-                    <Avatar className="h-9 w-9 border border-border">
-                      <AvatarFallback className="bg-primary/10 text-sm font-semibold text-primary">
-                        {getInitials(user.name)}
-                      </AvatarFallback>
-                    </Avatar>
+                    <CircleUserRound className="h-7 w-7" strokeWidth={1.75} />
                   </button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-56">
+                <DropdownMenuContent align="end" className="w-64">
                   <DropdownMenuLabel className="flex items-center gap-2">
                     <span className="truncate">{user.name}</span>
                     {user.role === "worker" && user.verified && (
                       <BadgeCheck className="h-4 w-4 fill-[#1da1f2] text-white" />
                     )}
                   </DropdownMenuLabel>
+                  <div className="mx-1 mb-1 flex items-center justify-between gap-2 rounded-lg bg-gradient-to-r from-primary/10 to-accent/10 px-2.5 py-2">
+                    <span className="min-w-0 truncate text-sm font-bold text-primary">
+                      Кредити: {credits}
+                    </span>
+                    <Link
+                      to="/settings/billing"
+                      className="shrink-0 rounded-full bg-gradient-to-r from-primary to-accent px-2.5 py-1 text-[11px] font-semibold text-primary-foreground"
+                    >
+                      Купи кредити
+                    </Link>
+                  </div>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem asChild>
                     <Link to="/profile" className="cursor-pointer">
@@ -90,9 +99,15 @@ export function SiteHeader() {
                     </Link>
                   </DropdownMenuItem>
                   <DropdownMenuItem asChild>
-                    <Link to="/profile" className="cursor-pointer">
-                      <ClipboardList className="mr-2 h-4 w-4" />
-                      Моите задачи
+                    <Link to="/messages" className="cursor-pointer">
+                      <MessageCircle className="mr-2 h-4 w-4" />
+                      Съобщения
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Link to="/settings/profile" className="cursor-pointer">
+                      <Settings className="mr-2 h-4 w-4" />
+                      Настройки
                     </Link>
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />

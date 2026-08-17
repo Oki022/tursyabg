@@ -1,6 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { MapPin, Clock } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { TopBadge, UrgentBadge } from "@/components/promotions/promo-badges";
 import { getCategory, CATEGORY_IMAGES, type Task } from "@/lib/mock-data";
 
 export function TaskCard({ task }: { task: Task }) {
@@ -23,31 +24,25 @@ export function TaskCard({ task }: { task: Task }) {
           loading="lazy"
           className="aspect-[4/3] w-full object-cover"
         />
-        {(task.isTop || task.isUrgent) && (
-          <div className="absolute right-2 top-2 flex max-w-[60%] flex-wrap justify-end gap-1">
-            {task.isTop && (
-              <span className="rounded-full bg-gradient-to-r from-primary to-accent px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-primary-foreground shadow-sm">
-                ТОП
-              </span>
-            )}
-            {task.isUrgent && (
-              <span className="rounded-full bg-destructive px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-destructive-foreground shadow-sm">
-                Спешно
-              </span>
-            )}
-          </div>
-        )}
-        <Badge
-          variant="secondary"
-          className="absolute left-2 top-2 max-w-[55%] gap-1 rounded-full bg-background/90 px-2 py-0.5 text-[10px] font-medium shadow-sm backdrop-blur"
-        >
-          <Icon className="h-3 w-3 shrink-0" />
-          <span className="max-w-[80px] truncate">{cat.name}</span>
-        </Badge>
+        <div className="pointer-events-none absolute inset-x-0 top-0 flex items-start justify-between gap-1.5 p-1.5">
+          <Badge
+            variant="secondary"
+            className="min-w-0 max-w-[52%] gap-1 rounded-full bg-background/90 px-2 py-0.5 text-[10px] font-medium leading-tight shadow-sm backdrop-blur"
+          >
+            <Icon className="h-3 w-3 shrink-0" />
+            <span className="truncate">{cat.name}</span>
+          </Badge>
+          {(task.isTop || task.isUrgent) && (
+            <div className="flex min-w-0 max-w-[46%] flex-col items-end gap-1">
+              {task.isTop && <TopBadge />}
+              {task.isUrgent && <UrgentBadge />}
+            </div>
+          )}
+        </div>
       </div>
 
       <div className="flex min-w-0 flex-1 flex-col gap-1 p-2.5">
-        <h3 className="text-[13px] font-medium leading-snug text-foreground line-clamp-2">
+        <h3 className="break-words text-[13px] font-medium leading-snug text-foreground line-clamp-2">
           {task.title}
         </h3>
         <p className="text-sm font-bold text-primary md:text-base">{task.budget} €</p>
