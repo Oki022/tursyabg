@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as TasksRouteImport } from './routes/tasks'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as AuthRouteImport } from './routes/auth'
+import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as TaskIdRouteImport } from './routes/task.$id'
 import { Route as AuthenticatedProfileRouteImport } from './routes/_authenticated/profile'
@@ -33,6 +34,10 @@ const AuthRoute = AuthRouteImport.update({
   path: '/auth',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
+  id: '/_authenticated',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
@@ -44,19 +49,19 @@ const TaskIdRoute = TaskIdRouteImport.update({
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedProfileRoute = AuthenticatedProfileRouteImport.update({
-  id: '/_authenticated/profile',
+  id: '/profile',
   path: '/profile',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedPostRoute = AuthenticatedPostRouteImport.update({
-  id: '/_authenticated/post',
+  id: '/post',
   path: '/post',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedMessagesRoute = AuthenticatedMessagesRouteImport.update({
-  id: '/_authenticated/messages',
+  id: '/messages',
   path: '/messages',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 
 export interface FileRoutesByFullPath {
@@ -82,6 +87,7 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
   '/reset-password': typeof ResetPasswordRoute
   '/tasks': typeof TasksRoute
@@ -114,6 +120,7 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
+    | '/_authenticated'
     | '/auth'
     | '/reset-password'
     | '/tasks'
@@ -125,12 +132,10 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AuthRoute: typeof AuthRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
   TasksRoute: typeof TasksRoute
-  AuthenticatedMessagesRoute: typeof AuthenticatedMessagesRoute
-  AuthenticatedPostRoute: typeof AuthenticatedPostRoute
-  AuthenticatedProfileRoute: typeof AuthenticatedProfileRoute
   TaskIdRoute: typeof TaskIdRoute
 }
 
@@ -157,6 +162,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated': {
+      id: '/_authenticated'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof AuthenticatedRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -176,33 +188,46 @@ declare module '@tanstack/react-router' {
       path: '/profile'
       fullPath: '/profile'
       preLoaderRoute: typeof AuthenticatedProfileRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/post': {
       id: '/_authenticated/post'
       path: '/post'
       fullPath: '/post'
       preLoaderRoute: typeof AuthenticatedPostRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/messages': {
       id: '/_authenticated/messages'
       path: '/messages'
       fullPath: '/messages'
       preLoaderRoute: typeof AuthenticatedMessagesRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
     }
   }
 }
 
-const rootRouteChildren: RootRouteChildren = {
-  IndexRoute: IndexRoute,
-  AuthRoute: AuthRoute,
-  ResetPasswordRoute: ResetPasswordRoute,
-  TasksRoute: TasksRoute,
+interface AuthenticatedRouteRouteChildren {
+  AuthenticatedMessagesRoute: typeof AuthenticatedMessagesRoute
+  AuthenticatedPostRoute: typeof AuthenticatedPostRoute
+  AuthenticatedProfileRoute: typeof AuthenticatedProfileRoute
+}
+
+const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedMessagesRoute: AuthenticatedMessagesRoute,
   AuthenticatedPostRoute: AuthenticatedPostRoute,
   AuthenticatedProfileRoute: AuthenticatedProfileRoute,
+}
+
+const AuthenticatedRouteRouteWithChildren =
+  AuthenticatedRouteRoute._addFileChildren(AuthenticatedRouteRouteChildren)
+
+const rootRouteChildren: RootRouteChildren = {
+  IndexRoute: IndexRoute,
+  AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
+  AuthRoute: AuthRoute,
+  ResetPasswordRoute: ResetPasswordRoute,
+  TasksRoute: TasksRoute,
   TaskIdRoute: TaskIdRoute,
 }
 export const routeTree = rootRouteImport
