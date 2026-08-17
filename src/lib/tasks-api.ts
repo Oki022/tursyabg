@@ -8,9 +8,9 @@ import { useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { CATEGORY_IMAGES, type Task, type TaskStatus } from "@/lib/mock-data";
 import { resolveImageUrls } from "@/services/storage";
+import { uploadModeratedTaskImage } from "@/lib/moderation.functions";
 
 export const PAGE_SIZE = 20;
-const BUCKET = "task-images";
 
 type Row = {
   id: string;
