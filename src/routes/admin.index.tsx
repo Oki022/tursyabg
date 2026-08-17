@@ -49,8 +49,17 @@ function AdminDashboard() {
 
   return (
     <AdminPage title="Табло" description="Обобщение за последните 30 дни.">
-      {(s?.pending_refunds ?? 0) > 0 || (s?.pending_reports ?? 0) > 0 ? (
+      {(s?.pending_refunds ?? 0) > 0 || (s?.pending_reports ?? 0) > 0 || (s?.moderation_pending ?? 0) > 0 ? (
         <div className="flex flex-wrap gap-2">
+          {(s?.moderation_pending ?? 0) > 0 && (
+            <Link
+              to="/admin/moderation"
+              className="rounded-md border border-red-300 bg-red-50 px-3 py-2 text-sm font-medium text-red-900"
+            >
+              {s?.moderation_pending} чакащи в опашката за модерация
+              {s?.moderation_oldest ? ` · най-старото от ${formatDateBg(s.moderation_oldest)}` : ""} →
+            </Link>
+          )}
           {(s?.pending_refunds ?? 0) > 0 && (
             <Link
               to="/admin/refunds"
@@ -95,6 +104,16 @@ function AdminDashboard() {
           label="Маркирани профили"
           value={String(s?.flagged_users ?? 0)}
           hint="Висок дял заявки за връщане"
+        />
+        <Stat
+          label="Опашка за модерация"
+          value={String(s?.moderation_pending ?? 0)}
+          hint={s?.moderation_oldest ? `най-старото от ${formatDateBg(s.moderation_oldest)}` : "няма изчакващи"}
+        />
+        <Stat
+          label="Нарушения 30 дни"
+          value={String(s?.violations_30d ?? 0)}
+          hint="Автоматични и ръчни санкции"
         />
       </div>
 
