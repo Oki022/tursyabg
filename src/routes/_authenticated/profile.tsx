@@ -29,6 +29,7 @@ import { useMyTasks } from "@/lib/tasks-api";
 import { useOwnerPromotions } from "@/lib/promotions-api";
 import { PROMO_LABELS, remainingLabel, type TaskPromotion } from "@/services/promotions";
 import { PromoteDialog } from "@/components/promotions/promote-dialog";
+import { PromotedBadge, TopBadge, UrgentBadge } from "@/components/promotions/promo-badges";
 import type { Task } from "@/lib/mock-data";
 import { toast } from "sonner";
 
