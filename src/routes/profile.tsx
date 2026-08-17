@@ -68,9 +68,13 @@ function ProfilePage() {
       pending_payment: [],
       inactive: [],
     };
-    for (const t of tasks) map[t.status ?? "active"].push(t);
+    if (!user) return map;
+    for (const t of tasks) {
+      if (t.userId !== user.id) continue;
+      map[t.status ?? "active"].push(t);
+    }
     return map;
-  }, [tasks]);
+  }, [tasks, user]);
 
   useEffect(() => {
     if (typeof window !== "undefined" && user === null) {
