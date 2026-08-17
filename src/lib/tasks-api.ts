@@ -21,6 +21,7 @@ type Row = {
   city: string | null;
   neighborhood: string | null;
   status: TaskStatus;
+  unlock_cost?: number | null;
   created_at: string;
   user_id: string;
   task_images?: { image_url: string; sort_order: number }[] | null;
@@ -28,7 +29,7 @@ type Row = {
 };
 
 const SELECT =
-  "id, title, description, category, budget, city, neighborhood, status, created_at, user_id, task_images(image_url, sort_order), profiles(full_name)";
+  "id, title, description, category, budget, city, neighborhood, status, unlock_cost, created_at, user_id, task_images(image_url, sort_order), profiles(full_name)";
 
 export function timeAgoBg(iso: string) {
   const diff = Date.now() - new Date(iso).getTime();
@@ -61,6 +62,7 @@ function mapRow(row: Row, signed: Record<string, string>): Task {
     author: row.profiles?.full_name ?? "Потребител",
     userId: row.user_id,
     status: row.status,
+    unlockCost: row.unlock_cost ?? undefined,
     image: gallery[0] ?? CATEGORY_IMAGES[row.category] ?? CATEGORY_IMAGES.drugi,
     gallery,
   };
