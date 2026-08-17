@@ -10,6 +10,9 @@ import { categories, detectCategory } from "@/lib/mock-data";
 import { useCreateTask } from "@/lib/tasks-api";
 import { LocationCombobox } from "@/components/location-combobox";
 import { toast } from "sonner";
+import { useAuth } from "@/lib/auth";
+import { RequirePhoneNotice } from "@/components/require-phone-notice";
+import { CONTACT_MASK_WARNING, containsContactInfo, isValidBgPhone } from "@/lib/phone";
 
 export const Route = createFileRoute("/_authenticated/post")({
   head: () => ({
@@ -24,6 +27,8 @@ export const Route = createFileRoute("/_authenticated/post")({
 function PostPage() {
   const navigate = useNavigate();
   const createTask = useCreateTask();
+  const { user } = useAuth();
+  const hasPhone = Boolean(user?.phone && isValidBgPhone(user.phone));
   const [title, setTitle] = useState("");
   const [category, setCategory] = useState<string | undefined>(undefined);
   const [description, setDescription] = useState("");
@@ -71,6 +76,10 @@ function PostPage() {
       toast.error("Моля, попълни всички полета");
       return;
     }
+    if (!hasPhone) {
+      toast.error("Добави телефон в профила си, за да публикуваш задача.");
+      return;
+    }
     try {
       const id = await createTask.mutateAsync({
         title,
@@ -83,10 +92,17 @@ function PostPage() {
       toast.success("🎉 Задачата е публикувана успешно!", {
         description: "Скоро ще получиш първите предложения.",
       });
-      navigate({ to: "/task/$id", params: { id } });
+      if (containsContactInfo(`${title} ${description}`)) {
+        toast.warning("Контактите са скрити автоматично", { description: CONTACT_MASK_WARNING });
+      }
+      navigate({ to: "/posted/$id", params: { id } });
     } catch (err) {
       const raw = err instanceof Error ? err.message : "";
       const limitReached = raw.includes("FREE_TASK_LIMIT") || raw.includes("лимит");
+      if (raw.includes("PHONE_REQUIRED")) {
+        toast.error("Добави телефон в профила си, за да публикуваш задача.");
+        return;
+      }
       toast.error(
         limitReached ? "Достигна лимита от 5 безплатни задачи този месец." : "Задачата не беше публикувана.",
         { description: limitReached ? "Опитай отново следващия месец." : raw || undefined },
@@ -102,6 +118,14 @@ function PostPage() {
           Опиши какво ти трябва. Безплатно е и отнема по-малко от минута.
         </p>
       </div>
+
+      {user && !hasPhone && (
+        <RequirePhoneNotice
+          className="mb-6"
+          title="Липсва телефон в профила ти"
+          description="За да публикуваш задача, добави телефон за контакт. Той остава скрит и се вижда само от майстор, който плати за отключване."
+        />
+      )}
 
       <form onSubmit={onSubmit} className="space-y-6 rounded-2xl border border-border bg-card p-6 md:p-8">
         <div className="space-y-2">
@@ -254,7 +278,7 @@ function PostPage() {
           <p className="text-xs text-muted-foreground">
             С публикуването приемаш Условията за ползване.
           </p>
-          <Button type="submit" size="lg" disabled={createTask.isPending} className="sm:px-8">{createTask.isPending ? "Публикуване..." : "Публикувай задачата"}</Button>
+            <Button type="submit" size="lg" disabled={createTask.isPending || !hasPhone} className="sm:px-8">{createTask.isPending ? "Публикуване..." : "Публикувай задачата"}</Button>
         </div>
       </form>
     </div>

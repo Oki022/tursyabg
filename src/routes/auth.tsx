@@ -1,11 +1,12 @@
 import { createFileRoute, Link, useNavigate, useSearch } from "@tanstack/react-router";
 import { useMemo, useState, type FormEvent } from "react";
-import { Mail, Lock, User as UserIcon, HandHeart, Wrench, Eye, EyeOff, Loader2 } from "lucide-react";
+import { Mail, Lock, User as UserIcon, HandHeart, Wrench, Eye, EyeOff, Loader2, PhoneCall } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useAuth, type UserRole } from "@/lib/auth";
 import { authErrorMessage, emailError, nameError, passwordError } from "@/lib/auth-errors";
+import { normalizeBgPhone, phoneError } from "@/lib/phone";
 import { toast } from "sonner";
 import { Checkbox } from "@/components/ui/checkbox";
 
@@ -39,23 +40,29 @@ function AuthPage() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [phone, setPhone] = useState("");
   const [role, setRole] = useState<UserRole>("customer");
   const [acceptedTerms, setAcceptedTerms] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-  const [touched, setTouched] = useState<{ name?: boolean; email?: boolean; password?: boolean }>({});
+  const [touched, setTouched] = useState<{ name?: boolean; email?: boolean; password?: boolean; phone?: boolean }>({});
 
   const nameMsg = useMemo(() => (touched.name ? nameError(name) : null), [touched.name, name]);
   const emailMsg = useMemo(() => (touched.email ? emailError(email) : null), [touched.email, email]);
   const passwordMsg = useMemo(() => (touched.password ? passwordError(password) : null), [touched.password, password]);
+  const phoneMsg = useMemo(() => (touched.phone ? phoneError(phone) : null), [touched.phone, phone]);
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    setTouched({ name: true, email: true, password: true });
-    if (!email || !password || (isRegister && !name)) {
+    setTouched({ name: true, email: true, password: true, phone: true });
+    if (!email || !password || (isRegister && (!name || !phone))) {
       toast.error("Моля, попълнете всички полета.");
       return;
     }
-    if (emailError(email) || passwordError(password) || (isRegister && nameError(name))) {
+    if (
+      emailError(email) ||
+      passwordError(password) ||
+      (isRegister && (nameError(name) || phoneError(phone)))
+    ) {
       toast.error("Провери маркираните полета.");
       return;
     }
@@ -69,7 +76,13 @@ function AuthPage() {
         // PRE-LAUNCH TODO: потвърждението на имейл е изключено за разработка.
         // Когато се включи отново, needsConfirmation ще е true и трябва да пренасочим към
         // /auth/verify?email=... (цялата страница е вече готова) вместо да влизаме директно.
-        const { needsConfirmation } = await register({ name, email, password, role });
+        const { needsConfirmation } = await register({
+          name,
+          email,
+          password,
+          phone: normalizeBgPhone(phone),
+          role,
+        });
         if (needsConfirmation) {
           navigate({ to: "/auth/verify", search: { email } });
           return;
@@ -215,6 +228,34 @@ function AuthPage() {
               isRegister && <p className="text-xs text-muted-foreground">Поне 6 символа.</p>
             )}
           </div>
+
+          {isRegister && (
+            <div className="grid gap-1.5">
+              <Label htmlFor="phone">Телефон</Label>
+              <div className="relative">
+                <PhoneCall className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                <Input
+                  id="phone"
+                  inputMode="tel"
+                  value={phone}
+                  onChange={(e) => {
+                    setPhone(e.target.value);
+                    setTouched((t) => ({ ...t, phone: true }));
+                  }}
+                  placeholder="0888123456"
+                  aria-invalid={Boolean(phoneMsg)}
+                  className={`h-10 pl-9 ${phoneMsg ? "border-destructive focus-visible:ring-destructive" : ""}`}
+                />
+              </div>
+              {phoneMsg ? (
+                <p className="text-xs text-destructive">{phoneMsg}</p>
+              ) : (
+                <p className="text-xs text-muted-foreground">
+                  Скрит е за всички — вижда се само след отключване с кредити.
+                </p>
+              )}
+            </div>
+          )}
 
           {isRegister && (
             <div className="grid gap-2">

@@ -7,6 +7,9 @@ import { Input } from "@/components/ui/input";
 import { getInitials, useAuth } from "@/lib/auth";
 import { useConversation, useMarkAsRead, useSendMessage, useThread } from "@/lib/messages-api";
 import type { ChatMessage } from "@/services/messages";
+import { CONTACT_MASK_WARNING, containsContactInfo, isValidBgPhone } from "@/lib/phone";
+import { RequirePhoneNotice } from "@/components/require-phone-notice";
+import { toast } from "sonner";
 
 function dayLabel(iso: string) {
   const d = new Date(iso);
@@ -51,13 +54,25 @@ export function ChatThread({ conversationId }: { conversationId: string }) {
   const handleSend = async () => {
     const content = text.trim();
     if (!content || !conversation) return;
+    if (!user?.phone || !isValidBgPhone(user.phone)) {
+      toast.error("Добави телефон в профила си, за да пишеш съобщения.");
+      return;
+    }
     setText("");
-    await send.mutateAsync({
-      conversationId,
-      receiverId: conversation.otherUserId,
-      taskId: conversation.taskId,
-      content,
-    });
+    try {
+      await send.mutateAsync({
+        conversationId,
+        receiverId: conversation.otherUserId,
+        taskId: conversation.taskId,
+        content,
+      });
+      if (containsContactInfo(content)) {
+        toast.warning("Контактите са скрити автоматично", { description: CONTACT_MASK_WARNING });
+      }
+    } catch {
+      setText(content);
+      toast.error("Съобщението не беше изпратено.");
+    }
   };
 
   if (thread.isLoading) {
@@ -179,6 +194,14 @@ export function ChatThread({ conversationId }: { conversationId: string }) {
         }}
         className="sticky bottom-0 z-10 flex shrink-0 items-center gap-2 border-t border-border/60 bg-background/95 px-3 py-3 backdrop-blur"
       >
+        {user && (!user.phone || !isValidBgPhone(user.phone)) ? (
+          <RequirePhoneNotice
+            className="w-full"
+            title="Добави телефон, за да пишеш съобщения"
+            description="Телефонът остава скрит — служи само за потвърждаване на профила ти."
+          />
+        ) : (
+          <>
         <Input
           value={text}
           onChange={(e) => setText(e.target.value)}
@@ -194,6 +217,8 @@ export function ChatThread({ conversationId }: { conversationId: string }) {
         >
           {send.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
         </Button>
+          </>
+        )}
       </form>
     </div>
   );

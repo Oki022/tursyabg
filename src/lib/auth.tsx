@@ -24,7 +24,7 @@ type AuthContextValue = {
   loading: boolean;
   login: (email: string, password: string) => Promise<void>;
   loginSocial: (provider: "google") => Promise<void>;
-  register: (data: { name: string; email: string; password: string; role: UserRole }) => Promise<{ needsConfirmation: boolean }>;
+  register: (data: { name: string; email: string; password: string; phone: string; role: UserRole }) => Promise<{ needsConfirmation: boolean }>;
   resetPassword: (email: string) => Promise<void>;
   updatePassword: (password: string) => Promise<void>;
   logout: () => Promise<void>;
@@ -141,7 +141,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     if (result.error) throw new Error(result.error.message ?? "Неуспешен вход с Google");
   };
 
-  const register: AuthContextValue["register"] = async ({ name, email, password, role }) => {
+  const register: AuthContextValue["register"] = async ({ name, email, password, phone, role }) => {
     // PRE-LAUNCH TODO: потвърждението на имейл е ИЗКЛЮЧЕНО (auto-confirm) за периода на разработка,
     // затова signUp връща активна сесия и потребителят влиза веднага.
     // Преди пускане на живо: включи отново "Confirm email" с истински SMTP доставчик
@@ -153,10 +153,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       password,
       options: {
         emailRedirectTo: `${window.location.origin}/`,
-        data: { full_name: name, role },
+        data: { full_name: name, role, phone },
       },
     });
     if (error) throw error;
+    // Телефонът е задължителен контакт — записва се в профила веднага след регистрация.
+    if (data.session?.user?.id) {
+      await supabase.from("profiles").upsert({ id: data.session.user.id, full_name: name }, { onConflict: "id" });
+      await supabase
+        .from("profile_contacts")
+        .upsert({ user_id: data.session.user.id, phone }, { onConflict: "user_id" });
+    }
     return { needsConfirmation: !data.session };
   };
 

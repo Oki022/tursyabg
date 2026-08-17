@@ -35,6 +35,7 @@ import { Route as AuthenticatedSettingsSecurityRouteImport } from './routes/_aut
 import { Route as AuthenticatedSettingsProfileRouteImport } from './routes/_authenticated/settings.profile'
 import { Route as AuthenticatedSettingsNotificationsRouteImport } from './routes/_authenticated/settings.notifications'
 import { Route as AuthenticatedSettingsBillingRouteImport } from './routes/_authenticated/settings.billing'
+import { Route as AuthenticatedPostedIdRouteImport } from './routes/_authenticated/posted.$id'
 import { Route as AuthenticatedMessagesConversationIdRouteImport } from './routes/_authenticated/messages.$conversationId'
 import { Route as AuthenticatedBillingSuccessRouteImport } from './routes/_authenticated/billing.success'
 import { Route as ApiPublicPaymentsWebhookRouteImport } from './routes/api/public/payments/webhook'
@@ -173,6 +174,11 @@ const AuthenticatedSettingsBillingRoute =
     path: '/settings/billing',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedPostedIdRoute = AuthenticatedPostedIdRouteImport.update({
+  id: '/posted/$id',
+  path: '/posted/$id',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedMessagesConversationIdRoute =
   AuthenticatedMessagesConversationIdRouteImport.update({
     id: '/messages/$conversationId',
@@ -215,6 +221,7 @@ export interface FileRoutesByFullPath {
   '/admin/': typeof AdminIndexRoute
   '/billing/success': typeof AuthenticatedBillingSuccessRoute
   '/messages/$conversationId': typeof AuthenticatedMessagesConversationIdRoute
+  '/posted/$id': typeof AuthenticatedPostedIdRoute
   '/settings/billing': typeof AuthenticatedSettingsBillingRoute
   '/settings/notifications': typeof AuthenticatedSettingsNotificationsRoute
   '/settings/profile': typeof AuthenticatedSettingsProfileRoute
@@ -244,6 +251,7 @@ export interface FileRoutesByTo {
   '/admin': typeof AdminIndexRoute
   '/billing/success': typeof AuthenticatedBillingSuccessRoute
   '/messages/$conversationId': typeof AuthenticatedMessagesConversationIdRoute
+  '/posted/$id': typeof AuthenticatedPostedIdRoute
   '/settings/billing': typeof AuthenticatedSettingsBillingRoute
   '/settings/notifications': typeof AuthenticatedSettingsNotificationsRoute
   '/settings/profile': typeof AuthenticatedSettingsProfileRoute
@@ -276,6 +284,7 @@ export interface FileRoutesById {
   '/admin/': typeof AdminIndexRoute
   '/_authenticated/billing/success': typeof AuthenticatedBillingSuccessRoute
   '/_authenticated/messages/$conversationId': typeof AuthenticatedMessagesConversationIdRoute
+  '/_authenticated/posted/$id': typeof AuthenticatedPostedIdRoute
   '/_authenticated/settings/billing': typeof AuthenticatedSettingsBillingRoute
   '/_authenticated/settings/notifications': typeof AuthenticatedSettingsNotificationsRoute
   '/_authenticated/settings/profile': typeof AuthenticatedSettingsProfileRoute
@@ -308,6 +317,7 @@ export interface FileRouteTypes {
     | '/admin/'
     | '/billing/success'
     | '/messages/$conversationId'
+    | '/posted/$id'
     | '/settings/billing'
     | '/settings/notifications'
     | '/settings/profile'
@@ -337,6 +347,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/billing/success'
     | '/messages/$conversationId'
+    | '/posted/$id'
     | '/settings/billing'
     | '/settings/notifications'
     | '/settings/profile'
@@ -368,6 +379,7 @@ export interface FileRouteTypes {
     | '/admin/'
     | '/_authenticated/billing/success'
     | '/_authenticated/messages/$conversationId'
+    | '/_authenticated/posted/$id'
     | '/_authenticated/settings/billing'
     | '/_authenticated/settings/notifications'
     | '/_authenticated/settings/profile'
@@ -575,6 +587,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedSettingsBillingRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/posted/$id': {
+      id: '/_authenticated/posted/$id'
+      path: '/posted/$id'
+      fullPath: '/posted/$id'
+      preLoaderRoute: typeof AuthenticatedPostedIdRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/messages/$conversationId': {
       id: '/_authenticated/messages/$conversationId'
       path: '/messages/$conversationId'
@@ -605,6 +624,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedUnlockedRoute: typeof AuthenticatedUnlockedRoute
   AuthenticatedBillingSuccessRoute: typeof AuthenticatedBillingSuccessRoute
   AuthenticatedMessagesConversationIdRoute: typeof AuthenticatedMessagesConversationIdRoute
+  AuthenticatedPostedIdRoute: typeof AuthenticatedPostedIdRoute
   AuthenticatedSettingsBillingRoute: typeof AuthenticatedSettingsBillingRoute
   AuthenticatedSettingsNotificationsRoute: typeof AuthenticatedSettingsNotificationsRoute
   AuthenticatedSettingsProfileRoute: typeof AuthenticatedSettingsProfileRoute
@@ -619,6 +639,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedBillingSuccessRoute: AuthenticatedBillingSuccessRoute,
   AuthenticatedMessagesConversationIdRoute:
     AuthenticatedMessagesConversationIdRoute,
+  AuthenticatedPostedIdRoute: AuthenticatedPostedIdRoute,
   AuthenticatedSettingsBillingRoute: AuthenticatedSettingsBillingRoute,
   AuthenticatedSettingsNotificationsRoute:
     AuthenticatedSettingsNotificationsRoute,
