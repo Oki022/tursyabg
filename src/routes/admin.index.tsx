@@ -120,6 +120,33 @@ function AdminDashboard() {
 
       <AdminCard>
         <div className="border-b border-slate-200 px-4 py-3 text-sm font-semibold text-slate-900">
+          Планировчик (фонови задачи)
+        </div>
+        <ul className="divide-y divide-slate-200">
+          {(cron.data ?? []).map((j) => (
+            <li key={j.job_name} className="flex flex-wrap items-center gap-2 px-4 py-3 text-sm">
+              <span className="font-medium text-slate-900">{CRON_JOB_BG[j.job_name] ?? j.job_name}</span>
+              {j.stale ? (
+                <Badge className="rounded bg-rose-100 text-rose-900 hover:bg-rose-100">Не е изпълнявана &gt; 2 ч.</Badge>
+              ) : (
+                <Badge className="rounded bg-emerald-100 text-emerald-900 hover:bg-emerald-100">Нормално</Badge>
+              )}
+              {j.last_error ? <span className="text-xs text-rose-700">Грешка: {j.last_error}</span> : null}
+              <span className="ml-auto text-xs text-slate-500">
+                {j.last_success
+                  ? `Последно успешно: ${formatDateBg(j.last_success)} · ${j.rows_processed ?? 0} обработени`
+                  : "Няма успешно изпълнение"}
+              </span>
+            </li>
+          ))}
+          {(cron.data ?? []).length === 0 && (
+            <li className="px-4 py-8 text-center text-sm text-slate-500">Няма данни за фонови задачи.</li>
+          )}
+        </ul>
+      </AdminCard>
+
+      <AdminCard>
+        <div className="border-b border-slate-200 px-4 py-3 text-sm font-semibold text-slate-900">
           Последни доклади
         </div>
         {(reports.data ?? []).length === 0 ? (
