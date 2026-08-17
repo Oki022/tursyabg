@@ -51,7 +51,7 @@ const SETTINGS_ITEMS: { icon: typeof Wallet; label: string; to: string }[] = [
   { icon: Settings2, label: "Действия по моя профил", to: "/profile" },
 ];
 
-export const Route = createFileRoute("/profile")({
+export const Route = createFileRoute("/_authenticated/profile")({
   component: ProfilePage,
 });
 

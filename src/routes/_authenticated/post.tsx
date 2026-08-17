@@ -11,7 +11,7 @@ import { useCreateTask } from "@/lib/tasks-api";
 import { LocationCombobox } from "@/components/location-combobox";
 import { toast } from "sonner";
 
-export const Route = createFileRoute("/post")({
+export const Route = createFileRoute("/_authenticated/post")({
   head: () => ({
     meta: [
       { title: "Възложи задача — ЗадачаНет" },
