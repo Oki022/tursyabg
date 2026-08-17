@@ -2,7 +2,15 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { AdminCard, AdminPage } from "@/components/admin/admin-page";
-import { getDailySeries, getDashboardStats, getPendingReports, REPORT_REASON_BG, formatDateBg } from "@/services/admin";
+import {
+  getDailySeries,
+  getDashboardStats,
+  getPendingReports,
+  getCronHealth,
+  CRON_JOB_BG,
+  REPORT_REASON_BG,
+  formatDateBg,
+} from "@/services/admin";
 import { formatEur } from "@/services/credits";
 import { Badge } from "@/components/ui/badge";
 
@@ -34,6 +42,8 @@ function AdminDashboard() {
   const stats = useQuery({ queryKey: ["admin", "stats"], queryFn: getDashboardStats });
   const series = useQuery({ queryKey: ["admin", "series"], queryFn: getDailySeries });
   const reports = useQuery({ queryKey: ["admin", "reports"], queryFn: getPendingReports });
+  const cron = useQuery({ queryKey: ["admin", "cron"], queryFn: getCronHealth, refetchInterval: 60_000 });
+  const staleJobs = (cron.data ?? []).filter((j) => j.stale);
 
   const s = stats.data;
 
@@ -59,6 +69,13 @@ function AdminDashboard() {
           )}
         </div>
       ) : null}
+
+      {staleJobs.length > 0 && (
+        <div className="rounded-md border border-rose-300 bg-rose-50 px-3 py-2 text-sm font-medium text-rose-900">
+          Внимание: {staleJobs.length === 1 ? "фонова задача не е изпълнявана" : "фонови задачи не са изпълнявани"} успешно
+          повече от 2 часа.
+        </div>
+      )}
 
       <div className="grid grid-cols-2 gap-3 md:grid-cols-3 xl:grid-cols-4">
         <Stat label="Потребители" value={String(s?.total_users ?? "—")} hint={`+${s?.new_users_7d ?? 0} за 7 дни · +${s?.new_users_30d ?? 0} за 30 дни`} />
