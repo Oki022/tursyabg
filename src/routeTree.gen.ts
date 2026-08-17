@@ -17,11 +17,12 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as TaskIdRouteImport } from './routes/task.$id'
 import { Route as AuthenticatedProfileRouteImport } from './routes/_authenticated/profile'
 import { Route as AuthenticatedPostRouteImport } from './routes/_authenticated/post'
-import { Route as AuthenticatedMessagesRouteImport } from './routes/_authenticated/messages'
+import { Route as AuthenticatedMessagesIndexRouteImport } from './routes/_authenticated/messages.index'
 import { Route as AuthenticatedSettingsSecurityRouteImport } from './routes/_authenticated/settings.security'
 import { Route as AuthenticatedSettingsProfileRouteImport } from './routes/_authenticated/settings.profile'
 import { Route as AuthenticatedSettingsNotificationsRouteImport } from './routes/_authenticated/settings.notifications'
 import { Route as AuthenticatedSettingsBillingRouteImport } from './routes/_authenticated/settings.billing'
+import { Route as AuthenticatedMessagesConversationIdRouteImport } from './routes/_authenticated/messages.$conversationId'
 
 const TasksRoute = TasksRouteImport.update({
   id: '/tasks',
@@ -62,11 +63,12 @@ const AuthenticatedPostRoute = AuthenticatedPostRouteImport.update({
   path: '/post',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
-const AuthenticatedMessagesRoute = AuthenticatedMessagesRouteImport.update({
-  id: '/messages',
-  path: '/messages',
-  getParentRoute: () => AuthenticatedRouteRoute,
-} as any)
+const AuthenticatedMessagesIndexRoute =
+  AuthenticatedMessagesIndexRouteImport.update({
+    id: '/messages/',
+    path: '/messages/',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedSettingsSecurityRoute =
   AuthenticatedSettingsSecurityRouteImport.update({
     id: '/settings/security',
@@ -91,34 +93,42 @@ const AuthenticatedSettingsBillingRoute =
     path: '/settings/billing',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedMessagesConversationIdRoute =
+  AuthenticatedMessagesConversationIdRouteImport.update({
+    id: '/messages/$conversationId',
+    path: '/messages/$conversationId',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/reset-password': typeof ResetPasswordRoute
   '/tasks': typeof TasksRoute
-  '/messages': typeof AuthenticatedMessagesRoute
   '/post': typeof AuthenticatedPostRoute
   '/profile': typeof AuthenticatedProfileRoute
   '/task/$id': typeof TaskIdRoute
+  '/messages/$conversationId': typeof AuthenticatedMessagesConversationIdRoute
   '/settings/billing': typeof AuthenticatedSettingsBillingRoute
   '/settings/notifications': typeof AuthenticatedSettingsNotificationsRoute
   '/settings/profile': typeof AuthenticatedSettingsProfileRoute
   '/settings/security': typeof AuthenticatedSettingsSecurityRoute
+  '/messages/': typeof AuthenticatedMessagesIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/reset-password': typeof ResetPasswordRoute
   '/tasks': typeof TasksRoute
-  '/messages': typeof AuthenticatedMessagesRoute
   '/post': typeof AuthenticatedPostRoute
   '/profile': typeof AuthenticatedProfileRoute
   '/task/$id': typeof TaskIdRoute
+  '/messages/$conversationId': typeof AuthenticatedMessagesConversationIdRoute
   '/settings/billing': typeof AuthenticatedSettingsBillingRoute
   '/settings/notifications': typeof AuthenticatedSettingsNotificationsRoute
   '/settings/profile': typeof AuthenticatedSettingsProfileRoute
   '/settings/security': typeof AuthenticatedSettingsSecurityRoute
+  '/messages': typeof AuthenticatedMessagesIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -127,14 +137,15 @@ export interface FileRoutesById {
   '/auth': typeof AuthRoute
   '/reset-password': typeof ResetPasswordRoute
   '/tasks': typeof TasksRoute
-  '/_authenticated/messages': typeof AuthenticatedMessagesRoute
   '/_authenticated/post': typeof AuthenticatedPostRoute
   '/_authenticated/profile': typeof AuthenticatedProfileRoute
   '/task/$id': typeof TaskIdRoute
+  '/_authenticated/messages/$conversationId': typeof AuthenticatedMessagesConversationIdRoute
   '/_authenticated/settings/billing': typeof AuthenticatedSettingsBillingRoute
   '/_authenticated/settings/notifications': typeof AuthenticatedSettingsNotificationsRoute
   '/_authenticated/settings/profile': typeof AuthenticatedSettingsProfileRoute
   '/_authenticated/settings/security': typeof AuthenticatedSettingsSecurityRoute
+  '/_authenticated/messages/': typeof AuthenticatedMessagesIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -143,28 +154,30 @@ export interface FileRouteTypes {
     | '/auth'
     | '/reset-password'
     | '/tasks'
-    | '/messages'
     | '/post'
     | '/profile'
     | '/task/$id'
+    | '/messages/$conversationId'
     | '/settings/billing'
     | '/settings/notifications'
     | '/settings/profile'
     | '/settings/security'
+    | '/messages/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/auth'
     | '/reset-password'
     | '/tasks'
-    | '/messages'
     | '/post'
     | '/profile'
     | '/task/$id'
+    | '/messages/$conversationId'
     | '/settings/billing'
     | '/settings/notifications'
     | '/settings/profile'
     | '/settings/security'
+    | '/messages'
   id:
     | '__root__'
     | '/'
@@ -172,14 +185,15 @@ export interface FileRouteTypes {
     | '/auth'
     | '/reset-password'
     | '/tasks'
-    | '/_authenticated/messages'
     | '/_authenticated/post'
     | '/_authenticated/profile'
     | '/task/$id'
+    | '/_authenticated/messages/$conversationId'
     | '/_authenticated/settings/billing'
     | '/_authenticated/settings/notifications'
     | '/_authenticated/settings/profile'
     | '/_authenticated/settings/security'
+    | '/_authenticated/messages/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -249,11 +263,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedPostRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/_authenticated/messages': {
-      id: '/_authenticated/messages'
+    '/_authenticated/messages/': {
+      id: '/_authenticated/messages/'
       path: '/messages'
-      fullPath: '/messages'
-      preLoaderRoute: typeof AuthenticatedMessagesRouteImport
+      fullPath: '/messages/'
+      preLoaderRoute: typeof AuthenticatedMessagesIndexRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/settings/security': {
@@ -284,28 +298,38 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedSettingsBillingRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/messages/$conversationId': {
+      id: '/_authenticated/messages/$conversationId'
+      path: '/messages/$conversationId'
+      fullPath: '/messages/$conversationId'
+      preLoaderRoute: typeof AuthenticatedMessagesConversationIdRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
   }
 }
 
 interface AuthenticatedRouteRouteChildren {
-  AuthenticatedMessagesRoute: typeof AuthenticatedMessagesRoute
   AuthenticatedPostRoute: typeof AuthenticatedPostRoute
   AuthenticatedProfileRoute: typeof AuthenticatedProfileRoute
+  AuthenticatedMessagesConversationIdRoute: typeof AuthenticatedMessagesConversationIdRoute
   AuthenticatedSettingsBillingRoute: typeof AuthenticatedSettingsBillingRoute
   AuthenticatedSettingsNotificationsRoute: typeof AuthenticatedSettingsNotificationsRoute
   AuthenticatedSettingsProfileRoute: typeof AuthenticatedSettingsProfileRoute
   AuthenticatedSettingsSecurityRoute: typeof AuthenticatedSettingsSecurityRoute
+  AuthenticatedMessagesIndexRoute: typeof AuthenticatedMessagesIndexRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
-  AuthenticatedMessagesRoute: AuthenticatedMessagesRoute,
   AuthenticatedPostRoute: AuthenticatedPostRoute,
   AuthenticatedProfileRoute: AuthenticatedProfileRoute,
+  AuthenticatedMessagesConversationIdRoute:
+    AuthenticatedMessagesConversationIdRoute,
   AuthenticatedSettingsBillingRoute: AuthenticatedSettingsBillingRoute,
   AuthenticatedSettingsNotificationsRoute:
     AuthenticatedSettingsNotificationsRoute,
   AuthenticatedSettingsProfileRoute: AuthenticatedSettingsProfileRoute,
   AuthenticatedSettingsSecurityRoute: AuthenticatedSettingsSecurityRoute,
+  AuthenticatedMessagesIndexRoute: AuthenticatedMessagesIndexRoute,
 }
 
 const AuthenticatedRouteRouteWithChildren =

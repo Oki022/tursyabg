@@ -14,9 +14,59 @@ export type Database = {
   }
   public: {
     Tables: {
+      conversations: {
+        Row: {
+          created_at: string
+          id: string
+          last_message_at: string
+          participant_a: string
+          participant_b: string
+          task_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          last_message_at?: string
+          participant_a: string
+          participant_b: string
+          task_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          last_message_at?: string
+          participant_a?: string
+          participant_b?: string
+          task_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "conversations_participant_a_fkey"
+            columns: ["participant_a"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "conversations_participant_b_fkey"
+            columns: ["participant_b"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "conversations_task_id_fkey"
+            columns: ["task_id"]
+            isOneToOne: false
+            referencedRelation: "tasks"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       messages: {
         Row: {
           content: string
+          conversation_id: string | null
           created_at: string
           id: string
           read_at: string | null
@@ -26,6 +76,7 @@ export type Database = {
         }
         Insert: {
           content: string
+          conversation_id?: string | null
           created_at?: string
           id?: string
           read_at?: string | null
@@ -35,6 +86,7 @@ export type Database = {
         }
         Update: {
           content?: string
+          conversation_id?: string | null
           created_at?: string
           id?: string
           read_at?: string | null
@@ -43,6 +95,13 @@ export type Database = {
           task_id?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "messages_conversation_id_fkey"
+            columns: ["conversation_id"]
+            isOneToOne: false
+            referencedRelation: "conversations"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "messages_receiver_id_fkey"
             columns: ["receiver_id"]
@@ -195,7 +254,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      find_or_create_conversation: {
+        Args: { _other_user: string; _task_id: string }
+        Returns: string
+      }
     }
     Enums: {
       task_status: "active" | "pending" | "pending_payment" | "inactive"
