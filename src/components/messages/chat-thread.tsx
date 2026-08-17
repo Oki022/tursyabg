@@ -7,6 +7,9 @@ import { Input } from "@/components/ui/input";
 import { getInitials, useAuth } from "@/lib/auth";
 import { useConversation, useMarkAsRead, useSendMessage, useThread } from "@/lib/messages-api";
 import type { ChatMessage } from "@/services/messages";
+import { CONTACT_MASK_WARNING, containsContactInfo, isValidBgPhone } from "@/lib/phone";
+import { RequirePhoneNotice } from "@/components/require-phone-notice";
+import { toast } from "sonner";
 
 function dayLabel(iso: string) {
   const d = new Date(iso);
@@ -51,13 +54,25 @@ export function ChatThread({ conversationId }: { conversationId: string }) {
   const handleSend = async () => {
     const content = text.trim();
     if (!content || !conversation) return;
+    if (!user?.phone || !isValidBgPhone(user.phone)) {
+      toast.error("Добави телефон в профила си, за да пишеш съобщения.");
+      return;
+    }
     setText("");
-    await send.mutateAsync({
-      conversationId,
-      receiverId: conversation.otherUserId,
-      taskId: conversation.taskId,
-      content,
-    });
+    try {
+      await send.mutateAsync({
+        conversationId,
+        receiverId: conversation.otherUserId,
+        taskId: conversation.taskId,
+        content,
+      });
+      if (containsContactInfo(content)) {
+        toast.warning("Контактите са скрити автоматично", { description: CONTACT_MASK_WARNING });
+      }
+    } catch {
+      setText(content);
+      toast.error("Съобщението не беше изпратено.");
+    }
   };
 
   if (thread.isLoading) {
