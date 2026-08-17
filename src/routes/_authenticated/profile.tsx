@@ -35,6 +35,7 @@ import { toast } from "sonner";
 
 const TASK_TABS: { value: TaskStatus; label: string; empty: string }[] = [
   { value: "active", label: "Активни", empty: "Нямаш активни задачи в момента." },
+  { value: "assigned", label: "Възложени", empty: "Нямаш възложени задачи." },
   { value: "pending", label: "Изчакващи", empty: "Нямаш задачи, чакащи одобрение." },
   {
     value: "pending_payment",
@@ -67,6 +68,7 @@ function ProfilePage() {
   const byStatus = useMemo(() => {
     const map: Record<TaskStatus, typeof tasks> = {
       active: [],
+      assigned: [],
       pending: [],
       pending_payment: [],
       inactive: [],

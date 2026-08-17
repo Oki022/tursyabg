@@ -241,6 +241,31 @@ export function useMyTasks(userId?: string) {
   });
 }
 
+async function callTaskRpc(fn: "close_task" | "confirm_task_active", taskId: string) {
+  const { data, error } = await supabase.rpc(fn, { _task_id: taskId });
+  if (error) throw error;
+  const r = (data ?? {}) as Record<string, unknown>;
+  if (!r["ok"]) throw new Error(String(r["error"] ?? "UNKNOWN"));
+}
+
+/** Owner marks the task as taken — it leaves the feed and stops consuming unlock slots. */
+export function useCloseTask() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (taskId: string) => callTaskRpc("close_task", taskId),
+    onSuccess: () => void queryClient.invalidateQueries({ queryKey: ["tasks"] }),
+  });
+}
+
+/** Owner confirms the task is still open — refreshes it in the feed. */
+export function useConfirmTaskActive() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (taskId: string) => callTaskRpc("confirm_task_active", taskId),
+    onSuccess: () => void queryClient.invalidateQueries({ queryKey: ["tasks"] }),
+  });
+}
+
 /** Compresses an image in the browser before upload. */
 export async function compressImage(file: File, maxSize = 1600, quality = 0.8): Promise<Blob> {
   try {
