@@ -8,6 +8,7 @@ import {
   Clock,
   MapPin,
   MessageSquare,
+  Rocket,
   ShieldCheck,
   ShieldAlert,
 } from "lucide-react";
