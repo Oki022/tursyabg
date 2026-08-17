@@ -391,6 +391,8 @@ export type AdminUser = {
   unlockCount: number;
   totalSpentCredits: number;
   totalPaidEur: number;
+  refundCount: number;
+  refundFlagged: boolean;
   isModerator: boolean;
   isAdmin: boolean;
 };
@@ -410,6 +412,8 @@ export async function getAdminUsers(search: string): Promise<AdminUser[]> {
     unlockCount: Number(u["unlock_count"] ?? 0),
     totalSpentCredits: Number(u["total_spent_credits"] ?? 0),
     totalPaidEur: Number(u["total_paid_eur"] ?? 0),
+    refundCount: Number(u["refund_count"] ?? 0),
+    refundFlagged: Boolean(u["refund_flagged"]),
     isModerator: Boolean(u["is_moderator"]),
     isAdmin: Boolean(u["is_admin"]),
   }));
