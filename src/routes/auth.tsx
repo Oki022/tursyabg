@@ -13,6 +13,16 @@ export const Route = createFileRoute("/auth")({
   validateSearch: (s: Record<string, unknown>): AuthSearch => ({
     mode: s.mode === "register" ? "register" : "login",
   }),
+  head: () => ({
+    meta: [
+      { title: "Вход и регистрация — ЗадачаНет" },
+      { name: "description", content: "Влез в профила си или създай безплатен акаунт в ЗадачаНет за минути." },
+      { property: "og:title", content: "Вход и регистрация — ЗадачаНет" },
+      { property: "og:description", content: "Влез или се регистрирай безплатно в ЗадачаНет." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
+    ],
+  }),
   component: AuthPage,
 });
 

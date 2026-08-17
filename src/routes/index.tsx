@@ -9,6 +9,16 @@ import { categories } from "@/lib/mock-data";
 import { useTasksFeed } from "@/lib/tasks-api";
 
 export const Route = createFileRoute("/")({
+  head: () => ({
+    meta: [
+      { title: "ЗадачаНет — Възложи задача или намери работа" },
+      { name: "description", content: "Публикувай задача безплатно и намери проверен изпълнител в България. Ремонти, почистване, превоз, уроци и още." },
+      { property: "og:title", content: "ЗадачаНет — Възложи задача или намери работа" },
+      { property: "og:description", content: "Публикувай задача безплатно и намери проверен изпълнител в България." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
+    ],
+  }),
   component: Index,
 });
 
