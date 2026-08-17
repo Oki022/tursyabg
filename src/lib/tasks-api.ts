@@ -295,11 +295,30 @@ export type CreateTaskInput = {
   files: File[];
 };
 
+function blobToDataUrl(blob: Blob): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(String(reader.result));
+    reader.onerror = () => reject(new Error("READ_FAILED"));
+    reader.readAsDataURL(blob);
+  });
+}
+
+export type CreateTaskResult = {
+  id: string;
+  /** Categories of images rejected by automated moderation (never stored). */
+  rejected: (string | null)[];
+  /** Number of images held for manual review. */
+  held: number;
+  /** True when the task itself was held (pending) instead of published. */
+  pending: boolean;
+};
+
 export function useCreateTask() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (input: CreateTaskInput) => {
+    mutationFn: async (input: CreateTaskInput): Promise<CreateTaskResult> => {
       const { data: auth } = await supabase.auth.getUser();
       const userId = auth.user?.id;
       if (!userId) throw new Error("Трябва да си влязъл в профила си.");
@@ -318,22 +337,38 @@ export function useCreateTask() {
           neighborhood: neighborhood ?? null,
           status: "active",
         })
-        .select("id")
+        .select("id, status")
         .single();
       if (error) throw error;
 
+      const rejected: (string | null)[] = [];
+      let held = 0;
+
+      // Images go through server-side moderation before they are ever stored.
       for (let i = 0; i < input.files.length; i++) {
         const file = input.files[i];
+        if (!file) continue;
         const blob = await compressImage(file);
-        const path = `${userId}/${task.id}/${Date.now()}-${i}.jpg`;
-        const { error: upErr } = await supabase.storage
-          .from(BUCKET)
-          .upload(path, blob, { contentType: "image/jpeg", upsert: false });
-        if (upErr) continue;
-        await supabase.from("task_images").insert({ task_id: task.id, image_url: path, sort_order: i });
+        const dataUrl = await blobToDataUrl(blob);
+        try {
+          const res = await uploadModeratedTaskImage({
+            data: { taskId: task.id, index: i, dataUrl },
+          });
+          if (res.status === "rejected") rejected.push(res.category);
+          if (res.status === "pending") held += 1;
+        } catch {
+          rejected.push(null);
+        }
       }
 
-      return task.id as string;
+      const { data: fresh } = await supabase.from("tasks").select("status").eq("id", task.id).maybeSingle();
+
+      return {
+        id: task.id as string,
+        rejected,
+        held,
+        pending: (fresh?.status ?? task.status) === "pending",
+      };
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["tasks"] });
