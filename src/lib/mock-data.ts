@@ -78,10 +78,11 @@ export const locations: string[] = [
 
 export const cities = ["София", "Пловдив", "Варна", "Бургас", "Русе", "Стара Загора", "Плевен"];
 
-export type TaskStatus = "active" | "pending" | "pending_payment" | "inactive";
+export type TaskStatus = "active" | "assigned" | "pending" | "pending_payment" | "inactive";
 
 export const TASK_STATUS_LABELS: Record<TaskStatus, string> = {
   active: "Активни",
+  assigned: "Възложени",
   pending: "Изчакващи",
   pending_payment: "Изчакващи плащане",
   inactive: "Неактивни",
@@ -107,6 +108,9 @@ export type Task = {
   promoExpiresAt?: string | null;
   bumpedAt?: string;
   viewCount?: number;
+  /** Contact-unlock slots (max 5 professionals per task by default). */
+  unlockCount?: number;
+  maxUnlocks?: number;
 };
 
 const img = (id: string) => `https://images.unsplash.com/${id}?auto=format&fit=crop&w=800&q=80`;
