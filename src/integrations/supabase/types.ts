@@ -1197,6 +1197,8 @@ export type Database = {
         }
         Returns: {
           author: string
+          author_rating: number
+          author_review_count: number
           budget: number
           bumped_at: string
           category: string
