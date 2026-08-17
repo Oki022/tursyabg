@@ -2,13 +2,15 @@ import { Crown, Siren } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const pill =
-  "inline-flex max-w-full items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-bold uppercase leading-tight tracking-wide shadow-sm sm:text-[11px]";
+  "inline-flex max-w-full items-center gap-1 rounded-full px-1.5 py-0.5 text-[9px] font-bold uppercase leading-tight tracking-normal shadow-sm sm:px-2 sm:text-[11px] sm:tracking-wide";
+
+const icon = "hidden h-3 w-3 shrink-0 sm:block";
 
 export function UrgentBadge({ className }: { className?: string }) {
   return (
     <span className={cn(pill, "bg-destructive text-destructive-foreground", className)}>
-      <Siren className="h-3 w-3 shrink-0" />
-      <span className="truncate">Спешно</span>
+      <Siren className={icon} />
+      <span className="whitespace-nowrap">Спешно</span>
     </span>
   );
 }
@@ -22,8 +24,8 @@ export function TopBadge({ className }: { className?: string }) {
         className,
       )}
     >
-      <Crown className="h-3 w-3 shrink-0" />
-      <span className="truncate">Топ обява</span>
+      <Crown className={icon} />
+      <span className="whitespace-nowrap">Топ обява</span>
     </span>
   );
 }
