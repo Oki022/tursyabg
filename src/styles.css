@@ -154,3 +154,47 @@
     max-width: 100%;
   }
 }
+
+/* --- Toasts: brand accent, floating pill, spring motion --- */
+[data-sonner-toaster] {
+  --width: min(24rem, calc(100vw - 1.5rem));
+}
+
+.app-toast::before {
+  content: "";
+  position: absolute;
+  inset-block: 0;
+  left: 0;
+  width: 3px;
+  background-image: linear-gradient(to bottom, #f97316, #f43f5e);
+}
+
+.app-toast::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  height: 2px;
+  width: 100%;
+  transform-origin: left;
+  background-image: linear-gradient(to right, #f97316, #f43f5e);
+  animation: toast-progress 2.5s linear forwards;
+}
+
+@keyframes toast-progress {
+  from { transform: scaleX(1); }
+  to { transform: scaleX(0); }
+}
+
+[data-sonner-toast] {
+  transition-duration: 200ms !important;
+  transition-timing-function: cubic-bezier(0.22, 1.3, 0.36, 1) !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .app-toast::after { animation: none; }
+  [data-sonner-toast] {
+    transition-duration: 1ms !important;
+    transition-timing-function: linear !important;
+  }
+}
