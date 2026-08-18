@@ -32,8 +32,17 @@ export const cityList: City[] = (() => {
   return [...map.values()];
 })();
 
+/** Common Latin spellings people type/link, mapped to the canonical slug. */
+const SLUG_ALIASES: Record<string, string> = {
+  sofia: "sofiya",
+  bourgas: "burgas",
+  rousse: "ruse",
+  plovdif: "plovdiv",
+};
+
 export function findCityBySlug(slug: string): City | undefined {
-  return cityList.find((c) => c.slug === slug);
+  const normalized = SLUG_ALIASES[slug] ?? slug;
+  return cityList.find((c) => c.slug === normalized);
 }
 
 export const categoryList = categories;
