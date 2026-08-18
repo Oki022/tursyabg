@@ -39,6 +39,11 @@ const Toaster = ({ ...props }: ToasterProps) => {
           ? "calc(env(safe-area-inset-top, 0px) + 4.25rem)"
           : "calc(env(safe-area-inset-top, 0px) + 5rem)"
       }
+      mobileOffset={{
+        top: "calc(env(safe-area-inset-top, 0px) + 4.25rem)",
+        left: "0.75rem",
+        right: "0.75rem",
+      }}
       icons={{
         success: (
           <IconBubble tone="success">
