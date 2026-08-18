@@ -22,7 +22,7 @@ const REASONS = [
   { value: "other", label: "Друга причина" },
 ] as const;
 
-/** Owner delete flow — shows exactly who gets refunded before anything happens. */
+/** Owner delete flow, shows exactly who gets refunded before anything happens. */
 export function DeleteTaskDialog({
   taskId,
   open,

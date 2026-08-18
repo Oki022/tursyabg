@@ -291,7 +291,7 @@ export function useCloseTask() {
   });
 }
 
-/** Owner confirms the task is still open — refreshes it in the feed. */
+/** Owner confirms the task is still open, refreshes it in the feed. */
 export function useConfirmTaskActive() {
   const queryClient = useQueryClient();
   return useMutation({
@@ -490,7 +490,7 @@ export function useUpdateTask() {
 
 export type DeletePreview = { unlockers: number; credits: number };
 
-/** How many professionals paid for this task — shown before the owner deletes it. */
+/** How many professionals paid for this task, shown before the owner deletes it. */
 export function useDeletePreview(taskId?: string, enabled = true) {
   return useQuery({
     queryKey: ["tasks", "delete-preview", taskId],

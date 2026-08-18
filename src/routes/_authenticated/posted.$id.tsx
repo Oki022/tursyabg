@@ -8,12 +8,12 @@ import { useTask } from "@/lib/tasks-api";
 export const Route = createFileRoute("/_authenticated/posted/$id")({
   head: () => ({
     meta: [
-      { title: "Задачата е публикувана — Търся" },
+      { title: "Задачата е публикувана | Търся" },
       {
         name: "description",
         content: "Задачата ти е публикувана успешно. Промотирай я, за да получиш повече оферти от майстори.",
       },
-      { property: "og:title", content: "Задачата е публикувана — Търся" },
+      { property: "og:title", content: "Задачата е публикувана | Търся" },
       { property: "og:description", content: "Промотирай новата си задача за повече прегледания и оферти." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
@@ -42,7 +42,7 @@ function PostedPage() {
         </h1>
         <p className="mx-auto mt-2 max-w-lg text-sm text-muted-foreground">
           {pending
-            ? "Първата задача от нов профил минава през кратка проверка от нашия екип. Обикновено отнема до няколко часа — ще получиш известие веднага щом стане публична."
+            ? "Първата задача от нов профил минава през кратка проверка от нашия екип. Обикновено отнема до няколко часа, ще получиш известие веднага щом стане публична."
             : "Вече е видима в борсата и е напълно безплатна. Ако искаш повече оферти, промотирай я още сега."}
         </p>
       </div>
@@ -63,7 +63,7 @@ function PostedPage() {
           <h2 className="text-lg font-semibold text-foreground">Искаш ли повече оферти?</h2>
         </div>
         <p className="mt-1 text-sm text-muted-foreground">
-          Избери промоция — плащането е еднократно и защитено.
+          Избери промоция, плащането е еднократно и защитено.
         </p>
         <div className="mt-4">
           <PromoPicker taskId={id} />

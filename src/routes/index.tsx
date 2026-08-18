@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Link, useNavigate } from "@tanstack/react-router";
-import { Search, Plus, Briefcase, Zap, ArrowRight } from "lucide-react";
+import { Search, Plus, Briefcase, ArrowRight } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -14,7 +14,7 @@ export const Route = createFileRoute("/")({
   head: () => {
     const { meta, links } = seo({
       description:
-        "Публикувай задача безплатно и намери проверен изпълнител в България — ремонти, почистване, превоз, уроци, градина и още. Реални отзиви и цени в евро.",
+        "Публикувай задача безплатно и намери проверен изпълнител в България, ремонти, почистване, превоз, уроци, градина и още. Реални отзиви и цени в евро.",
       path: "/",
     });
     return {
@@ -68,11 +68,7 @@ function Index() {
       <section className="relative overflow-hidden border-b border-border/60 bg-gradient-to-b from-primary/5 via-background to-background">
         <div className="container mx-auto px-4 py-16 md:py-24">
           <div className="mx-auto max-w-3xl text-center">
-            <span className="inline-flex items-center gap-2 rounded-full border border-border bg-background px-3 py-1 text-xs font-medium text-muted-foreground">
-              <Zap className="h-3.5 w-3.5 text-primary" />
-              Над 1 200 активни задачи в България
-            </span>
-            <h1 className="mt-6 text-4xl font-bold tracking-tight text-foreground md:text-6xl">
+            <h1 className="text-4xl font-bold tracking-tight text-foreground md:text-6xl">
               Какво трябва да се свърши днес?
             </h1>
             <p className="mx-auto mt-5 max-w-2xl text-base text-muted-foreground md:text-lg">

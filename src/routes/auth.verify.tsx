@@ -7,7 +7,7 @@ import { authErrorMessage } from "@/lib/auth-errors";
 import { toast } from "sonner";
 
 // PRE-LAUNCH TODO: тази страница се използва само когато потвърждението на имейл
-// е включено. В момента е изключено за разработка — виж бележката в src/lib/auth.tsx.
+// е включено. В момента е изключено за разработка, виж бележката в src/lib/auth.tsx.
 
 type VerifySearch = { email?: string };
 
@@ -17,9 +17,9 @@ export const Route = createFileRoute("/auth/verify")({
   }),
   head: () => ({
     meta: [
-      { title: "Потвърди имейла си — Търся" },
+      { title: "Потвърди имейла си | Търся" },
       { name: "description", content: "Изпратихме ти линк за потвърждение. Отвори имейла си, за да активираш профила." },
-      { property: "og:title", content: "Потвърди имейла си — Търся" },
+      { property: "og:title", content: "Потвърди имейла си | Търся" },
       { property: "og:description", content: "Още една стъпка: потвърди имейла си, за да започнеш работа в Търся." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
@@ -75,14 +75,14 @@ function VerifyPage() {
         <p className="mt-3 text-base leading-relaxed text-muted-foreground">
           Изпратихме писмо на{" "}
           <span className="font-semibold text-foreground">{email ?? "твоя имейл"}</span>. Отвори го и натисни
-          големия бутон вътре — така потвърждаваме, че имейлът е твой. Отнема по-малко от минута.
+          големия бутон вътре, така потвърждаваме, че имейлът е твой. Отнема по-малко от минута.
         </p>
 
         <div className="mt-6 rounded-xl border border-border/60 bg-background p-4 text-left text-sm text-muted-foreground">
           <p className="font-semibold text-foreground">Не виждаш писмото?</p>
           <ul className="mt-2 list-disc space-y-1 pl-5">
             <li>Провери папка „Спам“ или „Промоции“.</li>
-            <li>Изчакай 1–2 минути — понякога закъснява.</li>
+            <li>Изчакай 1–2 минути, понякога закъснява.</li>
             <li>Увери се, че имейлът е изписан правилно.</li>
           </ul>
         </div>

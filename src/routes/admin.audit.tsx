@@ -88,7 +88,7 @@ function AdminAudit() {
                     <TableCell>{ACTION_TYPE_BG[e.actionType] ?? e.actionType}</TableCell>
                     <TableCell className="text-xs text-slate-500">
                       {e.targetType}
-                      <div className="font-mono text-[11px] text-slate-400">{e.targetId?.slice(0, 8) ?? "—"}</div>
+                      <div className="font-mono text-[11px] text-slate-400">{e.targetId?.slice(0, 8) ?? "няма"}</div>
                     </TableCell>
                     <TableCell className="max-w-[360px] break-words font-mono text-[11px] text-slate-600">
                       {JSON.stringify(e.details)}

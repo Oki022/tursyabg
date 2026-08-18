@@ -55,7 +55,7 @@ export type TaskUnlocker = {
 export const REVIEWS_PAGE_SIZE = 10;
 
 export const DOUBLE_BLIND_NOTE =
-  "Отзивите са двустранни и остават скрити, докато и двете страни не напишат своя — или докато не изтекат 14 дни. Така никой не може да отговори „с око за око“.";
+  "Отзивите са двустранни и остават скрити, докато и двете страни не напишат своя, или докато не изтекат 14 дни. Така никой не може да отговори „с око за око“.";
 
 export const REVIEW_PLACEHOLDER: Record<ReviewDirection, string> = {
   client_to_pro:

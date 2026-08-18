@@ -20,7 +20,7 @@ export function SiteFooter() {
             Връщане на кредити
           </Link>
         </nav>
-        <p>© {new Date().getFullYear()} {BRAND_NAME} — Свържи се с хората, които могат да го свършат.</p>
+        <p>© {new Date().getFullYear()} {BRAND_NAME}, Свържи се с хората, които могат да го свършат.</p>
       </div>
     </footer>
   );

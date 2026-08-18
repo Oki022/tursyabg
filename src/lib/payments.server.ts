@@ -41,7 +41,7 @@ async function resolveOrCreateCustomer(
 
 /**
  * Creates a Stripe checkout session for a credit package.
- * The price is ALWAYS read from the database — never from the client.
+ * The price is ALWAYS read from the database, never from the client.
  */
 export async function createStripeCheckout(input: CheckoutInput): Promise<{ clientSecret: string }> {
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
@@ -74,12 +74,12 @@ export async function createStripeCheckout(input: CheckoutInput): Promise<{ clie
           currency: "eur",
           unit_amount: amountInCents,
           product_data: {
-            name: `${pkg.name} — ${pkg.credits} кредита`,
+            name: `${pkg.name}, ${pkg.credits} кредита`,
           },
         },
       },
     ],
-    payment_intent_data: { description: `${pkg.name} — ${pkg.credits} кредита` },
+    payment_intent_data: { description: `${pkg.name}, ${pkg.credits} кредита` },
     metadata: {
       userId: input.userId,
       packageId: pkg.id,
@@ -150,7 +150,7 @@ export async function createPromotionStripeCheckout(
 
   const stripe = createStripeClient(input.environment);
   const customerId = await resolveOrCreateCustomer(stripe, { email: input.email, userId: input.userId });
-  const label = `${promo.name_bg} — ${task.title}`.slice(0, 250);
+  const label = `${promo.name_bg}, ${task.title}`.slice(0, 250);
 
   const session = await stripe.checkout.sessions.create({
     mode: "payment",

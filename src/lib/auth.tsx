@@ -3,15 +3,12 @@ import type { Session } from "@supabase/supabase-js";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 
-export type UserRole = "customer" | "worker";
-
 export type AuthUser = {
   id: string;
   name: string;
   email: string;
   phone?: string;
   credits?: number;
-  role: UserRole;
   avatarUrl?: string;
   skills?: string[];
   verified?: boolean;
@@ -24,7 +21,7 @@ type AuthContextValue = {
   loading: boolean;
   login: (email: string, password: string) => Promise<void>;
   loginSocial: (provider: "google") => Promise<void>;
-  register: (data: { name: string; email: string; password: string; phone: string; role: UserRole }) => Promise<{ needsConfirmation: boolean }>;
+  register: (data: { name: string; email: string; password: string; phone: string }) => Promise<{ needsConfirmation: boolean }>;
   resetPassword: (email: string) => Promise<void>;
   updatePassword: (password: string) => Promise<void>;
   logout: () => Promise<void>;
@@ -72,7 +69,6 @@ async function buildUser(session: Session): Promise<AuthUser> {
     email: session.user.email ?? "",
     phone: contact?.phone ?? undefined,
     credits: profile?.credits ?? 0,
-    role: meta.role === "worker" ? "worker" : "customer",
     avatarUrl: profile?.avatar_url ?? undefined,
     skills: Array.isArray(meta.skills) ? (meta.skills as string[]) : [],
     verified: meta.verified === true,
@@ -141,11 +137,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     if (result.error) throw new Error(result.error.message ?? "Неуспешен вход с Google");
   };
 
-  const register: AuthContextValue["register"] = async ({ name, email, password, phone, role }) => {
+  const register: AuthContextValue["register"] = async ({ name, email, password, phone }) => {
     // PRE-LAUNCH TODO: потвърждението на имейл е ИЗКЛЮЧЕНО (auto-confirm) за периода на разработка,
     // затова signUp връща активна сесия и потребителят влиза веднага.
     // Преди пускане на живо: включи отново "Confirm email" с истински SMTP доставчик
-    // (Resend/Postmark) — публичен маркетплейс се нуждае от верифицирани имейли срещу спам профили.
+    // (Resend/Postmark), публичен маркетплейс се нуждае от верифицирани имейли срещу спам профили.
     // Когато го включиш, register ще върне needsConfirmation: true и потребителят
     // трябва да се насочи към /auth/verify?email=... (страницата вече е готова).
     const { data, error } = await supabase.auth.signUp({
@@ -153,11 +149,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       password,
       options: {
         emailRedirectTo: `${window.location.origin}/`,
-        data: { full_name: name, role, phone },
+        data: { full_name: name, phone },
       },
     });
     if (error) throw error;
-    // Телефонът е задължителен контакт — записва се в профила веднага след регистрация.
+    // Телефонът е задължителен контакт, записва се в профила веднага след регистрация.
     if (data.session?.user?.id) {
       await supabase.from("profiles").upsert({ id: data.session.user.id, full_name: name }, { onConflict: "id" });
       await supabase
@@ -203,9 +199,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         .from("profile_contacts")
         .upsert({ user_id: user.id, phone: next.phone ?? null }, { onConflict: "user_id" });
     }
-    if (patch.skills !== undefined || patch.verified !== undefined || patch.role !== undefined || patch.name !== undefined) {
+    if (patch.skills !== undefined || patch.verified !== undefined || patch.name !== undefined) {
       await supabase.auth.updateUser({
-        data: { full_name: next.name, role: next.role, skills: next.skills ?? [], verified: next.verified === true },
+        data: { full_name: next.name, skills: next.skills ?? [], verified: next.verified === true },
       });
     }
   };

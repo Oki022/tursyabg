@@ -23,7 +23,7 @@ export const messageKeys = {
   unread: ["messages", "unread"] as const,
 };
 
-/** Single realtime subscription helper — invalidates the relevant caches. */
+/** Single realtime subscription helper, invalidates the relevant caches. */
 export function useMessagesRealtime(enabled: boolean) {
   const queryClient = useQueryClient();
   useEffect(() => {

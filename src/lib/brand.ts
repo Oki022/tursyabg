@@ -1,6 +1,6 @@
 /** Single source of truth for brand identity and the site's base URL. */
 export const BRAND = "Търся";
-/** Latin transliteration — only where a Latin-script name is technically required. */
+/** Latin transliteration, only where a Latin-script name is technically required. */
 export const BRAND_LATIN = "Tarsya";
 export const BRAND_TAGLINE = "Борса за задачи и услуги в България";
 
@@ -20,6 +20,6 @@ export function absoluteUrl(path = "/"): string {
 
 /** Page title format: "[Page title] | Търся" */
 export function pageTitle(title?: string): string {
-  if (!title) return `${BRAND} — ${BRAND_TAGLINE}`;
+  if (!title) return `${BRAND} | ${BRAND_TAGLINE}`;
   return `${title} | ${BRAND}`;
 }

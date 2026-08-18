@@ -108,14 +108,14 @@ function AdminDashboard() {
       )}
 
       <div className="grid grid-cols-2 gap-3 md:grid-cols-3 xl:grid-cols-4">
-        <Stat label="Потребители" value={String(s?.total_users ?? "—")} hint={`+${s?.new_users_7d ?? 0} за 7 дни · +${s?.new_users_30d ?? 0} за 30 дни`} />
-        <Stat label="Задачи" value={String(s?.total_tasks ?? "—")} hint={`${s?.active_tasks ?? 0} активни`} />
-        <Stat label="Нови задачи" value={String(s?.tasks_7d ?? "—")} hint={`за 7 дни · ${s?.tasks_30d ?? 0} за 30 дни`} />
-        <Stat label="Отключвания" value={String(s?.unlocks_total ?? "—")} />
-        <Stat label="Продадени кредити" value={String(s?.credits_sold ?? "—")} />
-        <Stat label="Приходи (общо)" value={s ? formatEur(Number(s.revenue_total)) : "—"} />
-        <Stat label="Приходи 7 дни" value={s ? formatEur(Number(s.revenue_7d)) : "—"} />
-        <Stat label="Приходи 30 дни" value={s ? formatEur(Number(s.revenue_30d)) : "—"} />
+        <Stat label="Потребители" value={String(s?.total_users ?? "няма")} hint={`+${s?.new_users_7d ?? 0} за 7 дни · +${s?.new_users_30d ?? 0} за 30 дни`} />
+        <Stat label="Задачи" value={String(s?.total_tasks ?? "няма")} hint={`${s?.active_tasks ?? 0} активни`} />
+        <Stat label="Нови задачи" value={String(s?.tasks_7d ?? "няма")} hint={`за 7 дни · ${s?.tasks_30d ?? 0} за 30 дни`} />
+        <Stat label="Отключвания" value={String(s?.unlocks_total ?? "няма")} />
+        <Stat label="Продадени кредити" value={String(s?.credits_sold ?? "няма")} />
+        <Stat label="Приходи (общо)" value={s ? formatEur(Number(s.revenue_total)) : "няма"} />
+        <Stat label="Приходи 7 дни" value={s ? formatEur(Number(s.revenue_7d)) : "няма"} />
+        <Stat label="Приходи 30 дни" value={s ? formatEur(Number(s.revenue_30d)) : "няма"} />
         <Stat
           label="Възстановявания 30 дни"
           value={String((s?.auto_refunds_30d ?? 0) + (s?.manual_refunds_30d ?? 0))}

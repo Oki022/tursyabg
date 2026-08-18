@@ -78,7 +78,7 @@ export function SiteHeader() {
                 <DropdownMenuContent align="end" className="w-64">
                   <DropdownMenuLabel className="flex items-center gap-2">
                     <span className="truncate">{user.name}</span>
-                    {user.role === "worker" && user.verified && (
+                    {user.verified && (
                       <BadgeCheck className="h-4 w-4 fill-[#1da1f2] text-white" />
                     )}
                   </DropdownMenuLabel>

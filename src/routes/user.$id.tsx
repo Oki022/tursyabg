@@ -24,7 +24,7 @@ export const Route = createFileRoute("/user/$id")({
     const p = loaderData;
     const ratingText = p.rating ? `Рейтинг ${p.rating}/5 от ${p.reviewCount} отзива` : "Нов потребител без отзиви";
     const { meta, links } = seo({
-      title: clampDescription(`${p.name} — отзиви и рейтинг`, 58),
+      title: clampDescription(`${p.name}, отзиви и рейтинг`, 58),
       description: clampDescription(
         `${p.name}${p.city ? ` от ${p.city}` : ""} в ${BRAND}. ${ratingText}. Завършени задачи: ${p.completedJobs}. Виж публичните отзиви от клиенти и изпълнители.`,
       ),
@@ -138,7 +138,7 @@ function PublicProfilePage() {
             </>
           ) : (
             <span className="inline-flex items-center gap-2 text-sm text-muted-foreground">
-              <BadgeCheck className="h-4 w-4 text-primary" /> Нов потребител — още няма отзиви
+              <BadgeCheck className="h-4 w-4 text-primary" /> Нов потребител, още няма отзиви
             </span>
           )}
         </div>

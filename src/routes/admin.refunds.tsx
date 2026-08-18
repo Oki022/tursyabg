@@ -48,10 +48,10 @@ function EvidenceCell({ requestId }: { requestId: string }) {
     queryKey: ["admin", "refund-evidence", requestId],
     queryFn: () => getRefundEvidence(requestId),
   });
-  if (!data?.found) return <span className="text-xs text-slate-400">—</span>;
+  if (!data?.found) return <span className="text-xs text-slate-400">няма</span>;
   return (
     <div className="space-y-0.5 text-xs text-slate-600">
-      <div>Статус на задачата: {data.task_status ?? "—"}</div>
+      <div>Статус на задачата: {data.task_status ?? "няма"}</div>
       <div>
         Съобщения: {data.messages_sent ?? 0} · Отговори: {data.owner_replies ?? 0}
       </div>
@@ -204,7 +204,7 @@ function AdminRefunds() {
                           </Button>
                         </div>
                       ) : (
-                        <span className="text-xs text-slate-400">{r.resolvedAt ? formatDateBg(r.resolvedAt) : "—"}</span>
+                        <span className="text-xs text-slate-400">{r.resolvedAt ? formatDateBg(r.resolvedAt) : "няма"}</span>
                       )}
                     </TableCell>
                   </TableRow>

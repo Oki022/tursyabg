@@ -68,7 +68,7 @@ function ContactPage() {
   const submit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!name.trim() || !email.trim() || !subject || body.trim().length < 10) {
-      toast.error("Попълни всички полета (съобщението — поне 10 символа).");
+      toast.error("Попълни всички полета (съобщението, поне 10 символа).");
       return;
     }
     send.mutate({ name, email, subject, body });
@@ -141,7 +141,7 @@ function ContactPage() {
             <Textarea
               id="c-body"
               rows={6}
-              placeholder="Опиши случая възможно най-конкретно — линк към задача, дата, сума и др."
+              placeholder="Опиши случая възможно най-конкретно, линк към задача, дата, сума и др."
               value={body}
               onChange={(e) => setBody(e.target.value)}
             />

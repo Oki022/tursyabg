@@ -1,10 +1,10 @@
 import { createFileRoute, Link, useNavigate, useSearch } from "@tanstack/react-router";
 import { useMemo, useState, type FormEvent } from "react";
-import { Mail, Lock, User as UserIcon, HandHeart, Wrench, Eye, EyeOff, Loader2, PhoneCall } from "lucide-react";
+import { Mail, Lock, User as UserIcon, Eye, EyeOff, Loader2, PhoneCall } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { useAuth, type UserRole } from "@/lib/auth";
+import { useAuth } from "@/lib/auth";
 import { authErrorMessage, emailError, nameError, passwordError } from "@/lib/auth-errors";
 import { normalizeBgPhone, phoneError } from "@/lib/phone";
 import { toast } from "sonner";
@@ -41,7 +41,6 @@ function AuthPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [phone, setPhone] = useState("");
-  const [role, setRole] = useState<UserRole>("customer");
   const [acceptedTerms, setAcceptedTerms] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [touched, setTouched] = useState<{ name?: boolean; email?: boolean; password?: boolean; phone?: boolean }>({});
@@ -81,7 +80,6 @@ function AuthPage() {
           email,
           password,
           phone: normalizeBgPhone(phone),
-          role,
         });
         if (needsConfirmation) {
           navigate({ to: "/auth/verify", search: { email } });
@@ -252,31 +250,9 @@ function AuthPage() {
                 <p className="text-xs text-destructive">{phoneMsg}</p>
               ) : (
                 <p className="text-xs text-muted-foreground">
-                  Скрит е за всички — вижда се само след отключване с кредити.
+                  Скрит е за всички, вижда се само след отключване с кредити.
                 </p>
               )}
-            </div>
-          )}
-
-          {isRegister && (
-            <div className="grid gap-2">
-              <Label>Каква е твоята роля?</Label>
-              <div className="grid grid-cols-2 gap-2">
-                <RoleCard
-                  active={role === "customer"}
-                  onClick={() => setRole("customer")}
-                  icon={<HandHeart className="h-5 w-5" />}
-                  title="Търся помощ"
-                  desc="Възлагам задачи"
-                />
-                <RoleCard
-                  active={role === "worker"}
-                  onClick={() => setRole("worker")}
-                  icon={<Wrench className="h-5 w-5" />}
-                  title="Предлагам услуги"
-                  desc="Изпълнявам задачи"
-                />
-              </div>
             </div>
           )}
 
@@ -330,42 +306,6 @@ function AuthPage() {
         </p>
       </div>
     </div>
-  );
-}
-
-function RoleCard({
-  active,
-  onClick,
-  icon,
-  title,
-  desc,
-}: {
-  active: boolean;
-  onClick: () => void;
-  icon: React.ReactNode;
-  title: string;
-  desc: string;
-}) {
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      className={`flex flex-col items-start gap-1.5 rounded-lg border p-3 text-left transition-all ${
-        active
-          ? "border-primary bg-primary/5 ring-1 ring-primary"
-          : "border-border hover:border-primary/50 hover:bg-accent/40"
-      }`}
-    >
-      <span
-        className={`grid h-9 w-9 place-items-center rounded-md ${
-          active ? "bg-primary text-primary-foreground" : "bg-muted text-foreground"
-        }`}
-      >
-        {icon}
-      </span>
-      <span className="text-sm font-semibold text-foreground">{title}</span>
-      <span className="text-xs text-muted-foreground">{desc}</span>
-    </button>
   );
 }
 

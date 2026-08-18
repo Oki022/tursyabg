@@ -27,7 +27,7 @@ export type CheckoutStart =
   | { kind: "embedded"; clientSecret: string }
   | { kind: "redirect"; url: string };
 
-/** What is being purchased — providers never need to know the product domain. */
+/** What is being purchased, providers never need to know the product domain. */
 export type CheckoutTarget =
   | { kind: "credits"; packageId: string }
   | { kind: "promotion"; promoProductId: string; taskId: string };

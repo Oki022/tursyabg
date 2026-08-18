@@ -11,9 +11,9 @@ import { CONTACT_MASK_WARNING, containsContactInfo } from "@/lib/phone";
 export const Route = createFileRoute("/_authenticated/task/$id/edit")({
   head: () => ({
     meta: [
-      { title: "Редакция на задача — Търся" },
+      { title: "Редакция на задача | Търся" },
       { name: "description", content: "Обнови описанието, бюджета, снимките и локацията на своята задача." },
-      { property: "og:title", content: "Редакция на задача — Търся" },
+      { property: "og:title", content: "Редакция на задача | Търся" },
       { property: "og:description", content: "Обнови детайлите по своята задача в Търся." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },

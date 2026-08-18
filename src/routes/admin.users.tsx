@@ -126,7 +126,7 @@ function AdminUsers() {
                           </Badge>
                         )}
                       </div>
-                      <div className="text-xs text-slate-500">{u.email ?? "—"}</div>
+                      <div className="text-xs text-slate-500">{u.email ?? "няма"}</div>
                       {u.banReason ? <div className="text-xs text-rose-600">{u.banReason}</div> : null}
                     </TableCell>
                     <TableCell className="whitespace-nowrap text-xs text-slate-500">{formatDateBg(u.createdAt)}</TableCell>
@@ -171,7 +171,7 @@ function AdminUsers() {
           <DialogHeader>
             <DialogTitle>Корекция на кредити</DialogTitle>
             <DialogDescription>
-              {creditsTarget?.fullName ?? "Потребител"} — текущ баланс {creditsTarget?.credits} кредита. Положително число добавя, отрицателно отнема.
+              {creditsTarget?.fullName ?? "Потребител"}, текущ баланс {creditsTarget?.credits} кредита. Положително число добавя, отрицателно отнема.
             </DialogDescription>
           </DialogHeader>
           <Input type="number" value={amount} onChange={(e) => setAmount(e.target.value)} placeholder="напр. 10 или -5" className="rounded-md" />

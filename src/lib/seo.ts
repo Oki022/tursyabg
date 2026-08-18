@@ -68,5 +68,5 @@ export function breadcrumbLd(items: { name: string; path: string }[]) {
 export function clampDescription(text: string, max = 158) {
   const clean = text.replace(/\s+/g, " ").trim();
   if (clean.length <= max) return clean;
-  return `${clean.slice(0, max - 1).replace(/[\s,.;:–—-]+$/, "")}…`;
+  return `${clean.slice(0, max - 1).replace(/[\s,.;:–-]+$/, "")}…`;
 }

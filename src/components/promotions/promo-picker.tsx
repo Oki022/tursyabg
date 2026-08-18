@@ -148,7 +148,7 @@ export function PromoPicker({
                     Активна
                   </span>
                   <span className="text-xs font-medium text-emerald-600">
-                    {PROMO_LABELS[p.type]} — {remainingLabel(activeUntil)}
+                    {PROMO_LABELS[p.type]}, {remainingLabel(activeUntil)}
                   </span>
                 </span>
               )}

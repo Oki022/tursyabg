@@ -2,7 +2,7 @@
  * Single provider boundary for automated content moderation.
  *
  * Everything else in the app calls `moderateImage()` and never touches the
- * provider directly — swapping Sightengine for Rekognition / Vision only
+ * provider directly, swapping Sightengine for Rekognition / Vision only
  * means rewriting the body of this file.
  *
  * SERVER ONLY: credentials live in process.env and are read per call.
@@ -19,7 +19,7 @@ export type ImageModerationResult = {
   /** Violation category key, e.g. "nudity" | "gore" | "offensive" | "violence". */
   category: string | null;
   provider: string;
-  /** True when the provider could not be reached — caller must fail closed. */
+  /** True when the provider could not be reached, caller must fail closed. */
   unavailable: boolean;
 };
 
@@ -66,7 +66,7 @@ function extractLabels(json: Record<string, any>): Record<string, number> {
 
 /**
  * Runs one image through the moderation provider.
- * Never throws — an outage returns `unavailable: true` with verdict "review",
+ * Never throws, an outage returns `unavailable: true` with verdict "review",
  * so callers hold the content instead of publishing it.
  */
 export async function moderateImage(

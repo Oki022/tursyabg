@@ -23,7 +23,7 @@ export function TaskCard({ task }: { task: Task }) {
         <img
           src={thumb}
           {...(srcSet ? { srcSet, sizes: "(min-width: 1024px) 320px, (min-width: 640px) 45vw, 90vw" } : {})}
-          alt={`${task.title} — ${cat.name}${task.location ? `, ${task.location}` : ""}`}
+          alt={`${task.title}, ${cat.name}${task.location ? `, ${task.location}` : ""}`}
           loading="lazy"
           decoding="async"
           width={640}

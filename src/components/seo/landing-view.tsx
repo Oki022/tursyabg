@@ -70,7 +70,7 @@ export function LandingView({
       </div>
 
       <h2 className="mt-10 text-xl font-semibold text-foreground">
-        Активни задачи{category ? ` — ${category.name}` : ""}{city ? ` в ${city.name}` : ""}
+        Активни задачи{category ? `, ${category.name}` : ""}{city ? ` в ${city.name}` : ""}
       </h2>
 
       {isLoading ? (
