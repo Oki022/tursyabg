@@ -11,9 +11,14 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as TermsRouteImport } from './routes/terms'
 import { Route as TasksRouteImport } from './routes/tasks'
+import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
+import { Route as SitemapTasksDotxmlRouteImport } from './routes/sitemap-tasks[.]xml'
+import { Route as SitemapPagesDotxmlRouteImport } from './routes/sitemap-pages[.]xml'
+import { Route as RobotsDottxtRouteImport } from './routes/robots[.]txt'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as RefundPolicyRouteImport } from './routes/refund-policy'
 import { Route as PrivacyRouteImport } from './routes/privacy'
+import { Route as ManifestDotwebmanifestRouteImport } from './routes/manifest[.]webmanifest'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
@@ -21,6 +26,8 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as UserIdRouteImport } from './routes/user.$id'
 import { Route as TaskIdRouteImport } from './routes/task.$id'
+import { Route as CityCityRouteImport } from './routes/city.$city'
+import { Route as CategoriesCategoryRouteImport } from './routes/categories.$category'
 import { Route as BillingCancelRouteImport } from './routes/billing.cancel'
 import { Route as AuthVerifyRouteImport } from './routes/auth.verify'
 import { Route as AdminUsersRouteImport } from './routes/admin.users'
@@ -34,7 +41,9 @@ import { Route as AuthenticatedUnlockedRouteImport } from './routes/_authenticat
 import { Route as AuthenticatedProfileRouteImport } from './routes/_authenticated/profile'
 import { Route as AuthenticatedPostRouteImport } from './routes/_authenticated/post'
 import { Route as AuthenticatedNotificationsRouteImport } from './routes/_authenticated/notifications'
+import { Route as CityCityIndexRouteImport } from './routes/city.$city.index'
 import { Route as AuthenticatedMessagesIndexRouteImport } from './routes/_authenticated/messages.index'
+import { Route as CityCityCategoryRouteImport } from './routes/city.$city.$category'
 import { Route as AuthenticatedSettingsSecurityRouteImport } from './routes/_authenticated/settings.security'
 import { Route as AuthenticatedSettingsProfileRouteImport } from './routes/_authenticated/settings.profile'
 import { Route as AuthenticatedSettingsNotificationsRouteImport } from './routes/_authenticated/settings.notifications'
@@ -55,6 +64,26 @@ const TasksRoute = TasksRouteImport.update({
   path: '/tasks',
   getParentRoute: () => rootRouteImport,
 } as any)
+const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
+  id: '/sitemap.xml',
+  path: '/sitemap.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SitemapTasksDotxmlRoute = SitemapTasksDotxmlRouteImport.update({
+  id: '/sitemap-tasks.xml',
+  path: '/sitemap-tasks.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SitemapPagesDotxmlRoute = SitemapPagesDotxmlRouteImport.update({
+  id: '/sitemap-pages.xml',
+  path: '/sitemap-pages.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RobotsDottxtRoute = RobotsDottxtRouteImport.update({
+  id: '/robots.txt',
+  path: '/robots.txt',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ResetPasswordRoute = ResetPasswordRouteImport.update({
   id: '/reset-password',
   path: '/reset-password',
@@ -68,6 +97,11 @@ const RefundPolicyRoute = RefundPolicyRouteImport.update({
 const PrivacyRoute = PrivacyRouteImport.update({
   id: '/privacy',
   path: '/privacy',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ManifestDotwebmanifestRoute = ManifestDotwebmanifestRouteImport.update({
+  id: '/manifest.webmanifest',
+  path: '/manifest.webmanifest',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthRoute = AuthRouteImport.update({
@@ -102,6 +136,16 @@ const UserIdRoute = UserIdRouteImport.update({
 const TaskIdRoute = TaskIdRouteImport.update({
   id: '/task/$id',
   path: '/task/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CityCityRoute = CityCityRouteImport.update({
+  id: '/city/$city',
+  path: '/city/$city',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CategoriesCategoryRoute = CategoriesCategoryRouteImport.update({
+  id: '/categories/$category',
+  path: '/categories/$category',
   getParentRoute: () => rootRouteImport,
 } as any)
 const BillingCancelRoute = BillingCancelRouteImport.update({
@@ -170,12 +214,22 @@ const AuthenticatedNotificationsRoute =
     path: '/notifications',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const CityCityIndexRoute = CityCityIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => CityCityRoute,
+} as any)
 const AuthenticatedMessagesIndexRoute =
   AuthenticatedMessagesIndexRouteImport.update({
     id: '/messages/',
     path: '/messages/',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const CityCityCategoryRoute = CityCityCategoryRouteImport.update({
+  id: '/$category',
+  path: '/$category',
+  getParentRoute: () => CityCityRoute,
+} as any)
 const AuthenticatedSettingsSecurityRoute =
   AuthenticatedSettingsSecurityRouteImport.update({
     id: '/settings/security',
@@ -234,9 +288,14 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/admin': typeof AdminRouteWithChildren
   '/auth': typeof AuthRouteWithChildren
+  '/manifest.webmanifest': typeof ManifestDotwebmanifestRoute
   '/privacy': typeof PrivacyRoute
   '/refund-policy': typeof RefundPolicyRoute
   '/reset-password': typeof ResetPasswordRoute
+  '/robots.txt': typeof RobotsDottxtRoute
+  '/sitemap-pages.xml': typeof SitemapPagesDotxmlRoute
+  '/sitemap-tasks.xml': typeof SitemapTasksDotxmlRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/tasks': typeof TasksRoute
   '/terms': typeof TermsRoute
   '/notifications': typeof AuthenticatedNotificationsRoute
@@ -252,6 +311,8 @@ export interface FileRoutesByFullPath {
   '/admin/users': typeof AdminUsersRoute
   '/auth/verify': typeof AuthVerifyRoute
   '/billing/cancel': typeof BillingCancelRoute
+  '/categories/$category': typeof CategoriesCategoryRoute
+  '/city/$city': typeof CityCityRouteWithChildren
   '/task/$id': typeof TaskIdRoute
   '/user/$id': typeof UserIdRoute
   '/admin/': typeof AdminIndexRoute
@@ -263,15 +324,22 @@ export interface FileRoutesByFullPath {
   '/settings/notifications': typeof AuthenticatedSettingsNotificationsRoute
   '/settings/profile': typeof AuthenticatedSettingsProfileRoute
   '/settings/security': typeof AuthenticatedSettingsSecurityRoute
+  '/city/$city/$category': typeof CityCityCategoryRoute
   '/messages/': typeof AuthenticatedMessagesIndexRoute
+  '/city/$city/': typeof CityCityIndexRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRouteWithChildren
+  '/manifest.webmanifest': typeof ManifestDotwebmanifestRoute
   '/privacy': typeof PrivacyRoute
   '/refund-policy': typeof RefundPolicyRoute
   '/reset-password': typeof ResetPasswordRoute
+  '/robots.txt': typeof RobotsDottxtRoute
+  '/sitemap-pages.xml': typeof SitemapPagesDotxmlRoute
+  '/sitemap-tasks.xml': typeof SitemapTasksDotxmlRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/tasks': typeof TasksRoute
   '/terms': typeof TermsRoute
   '/notifications': typeof AuthenticatedNotificationsRoute
@@ -287,6 +355,7 @@ export interface FileRoutesByTo {
   '/admin/users': typeof AdminUsersRoute
   '/auth/verify': typeof AuthVerifyRoute
   '/billing/cancel': typeof BillingCancelRoute
+  '/categories/$category': typeof CategoriesCategoryRoute
   '/task/$id': typeof TaskIdRoute
   '/user/$id': typeof UserIdRoute
   '/admin': typeof AdminIndexRoute
@@ -298,7 +367,9 @@ export interface FileRoutesByTo {
   '/settings/notifications': typeof AuthenticatedSettingsNotificationsRoute
   '/settings/profile': typeof AuthenticatedSettingsProfileRoute
   '/settings/security': typeof AuthenticatedSettingsSecurityRoute
+  '/city/$city/$category': typeof CityCityCategoryRoute
   '/messages': typeof AuthenticatedMessagesIndexRoute
+  '/city/$city': typeof CityCityIndexRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
 }
 export interface FileRoutesById {
@@ -307,9 +378,14 @@ export interface FileRoutesById {
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/admin': typeof AdminRouteWithChildren
   '/auth': typeof AuthRouteWithChildren
+  '/manifest.webmanifest': typeof ManifestDotwebmanifestRoute
   '/privacy': typeof PrivacyRoute
   '/refund-policy': typeof RefundPolicyRoute
   '/reset-password': typeof ResetPasswordRoute
+  '/robots.txt': typeof RobotsDottxtRoute
+  '/sitemap-pages.xml': typeof SitemapPagesDotxmlRoute
+  '/sitemap-tasks.xml': typeof SitemapTasksDotxmlRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/tasks': typeof TasksRoute
   '/terms': typeof TermsRoute
   '/_authenticated/notifications': typeof AuthenticatedNotificationsRoute
@@ -325,6 +401,8 @@ export interface FileRoutesById {
   '/admin/users': typeof AdminUsersRoute
   '/auth/verify': typeof AuthVerifyRoute
   '/billing/cancel': typeof BillingCancelRoute
+  '/categories/$category': typeof CategoriesCategoryRoute
+  '/city/$city': typeof CityCityRouteWithChildren
   '/task/$id': typeof TaskIdRoute
   '/user/$id': typeof UserIdRoute
   '/admin/': typeof AdminIndexRoute
@@ -336,7 +414,9 @@ export interface FileRoutesById {
   '/_authenticated/settings/notifications': typeof AuthenticatedSettingsNotificationsRoute
   '/_authenticated/settings/profile': typeof AuthenticatedSettingsProfileRoute
   '/_authenticated/settings/security': typeof AuthenticatedSettingsSecurityRoute
+  '/city/$city/$category': typeof CityCityCategoryRoute
   '/_authenticated/messages/': typeof AuthenticatedMessagesIndexRoute
+  '/city/$city/': typeof CityCityIndexRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
 }
 export interface FileRouteTypes {
@@ -345,9 +425,14 @@ export interface FileRouteTypes {
     | '/'
     | '/admin'
     | '/auth'
+    | '/manifest.webmanifest'
     | '/privacy'
     | '/refund-policy'
     | '/reset-password'
+    | '/robots.txt'
+    | '/sitemap-pages.xml'
+    | '/sitemap-tasks.xml'
+    | '/sitemap.xml'
     | '/tasks'
     | '/terms'
     | '/notifications'
@@ -363,6 +448,8 @@ export interface FileRouteTypes {
     | '/admin/users'
     | '/auth/verify'
     | '/billing/cancel'
+    | '/categories/$category'
+    | '/city/$city'
     | '/task/$id'
     | '/user/$id'
     | '/admin/'
@@ -374,15 +461,22 @@ export interface FileRouteTypes {
     | '/settings/notifications'
     | '/settings/profile'
     | '/settings/security'
+    | '/city/$city/$category'
     | '/messages/'
+    | '/city/$city/'
     | '/api/public/payments/webhook'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/auth'
+    | '/manifest.webmanifest'
     | '/privacy'
     | '/refund-policy'
     | '/reset-password'
+    | '/robots.txt'
+    | '/sitemap-pages.xml'
+    | '/sitemap-tasks.xml'
+    | '/sitemap.xml'
     | '/tasks'
     | '/terms'
     | '/notifications'
@@ -398,6 +492,7 @@ export interface FileRouteTypes {
     | '/admin/users'
     | '/auth/verify'
     | '/billing/cancel'
+    | '/categories/$category'
     | '/task/$id'
     | '/user/$id'
     | '/admin'
@@ -409,7 +504,9 @@ export interface FileRouteTypes {
     | '/settings/notifications'
     | '/settings/profile'
     | '/settings/security'
+    | '/city/$city/$category'
     | '/messages'
+    | '/city/$city'
     | '/api/public/payments/webhook'
   id:
     | '__root__'
@@ -417,9 +514,14 @@ export interface FileRouteTypes {
     | '/_authenticated'
     | '/admin'
     | '/auth'
+    | '/manifest.webmanifest'
     | '/privacy'
     | '/refund-policy'
     | '/reset-password'
+    | '/robots.txt'
+    | '/sitemap-pages.xml'
+    | '/sitemap-tasks.xml'
+    | '/sitemap.xml'
     | '/tasks'
     | '/terms'
     | '/_authenticated/notifications'
@@ -435,6 +537,8 @@ export interface FileRouteTypes {
     | '/admin/users'
     | '/auth/verify'
     | '/billing/cancel'
+    | '/categories/$category'
+    | '/city/$city'
     | '/task/$id'
     | '/user/$id'
     | '/admin/'
@@ -446,7 +550,9 @@ export interface FileRouteTypes {
     | '/_authenticated/settings/notifications'
     | '/_authenticated/settings/profile'
     | '/_authenticated/settings/security'
+    | '/city/$city/$category'
     | '/_authenticated/messages/'
+    | '/city/$city/'
     | '/api/public/payments/webhook'
   fileRoutesById: FileRoutesById
 }
@@ -455,12 +561,19 @@ export interface RootRouteChildren {
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AdminRoute: typeof AdminRouteWithChildren
   AuthRoute: typeof AuthRouteWithChildren
+  ManifestDotwebmanifestRoute: typeof ManifestDotwebmanifestRoute
   PrivacyRoute: typeof PrivacyRoute
   RefundPolicyRoute: typeof RefundPolicyRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
+  RobotsDottxtRoute: typeof RobotsDottxtRoute
+  SitemapPagesDotxmlRoute: typeof SitemapPagesDotxmlRoute
+  SitemapTasksDotxmlRoute: typeof SitemapTasksDotxmlRoute
+  SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   TasksRoute: typeof TasksRoute
   TermsRoute: typeof TermsRoute
   BillingCancelRoute: typeof BillingCancelRoute
+  CategoriesCategoryRoute: typeof CategoriesCategoryRoute
+  CityCityRoute: typeof CityCityRouteWithChildren
   TaskIdRoute: typeof TaskIdRoute
   UserIdRoute: typeof UserIdRoute
   ApiPublicPaymentsWebhookRoute: typeof ApiPublicPaymentsWebhookRoute
@@ -482,6 +595,34 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TasksRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/sitemap.xml': {
+      id: '/sitemap.xml'
+      path: '/sitemap.xml'
+      fullPath: '/sitemap.xml'
+      preLoaderRoute: typeof SitemapDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sitemap-tasks.xml': {
+      id: '/sitemap-tasks.xml'
+      path: '/sitemap-tasks.xml'
+      fullPath: '/sitemap-tasks.xml'
+      preLoaderRoute: typeof SitemapTasksDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sitemap-pages.xml': {
+      id: '/sitemap-pages.xml'
+      path: '/sitemap-pages.xml'
+      fullPath: '/sitemap-pages.xml'
+      preLoaderRoute: typeof SitemapPagesDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/robots.txt': {
+      id: '/robots.txt'
+      path: '/robots.txt'
+      fullPath: '/robots.txt'
+      preLoaderRoute: typeof RobotsDottxtRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/reset-password': {
       id: '/reset-password'
       path: '/reset-password'
@@ -501,6 +642,13 @@ declare module '@tanstack/react-router' {
       path: '/privacy'
       fullPath: '/privacy'
       preLoaderRoute: typeof PrivacyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/manifest.webmanifest': {
+      id: '/manifest.webmanifest'
+      path: '/manifest.webmanifest'
+      fullPath: '/manifest.webmanifest'
+      preLoaderRoute: typeof ManifestDotwebmanifestRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/auth': {
@@ -550,6 +698,20 @@ declare module '@tanstack/react-router' {
       path: '/task/$id'
       fullPath: '/task/$id'
       preLoaderRoute: typeof TaskIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/city/$city': {
+      id: '/city/$city'
+      path: '/city/$city'
+      fullPath: '/city/$city'
+      preLoaderRoute: typeof CityCityRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/categories/$category': {
+      id: '/categories/$category'
+      path: '/categories/$category'
+      fullPath: '/categories/$category'
+      preLoaderRoute: typeof CategoriesCategoryRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/billing/cancel': {
@@ -643,12 +805,26 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedNotificationsRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/city/$city/': {
+      id: '/city/$city/'
+      path: '/'
+      fullPath: '/city/$city/'
+      preLoaderRoute: typeof CityCityIndexRouteImport
+      parentRoute: typeof CityCityRoute
+    }
     '/_authenticated/messages/': {
       id: '/_authenticated/messages/'
       path: '/messages'
       fullPath: '/messages/'
       preLoaderRoute: typeof AuthenticatedMessagesIndexRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/city/$city/$category': {
+      id: '/city/$city/$category'
+      path: '/$category'
+      fullPath: '/city/$city/$category'
+      preLoaderRoute: typeof CityCityCategoryRouteImport
+      parentRoute: typeof CityCityRoute
     }
     '/_authenticated/settings/security': {
       id: '/_authenticated/settings/security'
@@ -787,17 +963,38 @@ const AuthRouteChildren: AuthRouteChildren = {
 
 const AuthRouteWithChildren = AuthRoute._addFileChildren(AuthRouteChildren)
 
+interface CityCityRouteChildren {
+  CityCityCategoryRoute: typeof CityCityCategoryRoute
+  CityCityIndexRoute: typeof CityCityIndexRoute
+}
+
+const CityCityRouteChildren: CityCityRouteChildren = {
+  CityCityCategoryRoute: CityCityCategoryRoute,
+  CityCityIndexRoute: CityCityIndexRoute,
+}
+
+const CityCityRouteWithChildren = CityCityRoute._addFileChildren(
+  CityCityRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AdminRoute: AdminRouteWithChildren,
   AuthRoute: AuthRouteWithChildren,
+  ManifestDotwebmanifestRoute: ManifestDotwebmanifestRoute,
   PrivacyRoute: PrivacyRoute,
   RefundPolicyRoute: RefundPolicyRoute,
   ResetPasswordRoute: ResetPasswordRoute,
+  RobotsDottxtRoute: RobotsDottxtRoute,
+  SitemapPagesDotxmlRoute: SitemapPagesDotxmlRoute,
+  SitemapTasksDotxmlRoute: SitemapTasksDotxmlRoute,
+  SitemapDotxmlRoute: SitemapDotxmlRoute,
   TasksRoute: TasksRoute,
   TermsRoute: TermsRoute,
   BillingCancelRoute: BillingCancelRoute,
+  CategoriesCategoryRoute: CategoriesCategoryRoute,
+  CityCityRoute: CityCityRouteWithChildren,
   TaskIdRoute: TaskIdRoute,
   UserIdRoute: UserIdRoute,
   ApiPublicPaymentsWebhookRoute: ApiPublicPaymentsWebhookRoute,

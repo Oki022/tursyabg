@@ -4,10 +4,10 @@ import { SettingsPageShell } from "@/components/settings-page-shell";
 export const Route = createFileRoute("/_authenticated/settings/notifications")({
   head: () => ({
     meta: [
-      { title: "Нотификации — ЗадачаНет" },
+      { title: "Нотификации — Търся" },
       { name: "description", content: "Избери за какво да получаваш известия по имейл и в приложението." },
-      { property: "og:title", content: "Нотификации — ЗадачаНет" },
-      { property: "og:description", content: "Управлявай своите известия в ЗадачаНет." },
+      { property: "og:title", content: "Нотификации — Търся" },
+      { property: "og:description", content: "Управлявай своите известия в Търся." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
     ],

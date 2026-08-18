@@ -10,6 +10,7 @@ import { normalizeBgPhone, phoneError } from "@/lib/phone";
 import { toast } from "sonner";
 import { Logo } from "@/components/Logo";
 import { Checkbox } from "@/components/ui/checkbox";
+import { seo } from "@/lib/seo";
 
 type AuthSearch = { mode?: "login" | "register"; redirect?: string };
 
@@ -19,14 +20,12 @@ export const Route = createFileRoute("/auth")({
     redirect: typeof s.redirect === "string" && s.redirect.startsWith("/") ? s.redirect : undefined,
   }),
   head: () => ({
-    meta: [
-      { title: "Вход и регистрация — ЗадачаНет" },
-      { name: "description", content: "Влез в профила си или създай безплатен акаунт в ЗадачаНет за минути." },
-      { property: "og:title", content: "Вход и регистрация — ЗадачаНет" },
-      { property: "og:description", content: "Влез или се регистрирай безплатно в ЗадачаНет." },
-      { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary" },
-    ],
+    ...seo({
+      title: "Вход и регистрация",
+      description: "Влез в профила си или създай безплатен акаунт за минути и започни да възлагаш задачи или да намираш работа.",
+      path: "/auth",
+      noindex: true,
+    }),
   }),
   component: AuthPage,
 });
@@ -136,7 +135,7 @@ function AuthPage() {
           </h1>
           <p className="mt-1.5 text-sm text-muted-foreground">
             {isRegister
-              ? "Присъедини се към ЗадачаНет за минути."
+              ? "Присъедини се към Търся за минути."
               : "Влез в своя профил, за да продължиш."}
           </p>
         </div>

@@ -39,8 +39,13 @@ import { Crown, Siren, ArrowUpCircle } from "lucide-react";
 import { toast } from "sonner";
 import { CONTACT_MASK_WARNING, containsContactInfo, isValidBgPhone } from "@/lib/phone";
 import { RequirePhoneNotice } from "@/components/require-phone-notice";
+import { ShareButton } from "@/components/share-button";
 import { ClaimTaskButton } from "@/components/tasks/claim-task-button";
 import { EngagementInbox } from "@/components/reviews/engagement-cards";
+import { fetchTaskSeo } from "@/lib/seo-loaders";
+import { breadcrumbLd, clampDescription, jsonLd, seo } from "@/lib/seo";
+import { absoluteUrl, BRAND } from "@/lib/brand";
+import { slugify } from "@/lib/geo";
 
 const GALLERY_BY_CATEGORY: Record<string, string[]> = {
   remonti: [
@@ -67,6 +72,59 @@ const GALLERY_BY_CATEGORY: Record<string, string[]> = {
 };
 
 export const Route = createFileRoute("/task/$id")({
+  loader: ({ params }) => fetchTaskSeo(params.id),
+  head: ({ params, loaderData }) => {
+    const path = `/task/${params.id}`;
+    if (!loaderData) {
+      return seo({ title: "Задачата не е намерена", description: "Тази задача вече не е активна.", path, noindex: true });
+    }
+    const t = loaderData;
+    const location = [t.city, t.neighborhood].filter(Boolean).join(", ");
+    const cat = getCategory(t.category);
+    const budget = `${t.budget} €`;
+    const { meta, links } = seo({
+      title: clampDescription(`${t.title} — ${location || "България"} | ${budget}`, 58),
+      description: clampDescription(
+        `${t.description} Бюджет: ${budget}. Локация: ${location || "България"}. Категория: ${cat.name}.`,
+      ),
+      path,
+      image: t.image,
+      type: "article",
+    });
+    return {
+      meta,
+      links,
+      scripts: [
+        jsonLd({
+          "@context": "https://schema.org",
+          "@type": "Service",
+          name: t.title,
+          description: t.description,
+          serviceType: cat.name,
+          category: cat.name,
+          url: absoluteUrl(path),
+          ...(t.image ? { image: t.image } : {}),
+          areaServed: { "@type": "City", name: t.city ?? "България", addressCountry: "BG" },
+          offers: {
+            "@type": "Offer",
+            price: t.budget,
+            priceCurrency: "EUR",
+            availability: t.status === "active" ? "https://schema.org/InStock" : "https://schema.org/OutOfStock",
+            validFrom: t.createdAt,
+            validThrough: t.expiresAt,
+            url: absoluteUrl(path),
+          },
+          provider: { "@type": "Organization", name: BRAND, url: absoluteUrl("/") },
+        }),
+        breadcrumbLd([
+          { name: "Начало", path: "/" },
+          { name: "Задачи", path: "/tasks" },
+          ...(t.city ? [{ name: t.city, path: `/city/${slugify(t.city)}` }] : []),
+          { name: t.title, path },
+        ]),
+      ],
+    };
+  },
   component: TaskDetails,
   notFoundComponent: () => (
     <div className="container mx-auto px-4 py-24 text-center">
@@ -80,6 +138,7 @@ export const Route = createFileRoute("/task/$id")({
 
 function TaskDetails() {
   const { id } = Route.useParams();
+  const seoTask = Route.useLoaderData();
   const { data: task, isLoading } = useTask(id);
   const { user } = useAuth();
   const [active, setActive] = useState(0);
@@ -113,12 +172,42 @@ function TaskDetails() {
     };
   }, [messageOpen, user, task?.id, task?.userId]);
 
+  // SSR / първо зареждане: рендираме съдържанието от loader-а, за да го виждат
+  // и търсачките (клиентската заявка го подменя веднага след hydration).
   if (isLoading) {
+    if (!seoTask) {
+      return (
+        <div className="container mx-auto max-w-6xl px-4 py-10">
+          <div className="h-[320px] w-full animate-pulse rounded-3xl bg-muted sm:h-[420px]" />
+          <div className="mt-6 h-8 w-2/3 animate-pulse rounded bg-muted" />
+          <div className="mt-3 h-4 w-full animate-pulse rounded bg-muted" />
+        </div>
+      );
+    }
+    const seoLocation = [seoTask.city, seoTask.neighborhood].filter(Boolean).join(", ");
     return (
       <div className="container mx-auto max-w-6xl px-4 py-10">
-        <div className="h-[320px] w-full animate-pulse rounded-3xl bg-muted sm:h-[420px]" />
-        <div className="mt-6 h-8 w-2/3 animate-pulse rounded bg-muted" />
-        <div className="mt-3 h-4 w-full animate-pulse rounded bg-muted" />
+        {seoTask.image && (
+          <img
+            src={seoTask.image}
+            alt={`${seoTask.title} — ${getCategory(seoTask.category).name}`}
+            width={1400}
+            height={933}
+            fetchPriority="high"
+            className="aspect-[3/2] w-full rounded-3xl object-cover"
+          />
+        )}
+        <h1 className="mt-6 break-words text-3xl font-bold tracking-tight text-slate-900 md:text-4xl">
+          {seoTask.title}
+        </h1>
+        <p className="mt-2 text-sm text-muted-foreground">
+          {getCategory(seoTask.category).name}
+          {seoLocation ? ` · ${seoLocation}` : ""} · {seoTask.budget} €
+        </p>
+        <h2 className="mt-8 text-lg font-semibold text-slate-900">Описание</h2>
+        <p className="mt-3 whitespace-pre-line break-words text-[15px] leading-relaxed text-foreground/90">
+          {seoTask.description}
+        </p>
       </div>
     );
   }
@@ -204,6 +293,10 @@ function TaskDetails() {
                   src={src}
                   alt={`${task.title} — снимка ${index + 1}`}
                   loading={index === 0 ? "eager" : "lazy"}
+                  {...(index === 0 ? { fetchPriority: "high" as const } : {})}
+                  decoding={index === 0 ? "sync" : "async"}
+                  width={1400}
+                  height={933}
                   className={`absolute inset-0 mx-auto h-full w-full object-contain transition-opacity duration-300 ${index === active ? "opacity-100" : "opacity-0"}`}
                 />
               ))}
@@ -260,9 +353,12 @@ function TaskDetails() {
             </div>
           )}
 
-          <h1 className="mt-4 break-words text-3xl font-bold tracking-tight text-slate-900 md:text-4xl">
-            {task.title}
-          </h1>
+          <div className="mt-4 flex items-start justify-between gap-3">
+            <h1 className="break-words text-3xl font-bold tracking-tight text-slate-900 md:text-4xl">
+              {task.title}
+            </h1>
+            <ShareButton path={`/task/${task.id}`} title={task.title} className="mt-1 shrink-0" />
+          </div>
 
           <section className="mt-8 rounded-3xl border border-border/60 bg-card p-6 shadow-sm md:p-7">
             <h2 className="text-lg font-semibold text-slate-900">Описание</h2>

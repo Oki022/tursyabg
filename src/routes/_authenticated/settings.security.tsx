@@ -19,10 +19,10 @@ import { toast } from "sonner";
 export const Route = createFileRoute("/_authenticated/settings/security")({
   head: () => ({
     meta: [
-      { title: "Влизане и сигурност — ЗадачаНет" },
+      { title: "Влизане и сигурност — Търся" },
       { name: "description", content: "Смени паролата си и управлявай сигурността и статуса на акаунта си." },
-      { property: "og:title", content: "Влизане и сигурност — ЗадачаНет" },
-      { property: "og:description", content: "Настройки за сигурност на профила в ЗадачаНет." },
+      { property: "og:title", content: "Влизане и сигурност — Търся" },
+      { property: "og:description", content: "Настройки за сигурност на профила в Търся." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
     ],
