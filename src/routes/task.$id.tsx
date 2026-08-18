@@ -41,6 +41,10 @@ import { CONTACT_MASK_WARNING, containsContactInfo, isValidBgPhone } from "@/lib
 import { RequirePhoneNotice } from "@/components/require-phone-notice";
 import { ClaimTaskButton } from "@/components/tasks/claim-task-button";
 import { EngagementInbox } from "@/components/reviews/engagement-cards";
+import { fetchTaskSeo } from "@/lib/seo-loaders";
+import { breadcrumbLd, clampDescription, jsonLd, seo } from "@/lib/seo";
+import { absoluteUrl, BRAND } from "@/lib/brand";
+import { slugify } from "@/lib/geo";
 
 const GALLERY_BY_CATEGORY: Record<string, string[]> = {
   remonti: [
@@ -67,6 +71,59 @@ const GALLERY_BY_CATEGORY: Record<string, string[]> = {
 };
 
 export const Route = createFileRoute("/task/$id")({
+  loader: ({ params }) => fetchTaskSeo(params.id),
+  head: ({ params, loaderData }) => {
+    const path = `/task/${params.id}`;
+    if (!loaderData) {
+      return seo({ title: "Задачата не е намерена", description: "Тази задача вече не е активна.", path, noindex: true });
+    }
+    const t = loaderData;
+    const location = [t.city, t.neighborhood].filter(Boolean).join(", ");
+    const cat = getCategory(t.category);
+    const budget = `${t.budget} €`;
+    const { meta, links } = seo({
+      title: clampDescription(`${t.title} — ${location || "България"} | ${budget}`, 58),
+      description: clampDescription(
+        `${t.description} Бюджет: ${budget}. Локация: ${location || "България"}. Категория: ${cat.name}.`,
+      ),
+      path,
+      image: t.image,
+      type: "article",
+    });
+    return {
+      meta,
+      links,
+      scripts: [
+        jsonLd({
+          "@context": "https://schema.org",
+          "@type": "Service",
+          name: t.title,
+          description: t.description,
+          serviceType: cat.name,
+          category: cat.name,
+          url: absoluteUrl(path),
+          ...(t.image ? { image: t.image } : {}),
+          areaServed: { "@type": "City", name: t.city ?? "България", addressCountry: "BG" },
+          offers: {
+            "@type": "Offer",
+            price: t.budget,
+            priceCurrency: "EUR",
+            availability: t.status === "active" ? "https://schema.org/InStock" : "https://schema.org/OutOfStock",
+            validFrom: t.createdAt,
+            validThrough: t.expiresAt,
+            url: absoluteUrl(path),
+          },
+          provider: { "@type": "Organization", name: BRAND, url: absoluteUrl("/") },
+        }),
+        breadcrumbLd([
+          { name: "Начало", path: "/" },
+          { name: "Задачи", path: "/tasks" },
+          ...(t.city ? [{ name: t.city, path: `/city/${slugify(t.city)}` }] : []),
+          { name: t.title, path },
+        ]),
+      ],
+    };
+  },
   component: TaskDetails,
   notFoundComponent: () => (
     <div className="container mx-auto px-4 py-24 text-center">
