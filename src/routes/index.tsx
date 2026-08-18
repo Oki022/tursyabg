@@ -7,18 +7,47 @@ import { Input } from "@/components/ui/input";
 import { TaskCard, TaskCardSkeleton } from "@/components/task-card";
 import { categories } from "@/lib/mock-data";
 import { useTasksFeed } from "@/lib/tasks-api";
+import { jsonLd, seo } from "@/lib/seo";
+import { absoluteUrl, BRAND, BRAND_LATIN, BRAND_TAGLINE } from "@/lib/brand";
 
 export const Route = createFileRoute("/")({
-  head: () => ({
-    meta: [
-      { title: "ЗадачаНет — Възложи задача или намери работа" },
-      { name: "description", content: "Публикувай задача безплатно и намери проверен изпълнител в България. Ремонти, почистване, превоз, уроци и още." },
-      { property: "og:title", content: "ЗадачаНет — Възложи задача или намери работа" },
-      { property: "og:description", content: "Публикувай задача безплатно и намери проверен изпълнител в България." },
-      { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary" },
-    ],
-  }),
+  head: () => {
+    const { meta, links } = seo({
+      description:
+        "Публикувай задача безплатно и намери проверен изпълнител в България — ремонти, почистване, превоз, уроци, градина и още. Реални отзиви и цени в евро.",
+      path: "/",
+    });
+    return {
+      meta,
+      links,
+      scripts: [
+        jsonLd({
+          "@context": "https://schema.org",
+          "@type": "Organization",
+          name: BRAND,
+          alternateName: BRAND_LATIN,
+          url: absoluteUrl("/"),
+          description: BRAND_TAGLINE,
+          areaServed: { "@type": "Country", name: "България" },
+        }),
+        jsonLd({
+          "@context": "https://schema.org",
+          "@type": "WebSite",
+          name: BRAND,
+          url: absoluteUrl("/"),
+          inLanguage: "bg",
+          potentialAction: {
+            "@type": "SearchAction",
+            target: {
+              "@type": "EntryPoint",
+              urlTemplate: `${absoluteUrl("/tasks")}?q={search_term_string}`,
+            },
+            "query-input": "required name=search_term_string",
+          },
+        }),
+      ],
+    };
+  },
   component: Index,
 });
 
