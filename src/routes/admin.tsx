@@ -13,9 +13,11 @@ import {
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { getMyStaffRole } from "@/services/admin";
+import { noindexSeo } from "@/lib/seo";
 
 export const Route = createFileRoute("/admin")({
   ssr: false,
+  head: () => noindexSeo("Администрация"),
   beforeLoad: async () => {
     const { data, error } = await supabase.auth.getUser();
     if (error || !data.user) throw redirect({ to: "/auth", search: { mode: "login" } });
