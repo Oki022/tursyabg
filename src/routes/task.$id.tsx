@@ -138,6 +138,7 @@ export const Route = createFileRoute("/task/$id")({
 
 function TaskDetails() {
   const { id } = Route.useParams();
+  const seoTask = Route.useLoaderData();
   const { data: task, isLoading } = useTask(id);
   const { user } = useAuth();
   const [active, setActive] = useState(0);
@@ -171,12 +172,42 @@ function TaskDetails() {
     };
   }, [messageOpen, user, task?.id, task?.userId]);
 
+  // SSR / първо зареждане: рендираме съдържанието от loader-а, за да го виждат
+  // и търсачките (клиентската заявка го подменя веднага след hydration).
   if (isLoading) {
+    if (!seoTask) {
+      return (
+        <div className="container mx-auto max-w-6xl px-4 py-10">
+          <div className="h-[320px] w-full animate-pulse rounded-3xl bg-muted sm:h-[420px]" />
+          <div className="mt-6 h-8 w-2/3 animate-pulse rounded bg-muted" />
+          <div className="mt-3 h-4 w-full animate-pulse rounded bg-muted" />
+        </div>
+      );
+    }
+    const seoLocation = [seoTask.city, seoTask.neighborhood].filter(Boolean).join(", ");
     return (
       <div className="container mx-auto max-w-6xl px-4 py-10">
-        <div className="h-[320px] w-full animate-pulse rounded-3xl bg-muted sm:h-[420px]" />
-        <div className="mt-6 h-8 w-2/3 animate-pulse rounded bg-muted" />
-        <div className="mt-3 h-4 w-full animate-pulse rounded bg-muted" />
+        {seoTask.image && (
+          <img
+            src={seoTask.image}
+            alt={`${seoTask.title} — ${getCategory(seoTask.category).name}`}
+            width={1400}
+            height={933}
+            fetchPriority="high"
+            className="aspect-[3/2] w-full rounded-3xl object-cover"
+          />
+        )}
+        <h1 className="mt-6 break-words text-3xl font-bold tracking-tight text-slate-900 md:text-4xl">
+          {seoTask.title}
+        </h1>
+        <p className="mt-2 text-sm text-muted-foreground">
+          {getCategory(seoTask.category).name}
+          {seoLocation ? ` · ${seoLocation}` : ""} · {seoTask.budget} €
+        </p>
+        <h2 className="mt-8 text-lg font-semibold text-slate-900">Описание</h2>
+        <p className="mt-3 whitespace-pre-line break-words text-[15px] leading-relaxed text-foreground/90">
+          {seoTask.description}
+        </p>
       </div>
     );
   }
