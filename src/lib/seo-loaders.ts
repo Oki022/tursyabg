@@ -19,7 +19,7 @@ export async function fetchTaskSeo(id: string): Promise<TaskSeo | null> {
   try {
     const { data } = await supabase
       .from("tasks")
-      .select("id, title, description, category, budget, city, neighborhood, status, created_at, expires_at, task_images(image_url, sort_order)")
+      .select("id, title, description, category, budget, city, neighborhood, status, created_at, task_images(image_url, sort_order)")
       .eq("id", id)
       .maybeSingle();
     if (!data) return null;
@@ -36,7 +36,8 @@ export async function fetchTaskSeo(id: string): Promise<TaskSeo | null> {
       neighborhood: row.neighborhood,
       status: row.status,
       createdAt: row.created_at,
-      expiresAt: row.expires_at ?? null,
+      /** Tasks expire 30 days after creation (feed sweep policy). */
+      expiresAt: new Date(new Date(row.created_at).getTime() + 30 * 24 * 3600 * 1000).toISOString(),
       image: firstHttp,
     };
   } catch {
