@@ -41,6 +41,7 @@ import { Route as AuthenticatedUnlockedRouteImport } from './routes/_authenticat
 import { Route as AuthenticatedProfileRouteImport } from './routes/_authenticated/profile'
 import { Route as AuthenticatedPostRouteImport } from './routes/_authenticated/post'
 import { Route as AuthenticatedNotificationsRouteImport } from './routes/_authenticated/notifications'
+import { Route as CityCityIndexRouteImport } from './routes/city.$city.index'
 import { Route as AuthenticatedMessagesIndexRouteImport } from './routes/_authenticated/messages.index'
 import { Route as CityCityCategoryRouteImport } from './routes/city.$city.$category'
 import { Route as AuthenticatedSettingsSecurityRouteImport } from './routes/_authenticated/settings.security'
@@ -213,6 +214,11 @@ const AuthenticatedNotificationsRoute =
     path: '/notifications',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const CityCityIndexRoute = CityCityIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => CityCityRoute,
+} as any)
 const AuthenticatedMessagesIndexRoute =
   AuthenticatedMessagesIndexRouteImport.update({
     id: '/messages/',
@@ -320,6 +326,7 @@ export interface FileRoutesByFullPath {
   '/settings/security': typeof AuthenticatedSettingsSecurityRoute
   '/city/$city/$category': typeof CityCityCategoryRoute
   '/messages/': typeof AuthenticatedMessagesIndexRoute
+  '/city/$city/': typeof CityCityIndexRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
 }
 export interface FileRoutesByTo {
@@ -349,7 +356,6 @@ export interface FileRoutesByTo {
   '/auth/verify': typeof AuthVerifyRoute
   '/billing/cancel': typeof BillingCancelRoute
   '/categories/$category': typeof CategoriesCategoryRoute
-  '/city/$city': typeof CityCityRouteWithChildren
   '/task/$id': typeof TaskIdRoute
   '/user/$id': typeof UserIdRoute
   '/admin': typeof AdminIndexRoute
@@ -363,6 +369,7 @@ export interface FileRoutesByTo {
   '/settings/security': typeof AuthenticatedSettingsSecurityRoute
   '/city/$city/$category': typeof CityCityCategoryRoute
   '/messages': typeof AuthenticatedMessagesIndexRoute
+  '/city/$city': typeof CityCityIndexRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
 }
 export interface FileRoutesById {
@@ -409,6 +416,7 @@ export interface FileRoutesById {
   '/_authenticated/settings/security': typeof AuthenticatedSettingsSecurityRoute
   '/city/$city/$category': typeof CityCityCategoryRoute
   '/_authenticated/messages/': typeof AuthenticatedMessagesIndexRoute
+  '/city/$city/': typeof CityCityIndexRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
 }
 export interface FileRouteTypes {
@@ -455,6 +463,7 @@ export interface FileRouteTypes {
     | '/settings/security'
     | '/city/$city/$category'
     | '/messages/'
+    | '/city/$city/'
     | '/api/public/payments/webhook'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -484,7 +493,6 @@ export interface FileRouteTypes {
     | '/auth/verify'
     | '/billing/cancel'
     | '/categories/$category'
-    | '/city/$city'
     | '/task/$id'
     | '/user/$id'
     | '/admin'
@@ -498,6 +506,7 @@ export interface FileRouteTypes {
     | '/settings/security'
     | '/city/$city/$category'
     | '/messages'
+    | '/city/$city'
     | '/api/public/payments/webhook'
   id:
     | '__root__'
@@ -543,6 +552,7 @@ export interface FileRouteTypes {
     | '/_authenticated/settings/security'
     | '/city/$city/$category'
     | '/_authenticated/messages/'
+    | '/city/$city/'
     | '/api/public/payments/webhook'
   fileRoutesById: FileRoutesById
 }
@@ -795,6 +805,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedNotificationsRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/city/$city/': {
+      id: '/city/$city/'
+      path: '/'
+      fullPath: '/city/$city/'
+      preLoaderRoute: typeof CityCityIndexRouteImport
+      parentRoute: typeof CityCityRoute
+    }
     '/_authenticated/messages/': {
       id: '/_authenticated/messages/'
       path: '/messages'
@@ -948,10 +965,12 @@ const AuthRouteWithChildren = AuthRoute._addFileChildren(AuthRouteChildren)
 
 interface CityCityRouteChildren {
   CityCityCategoryRoute: typeof CityCityCategoryRoute
+  CityCityIndexRoute: typeof CityCityIndexRoute
 }
 
 const CityCityRouteChildren: CityCityRouteChildren = {
   CityCityCategoryRoute: CityCityCategoryRoute,
+  CityCityIndexRoute: CityCityIndexRoute,
 }
 
 const CityCityRouteWithChildren = CityCityRoute._addFileChildren(
