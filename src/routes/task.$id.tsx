@@ -39,6 +39,7 @@ import { Crown, Siren, ArrowUpCircle } from "lucide-react";
 import { toast } from "sonner";
 import { CONTACT_MASK_WARNING, containsContactInfo, isValidBgPhone } from "@/lib/phone";
 import { RequirePhoneNotice } from "@/components/require-phone-notice";
+import { ShareButton } from "@/components/share-button";
 import { ClaimTaskButton } from "@/components/tasks/claim-task-button";
 import { EngagementInbox } from "@/components/reviews/engagement-cards";
 import { fetchTaskSeo } from "@/lib/seo-loaders";
@@ -321,9 +322,12 @@ function TaskDetails() {
             </div>
           )}
 
-          <h1 className="mt-4 break-words text-3xl font-bold tracking-tight text-slate-900 md:text-4xl">
-            {task.title}
-          </h1>
+          <div className="mt-4 flex items-start justify-between gap-3">
+            <h1 className="break-words text-3xl font-bold tracking-tight text-slate-900 md:text-4xl">
+              {task.title}
+            </h1>
+            <ShareButton path={`/task/${task.id}`} title={task.title} className="mt-1 shrink-0" />
+          </div>
 
           <section className="mt-8 rounded-3xl border border-border/60 bg-card p-6 shadow-sm md:p-7">
             <h2 className="text-lg font-semibold text-slate-900">Описание</h2>
