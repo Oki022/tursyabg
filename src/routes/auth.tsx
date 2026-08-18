@@ -8,6 +8,7 @@ import { useAuth, type UserRole } from "@/lib/auth";
 import { authErrorMessage, emailError, nameError, passwordError } from "@/lib/auth-errors";
 import { normalizeBgPhone, phoneError } from "@/lib/phone";
 import { toast } from "sonner";
+import { Logo } from "@/components/Logo";
 import { Checkbox } from "@/components/ui/checkbox";
 
 type AuthSearch = { mode?: "login" | "register"; redirect?: string };
@@ -129,6 +130,7 @@ function AuthPage() {
     <div className="container mx-auto flex min-h-[calc(100vh-8rem)] max-w-md items-center px-4 py-10">
       <div className="w-full rounded-2xl border border-border/60 bg-card p-6 shadow-sm md:p-8">
         <div className="text-center">
+          <Logo size="lg" showText={false} className="mx-auto mb-4 justify-center" />
           <h1 className="text-2xl font-bold tracking-tight text-foreground">
             {isRegister ? "Създай профил" : "Добре дошли отново"}
           </h1>

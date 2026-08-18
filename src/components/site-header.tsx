@@ -1,9 +1,12 @@
 import { Link } from "@tanstack/react-router";
 import { UnreadBadge } from "@/components/unread-badge";
-import { ClipboardList, Plus, CircleUserRound, LogOut, BadgeCheck, MessageCircle, Settings } from "lucide-react";
+import { Plus, CircleUserRound, LogOut, BadgeCheck, MessageCircle, Settings } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { NotificationBell } from "@/components/notification-bell";
 import { useAuth } from "@/lib/auth";
+import { Logo } from "@/components/Logo";
+import { useHideOnScroll } from "@/hooks/use-hide-on-scroll";
+import { cn } from "@/lib/utils";
 import { useCreditBalance } from "@/lib/credits-api";
 import {
   DropdownMenu,
@@ -18,18 +21,17 @@ export function SiteHeader() {
   const { user, logout } = useAuth();
   const balance = useCreditBalance(user?.id);
   const credits = balance.data ?? user?.credits ?? 0;
+  const hidden = useHideOnScroll(10);
   return (
     <header
-      className="sticky top-0 z-40 w-full max-w-full border-b border-border/60 bg-background/80 backdrop-blur supports-[backdrop-filter]:bg-background/60"
+      className={cn(
+        "sticky top-0 z-40 w-full max-w-full border-b border-border/60 bg-background/80 backdrop-blur transition-transform duration-300 ease-out supports-[backdrop-filter]:bg-background/60 motion-reduce:transition-none",
+        hidden && "md:-translate-y-full motion-reduce:translate-y-0",
+      )}
       style={{ paddingTop: "env(safe-area-inset-top)" }}
     >
       <div className="mx-auto flex h-16 w-full max-w-7xl items-center justify-between gap-2 px-4">
-        <Link to="/" className="flex items-center gap-2 font-semibold text-foreground">
-          <span className="grid h-9 w-9 place-items-center rounded-lg bg-primary text-primary-foreground">
-            <ClipboardList className="h-5 w-5" />
-          </span>
-          <span className="text-lg tracking-tight">ЗадачаНет</span>
-        </Link>
+        <Logo size="md" />
         <nav className="hidden items-center gap-1 md:flex">
           <Link to="/" className="rounded-md px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground" activeOptions={{ exact: true }} activeProps={{ className: "rounded-md px-3 py-2 text-sm font-medium text-foreground" }}>
             Начало
