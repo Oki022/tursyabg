@@ -11,6 +11,10 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as TermsRouteImport } from './routes/terms'
 import { Route as TasksRouteImport } from './routes/tasks'
+import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
+import { Route as SitemapTasksDotxmlRouteImport } from './routes/sitemap-tasks[.]xml'
+import { Route as SitemapPagesDotxmlRouteImport } from './routes/sitemap-pages[.]xml'
+import { Route as RobotsDottxtRouteImport } from './routes/robots[.]txt'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as RefundPolicyRouteImport } from './routes/refund-policy'
 import { Route as PrivacyRouteImport } from './routes/privacy'
@@ -56,6 +60,26 @@ const TermsRoute = TermsRouteImport.update({
 const TasksRoute = TasksRouteImport.update({
   id: '/tasks',
   path: '/tasks',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
+  id: '/sitemap.xml',
+  path: '/sitemap.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SitemapTasksDotxmlRoute = SitemapTasksDotxmlRouteImport.update({
+  id: '/sitemap-tasks.xml',
+  path: '/sitemap-tasks.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SitemapPagesDotxmlRoute = SitemapPagesDotxmlRouteImport.update({
+  id: '/sitemap-pages.xml',
+  path: '/sitemap-pages.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RobotsDottxtRoute = RobotsDottxtRouteImport.update({
+  id: '/robots.txt',
+  path: '/robots.txt',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ResetPasswordRoute = ResetPasswordRouteImport.update({
@@ -255,6 +279,10 @@ export interface FileRoutesByFullPath {
   '/privacy': typeof PrivacyRoute
   '/refund-policy': typeof RefundPolicyRoute
   '/reset-password': typeof ResetPasswordRoute
+  '/robots.txt': typeof RobotsDottxtRoute
+  '/sitemap-pages.xml': typeof SitemapPagesDotxmlRoute
+  '/sitemap-tasks.xml': typeof SitemapTasksDotxmlRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/tasks': typeof TasksRoute
   '/terms': typeof TermsRoute
   '/notifications': typeof AuthenticatedNotificationsRoute
@@ -293,6 +321,10 @@ export interface FileRoutesByTo {
   '/privacy': typeof PrivacyRoute
   '/refund-policy': typeof RefundPolicyRoute
   '/reset-password': typeof ResetPasswordRoute
+  '/robots.txt': typeof RobotsDottxtRoute
+  '/sitemap-pages.xml': typeof SitemapPagesDotxmlRoute
+  '/sitemap-tasks.xml': typeof SitemapTasksDotxmlRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/tasks': typeof TasksRoute
   '/terms': typeof TermsRoute
   '/notifications': typeof AuthenticatedNotificationsRoute
@@ -334,6 +366,10 @@ export interface FileRoutesById {
   '/privacy': typeof PrivacyRoute
   '/refund-policy': typeof RefundPolicyRoute
   '/reset-password': typeof ResetPasswordRoute
+  '/robots.txt': typeof RobotsDottxtRoute
+  '/sitemap-pages.xml': typeof SitemapPagesDotxmlRoute
+  '/sitemap-tasks.xml': typeof SitemapTasksDotxmlRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/tasks': typeof TasksRoute
   '/terms': typeof TermsRoute
   '/_authenticated/notifications': typeof AuthenticatedNotificationsRoute
@@ -375,6 +411,10 @@ export interface FileRouteTypes {
     | '/privacy'
     | '/refund-policy'
     | '/reset-password'
+    | '/robots.txt'
+    | '/sitemap-pages.xml'
+    | '/sitemap-tasks.xml'
+    | '/sitemap.xml'
     | '/tasks'
     | '/terms'
     | '/notifications'
@@ -413,6 +453,10 @@ export interface FileRouteTypes {
     | '/privacy'
     | '/refund-policy'
     | '/reset-password'
+    | '/robots.txt'
+    | '/sitemap-pages.xml'
+    | '/sitemap-tasks.xml'
+    | '/sitemap.xml'
     | '/tasks'
     | '/terms'
     | '/notifications'
@@ -453,6 +497,10 @@ export interface FileRouteTypes {
     | '/privacy'
     | '/refund-policy'
     | '/reset-password'
+    | '/robots.txt'
+    | '/sitemap-pages.xml'
+    | '/sitemap-tasks.xml'
+    | '/sitemap.xml'
     | '/tasks'
     | '/terms'
     | '/_authenticated/notifications'
@@ -494,6 +542,10 @@ export interface RootRouteChildren {
   PrivacyRoute: typeof PrivacyRoute
   RefundPolicyRoute: typeof RefundPolicyRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
+  RobotsDottxtRoute: typeof RobotsDottxtRoute
+  SitemapPagesDotxmlRoute: typeof SitemapPagesDotxmlRoute
+  SitemapTasksDotxmlRoute: typeof SitemapTasksDotxmlRoute
+  SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   TasksRoute: typeof TasksRoute
   TermsRoute: typeof TermsRoute
   BillingCancelRoute: typeof BillingCancelRoute
@@ -518,6 +570,34 @@ declare module '@tanstack/react-router' {
       path: '/tasks'
       fullPath: '/tasks'
       preLoaderRoute: typeof TasksRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sitemap.xml': {
+      id: '/sitemap.xml'
+      path: '/sitemap.xml'
+      fullPath: '/sitemap.xml'
+      preLoaderRoute: typeof SitemapDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sitemap-tasks.xml': {
+      id: '/sitemap-tasks.xml'
+      path: '/sitemap-tasks.xml'
+      fullPath: '/sitemap-tasks.xml'
+      preLoaderRoute: typeof SitemapTasksDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sitemap-pages.xml': {
+      id: '/sitemap-pages.xml'
+      path: '/sitemap-pages.xml'
+      fullPath: '/sitemap-pages.xml'
+      preLoaderRoute: typeof SitemapPagesDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/robots.txt': {
+      id: '/robots.txt'
+      path: '/robots.txt'
+      fullPath: '/robots.txt'
+      preLoaderRoute: typeof RobotsDottxtRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/reset-password': {
@@ -866,6 +946,10 @@ const rootRouteChildren: RootRouteChildren = {
   PrivacyRoute: PrivacyRoute,
   RefundPolicyRoute: RefundPolicyRoute,
   ResetPasswordRoute: ResetPasswordRoute,
+  RobotsDottxtRoute: RobotsDottxtRoute,
+  SitemapPagesDotxmlRoute: SitemapPagesDotxmlRoute,
+  SitemapTasksDotxmlRoute: SitemapTasksDotxmlRoute,
+  SitemapDotxmlRoute: SitemapDotxmlRoute,
   TasksRoute: TasksRoute,
   TermsRoute: TermsRoute,
   BillingCancelRoute: BillingCancelRoute,
