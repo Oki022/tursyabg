@@ -1,16 +1,12 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { LegalPage, LegalSection } from "@/components/legal-page";
+import { clampDescription, seo } from "@/lib/seo";
 
 export const Route = createFileRoute("/privacy")({
-  head: () => ({
-    meta: [
-      { title: "Политика за поверителност — Търся" },
-      { name: "description", content: "Как Търся събира, съхранява и защитава личните ти данни." },
-      { property: "og:title", content: "Политика за поверителност — Търся" },
-      { property: "og:description", content: "Как обработваме и защитаваме личните ти данни в Търся." },
-      { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary" },
-    ],
+  head: () => seo({
+    title: "Политика за поверителност",
+    description: clampDescription("Как събираме, съхраняваме и защитаваме личните ти данни, какви бисквитки използваме и как да упражниш правата си по GDPR."),
+    path: "/privacy",
   }),
   component: PrivacyPage,
 });

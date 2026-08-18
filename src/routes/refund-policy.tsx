@@ -1,16 +1,12 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { LegalPage, LegalSection } from "@/components/legal-page";
+import { clampDescription, seo } from "@/lib/seo";
 
 export const Route = createFileRoute("/refund-policy")({
-  head: () => ({
-    meta: [
-      { title: "Политика за връщане на кредити — Търся" },
-      { name: "description", content: "Кога и как можеш да поискаш връщане на кредити в 14-дневен срок." },
-      { property: "og:title", content: "Политика за връщане на кредити — Търся" },
-      { property: "og:description", content: "14-дневен срок и приети причини за връщане на кредити." },
-      { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary" },
-    ],
+  head: () => seo({
+    title: "Политика за връщане на кредити",
+    description: clampDescription("Кога и как можеш да поискаш връщане на кредити в 14-дневен срок, приетите причини и как се обработва заявката от екипа."),
+    path: "/refund-policy",
   }),
   component: RefundPolicyPage,
 });

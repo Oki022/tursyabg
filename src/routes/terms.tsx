@@ -1,16 +1,12 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { LegalPage, LegalSection } from "@/components/legal-page";
+import { clampDescription, seo } from "@/lib/seo";
 
 export const Route = createFileRoute("/terms")({
-  head: () => ({
-    meta: [
-      { title: "Общи условия — Търся" },
-      { name: "description", content: "Общите условия за ползване на платформата Търся — права, задължения и кредити." },
-      { property: "og:title", content: "Общи условия — Търся" },
-      { property: "og:description", content: "Права и задължения при ползване на Търся." },
-      { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary" },
-    ],
+  head: () => seo({
+    title: "Общи условия",
+    description: clampDescription("Общите условия за ползване на платформата — права и задължения на клиенти и изпълнители, кредити, плащания и прекратяване на профил."),
+    path: "/terms",
   }),
   component: TermsPage,
 });
