@@ -293,7 +293,7 @@ function ProfilePage() {
                     <p className="text-sm font-medium text-foreground">
                       {user.verified ? "Самоличността ти е потвърдена" : "Качи лична карта или паспорт"}
                     </p>
-                    <p className="text-xs text-muted-foreground">JPG, PNG или PDF — до 5 MB</p>
+                    <p className="text-xs text-muted-foreground">JPG, PNG или PDF, до 5 MB</p>
                   </div>
                 </div>
                 <Button onClick={mockVerify} disabled={user.verified} className="gap-2">
@@ -385,7 +385,7 @@ function OwnerTaskCard({
           <div className="mt-2 space-y-1.5 rounded-xl bg-amber-50 p-2 text-[11px] leading-snug text-amber-900">
             <p className="font-medium">В проверка от екипа</p>
             <p>
-              Задачата ще стане публична след одобрение — обикновено до няколко часа. Ще получиш
+              Задачата ще стане публична след одобрение, обикновено до няколко часа. Ще получиш
               известие.
             </p>
             <Button asChild size="sm" variant="outline" className="h-auto w-full py-1.5 text-[11px]">

@@ -15,9 +15,9 @@ export const Route = createFileRoute("/_authenticated/billing/success")({
   }),
   head: () => ({
     meta: [
-      { title: "Потвърждение на плащане — Търся" },
+      { title: "Потвърждение на плащане | Търся" },
       { name: "description", content: "Потвърждаваме плащането ти и зареждаме кредитите по баланса." },
-      { property: "og:title", content: "Потвърждение на плащане — Търся" },
+      { property: "og:title", content: "Потвърждение на плащане | Търся" },
       { property: "og:description", content: "Проверяваме плащането и добавяме кредитите по баланса ти." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
@@ -30,7 +30,7 @@ const MAX_WAIT_MS = 90_000;
 
 function BillingSuccessPage() {
   const search = Route.useSearch();
-  // Opaque provider reference — Stripe returns it as `session_id`, other providers use `ref`.
+  // Opaque provider reference, Stripe returns it as `session_id`, other providers use `ref`.
   const reference = search.ref ?? search.session_id;
   const qc = useQueryClient();
   const [timedOut, setTimedOut] = useState(false);
@@ -112,7 +112,7 @@ function BillingSuccessPage() {
       <Shell icon={<TriangleAlert className="h-12 w-12 text-amber-500" />} title="Потвърждението се забави">
         <p className="text-sm text-muted-foreground">
           Плащането ти може вече да е прието, но потвърждението още не е пристигнало. Покупката се активира
-          автоматично — провери баланса си след няколко минути или ни пиши, ако нещо не е наред.
+          автоматично, провери баланса си след няколко минути или ни пиши, ако нещо не е наред.
         </p>
         <Actions />
       </Shell>
@@ -122,7 +122,7 @@ function BillingSuccessPage() {
   return (
     <Shell icon={<Loader2 className="h-12 w-12 animate-spin text-primary" />} title="Потвърждаваме плащането…">
       <p className="text-sm text-muted-foreground">
-        Изчакваме потвърждение от платежния оператор. Не затваряй страницата — обикновено отнема няколко
+        Изчакваме потвърждение от платежния оператор. Не затваряй страницата, обикновено отнема няколко
         секунди.
       </p>
     </Shell>

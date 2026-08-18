@@ -130,7 +130,7 @@ function QueueRow({ item, onResolve }: { item: ModerationItem; onResolve: (appro
                 {item.userName ?? "Потребител"}
               </Link>
             ) : (
-              "—"
+              "няма"
             )}
           </span>
           <span>Профил на {item.accountAgeDays} дни</span>
@@ -179,7 +179,7 @@ function AdminModerationPage() {
   const resolve = useMutation({
     mutationFn: (input: { id: string; approve: boolean; reason?: string }) => resolveModerationItem(input),
     onSuccess: (_d, vars) => {
-      toast.success(vars.approve ? "Одобрено и публикувано." : "Отхвърлено — потребителят е уведомен.");
+      toast.success(vars.approve ? "Одобрено и публикувано." : "Отхвърлено, потребителят е уведомен.");
       setRejectFor(null);
       setReason("");
       void qc.invalidateQueries({ queryKey: ["admin-moderation"] });
@@ -194,7 +194,7 @@ function AdminModerationPage() {
   return (
     <AdminPage
       title="Модерация"
-      description="Всичко задържано или маркирано на едно място — снимки, текст и доклади от потребители."
+      description="Всичко задържано или маркирано на едно място, снимки, текст и доклади от потребители."
       actions={
         <Select value={status} onValueChange={(v) => setStatus(v as ModerationStatus | "all")}>
           <SelectTrigger className="w-40 bg-white">

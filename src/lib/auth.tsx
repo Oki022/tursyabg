@@ -145,7 +145,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     // PRE-LAUNCH TODO: потвърждението на имейл е ИЗКЛЮЧЕНО (auto-confirm) за периода на разработка,
     // затова signUp връща активна сесия и потребителят влиза веднага.
     // Преди пускане на живо: включи отново "Confirm email" с истински SMTP доставчик
-    // (Resend/Postmark) — публичен маркетплейс се нуждае от верифицирани имейли срещу спам профили.
+    // (Resend/Postmark), публичен маркетплейс се нуждае от верифицирани имейли срещу спам профили.
     // Когато го включиш, register ще върне needsConfirmation: true и потребителят
     // трябва да се насочи към /auth/verify?email=... (страницата вече е готова).
     const { data, error } = await supabase.auth.signUp({
@@ -157,7 +157,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       },
     });
     if (error) throw error;
-    // Телефонът е задължителен контакт — записва се в профила веднага след регистрация.
+    // Телефонът е задължителен контакт, записва се в профила веднага след регистрация.
     if (data.session?.user?.id) {
       await supabase.from("profiles").upsert({ id: data.session.user.id, full_name: name }, { onConflict: "id" });
       await supabase

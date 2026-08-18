@@ -19,9 +19,9 @@ import {
 export const Route = createFileRoute("/_authenticated/review/$engagementId")({
   head: () => ({
     meta: [
-      { title: "Остави отзив — Търся" },
+      { title: "Остави отзив | Търся" },
       { name: "description", content: "Оцени съвместната работа с 1 до 5 звезди и кратък коментар." },
-      { property: "og:title", content: "Остави отзив — Търся" },
+      { property: "og:title", content: "Остави отзив | Търся" },
       { property: "og:description", content: "Двустранни отзиви след потвърдена работа." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
@@ -86,7 +86,7 @@ function ReviewPage() {
       const res = await submit.mutateAsync({ engagementId, rating, comment: comment.trim() });
       toast.success(
         res["revealed"]
-          ? "Отзивът е публикуван — и двата отзива вече са видими."
+          ? "Отзивът е публикуван, и двата отзива вече са видими."
           : "Благодарим! Отзивът ти е записан и ще стане видим, когато и другата страна напише своя.",
       );
       void navigate({ to: "/profile" });
@@ -106,7 +106,7 @@ function ReviewPage() {
       <div className="min-w-0 rounded-2xl border border-border/60 bg-card p-5 shadow-sm md:p-7">
         <h1 className="text-xl font-bold tracking-tight md:text-2xl">{REVIEW_HEADING[direction]}</h1>
         <p className="mt-1 break-words text-sm text-muted-foreground">
-          {counterpart ?? "Потребител"} — задача „{engagement.taskTitle}“
+          {counterpart ?? "Потребител"}, задача „{engagement.taskTitle}“
         </p>
 
         <div className="mt-4 flex items-start gap-2 rounded-2xl bg-secondary/60 px-4 py-3 text-xs leading-relaxed text-muted-foreground">

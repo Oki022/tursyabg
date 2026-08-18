@@ -83,7 +83,7 @@ export const Route = createFileRoute("/task/$id")({
     const cat = getCategory(t.category);
     const budget = `${t.budget} €`;
     const { meta, links } = seo({
-      title: clampDescription(`${t.title} — ${location || "България"} | ${budget}`, 58),
+      title: clampDescription(`${t.title}, ${location || "България"} | ${budget}`, 58),
       description: clampDescription(
         `${t.description} Бюджет: ${budget}. Локация: ${location || "България"}. Категория: ${cat.name}.`,
       ),
@@ -190,7 +190,7 @@ function TaskDetails() {
         {seoTask.image && (
           <img
             src={seoTask.image}
-            alt={`${seoTask.title} — ${getCategory(seoTask.category).name}`}
+            alt={`${seoTask.title}, ${getCategory(seoTask.category).name}`}
             width={1400}
             height={933}
             fetchPriority="high"
@@ -291,7 +291,7 @@ function TaskDetails() {
                 <img
                   key={src}
                   src={src}
-                  alt={`${task.title} — снимка ${index + 1}`}
+                  alt={`${task.title}, снимка ${index + 1}`}
                   loading={index === 0 ? "eager" : "lazy"}
                   {...(index === 0 ? { fetchPriority: "high" as const } : {})}
                   decoding={index === 0 ? "sync" : "async"}
@@ -396,7 +396,7 @@ function TaskDetails() {
                           <div key={p.id} className="flex flex-wrap items-center gap-x-1.5 gap-y-0.5">
                             <PromoIcon className="h-3.5 w-3.5 shrink-0 text-primary" />
                             <span className="font-semibold text-foreground">{PROMO_LABELS[p.type]}</span>
-                            <span>— {remainingLabel(p.expiresAt)}</span>
+                            <span> {remainingLabel(p.expiresAt)}</span>
                           </div>
                         );
                       })}

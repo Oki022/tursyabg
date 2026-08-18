@@ -29,7 +29,7 @@ export function PromoteDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-lg">
         <DialogHeader>
-          <DialogTitle>{selected ? `Плащане — ${selected.name}` : "Промотирай задачата"}</DialogTitle>
+          <DialogTitle>{selected ? `Плащане, ${selected.name}` : "Промотирай задачата"}</DialogTitle>
           <DialogDescription>
             {selected
               ? `${formatEur(selected.priceEur)} · Плащането е защитено.`

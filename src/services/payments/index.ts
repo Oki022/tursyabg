@@ -17,7 +17,7 @@ const REFERENCE_COLUMN = "stripe_session_id";
 const SELECT_COLUMNS =
   "id, package_id, credits, amount_eur, provider, status, receipt_url, created_at, completed_at, stripe_session_id, kind, task_id, promo_product_id";
 
-/** Registry — new providers (SMS, ePay/EasyPay) plug in here without touching callers. */
+/** Registry, new providers (SMS, ePay/EasyPay) plug in here without touching callers. */
 const providers: Record<PaymentProvider, PaymentProviderAdapter | undefined> = {
   stripe: stripeProvider,
   sms: undefined,

@@ -252,7 +252,7 @@ function AuthPage() {
                 <p className="text-xs text-destructive">{phoneMsg}</p>
               ) : (
                 <p className="text-xs text-muted-foreground">
-                  Скрит е за всички — вижда се само след отключване с кредити.
+                  Скрит е за всички, вижда се само след отключване с кредити.
                 </p>
               )}
             </div>

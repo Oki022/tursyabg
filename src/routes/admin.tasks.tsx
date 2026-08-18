@@ -114,7 +114,7 @@ function AdminTasks() {
     mutationFn: () =>
       deleteTask(
         deleteTarget!.id,
-        [deleteReason?.label ?? "", deleteNote.trim()].filter(Boolean).join(" — "),
+        [deleteReason?.label ?? "", deleteNote.trim()].filter(Boolean).join(", "),
         fraudulent,
       ),
     onSuccess: (res) => {
@@ -162,7 +162,7 @@ function AdminTasks() {
                 <Link to="/task/$id" params={{ id: r.taskId }} className="font-medium text-slate-900 hover:underline">
                   {r.taskTitle}
                 </Link>
-                {r.details ? <span className="text-slate-500">— {r.details}</span> : null}
+                {r.details ? <span className="text-slate-500"> {r.details}</span> : null}
                 <span className="text-xs text-slate-400">от {r.reporterName} · {formatDateBg(r.createdAt)}</span>
                 <div className="ml-auto flex gap-2">
                   <Button size="sm" variant="outline" className="rounded-md" onClick={() => mReport.mutate({ id: r.id, status: "reviewed" })}>
@@ -247,7 +247,7 @@ function AdminTasks() {
                     )}
                   </div>
                   <div className="mt-1 text-xs text-slate-500">
-                    {t.authorName} · {t.budget} € · {[t.city, t.neighborhood].filter(Boolean).join(", ") || "—"} · {formatDateBg(t.createdAt)}
+                    {t.authorName} · {t.budget} € · {[t.city, t.neighborhood].filter(Boolean).join(", ") || "няма"} · {formatDateBg(t.createdAt)}
                   </div>
                   <p className="mt-2 whitespace-pre-line text-sm text-slate-700">{t.description}</p>
                   {t.images.length > 1 && (

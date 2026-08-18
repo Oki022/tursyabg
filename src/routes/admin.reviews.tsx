@@ -143,7 +143,7 @@ function AdminReviewsPage() {
                 </div>
                 <p className="mt-2 break-words text-sm text-foreground/90">{r.comment}</p>
                 <p className="mt-1 truncate text-[11px] text-muted-foreground">
-                  Задача: {r.taskTitle ?? "—"}
+                  Задача: {r.taskTitle ?? "няма"}
                   {r.hiddenReason ? ` · Причина за скриване: ${r.hiddenReason}` : ""}
                 </p>
                 {!r.hiddenAt && (

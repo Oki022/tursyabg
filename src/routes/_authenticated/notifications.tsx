@@ -6,9 +6,9 @@ import { useMarkAllNotificationsRead, useNotifications, useUnreadNotifications }
 export const Route = createFileRoute("/_authenticated/notifications")({
   head: () => ({
     meta: [
-      { title: "Известия — Търся" },
+      { title: "Известия | Търся" },
       { name: "description", content: "Всички твои известия за задачи, съобщения, кредити и промоции в Търся." },
-      { property: "og:title", content: "Известия — Търся" },
+      { property: "og:title", content: "Известия | Търся" },
       { property: "og:description", content: "Следи новините по своите задачи и съобщения." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },

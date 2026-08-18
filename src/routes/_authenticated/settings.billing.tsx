@@ -13,9 +13,9 @@ import { BuyCreditsDialog } from "@/components/credits/buy-credits-dialog";
 export const Route = createFileRoute("/_authenticated/settings/billing")({
   head: () => ({
     meta: [
-      { title: "Баланс и плащания — Търся" },
+      { title: "Баланс и плащания | Търся" },
       { name: "description", content: "Виж баланса си, зареди сметката, купи пакет и попълни данни за фактура." },
-      { property: "og:title", content: "Баланс и плащания — Търся" },
+      { property: "og:title", content: "Баланс и плащания | Търся" },
       { property: "og:description", content: "Управлявай баланса, пакетите и фактурите си в Търся." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
@@ -46,7 +46,7 @@ function SettingsBillingPage() {
           <div className="min-w-0">
             <p className="text-sm text-muted-foreground">Наличност кредити</p>
             <p className="mt-1 text-3xl font-bold tracking-tight text-foreground">
-              {balanceQuery.isLoading ? "—" : creditsLabel(balance)}
+              {balanceQuery.isLoading ? "няма" : creditsLabel(balance)}
             </p>
             <p className="mt-1 text-xs text-muted-foreground">
               Публикуването на задачи е безплатно. Кредитите се използват за отключване на контакти.
@@ -220,7 +220,7 @@ function PaymentRow({ payment }: { payment: Payment }) {
           </a>
         </Button>
       ) : (
-        <span className="text-xs text-muted-foreground">—</span>
+        <span className="text-xs text-muted-foreground">няма</span>
       )}
     </div>
   );

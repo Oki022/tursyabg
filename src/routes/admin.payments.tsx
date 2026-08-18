@@ -78,7 +78,7 @@ function AdminPayments() {
                           Виж <ExternalLink className="h-3 w-3" />
                         </a>
                       ) : (
-                        <span className="text-xs text-slate-400">—</span>
+                        <span className="text-xs text-slate-400">няма</span>
                       )}
                     </TableCell>
                   </TableRow>

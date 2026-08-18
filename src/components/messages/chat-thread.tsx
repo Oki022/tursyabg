@@ -224,7 +224,7 @@ export function ChatThread({ conversationId }: { conversationId: string }) {
           <RequirePhoneNotice
             className="w-full"
             title="Добави телефон, за да пишеш съобщения"
-            description="Телефонът остава скрит — служи само за потвърждаване на профила ти."
+            description="Телефонът остава скрит, служи само за потвърждаване на профила ти."
           />
         ) : (
           <>

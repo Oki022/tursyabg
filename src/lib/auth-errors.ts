@@ -7,7 +7,7 @@ export function authErrorMessage(err: unknown): string {
   if (raw.includes("already registered") || raw.includes("already been registered") || raw.includes("user already"))
     return "Вече има профил с този имейл. Влез с него или използвай „Забравена парола“.";
   if (raw.includes("password") && (raw.includes("short") || raw.includes("at least") || raw.includes("6 characters")))
-    return "Паролата е твърде къса — използвай поне 6 символа.";
+    return "Паролата е твърде къса, използвай поне 6 символа.";
   if (raw.includes("pwned") || raw.includes("weak") || raw.includes("compromised"))
     return "Тази парола е твърде лесна за отгатване. Избери по-силна парола.";
   if (raw.includes("invalid email") || raw.includes("email address") && raw.includes("invalid"))

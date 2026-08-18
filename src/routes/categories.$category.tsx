@@ -14,9 +14,9 @@ export const Route = createFileRoute("/categories/$category")({
     const name = loaderData?.name ?? "Задачи";
     const path = `/categories/${params.category}`;
     const { meta, links } = seo({
-      title: `${name} — обяви за задачи в България`,
+      title: `${name}, обяви за задачи в България`,
       description: clampDescription(
-        `Актуални задачи в категория ${name} от цяла България. Публикувай безплатно или намери клиенти като изпълнител — с реални отзиви и бюджет в евро.`,
+        `Актуални задачи в категория ${name} от цяла България. Публикувай безплатно или намери клиенти като изпълнител, с реални отзиви и бюджет в евро.`,
       ),
       path,
     });

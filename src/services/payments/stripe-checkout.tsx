@@ -4,7 +4,7 @@ import { getStripe } from "@/lib/stripe";
 import { createCheckout } from "./index";
 import type { CheckoutSurfaceProps } from "./types";
 
-/** Stripe-specific rendering lives here — callers only use the adapter's CheckoutSurface. */
+/** Stripe-specific rendering lives here, callers only use the adapter's CheckoutSurface. */
 export function StripeCheckoutSurface({ target, returnUrl }: CheckoutSurfaceProps) {
   const targetKey = JSON.stringify(target);
   const fetchClientSecret = useCallback(async () => {

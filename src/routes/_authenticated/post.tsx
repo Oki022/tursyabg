@@ -15,7 +15,7 @@ import { CONTACT_MASK_WARNING, containsContactInfo, isValidBgPhone } from "@/lib
 export const Route = createFileRoute("/_authenticated/post")({
   head: () => ({
     meta: [
-      { title: "Възложи задача — Търся" },
+      { title: "Възложи задача | Търся" },
       { name: "description", content: "Опиши своята задача и я публикувай за минути. Получи предложения от подходящи изпълнители." },
     ],
   }),
