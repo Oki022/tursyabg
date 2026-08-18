@@ -8,16 +8,26 @@ import { TaskCard, TaskCardSkeleton } from "@/components/task-card";
 import { LocationCombobox } from "@/components/location-combobox";
 import { categories, getCategory } from "@/lib/mock-data";
 import { useTasksFeed } from "@/lib/tasks-api";
+import { clampDescription, seo } from "@/lib/seo";
 
 type Search = { q?: string; category?: string; location?: string };
 
 export const Route = createFileRoute("/tasks")({
-  head: () => ({
-    meta: [
-      { title: "Активни задачи — ЗадачаНет" },
-      { name: "description", content: "Разгледай актуалните задачи и проекти от хора в България." },
-    ],
-  }),
+  head: ({ match }) => {
+    const s = (match.search ?? {}) as Search;
+    const cat = s.category ? getCategory(s.category).name : undefined;
+    const city = s.location ? s.location.split(",")[0]!.trim() : undefined;
+    const label = [cat, city ? `в ${city}` : undefined].filter(Boolean).join(" ");
+    return seo({
+      title: label ? `${label} — обяви за задачи` : "Активни задачи и обяви",
+      description: clampDescription(
+        label
+          ? `Актуални обяви за ${label}. Свържи се директно със заявителя, договори цена в евро и виж реални отзиви преди да започнеш работа.`
+          : "Разгледай актуалните задачи от хора в цяла България — ремонти, почистване, превоз, уроци и още. Публикувай своята задача безплатно.",
+      ),
+      path: "/tasks",
+    });
+  },
   validateSearch: (s: Record<string, unknown>): Search => ({
     q: typeof s.q === "string" ? s.q : undefined,
     category: typeof s.category === "string" ? s.category : undefined,

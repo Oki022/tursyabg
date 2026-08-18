@@ -10,21 +10,56 @@ import { ReviewList } from "@/components/reviews/review-list";
 import { Stars } from "@/components/reviews/stars";
 import { ReportContentDialog } from "@/components/moderation/report-content-dialog";
 import type { ReviewDirection } from "@/services/reviews";
+import { fetchProfileSeo } from "@/lib/seo-loaders";
+import { breadcrumbLd, clampDescription, jsonLd, seo } from "@/lib/seo";
+import { absoluteUrl, BRAND } from "@/lib/brand";
 
 export const Route = createFileRoute("/user/$id")({
-  head: () => ({
-    meta: [
-      { title: "Профил и отзиви — ЗадачаНет" },
-      {
-        name: "description",
-        content: "Публичен профил с рейтинг, брой завършени задачи и отзиви от клиенти и изпълнители.",
-      },
-      { property: "og:title", content: "Профил и отзиви — ЗадачаНет" },
-      { property: "og:description", content: "Виж рейтинга и отзивите на потребителя в ЗадачаНет." },
-      { property: "og:type", content: "profile" },
-      { name: "twitter:card", content: "summary" },
-    ],
-  }),
+  loader: ({ params }) => fetchProfileSeo(params.id),
+  head: ({ params, loaderData }) => {
+    const path = `/user/${params.id}`;
+    if (!loaderData) {
+      return seo({ title: "Профилът не е намерен", description: "Този профил не съществува.", path, noindex: true });
+    }
+    const p = loaderData;
+    const ratingText = p.rating ? `Рейтинг ${p.rating}/5 от ${p.reviewCount} отзива` : "Нов потребител без отзиви";
+    const { meta, links } = seo({
+      title: clampDescription(`${p.name} — отзиви и рейтинг`, 58),
+      description: clampDescription(
+        `${p.name}${p.city ? ` от ${p.city}` : ""} в ${BRAND}. ${ratingText}. Завършени задачи: ${p.completedJobs}. Виж публичните отзиви от клиенти и изпълнители.`,
+      ),
+      path,
+      type: "profile",
+    });
+    return {
+      meta,
+      links,
+      scripts: [
+        jsonLd({
+          "@context": "https://schema.org",
+          "@type": "Person",
+          name: p.name,
+          url: absoluteUrl(path),
+          ...(p.city ? { address: { "@type": "PostalAddress", addressLocality: p.city, addressCountry: "BG" } } : {}),
+          ...(p.rating && p.reviewCount > 0
+            ? {
+                aggregateRating: {
+                  "@type": "AggregateRating",
+                  ratingValue: p.rating,
+                  reviewCount: p.reviewCount,
+                  bestRating: 5,
+                  worstRating: 1,
+                },
+              }
+            : {}),
+        }),
+        breadcrumbLd([
+          { name: "Начало", path: "/" },
+          { name: p.name, path },
+        ]),
+      ],
+    };
+  },
   component: PublicProfilePage,
 });
 
