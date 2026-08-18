@@ -7,8 +7,6 @@ import {
   Upload,
   LogOut,
   ClipboardList,
-  Wrench,
-  HandHeart,
   Wallet,
   UserCog,
   ShieldCheck,
@@ -20,7 +18,6 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { TaskCard } from "@/components/task-card";
 import { useAuth, getInitials } from "@/lib/auth";
