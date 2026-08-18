@@ -1,21 +1,32 @@
 import { useState } from "react";
-import { CheckCircle2, HelpCircle, Info, RefreshCw, Users } from "lucide-react";
+import { Link } from "@tanstack/react-router";
+import { CheckCircle2, HelpCircle, Info, Pencil, RefreshCw, Trash2, Users } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { useConfirmTaskActive } from "@/lib/tasks-api";
 import { useMyEngagements } from "@/lib/reviews-api";
 import { CloseTaskDialog } from "@/components/tasks/close-task-dialog";
+import { DeleteTaskDialog } from "@/components/tasks/delete-task-dialog";
 import type { Task } from "@/lib/mock-data";
 
 const LIMIT_HELP =
   "Лимитът пази телефона ти от прекалено много обаждания. Само първите изпълнители могат да отключат контакта ти.";
 
 /** Owner-only controls: close the task when assigned, or confirm it is still open. */
-export function OwnerTaskControls({ task, compact = false }: { task: Task; compact?: boolean }) {
+export function OwnerTaskControls({
+  task,
+  compact = false,
+  redirectAfterDelete,
+}: {
+  task: Task;
+  compact?: boolean;
+  redirectAfterDelete?: "profile";
+}) {
   const confirm = useConfirmTaskActive();
   const [closeOpen, setCloseOpen] = useState(false);
   const [assignOpen, setAssignOpen] = useState(false);
+  const [deleteOpen, setDeleteOpen] = useState(false);
   const [dismissed, setDismissed] = useState(false);
   const unlockCount = task.unlockCount ?? 0;
   const maxUnlocks = task.maxUnlocks ?? 5;
