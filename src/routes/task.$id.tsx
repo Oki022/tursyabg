@@ -261,6 +261,10 @@ function TaskDetails() {
                   src={src}
                   alt={`${task.title} — снимка ${index + 1}`}
                   loading={index === 0 ? "eager" : "lazy"}
+                  {...(index === 0 ? { fetchPriority: "high" as const } : {})}
+                  decoding={index === 0 ? "sync" : "async"}
+                  width={1400}
+                  height={933}
                   className={`absolute inset-0 mx-auto h-full w-full object-contain transition-opacity duration-300 ${index === active ? "opacity-100" : "opacity-0"}`}
                 />
               ))}
