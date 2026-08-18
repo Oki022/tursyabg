@@ -7,6 +7,7 @@ import {
   CreditCard,
   ScrollText,
   Star,
+  Mail,
   ArrowLeft,
   ShieldAlert,
 } from "lucide-react";
@@ -39,6 +40,7 @@ const NAV = [
   { to: "/admin/reviews", label: "Отзиви", icon: Star },
   { to: "/admin/users", label: "Потребители", icon: Users },
   { to: "/admin/payments", label: "Плащания", icon: CreditCard },
+  { to: "/admin/contact", label: "Контакти", icon: Mail },
   { to: "/admin/audit", label: "Одит лог", icon: ScrollText },
 ] as { to: string; label: string; icon: typeof LayoutDashboard; exact?: boolean }[];
 

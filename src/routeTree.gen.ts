@@ -19,6 +19,7 @@ import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as RefundPolicyRouteImport } from './routes/refund-policy'
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as ManifestDotwebmanifestRouteImport } from './routes/manifest[.]webmanifest'
+import { Route as ContactRouteImport } from './routes/contact'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
@@ -36,6 +37,7 @@ import { Route as AdminReviewsRouteImport } from './routes/admin.reviews'
 import { Route as AdminRefundsRouteImport } from './routes/admin.refunds'
 import { Route as AdminPaymentsRouteImport } from './routes/admin.payments'
 import { Route as AdminModerationRouteImport } from './routes/admin.moderation'
+import { Route as AdminContactRouteImport } from './routes/admin.contact'
 import { Route as AdminAuditRouteImport } from './routes/admin.audit'
 import { Route as AuthenticatedUnlockedRouteImport } from './routes/_authenticated/unlocked'
 import { Route as AuthenticatedProfileRouteImport } from './routes/_authenticated/profile'
@@ -53,6 +55,7 @@ import { Route as AuthenticatedPostedIdRouteImport } from './routes/_authenticat
 import { Route as AuthenticatedMessagesConversationIdRouteImport } from './routes/_authenticated/messages.$conversationId'
 import { Route as AuthenticatedBillingSuccessRouteImport } from './routes/_authenticated/billing.success'
 import { Route as ApiPublicPaymentsWebhookRouteImport } from './routes/api/public/payments/webhook'
+import { Route as AuthenticatedTaskIdEditRouteImport } from './routes/_authenticated/task.$id.edit'
 
 const TermsRoute = TermsRouteImport.update({
   id: '/terms',
@@ -102,6 +105,11 @@ const PrivacyRoute = PrivacyRouteImport.update({
 const ManifestDotwebmanifestRoute = ManifestDotwebmanifestRouteImport.update({
   id: '/manifest.webmanifest',
   path: '/manifest.webmanifest',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ContactRoute = ContactRouteImport.update({
+  id: '/contact',
+  path: '/contact',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthRoute = AuthRouteImport.update({
@@ -186,6 +194,11 @@ const AdminPaymentsRoute = AdminPaymentsRouteImport.update({
 const AdminModerationRoute = AdminModerationRouteImport.update({
   id: '/moderation',
   path: '/moderation',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminContactRoute = AdminContactRouteImport.update({
+  id: '/contact',
+  path: '/contact',
   getParentRoute: () => AdminRoute,
 } as any)
 const AdminAuditRoute = AdminAuditRouteImport.update({
@@ -283,11 +296,17 @@ const ApiPublicPaymentsWebhookRoute =
     path: '/api/public/payments/webhook',
     getParentRoute: () => rootRouteImport,
   } as any)
+const AuthenticatedTaskIdEditRoute = AuthenticatedTaskIdEditRouteImport.update({
+  id: '/task/$id/edit',
+  path: '/task/$id/edit',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/admin': typeof AdminRouteWithChildren
   '/auth': typeof AuthRouteWithChildren
+  '/contact': typeof ContactRoute
   '/manifest.webmanifest': typeof ManifestDotwebmanifestRoute
   '/privacy': typeof PrivacyRoute
   '/refund-policy': typeof RefundPolicyRoute
@@ -303,6 +322,7 @@ export interface FileRoutesByFullPath {
   '/profile': typeof AuthenticatedProfileRoute
   '/unlocked': typeof AuthenticatedUnlockedRoute
   '/admin/audit': typeof AdminAuditRoute
+  '/admin/contact': typeof AdminContactRoute
   '/admin/moderation': typeof AdminModerationRoute
   '/admin/payments': typeof AdminPaymentsRoute
   '/admin/refunds': typeof AdminRefundsRoute
@@ -327,11 +347,13 @@ export interface FileRoutesByFullPath {
   '/city/$city/$category': typeof CityCityCategoryRoute
   '/messages/': typeof AuthenticatedMessagesIndexRoute
   '/city/$city/': typeof CityCityIndexRoute
+  '/task/$id/edit': typeof AuthenticatedTaskIdEditRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRouteWithChildren
+  '/contact': typeof ContactRoute
   '/manifest.webmanifest': typeof ManifestDotwebmanifestRoute
   '/privacy': typeof PrivacyRoute
   '/refund-policy': typeof RefundPolicyRoute
@@ -347,6 +369,7 @@ export interface FileRoutesByTo {
   '/profile': typeof AuthenticatedProfileRoute
   '/unlocked': typeof AuthenticatedUnlockedRoute
   '/admin/audit': typeof AdminAuditRoute
+  '/admin/contact': typeof AdminContactRoute
   '/admin/moderation': typeof AdminModerationRoute
   '/admin/payments': typeof AdminPaymentsRoute
   '/admin/refunds': typeof AdminRefundsRoute
@@ -370,6 +393,7 @@ export interface FileRoutesByTo {
   '/city/$city/$category': typeof CityCityCategoryRoute
   '/messages': typeof AuthenticatedMessagesIndexRoute
   '/city/$city': typeof CityCityIndexRoute
+  '/task/$id/edit': typeof AuthenticatedTaskIdEditRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
 }
 export interface FileRoutesById {
@@ -378,6 +402,7 @@ export interface FileRoutesById {
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/admin': typeof AdminRouteWithChildren
   '/auth': typeof AuthRouteWithChildren
+  '/contact': typeof ContactRoute
   '/manifest.webmanifest': typeof ManifestDotwebmanifestRoute
   '/privacy': typeof PrivacyRoute
   '/refund-policy': typeof RefundPolicyRoute
@@ -393,6 +418,7 @@ export interface FileRoutesById {
   '/_authenticated/profile': typeof AuthenticatedProfileRoute
   '/_authenticated/unlocked': typeof AuthenticatedUnlockedRoute
   '/admin/audit': typeof AdminAuditRoute
+  '/admin/contact': typeof AdminContactRoute
   '/admin/moderation': typeof AdminModerationRoute
   '/admin/payments': typeof AdminPaymentsRoute
   '/admin/refunds': typeof AdminRefundsRoute
@@ -417,6 +443,7 @@ export interface FileRoutesById {
   '/city/$city/$category': typeof CityCityCategoryRoute
   '/_authenticated/messages/': typeof AuthenticatedMessagesIndexRoute
   '/city/$city/': typeof CityCityIndexRoute
+  '/_authenticated/task/$id/edit': typeof AuthenticatedTaskIdEditRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
 }
 export interface FileRouteTypes {
@@ -425,6 +452,7 @@ export interface FileRouteTypes {
     | '/'
     | '/admin'
     | '/auth'
+    | '/contact'
     | '/manifest.webmanifest'
     | '/privacy'
     | '/refund-policy'
@@ -440,6 +468,7 @@ export interface FileRouteTypes {
     | '/profile'
     | '/unlocked'
     | '/admin/audit'
+    | '/admin/contact'
     | '/admin/moderation'
     | '/admin/payments'
     | '/admin/refunds'
@@ -464,11 +493,13 @@ export interface FileRouteTypes {
     | '/city/$city/$category'
     | '/messages/'
     | '/city/$city/'
+    | '/task/$id/edit'
     | '/api/public/payments/webhook'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/auth'
+    | '/contact'
     | '/manifest.webmanifest'
     | '/privacy'
     | '/refund-policy'
@@ -484,6 +515,7 @@ export interface FileRouteTypes {
     | '/profile'
     | '/unlocked'
     | '/admin/audit'
+    | '/admin/contact'
     | '/admin/moderation'
     | '/admin/payments'
     | '/admin/refunds'
@@ -507,6 +539,7 @@ export interface FileRouteTypes {
     | '/city/$city/$category'
     | '/messages'
     | '/city/$city'
+    | '/task/$id/edit'
     | '/api/public/payments/webhook'
   id:
     | '__root__'
@@ -514,6 +547,7 @@ export interface FileRouteTypes {
     | '/_authenticated'
     | '/admin'
     | '/auth'
+    | '/contact'
     | '/manifest.webmanifest'
     | '/privacy'
     | '/refund-policy'
@@ -529,6 +563,7 @@ export interface FileRouteTypes {
     | '/_authenticated/profile'
     | '/_authenticated/unlocked'
     | '/admin/audit'
+    | '/admin/contact'
     | '/admin/moderation'
     | '/admin/payments'
     | '/admin/refunds'
@@ -553,6 +588,7 @@ export interface FileRouteTypes {
     | '/city/$city/$category'
     | '/_authenticated/messages/'
     | '/city/$city/'
+    | '/_authenticated/task/$id/edit'
     | '/api/public/payments/webhook'
   fileRoutesById: FileRoutesById
 }
@@ -561,6 +597,7 @@ export interface RootRouteChildren {
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AdminRoute: typeof AdminRouteWithChildren
   AuthRoute: typeof AuthRouteWithChildren
+  ContactRoute: typeof ContactRoute
   ManifestDotwebmanifestRoute: typeof ManifestDotwebmanifestRoute
   PrivacyRoute: typeof PrivacyRoute
   RefundPolicyRoute: typeof RefundPolicyRoute
@@ -649,6 +686,13 @@ declare module '@tanstack/react-router' {
       path: '/manifest.webmanifest'
       fullPath: '/manifest.webmanifest'
       preLoaderRoute: typeof ManifestDotwebmanifestRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/contact': {
+      id: '/contact'
+      path: '/contact'
+      fullPath: '/contact'
+      preLoaderRoute: typeof ContactRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/auth': {
@@ -770,6 +814,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminModerationRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/contact': {
+      id: '/admin/contact'
+      path: '/contact'
+      fullPath: '/admin/contact'
+      preLoaderRoute: typeof AdminContactRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/audit': {
       id: '/admin/audit'
       path: '/audit'
@@ -889,6 +940,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicPaymentsWebhookRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated/task/$id/edit': {
+      id: '/_authenticated/task/$id/edit'
+      path: '/task/$id/edit'
+      fullPath: '/task/$id/edit'
+      preLoaderRoute: typeof AuthenticatedTaskIdEditRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
   }
 }
 
@@ -906,6 +964,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedSettingsProfileRoute: typeof AuthenticatedSettingsProfileRoute
   AuthenticatedSettingsSecurityRoute: typeof AuthenticatedSettingsSecurityRoute
   AuthenticatedMessagesIndexRoute: typeof AuthenticatedMessagesIndexRoute
+  AuthenticatedTaskIdEditRoute: typeof AuthenticatedTaskIdEditRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
@@ -924,6 +983,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedSettingsProfileRoute: AuthenticatedSettingsProfileRoute,
   AuthenticatedSettingsSecurityRoute: AuthenticatedSettingsSecurityRoute,
   AuthenticatedMessagesIndexRoute: AuthenticatedMessagesIndexRoute,
+  AuthenticatedTaskIdEditRoute: AuthenticatedTaskIdEditRoute,
 }
 
 const AuthenticatedRouteRouteWithChildren =
@@ -931,6 +991,7 @@ const AuthenticatedRouteRouteWithChildren =
 
 interface AdminRouteChildren {
   AdminAuditRoute: typeof AdminAuditRoute
+  AdminContactRoute: typeof AdminContactRoute
   AdminModerationRoute: typeof AdminModerationRoute
   AdminPaymentsRoute: typeof AdminPaymentsRoute
   AdminRefundsRoute: typeof AdminRefundsRoute
@@ -942,6 +1003,7 @@ interface AdminRouteChildren {
 
 const AdminRouteChildren: AdminRouteChildren = {
   AdminAuditRoute: AdminAuditRoute,
+  AdminContactRoute: AdminContactRoute,
   AdminModerationRoute: AdminModerationRoute,
   AdminPaymentsRoute: AdminPaymentsRoute,
   AdminRefundsRoute: AdminRefundsRoute,
@@ -982,6 +1044,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AdminRoute: AdminRouteWithChildren,
   AuthRoute: AuthRouteWithChildren,
+  ContactRoute: ContactRoute,
   ManifestDotwebmanifestRoute: ManifestDotwebmanifestRoute,
   PrivacyRoute: PrivacyRoute,
   RefundPolicyRoute: RefundPolicyRoute,

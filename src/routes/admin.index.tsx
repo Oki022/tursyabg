@@ -49,8 +49,29 @@ function AdminDashboard() {
 
   return (
     <AdminPage title="Табло" description="Обобщение за последните 30 дни.">
-      {(s?.pending_refunds ?? 0) > 0 || (s?.pending_reports ?? 0) > 0 || (s?.moderation_pending ?? 0) > 0 ? (
+      {(s?.pending_refunds ?? 0) > 0 ||
+      (s?.pending_reports ?? 0) > 0 ||
+      (s?.moderation_pending ?? 0) > 0 ||
+      (s?.tasks_pending ?? 0) > 0 ||
+      (s?.contact_new ?? 0) > 0 ? (
         <div className="flex flex-wrap gap-2">
+          {(s?.tasks_pending ?? 0) > 0 && (
+            <Link
+              to="/admin/moderation"
+              className="rounded-md border border-orange-300 bg-orange-50 px-3 py-2 text-sm font-medium text-orange-900"
+            >
+              {s?.tasks_pending} задачи чакат одобрение преди публикуване
+              {s?.tasks_pending_oldest ? ` · най-старата от ${formatDateBg(s.tasks_pending_oldest)}` : ""} →
+            </Link>
+          )}
+          {(s?.contact_new ?? 0) > 0 && (
+            <Link
+              to="/admin/contact"
+              className="rounded-md border border-sky-300 bg-sky-50 px-3 py-2 text-sm font-medium text-sky-900"
+            >
+              {s?.contact_new} нови съобщения от контактната форма →
+            </Link>
+          )}
           {(s?.moderation_pending ?? 0) > 0 && (
             <Link
               to="/admin/moderation"
@@ -109,6 +130,16 @@ function AdminDashboard() {
           label="Опашка за модерация"
           value={String(s?.moderation_pending ?? 0)}
           hint={s?.moderation_oldest ? `най-старото от ${formatDateBg(s.moderation_oldest)}` : "няма изчакващи"}
+        />
+        <Stat
+          label="Задачи за одобрение"
+          value={String(s?.tasks_pending ?? 0)}
+          hint={s?.tasks_pending_oldest ? `най-старата от ${formatDateBg(s.tasks_pending_oldest)}` : "няма изчакващи"}
+        />
+        <Stat
+          label="Нови съобщения"
+          value={String(s?.contact_new ?? 0)}
+          hint="Контактна форма"
         />
         <Stat
           label="Нарушения 30 дни"

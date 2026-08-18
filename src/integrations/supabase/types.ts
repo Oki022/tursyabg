@@ -44,6 +44,56 @@ export type Database = {
         }
         Relationships: []
       }
+      contact_messages: {
+        Row: {
+          admin_note: string
+          body: string
+          created_at: string
+          email: string
+          handled_by: string | null
+          id: string
+          name: string
+          status: string
+          subject: string
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          admin_note?: string
+          body: string
+          created_at?: string
+          email: string
+          handled_by?: string | null
+          id?: string
+          name: string
+          status?: string
+          subject: string
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          admin_note?: string
+          body?: string
+          created_at?: string
+          email?: string
+          handled_by?: string | null
+          id?: string
+          name?: string
+          status?: string
+          subject?: string
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "contact_messages_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       content_violations: {
         Row: {
           action_taken: string
@@ -983,6 +1033,41 @@ export type Database = {
           },
         ]
       }
+      task_history: {
+        Row: {
+          action: string
+          actor_id: string | null
+          changes: Json
+          created_at: string
+          id: string
+          task_id: string
+        }
+        Insert: {
+          action: string
+          actor_id?: string | null
+          changes?: Json
+          created_at?: string
+          id?: string
+          task_id: string
+        }
+        Update: {
+          action?: string
+          actor_id?: string | null
+          changes?: Json
+          created_at?: string
+          id?: string
+          task_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "task_history_task_id_fkey"
+            columns: ["task_id"]
+            isOneToOne: false
+            referencedRelation: "tasks"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       task_images: {
         Row: {
           created_at: string
@@ -1182,6 +1267,8 @@ export type Database = {
           city: string | null
           created_at: string
           currency: string
+          deleted_at: string | null
+          deleted_reason: string | null
           description: string
           expires_at: string
           freshness_prompt_at: string | null
@@ -1206,6 +1293,8 @@ export type Database = {
           city?: string | null
           created_at?: string
           currency?: string
+          deleted_at?: string | null
+          deleted_reason?: string | null
           description?: string
           expires_at?: string
           freshness_prompt_at?: string | null
@@ -1230,6 +1319,8 @@ export type Database = {
           city?: string | null
           created_at?: string
           currency?: string
+          deleted_at?: string | null
+          deleted_reason?: string | null
           description?: string
           expires_at?: string
           freshness_prompt_at?: string | null
@@ -1400,6 +1491,10 @@ export type Database = {
         Args: { _banned: boolean; _reason: string; _user_id: string }
         Returns: Json
       }
+      admin_set_contact_status: {
+        Args: { _id: string; _note?: string; _status: string }
+        Returns: Json
+      }
       admin_set_role: {
         Args: {
           _grant: boolean
@@ -1440,6 +1535,10 @@ export type Database = {
         Returns: Json
       }
       confirm_task_active: { Args: { _task_id: string }; Returns: Json }
+      delete_own_task: {
+        Args: { _reason: string; _task_id: string }
+        Returns: Json
+      }
       enqueue_moderation: {
         Args: {
           _category: string
@@ -1545,6 +1644,7 @@ export type Database = {
         }[]
       }
       needs_prepublish_review: { Args: { _user_id: string }; Returns: boolean }
+      own_task_delete_preview: { Args: { _task_id: string }; Returns: Json }
       public_profile: { Args: { _user_id: string }; Returns: Json }
       public_reviews: {
         Args: {
@@ -1659,6 +1759,18 @@ export type Database = {
         }[]
       }
       unlock_task_contact: { Args: { _task_id: string }; Returns: Json }
+      update_own_task: {
+        Args: {
+          _budget: number
+          _category: string
+          _city: string
+          _description: string
+          _neighborhood: string
+          _task_id: string
+          _title: string
+        }
+        Returns: Json
+      }
       user_trust: { Args: { _user_id: string }; Returns: Json }
     }
     Enums: {
@@ -1696,6 +1808,7 @@ export type Database = {
         | "moderation_warning"
         | "account_suspended"
         | "account_banned"
+        | "contact_message"
       promo_type: "bump" | "urgent" | "top"
       refund_reason:
         | "fake_task"
@@ -1881,6 +1994,7 @@ export const Constants = {
         "moderation_warning",
         "account_suspended",
         "account_banned",
+        "contact_message",
       ],
       promo_type: ["bump", "urgent", "top"],
       refund_reason: [

@@ -415,7 +415,7 @@ function TaskDetails() {
                   taskStatus={task.status}
                 />
               )}
-              {isOwner && <OwnerTaskControls task={task} />}
+              {isOwner && <OwnerTaskControls task={task} redirectAfterDelete="profile" />}
               {!isOwner && (
                 <Button size="lg" className="w-full gap-2" onClick={openMessageModal}>
                   <MessageSquare className="h-4 w-4" /> Изпрати съобщение

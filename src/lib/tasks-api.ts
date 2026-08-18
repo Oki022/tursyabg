@@ -212,6 +212,31 @@ export function useTasksFeed(filters: TaskFilters = {}) {
   });
 }
 
+export type TaskImage = { id: string; path: string; url: string };
+
+/** Owner-facing image list for the edit form (ids are needed to remove them). */
+export function useTaskImages(taskId?: string) {
+  return useQuery({
+    queryKey: ["tasks", "images", taskId],
+    enabled: Boolean(taskId),
+    queryFn: async (): Promise<TaskImage[]> => {
+      const { data, error } = await supabase
+        .from("task_images")
+        .select("id, image_url, sort_order")
+        .eq("task_id", taskId!)
+        .order("sort_order");
+      if (error) throw error;
+      const rows = data ?? [];
+      const signed = await resolveImageUrls(rows.map((r) => r.image_url));
+      return rows.map((r) => ({
+        id: r.id,
+        path: r.image_url,
+        url: r.image_url.startsWith("http") ? r.image_url : (signed[r.image_url] ?? ""),
+      }));
+    },
+  });
+}
+
 export function useTask(id: string) {
   return useQuery({
     queryKey: ["tasks", "detail", id],
@@ -234,6 +259,7 @@ export function useMyTasks(userId?: string) {
         .from("tasks")
         .select(SELECT)
         .eq("user_id", userId!)
+        .is("deleted_at", null)
         .order("created_at", { ascending: false });
       if (error) throw error;
       return mapRows((data ?? []) as unknown as Row[]);
@@ -380,6 +406,120 @@ export function useCreateTask() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["tasks"] });
+    },
+  });
+}
+
+
+export type UpdateTaskInput = {
+  taskId: string;
+  title: string;
+  description: string;
+  category: string;
+  budget: number;
+  location: string;
+  files: File[];
+  removedImageIds: string[];
+};
+
+export type UpdateTaskResult = {
+  pending: boolean;
+  rejected: (string | null)[];
+  held: number;
+};
+
+/** Owner edit. Text goes through the same masking + moderation path as a new task. */
+export function useUpdateTask() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (input: UpdateTaskInput): Promise<UpdateTaskResult> => {
+      const [city, neighborhood] = input.location.split(",").map((s) => s.trim());
+
+      const { data, error } = await supabase.rpc("update_own_task", {
+        _task_id: input.taskId,
+        _title: input.title,
+        _description: input.description,
+        _category: input.category,
+        _budget: input.budget,
+        _city: city ?? null,
+        _neighborhood: neighborhood ?? null,
+      });
+      if (error) throw error;
+      const res = (data ?? {}) as Record<string, unknown>;
+      if (!res["ok"]) throw new Error(String(res["error"] ?? "UNKNOWN"));
+
+      if (input.removedImageIds.length > 0) {
+        const { error: delError } = await supabase
+          .from("task_images")
+          .delete()
+          .in("id", input.removedImageIds);
+        if (delError) throw delError;
+      }
+
+      const rejected: (string | null)[] = [];
+      let held = 0;
+      for (let i = 0; i < input.files.length; i++) {
+        const file = input.files[i];
+        if (!file) continue;
+        const blob = await compressImage(file);
+        const dataUrl = await blobToDataUrl(blob);
+        try {
+          const uploaded = await uploadModeratedTaskImage({
+            data: { taskId: input.taskId, index: Date.now() % 100000 + i, dataUrl },
+          });
+          if (uploaded.status === "rejected") rejected.push(uploaded.category);
+          if (uploaded.status === "pending") held += 1;
+        } catch {
+          rejected.push(null);
+        }
+      }
+
+      const { data: fresh } = await supabase
+        .from("tasks")
+        .select("status")
+        .eq("id", input.taskId)
+        .maybeSingle();
+
+      return { pending: (fresh?.status ?? "active") === "pending", rejected, held };
+    },
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: ["tasks"] });
+    },
+  });
+}
+
+export type DeletePreview = { unlockers: number; credits: number };
+
+/** How many professionals paid for this task — shown before the owner deletes it. */
+export function useDeletePreview(taskId?: string, enabled = true) {
+  return useQuery({
+    queryKey: ["tasks", "delete-preview", taskId],
+    enabled: Boolean(taskId) && enabled,
+    queryFn: async (): Promise<DeletePreview> => {
+      const { data, error } = await supabase.rpc("own_task_delete_preview", { _task_id: taskId! });
+      if (error) throw error;
+      const r = (data ?? {}) as Record<string, unknown>;
+      return { unlockers: Number(r["unlockers"] ?? 0), credits: Number(r["credits"] ?? 0) };
+    },
+  });
+}
+
+export function useDeleteTask() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (input: { taskId: string; reason: string }) => {
+      const { data, error } = await supabase.rpc("delete_own_task", {
+        _task_id: input.taskId,
+        _reason: input.reason,
+      });
+      if (error) throw error;
+      const r = (data ?? {}) as Record<string, unknown>;
+      if (!r["ok"]) throw new Error(String(r["error"] ?? "UNKNOWN"));
+      return { refundedUsers: Number(r["refunded_users"] ?? 0), refundedCredits: Number(r["refunded_credits"] ?? 0) };
+    },
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: ["tasks"] });
+      void queryClient.invalidateQueries({ queryKey: ["credits"] });
     },
   });
 }

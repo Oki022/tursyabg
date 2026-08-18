@@ -51,7 +51,7 @@ export function SiteHeader() {
           {user && <NotificationBell />}
           {!user ? (
             <>
-              <Button asChild variant="ghost" size="sm" className="hidden sm:inline-flex">
+              <Button asChild variant="ghost" size="sm">
                 <Link to="/auth" search={{ mode: "login" }}>Вход</Link>
               </Button>
               <Button asChild size="sm">

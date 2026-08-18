@@ -1,21 +1,32 @@
 import { useState } from "react";
-import { CheckCircle2, HelpCircle, Info, RefreshCw, Users } from "lucide-react";
+import { Link } from "@tanstack/react-router";
+import { CheckCircle2, HelpCircle, Info, Pencil, RefreshCw, Trash2, Users } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { useConfirmTaskActive } from "@/lib/tasks-api";
 import { useMyEngagements } from "@/lib/reviews-api";
 import { CloseTaskDialog } from "@/components/tasks/close-task-dialog";
+import { DeleteTaskDialog } from "@/components/tasks/delete-task-dialog";
 import type { Task } from "@/lib/mock-data";
 
 const LIMIT_HELP =
   "Лимитът пази телефона ти от прекалено много обаждания. Само първите изпълнители могат да отключат контакта ти.";
 
 /** Owner-only controls: close the task when assigned, or confirm it is still open. */
-export function OwnerTaskControls({ task, compact = false }: { task: Task; compact?: boolean }) {
+export function OwnerTaskControls({
+  task,
+  compact = false,
+  redirectAfterDelete,
+}: {
+  task: Task;
+  compact?: boolean;
+  redirectAfterDelete?: "profile";
+}) {
   const confirm = useConfirmTaskActive();
   const [closeOpen, setCloseOpen] = useState(false);
   const [assignOpen, setAssignOpen] = useState(false);
+  const [deleteOpen, setDeleteOpen] = useState(false);
   const [dismissed, setDismissed] = useState(false);
   const unlockCount = task.unlockCount ?? 0;
   const maxUnlocks = task.maxUnlocks ?? 5;
@@ -143,6 +154,35 @@ export function OwnerTaskControls({ task, compact = false }: { task: Task; compa
           <CloseTaskDialog taskId={task.id} open={closeOpen} onOpenChange={setCloseOpen} />
         </div>
       )}
+
+      <div className="flex w-full min-w-0 gap-1.5 border-t border-border/60 pt-2">
+        <Button
+          asChild
+          variant="ghost"
+          size={compact ? "sm" : "default"}
+          className={`min-w-0 flex-1 gap-1.5 whitespace-normal ${compact ? "h-auto py-1.5 text-[11px] leading-snug" : ""}`}
+        >
+          <Link to="/task/$id/edit" params={{ id: task.id }}>
+            <Pencil className={compact ? "h-3 w-3 shrink-0" : "h-4 w-4"} />
+            Редактирай
+          </Link>
+        </Button>
+        <Button
+          variant="ghost"
+          size={compact ? "sm" : "default"}
+          className={`min-w-0 flex-1 gap-1.5 whitespace-normal text-destructive hover:bg-destructive/10 hover:text-destructive ${compact ? "h-auto py-1.5 text-[11px] leading-snug" : ""}`}
+          onClick={() => setDeleteOpen(true)}
+        >
+          <Trash2 className={compact ? "h-3 w-3 shrink-0" : "h-4 w-4"} />
+          Изтрий
+        </Button>
+      </div>
+      <DeleteTaskDialog
+        taskId={task.id}
+        open={deleteOpen}
+        onOpenChange={setDeleteOpen}
+        {...(redirectAfterDelete ? { redirectTo: redirectAfterDelete } : {})}
+      />
     </div>
   );
 }

@@ -38,6 +38,9 @@ export type DashboardStats = {
   moderation_pending: number;
   moderation_oldest: string | null;
   violations_30d: number;
+  tasks_pending: number;
+  tasks_pending_oldest: string | null;
+  contact_new: number;
 };
 
 export async function getDashboardStats(): Promise<DashboardStats> {

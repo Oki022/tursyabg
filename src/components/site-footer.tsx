@@ -13,6 +13,9 @@ export function SiteFooter() {
           <Link to="/privacy" className="hover:text-foreground hover:underline">
             Политика за поверителност
           </Link>
+          <Link to="/contact" className="hover:text-foreground hover:underline">
+            Контакти
+          </Link>
           <Link to="/refund-policy" className="hover:text-foreground hover:underline">
             Връщане на кредити
           </Link>
