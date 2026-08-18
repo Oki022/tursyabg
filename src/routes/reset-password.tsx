@@ -17,6 +17,7 @@ export const Route = createFileRoute("/reset-password")({
       { property: "og:description", content: "Задай нова парола за своя профил." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
+      { name: "robots", content: "noindex, nofollow" },
     ],
   }),
   component: ResetPasswordPage,

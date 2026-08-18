@@ -23,6 +23,7 @@ export const Route = createFileRoute("/auth/verify")({
       { property: "og:description", content: "Още една стъпка: потвърди имейла си, за да започнеш работа в ЗадачаНет." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
+      { name: "robots", content: "noindex, nofollow" },
     ],
   }),
   component: VerifyPage,

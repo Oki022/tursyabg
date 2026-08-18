@@ -11,6 +11,7 @@ export const Route = createFileRoute("/billing/cancel")({
       { property: "og:description", content: "Плащането не беше завършено — нищо не е таксувано." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
+      { name: "robots", content: "noindex, nofollow" },
     ],
   }),
   component: BillingCancelPage,
