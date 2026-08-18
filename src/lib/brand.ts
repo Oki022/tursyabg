@@ -20,6 +20,6 @@ export function absoluteUrl(path = "/"): string {
 
 /** Page title format: "[Page title] | Търся" */
 export function pageTitle(title?: string): string {
-  if (!title) return `${BRAND}, ${BRAND_TAGLINE}`;
+  if (!title) return `${BRAND} | ${BRAND_TAGLINE}`;
   return `${title} | ${BRAND}`;
 }
