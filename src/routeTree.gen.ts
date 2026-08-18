@@ -21,6 +21,8 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as UserIdRouteImport } from './routes/user.$id'
 import { Route as TaskIdRouteImport } from './routes/task.$id'
+import { Route as CityCityRouteImport } from './routes/city.$city'
+import { Route as CategoriesCategoryRouteImport } from './routes/categories.$category'
 import { Route as BillingCancelRouteImport } from './routes/billing.cancel'
 import { Route as AuthVerifyRouteImport } from './routes/auth.verify'
 import { Route as AdminUsersRouteImport } from './routes/admin.users'
@@ -35,6 +37,7 @@ import { Route as AuthenticatedProfileRouteImport } from './routes/_authenticate
 import { Route as AuthenticatedPostRouteImport } from './routes/_authenticated/post'
 import { Route as AuthenticatedNotificationsRouteImport } from './routes/_authenticated/notifications'
 import { Route as AuthenticatedMessagesIndexRouteImport } from './routes/_authenticated/messages.index'
+import { Route as CityCityCategoryRouteImport } from './routes/city.$city.$category'
 import { Route as AuthenticatedSettingsSecurityRouteImport } from './routes/_authenticated/settings.security'
 import { Route as AuthenticatedSettingsProfileRouteImport } from './routes/_authenticated/settings.profile'
 import { Route as AuthenticatedSettingsNotificationsRouteImport } from './routes/_authenticated/settings.notifications'
@@ -102,6 +105,16 @@ const UserIdRoute = UserIdRouteImport.update({
 const TaskIdRoute = TaskIdRouteImport.update({
   id: '/task/$id',
   path: '/task/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CityCityRoute = CityCityRouteImport.update({
+  id: '/city/$city',
+  path: '/city/$city',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CategoriesCategoryRoute = CategoriesCategoryRouteImport.update({
+  id: '/categories/$category',
+  path: '/categories/$category',
   getParentRoute: () => rootRouteImport,
 } as any)
 const BillingCancelRoute = BillingCancelRouteImport.update({
@@ -176,6 +189,11 @@ const AuthenticatedMessagesIndexRoute =
     path: '/messages/',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const CityCityCategoryRoute = CityCityCategoryRouteImport.update({
+  id: '/$category',
+  path: '/$category',
+  getParentRoute: () => CityCityRoute,
+} as any)
 const AuthenticatedSettingsSecurityRoute =
   AuthenticatedSettingsSecurityRouteImport.update({
     id: '/settings/security',
@@ -252,6 +270,8 @@ export interface FileRoutesByFullPath {
   '/admin/users': typeof AdminUsersRoute
   '/auth/verify': typeof AuthVerifyRoute
   '/billing/cancel': typeof BillingCancelRoute
+  '/categories/$category': typeof CategoriesCategoryRoute
+  '/city/$city': typeof CityCityRouteWithChildren
   '/task/$id': typeof TaskIdRoute
   '/user/$id': typeof UserIdRoute
   '/admin/': typeof AdminIndexRoute
@@ -263,6 +283,7 @@ export interface FileRoutesByFullPath {
   '/settings/notifications': typeof AuthenticatedSettingsNotificationsRoute
   '/settings/profile': typeof AuthenticatedSettingsProfileRoute
   '/settings/security': typeof AuthenticatedSettingsSecurityRoute
+  '/city/$city/$category': typeof CityCityCategoryRoute
   '/messages/': typeof AuthenticatedMessagesIndexRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
 }
@@ -287,6 +308,8 @@ export interface FileRoutesByTo {
   '/admin/users': typeof AdminUsersRoute
   '/auth/verify': typeof AuthVerifyRoute
   '/billing/cancel': typeof BillingCancelRoute
+  '/categories/$category': typeof CategoriesCategoryRoute
+  '/city/$city': typeof CityCityRouteWithChildren
   '/task/$id': typeof TaskIdRoute
   '/user/$id': typeof UserIdRoute
   '/admin': typeof AdminIndexRoute
@@ -298,6 +321,7 @@ export interface FileRoutesByTo {
   '/settings/notifications': typeof AuthenticatedSettingsNotificationsRoute
   '/settings/profile': typeof AuthenticatedSettingsProfileRoute
   '/settings/security': typeof AuthenticatedSettingsSecurityRoute
+  '/city/$city/$category': typeof CityCityCategoryRoute
   '/messages': typeof AuthenticatedMessagesIndexRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
 }
@@ -325,6 +349,8 @@ export interface FileRoutesById {
   '/admin/users': typeof AdminUsersRoute
   '/auth/verify': typeof AuthVerifyRoute
   '/billing/cancel': typeof BillingCancelRoute
+  '/categories/$category': typeof CategoriesCategoryRoute
+  '/city/$city': typeof CityCityRouteWithChildren
   '/task/$id': typeof TaskIdRoute
   '/user/$id': typeof UserIdRoute
   '/admin/': typeof AdminIndexRoute
@@ -336,6 +362,7 @@ export interface FileRoutesById {
   '/_authenticated/settings/notifications': typeof AuthenticatedSettingsNotificationsRoute
   '/_authenticated/settings/profile': typeof AuthenticatedSettingsProfileRoute
   '/_authenticated/settings/security': typeof AuthenticatedSettingsSecurityRoute
+  '/city/$city/$category': typeof CityCityCategoryRoute
   '/_authenticated/messages/': typeof AuthenticatedMessagesIndexRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
 }
@@ -363,6 +390,8 @@ export interface FileRouteTypes {
     | '/admin/users'
     | '/auth/verify'
     | '/billing/cancel'
+    | '/categories/$category'
+    | '/city/$city'
     | '/task/$id'
     | '/user/$id'
     | '/admin/'
@@ -374,6 +403,7 @@ export interface FileRouteTypes {
     | '/settings/notifications'
     | '/settings/profile'
     | '/settings/security'
+    | '/city/$city/$category'
     | '/messages/'
     | '/api/public/payments/webhook'
   fileRoutesByTo: FileRoutesByTo
@@ -398,6 +428,8 @@ export interface FileRouteTypes {
     | '/admin/users'
     | '/auth/verify'
     | '/billing/cancel'
+    | '/categories/$category'
+    | '/city/$city'
     | '/task/$id'
     | '/user/$id'
     | '/admin'
@@ -409,6 +441,7 @@ export interface FileRouteTypes {
     | '/settings/notifications'
     | '/settings/profile'
     | '/settings/security'
+    | '/city/$city/$category'
     | '/messages'
     | '/api/public/payments/webhook'
   id:
@@ -435,6 +468,8 @@ export interface FileRouteTypes {
     | '/admin/users'
     | '/auth/verify'
     | '/billing/cancel'
+    | '/categories/$category'
+    | '/city/$city'
     | '/task/$id'
     | '/user/$id'
     | '/admin/'
@@ -446,6 +481,7 @@ export interface FileRouteTypes {
     | '/_authenticated/settings/notifications'
     | '/_authenticated/settings/profile'
     | '/_authenticated/settings/security'
+    | '/city/$city/$category'
     | '/_authenticated/messages/'
     | '/api/public/payments/webhook'
   fileRoutesById: FileRoutesById
@@ -461,6 +497,8 @@ export interface RootRouteChildren {
   TasksRoute: typeof TasksRoute
   TermsRoute: typeof TermsRoute
   BillingCancelRoute: typeof BillingCancelRoute
+  CategoriesCategoryRoute: typeof CategoriesCategoryRoute
+  CityCityRoute: typeof CityCityRouteWithChildren
   TaskIdRoute: typeof TaskIdRoute
   UserIdRoute: typeof UserIdRoute
   ApiPublicPaymentsWebhookRoute: typeof ApiPublicPaymentsWebhookRoute
@@ -550,6 +588,20 @@ declare module '@tanstack/react-router' {
       path: '/task/$id'
       fullPath: '/task/$id'
       preLoaderRoute: typeof TaskIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/city/$city': {
+      id: '/city/$city'
+      path: '/city/$city'
+      fullPath: '/city/$city'
+      preLoaderRoute: typeof CityCityRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/categories/$category': {
+      id: '/categories/$category'
+      path: '/categories/$category'
+      fullPath: '/categories/$category'
+      preLoaderRoute: typeof CategoriesCategoryRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/billing/cancel': {
@@ -649,6 +701,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/messages/'
       preLoaderRoute: typeof AuthenticatedMessagesIndexRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/city/$city/$category': {
+      id: '/city/$city/$category'
+      path: '/$category'
+      fullPath: '/city/$city/$category'
+      preLoaderRoute: typeof CityCityCategoryRouteImport
+      parentRoute: typeof CityCityRoute
     }
     '/_authenticated/settings/security': {
       id: '/_authenticated/settings/security'
@@ -787,6 +846,18 @@ const AuthRouteChildren: AuthRouteChildren = {
 
 const AuthRouteWithChildren = AuthRoute._addFileChildren(AuthRouteChildren)
 
+interface CityCityRouteChildren {
+  CityCityCategoryRoute: typeof CityCityCategoryRoute
+}
+
+const CityCityRouteChildren: CityCityRouteChildren = {
+  CityCityCategoryRoute: CityCityCategoryRoute,
+}
+
+const CityCityRouteWithChildren = CityCityRoute._addFileChildren(
+  CityCityRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
@@ -798,6 +869,8 @@ const rootRouteChildren: RootRouteChildren = {
   TasksRoute: TasksRoute,
   TermsRoute: TermsRoute,
   BillingCancelRoute: BillingCancelRoute,
+  CategoriesCategoryRoute: CategoriesCategoryRoute,
+  CityCityRoute: CityCityRouteWithChildren,
   TaskIdRoute: TaskIdRoute,
   UserIdRoute: UserIdRoute,
   ApiPublicPaymentsWebhookRoute: ApiPublicPaymentsWebhookRoute,
