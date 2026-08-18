@@ -16,6 +16,7 @@ const DISALLOWED = [
   "/auth",
   "/reset-password",
   "/api/",
+  "/task/*/edit",
 ];
 
 export const Route = createFileRoute("/robots.txt")({
