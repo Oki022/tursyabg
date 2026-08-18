@@ -13,10 +13,10 @@ import { BuyCreditsDialog } from "@/components/credits/buy-credits-dialog";
 export const Route = createFileRoute("/_authenticated/settings/billing")({
   head: () => ({
     meta: [
-      { title: "Баланс и плащания — ЗадачаНет" },
+      { title: "Баланс и плащания — Търся" },
       { name: "description", content: "Виж баланса си, зареди сметката, купи пакет и попълни данни за фактура." },
-      { property: "og:title", content: "Баланс и плащания — ЗадачаНет" },
-      { property: "og:description", content: "Управлявай баланса, пакетите и фактурите си в ЗадачаНет." },
+      { property: "og:title", content: "Баланс и плащания — Търся" },
+      { property: "og:description", content: "Управлявай баланса, пакетите и фактурите си в Търся." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
     ],

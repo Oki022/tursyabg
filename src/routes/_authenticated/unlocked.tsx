@@ -12,9 +12,9 @@ import { ClaimTaskButton } from "@/components/tasks/claim-task-button";
 export const Route = createFileRoute("/_authenticated/unlocked")({
   head: () => ({
     meta: [
-      { title: "Отключени задачи — ЗадачаНет" },
+      { title: "Отключени задачи — Търся" },
       { name: "description", content: "Всички задачи, за които си отключил контакт, с телефон и срок на достъп." },
-      { property: "og:title", content: "Отключени задачи — ЗадачаНет" },
+      { property: "og:title", content: "Отключени задачи — Търся" },
       { property: "og:description", content: "Преглед на отключените контакти и заявки за връщане на кредити." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },

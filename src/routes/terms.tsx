@@ -4,10 +4,10 @@ import { LegalPage, LegalSection } from "@/components/legal-page";
 export const Route = createFileRoute("/terms")({
   head: () => ({
     meta: [
-      { title: "Общи условия — ЗадачаНет" },
-      { name: "description", content: "Общите условия за ползване на платформата ЗадачаНет — права, задължения и кредити." },
-      { property: "og:title", content: "Общи условия — ЗадачаНет" },
-      { property: "og:description", content: "Права и задължения при ползване на ЗадачаНет." },
+      { title: "Общи условия — Търся" },
+      { name: "description", content: "Общите условия за ползване на платформата Търся — права, задължения и кредити." },
+      { property: "og:title", content: "Общи условия — Търся" },
+      { property: "og:description", content: "Права и задължения при ползване на Търся." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
     ],
@@ -18,9 +18,9 @@ export const Route = createFileRoute("/terms")({
 function TermsPage() {
   return (
     <LegalPage title="Общи условия" updatedAt="17 август 2026">
-      <LegalSection title="1. Какво е ЗадачаНет">
+      <LegalSection title="1. Какво е Търся">
         <p>
-          ЗадачаНет е онлайн платформа, която свързва хора, които имат задача за изпълнение, с изпълнители,
+          Търся е онлайн платформа, която свързва хора, които имат задача за изпълнение, с изпълнители,
           които предлагат услуги. Платформата не е страна по договора между възложител и изпълнител и не
           изпълнява услугите сама.
         </p>
@@ -84,7 +84,7 @@ function TermsPage() {
       </LegalSection>
       <LegalSection title="6. Отговорност">
         <p>
-          ЗадачаНет не гарантира качеството, сроковете или резултата от работата между потребителите. Всички
+          Търся не гарантира качеството, сроковете или резултата от работата между потребителите. Всички
           договорки, плащания и спорове по самата услуга са между възложителя и изпълнителя.
         </p>
       </LegalSection>

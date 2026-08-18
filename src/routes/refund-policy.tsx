@@ -4,9 +4,9 @@ import { LegalPage, LegalSection } from "@/components/legal-page";
 export const Route = createFileRoute("/refund-policy")({
   head: () => ({
     meta: [
-      { title: "Политика за връщане на кредити — ЗадачаНет" },
+      { title: "Политика за връщане на кредити — Търся" },
       { name: "description", content: "Кога и как можеш да поискаш връщане на кредити в 14-дневен срок." },
-      { property: "og:title", content: "Политика за връщане на кредити — ЗадачаНет" },
+      { property: "og:title", content: "Политика за връщане на кредити — Търся" },
       { property: "og:description", content: "14-дневен срок и приети причини за връщане на кредити." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },

@@ -11,9 +11,9 @@ export const Route = createFileRoute("/reset-password")({
   ssr: false,
   head: () => ({
     meta: [
-      { title: "Нова парола — ЗадачаНет" },
-      { name: "description", content: "Задай нова парола за своя профил в ЗадачаНет." },
-      { property: "og:title", content: "Нова парола — ЗадачаНет" },
+      { title: "Нова парола — Търся" },
+      { name: "description", content: "Задай нова парола за своя профил в Търся." },
+      { property: "og:title", content: "Нова парола — Търся" },
       { property: "og:description", content: "Задай нова парола за своя профил." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },

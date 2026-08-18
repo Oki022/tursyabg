@@ -1,11 +1,14 @@
 import { Link } from "@tanstack/react-router";
 import { ClipboardList } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { BRAND } from "@/lib/brand";
+
+export const BRAND_NAME = BRAND;
 
 /** Single source of truth for the brand mark. Swap this to a custom image path
  *  (e.g. "/logo.png" or an imported asset) to change the logo everywhere. */
 export const LOGO_SRC: string | null = null;
-export const BRAND_NAME = "ЗадачаНет";
+
 
 type LogoSize = "sm" | "md" | "lg";
 

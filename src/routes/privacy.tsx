@@ -4,10 +4,10 @@ import { LegalPage, LegalSection } from "@/components/legal-page";
 export const Route = createFileRoute("/privacy")({
   head: () => ({
     meta: [
-      { title: "Политика за поверителност — ЗадачаНет" },
-      { name: "description", content: "Как ЗадачаНет събира, съхранява и защитава личните ти данни." },
-      { property: "og:title", content: "Политика за поверителност — ЗадачаНет" },
-      { property: "og:description", content: "Как обработваме и защитаваме личните ти данни в ЗадачаНет." },
+      { title: "Политика за поверителност — Търся" },
+      { name: "description", content: "Как Търся събира, съхранява и защитава личните ти данни." },
+      { property: "og:title", content: "Политика за поверителност — Търся" },
+      { property: "og:description", content: "Как обработваме и защитаваме личните ти данни в Търся." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
     ],

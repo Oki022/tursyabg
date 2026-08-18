@@ -5,9 +5,9 @@ import { Button } from "@/components/ui/button";
 export const Route = createFileRoute("/billing/cancel")({
   head: () => ({
     meta: [
-      { title: "Плащането е прекратено — ЗадачаНет" },
+      { title: "Плащането е прекратено — Търся" },
       { name: "description", content: "Плащането не беше завършено. Можеш да опиташ отново по всяко време." },
-      { property: "og:title", content: "Плащането е прекратено — ЗадачаНет" },
+      { property: "og:title", content: "Плащането е прекратено — Търся" },
       { property: "og:description", content: "Плащането не беше завършено — нищо не е таксувано." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
