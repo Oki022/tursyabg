@@ -1,7 +1,7 @@
 import { Share2 } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
-import { absoluteUrl } from "@/lib/seo";
+import { absoluteUrl } from "@/lib/brand";
 
 /** Shares the clean canonical URL of a page (never the current URL with tracking params). */
 export function ShareButton({ path, title, className }: { path: string; title: string; className?: string }) {
