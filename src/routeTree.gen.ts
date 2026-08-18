@@ -53,6 +53,7 @@ import { Route as AuthenticatedPostedIdRouteImport } from './routes/_authenticat
 import { Route as AuthenticatedMessagesConversationIdRouteImport } from './routes/_authenticated/messages.$conversationId'
 import { Route as AuthenticatedBillingSuccessRouteImport } from './routes/_authenticated/billing.success'
 import { Route as ApiPublicPaymentsWebhookRouteImport } from './routes/api/public/payments/webhook'
+import { Route as AuthenticatedTaskIdEditRouteImport } from './routes/_authenticated/task.$id.edit'
 
 const TermsRoute = TermsRouteImport.update({
   id: '/terms',
@@ -283,6 +284,11 @@ const ApiPublicPaymentsWebhookRoute =
     path: '/api/public/payments/webhook',
     getParentRoute: () => rootRouteImport,
   } as any)
+const AuthenticatedTaskIdEditRoute = AuthenticatedTaskIdEditRouteImport.update({
+  id: '/task/$id/edit',
+  path: '/task/$id/edit',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -327,6 +333,7 @@ export interface FileRoutesByFullPath {
   '/city/$city/$category': typeof CityCityCategoryRoute
   '/messages/': typeof AuthenticatedMessagesIndexRoute
   '/city/$city/': typeof CityCityIndexRoute
+  '/task/$id/edit': typeof AuthenticatedTaskIdEditRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
 }
 export interface FileRoutesByTo {
@@ -370,6 +377,7 @@ export interface FileRoutesByTo {
   '/city/$city/$category': typeof CityCityCategoryRoute
   '/messages': typeof AuthenticatedMessagesIndexRoute
   '/city/$city': typeof CityCityIndexRoute
+  '/task/$id/edit': typeof AuthenticatedTaskIdEditRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
 }
 export interface FileRoutesById {
@@ -417,6 +425,7 @@ export interface FileRoutesById {
   '/city/$city/$category': typeof CityCityCategoryRoute
   '/_authenticated/messages/': typeof AuthenticatedMessagesIndexRoute
   '/city/$city/': typeof CityCityIndexRoute
+  '/_authenticated/task/$id/edit': typeof AuthenticatedTaskIdEditRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
 }
 export interface FileRouteTypes {
@@ -464,6 +473,7 @@ export interface FileRouteTypes {
     | '/city/$city/$category'
     | '/messages/'
     | '/city/$city/'
+    | '/task/$id/edit'
     | '/api/public/payments/webhook'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -507,6 +517,7 @@ export interface FileRouteTypes {
     | '/city/$city/$category'
     | '/messages'
     | '/city/$city'
+    | '/task/$id/edit'
     | '/api/public/payments/webhook'
   id:
     | '__root__'
@@ -553,6 +564,7 @@ export interface FileRouteTypes {
     | '/city/$city/$category'
     | '/_authenticated/messages/'
     | '/city/$city/'
+    | '/_authenticated/task/$id/edit'
     | '/api/public/payments/webhook'
   fileRoutesById: FileRoutesById
 }
@@ -889,6 +901,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicPaymentsWebhookRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated/task/$id/edit': {
+      id: '/_authenticated/task/$id/edit'
+      path: '/task/$id/edit'
+      fullPath: '/task/$id/edit'
+      preLoaderRoute: typeof AuthenticatedTaskIdEditRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
   }
 }
 
@@ -906,6 +925,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedSettingsProfileRoute: typeof AuthenticatedSettingsProfileRoute
   AuthenticatedSettingsSecurityRoute: typeof AuthenticatedSettingsSecurityRoute
   AuthenticatedMessagesIndexRoute: typeof AuthenticatedMessagesIndexRoute
+  AuthenticatedTaskIdEditRoute: typeof AuthenticatedTaskIdEditRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
@@ -924,6 +944,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedSettingsProfileRoute: AuthenticatedSettingsProfileRoute,
   AuthenticatedSettingsSecurityRoute: AuthenticatedSettingsSecurityRoute,
   AuthenticatedMessagesIndexRoute: AuthenticatedMessagesIndexRoute,
+  AuthenticatedTaskIdEditRoute: AuthenticatedTaskIdEditRoute,
 }
 
 const AuthenticatedRouteRouteWithChildren =
