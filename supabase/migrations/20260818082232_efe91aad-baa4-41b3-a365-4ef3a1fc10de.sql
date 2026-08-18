@@ -1,0 +1,1 @@
+UPDATE public.tasks SET status = 'active' WHERE id = '87608eed-a0fc-4623-a0a9-d4edb61f1f4f';
