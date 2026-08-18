@@ -32,10 +32,15 @@ function BellButton({ unread }: { unread: number }) {
 
 function PanelHeader({ onMarkAll, canMarkAll }: { onMarkAll: () => void; canMarkAll: boolean }) {
   return (
-    <div className="flex items-center justify-between gap-2 border-b border-border px-3 py-2.5">
-      <span className="text-sm font-semibold">Известия</span>
+    <div className="border-b border-border px-3 py-2.5">
+      <div className="flex min-h-8 items-center pr-10">
+        <span className="text-sm font-semibold">Известия</span>
+      </div>
       {canMarkAll && (
-        <button onClick={onMarkAll} className="text-xs text-muted-foreground hover:text-foreground">
+        <button
+          onClick={onMarkAll}
+          className="mt-1 block text-left text-xs text-muted-foreground hover:text-foreground"
+        >
           Маркирай всички като прочетени
         </button>
       )}

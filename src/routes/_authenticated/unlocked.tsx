@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
-import { KeyRound, Phone, RotateCcw, MapPin } from "lucide-react";
+import { ChevronLeft, KeyRound, Phone, RotateCcw, MapPin } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useUnlockedTasks } from "@/lib/credits-api";
@@ -29,7 +29,14 @@ function UnlockedPage() {
 
   return (
     <div className="container mx-auto max-w-3xl px-4 py-8 md:py-12">
-      <div className="mb-6 flex items-center gap-2">
+      <Link
+        to="/profile"
+        className="inline-flex items-center gap-1 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
+      >
+        <ChevronLeft className="h-4 w-4" />
+        Назад към профила
+      </Link>
+      <div className="mb-6 mt-4 flex items-center gap-2">
         <KeyRound className="h-5 w-5 text-primary" />
         <h1 className="text-2xl font-bold tracking-tight md:text-3xl">Отключени задачи</h1>
       </div>
