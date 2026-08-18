@@ -15,6 +15,10 @@ import { MobileNav } from "@/components/mobile-nav";
 import { SiteFooter } from "@/components/site-footer";
 import { Toaster } from "@/components/ui/sonner";
 import { AuthProvider } from "@/lib/auth";
+import { BRAND, pageTitle } from "@/lib/brand";
+
+const SUPABASE_ORIGIN =
+  (import.meta as any).env?.VITE_SUPABASE_URL ?? "https://xrltdrxhtennbscgbyxb.supabase.co";
 
 function NotFoundComponent() {
   return (
@@ -78,19 +82,27 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "ЗадачаНет — Борса за задачи и услуги" },
-      { name: "description", content: "Възложи задача или намери работа. Платформата, която свързва хора с майстори и изпълнители в България." },
-      { property: "og:title", content: "ЗадачаНет — Борса за задачи" },
-      { property: "og:description", content: "Възложи задача или намери работа в България." },
+      { title: pageTitle() },
+      {
+        name: "description",
+        content:
+          "Възложи задача или намери работа. Платформата, която свързва хора с майстори и изпълнители в България.",
+      },
       { property: "og:type", content: "website" },
+      { property: "og:site_name", content: BRAND },
+      { property: "og:locale", content: "bg_BG" },
       { name: "twitter:card", content: "summary" },
-      { name: "twitter:site", content: "@Lovable" },
+      { name: "theme-color", content: "#14532d" },
+      { name: "apple-mobile-web-app-title", content: BRAND },
+      { name: "application-name", content: BRAND },
     ],
     links: [
-      {
-        rel: "stylesheet",
-        href: appCss,
-      },
+      { rel: "stylesheet", href: appCss },
+      { rel: "manifest", href: "/manifest.webmanifest" },
+      { rel: "preconnect", href: SUPABASE_ORIGIN, crossOrigin: "anonymous" },
+      { rel: "dns-prefetch", href: SUPABASE_ORIGIN },
+      { rel: "preconnect", href: "https://images.unsplash.com", crossOrigin: "anonymous" },
+      { rel: "dns-prefetch", href: "https://images.unsplash.com" },
     ],
   }),
   shellComponent: RootShell,
@@ -101,7 +113,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
 
 function RootShell({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en">
+    <html lang="bg">
       <head>
         <HeadContent />
       </head>
