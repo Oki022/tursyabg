@@ -299,7 +299,6 @@ function ProfilePage() {
               </div>
             </section>
           </>
-        )}
       </div>
     </div>
   );
