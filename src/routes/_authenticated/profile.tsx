@@ -91,8 +91,6 @@ function ProfilePage() {
     );
   }
 
-  const isWorker = user.role === "worker";
-
   const handleLogout = async () => {
     await logout();
     toast.success("Излязохте от профила си.");
@@ -126,7 +124,7 @@ function ProfilePage() {
                 <h1 className="text-xl font-bold tracking-tight text-foreground md:text-2xl">
                   {user.name}
                 </h1>
-                {isWorker && user.verified && (
+                {user.verified && (
                   <span
                     title="Потвърден профил"
                     className="inline-flex items-center gap-1 rounded-full bg-[#1da1f2]/10 px-2 py-0.5 text-xs font-medium text-[#1da1f2]"
@@ -136,10 +134,9 @@ function ProfilePage() {
                   </span>
                 )}
               </div>
-              <Badge variant="secondary" className="mt-1.5 gap-1">
-                {isWorker ? <Wrench className="h-3 w-3" /> : <HandHeart className="h-3 w-3" />}
-                {isWorker ? "Предлагам услуги" : "Търся помощ"}
-              </Badge>
+              <p className="mt-1.5 text-sm text-muted-foreground">
+                Възлагай задачи и отключвай контакти без ограничения.
+              </p>
             </div>
           </div>
           <Button variant="outline" onClick={handleLogout} className="gap-2 self-start md:self-auto">
@@ -250,9 +247,8 @@ function ProfilePage() {
           </div>
         </section>
 
-        {isWorker && (
-          <>
-            <section className="min-w-0 rounded-2xl border border-border/60 bg-card p-5 shadow-sm md:p-7">
+        <>
+          <section className="min-w-0 rounded-2xl border border-border/60 bg-card p-5 shadow-sm md:p-7">
               <h2 className="text-lg font-semibold text-foreground">Моите умения</h2>
               <p className="mt-1 text-sm text-muted-foreground">
                 Избери категориите, в които предлагаш услуги.
