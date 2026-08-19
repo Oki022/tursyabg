@@ -37,10 +37,13 @@ export function NotificationList({
   items,
   isLoading,
   onNavigate,
+  unreadIds,
 }: {
   items: AppNotification[];
   isLoading: boolean;
   onNavigate?: () => void;
+  /** When provided, controls which rows render as unread (session snapshot). */
+  unreadIds?: Set<string>;
 }) {
   const navigate = useNavigate();
   const markRead = useMarkNotificationRead();
@@ -79,7 +82,7 @@ export function NotificationList({
     <ul className="divide-y divide-border/60">
       {items.map((n) => {
         const Icon = ICONS[n.type] ?? MessageSquare;
-        const unread = !n.readAt;
+        const unread = unreadIds ? unreadIds.has(n.id) : !n.readAt;
         return (
           <li key={n.id}>
             <button

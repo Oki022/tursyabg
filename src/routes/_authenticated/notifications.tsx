@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ChevronLeft, TriangleAlert } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -6,7 +6,6 @@ import { NotificationList } from "@/components/notifications/notification-list";
 import {
   useMarkAllNotificationsRead,
   useNotifications,
-  useUnreadNotifications,
 } from "@/lib/notifications-api";
 
 const PAGE = 20;
@@ -31,10 +30,21 @@ export const Route = createFileRoute("/_authenticated/notifications")({
 function NotificationsPage() {
   const [limit, setLimit] = useState(PAGE);
   const listQuery = useNotifications(true, limit);
-  const unreadQuery = useUnreadNotifications(true);
   const markAll = useMarkAllNotificationsRead();
   const items = listQuery.data ?? [];
   const canLoadMore = items.length >= limit;
+
+  // Snapshot unread rows on first load so the styling stays for this visit,
+  // while the badge clears right away.
+  const [sessionUnread, setSessionUnread] = useState<Set<string> | undefined>(undefined);
+  const snapshotTaken = useRef(false);
+  useEffect(() => {
+    if (snapshotTaken.current || listQuery.isLoading) return;
+    snapshotTaken.current = true;
+    setSessionUnread(new Set(items.filter((n) => !n.readAt).map((n) => n.id)));
+    if (items.some((n) => !n.readAt)) markAll.mutate();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [listQuery.isLoading]);
 
   return (
     <div className="mx-auto w-full max-w-2xl px-4 py-6">
@@ -46,14 +56,7 @@ function NotificationsPage() {
         Назад към профила
       </Link>
 
-      <div className="mt-4 flex flex-wrap items-center justify-between gap-2">
-        <h1 className="text-2xl font-bold tracking-tight text-foreground">Известия</h1>
-        {(unreadQuery.data ?? 0) > 0 && (
-          <Button variant="outline" size="sm" onClick={() => markAll.mutate()}>
-            Маркирай всички като прочетени
-          </Button>
-        )}
-      </div>
+      <h1 className="mt-4 text-2xl font-bold tracking-tight text-foreground">Известия</h1>
 
       {listQuery.isError ? (
         <div className="mt-4 flex flex-col items-center gap-3 rounded-2xl border border-border/60 bg-card p-8 text-center shadow-sm">
@@ -71,7 +74,7 @@ function NotificationsPage() {
       ) : (
         <>
           <div className="mt-4 overflow-hidden rounded-2xl border border-border/60 bg-card shadow-sm">
-            <NotificationList items={items} isLoading={listQuery.isLoading} />
+            <NotificationList items={items} isLoading={listQuery.isLoading} unreadIds={sessionUnread} />
           </div>
           {canLoadMore && (
             <div className="mt-4 flex justify-center">

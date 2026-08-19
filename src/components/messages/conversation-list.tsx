@@ -1,6 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { Inbox, Loader2 } from "lucide-react";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { getInitials } from "@/lib/auth";
 import { useConversations } from "@/lib/messages-api";
@@ -72,11 +72,22 @@ export function ConversationList({ selectedId, onSelect, variant = "desktop" }: 
       {items.map((c) => {
         const content = (
           <>
-            <Avatar className="h-11 w-11 shrink-0 border border-border">
-              <AvatarFallback className="bg-muted text-xs font-semibold">
-                {getInitials(c.otherUserName)}
-              </AvatarFallback>
-            </Avatar>
+            <span className="relative shrink-0">
+              <Avatar className="h-12 w-12 border border-border">
+                {c.otherUserAvatar ? (
+                  <AvatarImage src={c.otherUserAvatar} alt={c.otherUserName} />
+                ) : null}
+                <AvatarFallback className="bg-muted text-xs font-semibold">
+                  {getInitials(c.otherUserName)}
+                </AvatarFallback>
+              </Avatar>
+              <img
+                src={c.taskImage}
+                alt={c.taskTitle}
+                loading="lazy"
+                className="absolute -bottom-1 -right-1 h-5 w-5 rounded-md border border-background object-cover shadow-sm"
+              />
+            </span>
             <div className="min-w-0 flex-1">
               <div className="flex min-w-0 items-center gap-2">
                 <p className="truncate text-sm font-semibold text-foreground">{c.otherUserName}</p>
@@ -87,7 +98,6 @@ export function ConversationList({ selectedId, onSelect, variant = "desktop" }: 
               <p className="truncate text-xs text-muted-foreground">{c.taskTitle}</p>
               <p className="truncate text-xs text-slate-500">{c.lastMessage}</p>
             </div>
-            <img src={c.taskImage} alt="" className="h-11 w-11 shrink-0 rounded-xl object-cover" />
             {c.unread > 0 && (
               <span className="h-2.5 w-2.5 shrink-0 rounded-full bg-gradient-to-r from-orange-500 to-rose-500" />
             )}

@@ -1642,6 +1642,7 @@ export type Database = {
         Returns: boolean
       }
       is_gibberish: { Args: { _text: string }; Returns: boolean }
+      is_last_admin: { Args: { _user_id: string }; Returns: boolean }
       is_refund_flagged: { Args: { _user_id: string }; Returns: boolean }
       is_staff: { Args: { _user_id: string }; Returns: boolean }
       is_valid_bg_phone: { Args: { _phone: string }; Returns: boolean }
