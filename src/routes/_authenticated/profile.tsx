@@ -375,11 +375,8 @@ function OwnerTaskCard({
         )}
         {task.status === "pending" && (
           <div className="mt-2 space-y-1.5 rounded-xl bg-amber-50 p-2 text-[11px] leading-snug text-amber-900">
-            <p className="font-medium">В проверка от екипа</p>
-            <p>
-              Задачата ще стане публична след одобрение, обикновено до няколко часа. Ще получиш
-              известие.
-            </p>
+            <p className="font-medium">В проверка</p>
+            <p>Задачата ще стане публична след проверката. Ще получиш известие.</p>
             <Button asChild size="sm" variant="outline" className="h-auto w-full py-1.5 text-[11px]">
               <Link to="/task/$id/edit" params={{ id: task.id }}>
                 Редактирай задачата
