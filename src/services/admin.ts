@@ -89,14 +89,12 @@ export const AUTO_RULE_BG: Record<string, string> = {
 };
 
 export async function getRefundRequests(status: RefundStatus | "all"): Promise<AdminRefundRequest[]> {
-  let query = supabase
-    .from("credit_refund_requests")
-    .select(
-      "id, status, reason, details, admin_note, resolution, auto_rule, created_at, resolved_at, user_id, unlock_id, profiles(full_name), task_unlocks(credits_spent, task_id, tasks(title))",
-    )
-    .order("created_at", { ascending: false });
-  if (status !== "all") query = query.eq("status", status);
-  const { data, error } = await query;
+  const { data, error } = await (supabase.rpc as unknown as (
+    fn: string,
+    args: Record<string, unknown>,
+  ) => Promise<{ data: unknown; error: { message: string } | null }>)("admin_list_refunds", {
+    _status: status,
+  });
   if (error) throw error;
   const rows = (data ?? []) as unknown as {
     id: string;
@@ -109,8 +107,10 @@ export async function getRefundRequests(status: RefundStatus | "all"): Promise<A
     created_at: string;
     resolved_at: string | null;
     user_id: string;
-    profiles: { full_name: string | null } | null;
-    task_unlocks: { credits_spent: number; task_id: string; tasks: { title: string } | null } | null;
+    user_name: string | null;
+    credits: number | null;
+    task_id: string | null;
+    task_title: string | null;
   }[];
   return rows.map((r) => ({
     id: r.id,
@@ -123,10 +123,10 @@ export async function getRefundRequests(status: RefundStatus | "all"): Promise<A
     createdAt: r.created_at,
     resolvedAt: r.resolved_at,
     userId: r.user_id,
-    userName: r.profiles?.full_name ?? "Потребител",
-    credits: r.task_unlocks?.credits_spent ?? 0,
-    taskId: r.task_unlocks?.task_id ?? null,
-    taskTitle: r.task_unlocks?.tasks?.title ?? "Задача",
+    userName: r.user_name ?? "Потребител",
+    credits: r.credits ?? 0,
+    taskId: r.task_id ?? null,
+    taskTitle: r.task_title ?? "Задача",
   }));
 }
 

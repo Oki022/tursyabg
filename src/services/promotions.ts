@@ -18,7 +18,6 @@ export type TaskPromotion = {
   type: PromoType;
   startsAt: string;
   expiresAt: string;
-  pricePaidEur: number;
 };
 
 export const PROMO_DESCRIPTIONS: Record<PromoType, string> = {
@@ -52,7 +51,6 @@ function mapPromotion(r: Record<string, any>): TaskPromotion {
     type: r["type"] as PromoType,
     startsAt: r["starts_at"],
     expiresAt: r["expires_at"],
-    pricePaidEur: Number(r["price_paid_eur"]),
   };
 }
 
@@ -70,7 +68,7 @@ export async function listPromoProducts(): Promise<PromoProduct[]> {
 export async function getTaskPromotions(taskId: string): Promise<TaskPromotion[]> {
   const { data, error } = await supabase
     .from("task_promotions")
-    .select("id, task_id, type, starts_at, expires_at, price_paid_eur")
+    .select("id, task_id, type, starts_at, expires_at")
     .eq("task_id", taskId)
     .gt("expires_at", new Date().toISOString())
     .order("expires_at", { ascending: false });
@@ -82,7 +80,7 @@ export async function getTaskPromotions(taskId: string): Promise<TaskPromotion[]
 export async function getPromotionsByOwner(userId: string): Promise<Record<string, TaskPromotion[]>> {
   const { data, error } = await supabase
     .from("task_promotions")
-    .select("id, task_id, type, starts_at, expires_at, price_paid_eur")
+    .select("id, task_id, type, starts_at, expires_at")
     .eq("user_id", userId)
     .gt("expires_at", new Date().toISOString());
   if (error) throw error;
