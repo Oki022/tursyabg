@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { CheckCircle2, Mail, MessageSquare, ShieldQuestion } from "lucide-react";
@@ -81,6 +81,13 @@ function ContactPage() {
         <p className="mt-2 text-muted-foreground">
           Пиши ни при въпрос, проблем или сигнал. Екипът на {BRAND_NAME} отговаря обикновено в рамките на
           един работен ден.
+        </p>
+        <p className="mt-2 text-sm text-muted-foreground">
+          Преди това виж{" "}
+          <Link to="/faq" className="font-medium text-foreground underline underline-offset-4">
+            често задаваните въпроси
+          </Link>{" "}
+          - там има готови отговори за кредити, плащания и правила.
         </p>
       </header>
 
