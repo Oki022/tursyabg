@@ -1,3 +1,4 @@
+import { contentQualityErrorBg } from "@/lib/content-quality";
 import { supabase } from "@/integrations/supabase/client";
 
 export type EngagementStatus = "claimed" | "confirmed" | "rejected" | "expired";
@@ -227,5 +228,7 @@ export const REVIEW_ERROR_BG: Record<string, string> = {
 
 export function reviewErrorBg(e: unknown): string {
   const code = e instanceof Error ? e.message : "UNKNOWN";
+  const quality = contentQualityErrorBg(code);
+  if (quality) return quality.description;
   return REVIEW_ERROR_BG[code] ?? "Действието не беше изпълнено.";
 }

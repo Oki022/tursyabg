@@ -1632,6 +1632,7 @@ export type Database = {
         Args: { _other_user: string; _task_id: string }
         Returns: string
       }
+      flag_low_quality_tasks: { Args: never; Returns: number }
       get_unlock_cost: { Args: { task_budget: number }; Returns: number }
       has_role: {
         Args: {
@@ -1640,6 +1641,7 @@ export type Database = {
         }
         Returns: boolean
       }
+      is_gibberish: { Args: { _text: string }; Returns: boolean }
       is_refund_flagged: { Args: { _user_id: string }; Returns: boolean }
       is_staff: { Args: { _user_id: string }; Returns: boolean }
       is_valid_bg_phone: { Args: { _phone: string }; Returns: boolean }
@@ -1777,6 +1779,10 @@ export type Database = {
       sweep_autopublish: { Args: { _limit?: number }; Returns: number }
       sweep_engagements: { Args: { _batch?: number }; Returns: number }
       sweep_expiry_notifications: { Args: { _batch?: number }; Returns: number }
+      task_content_issue: {
+        Args: { _budget: number; _description: string; _title: string }
+        Returns: string
+      }
       task_unlockers: {
         Args: { _task_id: string }
         Returns: {
@@ -1788,6 +1794,15 @@ export type Database = {
           unlocked_at: string
           user_id: string
         }[]
+      }
+      text_quality_issue: {
+        Args: {
+          _max_len: number
+          _min_len: number
+          _min_words: number
+          _text: string
+        }
+        Returns: string
       }
       unlock_task_contact: { Args: { _task_id: string }; Returns: Json }
       update_own_task: {

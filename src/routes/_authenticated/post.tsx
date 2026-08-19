@@ -10,6 +10,7 @@ import { toast } from "sonner";
 import { useAuth } from "@/lib/auth";
 import { RequirePhoneNotice } from "@/components/require-phone-notice";
 import { TaskForm } from "@/components/tasks/task-form";
+import { contentQualityErrorBg } from "@/lib/content-quality";
 import { CONTACT_MASK_WARNING, containsContactInfo, isValidBgPhone } from "@/lib/phone";
 
 export const Route = createFileRoute("/_authenticated/post")({
@@ -82,6 +83,11 @@ function PostPage() {
             navigate({ to: "/posted/$id", params: { id: result.id } });
           } catch (err) {
             const raw = err instanceof Error ? err.message : "";
+            const quality = contentQualityErrorBg(raw);
+            if (quality) {
+              toast.error(quality.title, { description: quality.description });
+              return;
+            }
             const moderation = moderationErrorBg(raw);
             if (moderation) {
               toast.error(moderation.title, { description: moderation.description });

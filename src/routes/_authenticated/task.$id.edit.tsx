@@ -6,6 +6,7 @@ import { TaskForm } from "@/components/tasks/task-form";
 import { useAuth } from "@/lib/auth";
 import { useDeletePreview, useTask, useTaskImages, useUpdateTask } from "@/lib/tasks-api";
 import { IMAGE_HELD_BG, IMAGE_REJECT_BG, categoryBg, moderationErrorBg } from "@/lib/moderation-messages";
+import { contentQualityErrorBg } from "@/lib/content-quality";
 import { CONTACT_MASK_WARNING, containsContactInfo } from "@/lib/phone";
 
 export const Route = createFileRoute("/_authenticated/task/$id/edit")({
@@ -118,6 +119,11 @@ function EditTaskPage() {
             navigate({ to: "/task/$id", params: { id } });
           } catch (err) {
             const raw = err instanceof Error ? err.message : "";
+            const quality = contentQualityErrorBg(raw);
+            if (quality) {
+              toast.error(quality.title, { description: quality.description });
+              return;
+            }
             const moderation = moderationErrorBg(raw);
             if (moderation) {
               toast.error(moderation.title, { description: moderation.description });
