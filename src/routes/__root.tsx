@@ -18,6 +18,7 @@ import { Toaster } from "@/components/ui/sonner";
 import { AuthProvider } from "@/lib/auth";
 import { BRAND, pageTitle } from "@/lib/brand";
 import { MonitoringBoot } from "@/components/monitoring-boot";
+import { captureIssue } from "@/lib/monitoring/client";
 
 const SUPABASE_ORIGIN =
   (import.meta as any).env?.VITE_SUPABASE_URL ?? "https://xrltdrxhtennbscgbyxb.supabase.co";
@@ -142,6 +143,7 @@ function RootComponent() {
   return (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
+        <MonitoringBoot />
         <div className="flex min-h-screen w-full max-w-full flex-col overflow-x-hidden bg-background pb-24 md:pb-0">
             <SiteHeader />
             <main className="w-full max-w-full flex-1"><Outlet /></main>
