@@ -2,6 +2,7 @@ import { Link } from "@tanstack/react-router";
 import { MapPin, Clock } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { TopBadge, UrgentBadge } from "@/components/promotions/promo-badges";
+import { FavouriteButton } from "@/components/favourite-button";
 import { getCategory, CATEGORY_IMAGES, type Task } from "@/lib/mock-data";
 
 export function TaskCard({ task }: { task: Task }) {
@@ -11,6 +12,7 @@ export function TaskCard({ task }: { task: Task }) {
   const srcSet = responsiveSrcSet(thumb);
 
   return (
+    <div className="relative h-full">
     <Link
       to="/task/$id"
       params={{ id: task.id }}
@@ -39,7 +41,7 @@ export function TaskCard({ task }: { task: Task }) {
             <span className="truncate">{cat.name}</span>
           </Badge>
           {(task.isTop || task.isUrgent) && (
-            <div className="flex min-w-0 max-w-[40%] flex-col items-end gap-1">
+            <div className="mt-9 flex min-w-0 max-w-[40%] flex-col items-end gap-1">
               {task.isTop && <TopBadge />}
               {task.isUrgent && <UrgentBadge />}
             </div>
@@ -71,6 +73,8 @@ export function TaskCard({ task }: { task: Task }) {
         </div>
       </div>
     </Link>
+      <FavouriteButton taskId={task.id} ownerId={task.userId} className="absolute right-1.5 top-1.5 z-10" />
+    </div>
   );
 }
 export function TaskCardSkeleton() {
