@@ -49,6 +49,7 @@ const SETTINGS_ITEMS: { icon: typeof Wallet; label: string; to: string }[] = [
   { icon: ShieldCheck, label: "Влизане и сигурност", to: "/settings/security" },
   { icon: Wallet, label: "Баланс и плащания", to: "/settings/billing" },
   { icon: KeyRound, label: "Отключени задачи", to: "/unlocked" },
+  { icon: Heart, label: "Любими задачи", to: "/favourites" },
   { icon: Bell, label: "Нотификации", to: "/settings/notifications" },
 ];
 
@@ -136,10 +137,6 @@ function ProfilePage() {
               </p>
             </div>
           </div>
-          <Button variant="outline" onClick={handleLogout} className="gap-2 self-start md:self-auto">
-            <LogOut className="h-4 w-4" />
-            Изход
-          </Button>
         </div>
 
         <div className="mt-4">
@@ -159,6 +156,9 @@ function ProfilePage() {
           />
         </div>
       </div>
+
+      {/* Кредити */}
+      <CreditBalanceCard className="mt-4" />
 
       {/* Role-specific sections */}
       <div className="mt-6 grid gap-6">
