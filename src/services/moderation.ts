@@ -85,7 +85,21 @@ export async function moderateImage(
     unavailable: true,
   });
 
-  if (!user || !secret) return offline();
+  const reportOutage = (reason: string, error?: unknown) => {
+    void import("@/lib/monitoring/sentry.server").then(({ reportServerIssue }) =>
+      reportServerIssue({
+        area: "moderation.provider",
+        action: "image moderation unavailable",
+        error: error ?? new Error(reason),
+        extra: { provider: PROVIDER, reason },
+      }),
+    );
+  };
+
+  if (!user || !secret) {
+    reportOutage("missing_credentials");
+    return offline();
+  }
 
   try {
     const form = new FormData();
@@ -99,17 +113,24 @@ export async function moderateImage(
       method: "POST",
       body: form,
     });
-    if (!res.ok) return offline();
+    if (!res.ok) {
+      reportOutage(`http_${res.status}`);
+      return offline();
+    }
 
     const json = (await res.json()) as Record<string, any>;
-    if (json["status"] !== "success") return offline();
+    if (json["status"] !== "success") {
+      reportOutage("provider_status_not_success");
+      return offline();
+    }
 
     const labels = extractLabels(json);
     const { category, score } = pickMax(labels);
     const verdict: ImageVerdict = score >= REJECT_AT ? "reject" : score >= REVIEW_AT ? "review" : "clean";
 
     return { verdict, score, labels, category, provider: PROVIDER, unavailable: false };
-  } catch {
+  } catch (e) {
+    reportOutage("request_failed", e);
     return offline();
   }
 }
