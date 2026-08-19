@@ -23,6 +23,7 @@ export type ConversationSummary = {
   taskImage: string;
   otherUserId: string;
   otherUserName: string;
+  otherUserAvatar: string | null;
   lastMessage: string;
   lastMessageAt: string;
   unread: number;

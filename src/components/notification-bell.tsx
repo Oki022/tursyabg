@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { Bell } from "lucide-react";
 import {
@@ -30,20 +30,10 @@ function BellButton({ unread }: { unread: number }) {
   );
 }
 
-function PanelHeader({ onMarkAll, canMarkAll }: { onMarkAll: () => void; canMarkAll: boolean }) {
+function PanelHeader({ withCloseSpace }: { withCloseSpace: boolean }) {
   return (
-    <div className="border-b border-border px-3 py-2.5">
-      <div className="flex min-h-8 items-center pr-10">
-        <span className="text-sm font-semibold">Известия</span>
-      </div>
-      {canMarkAll && (
-        <button
-          onClick={onMarkAll}
-          className="mt-1 block text-left text-xs text-muted-foreground hover:text-foreground"
-        >
-          Маркирай всички като прочетени
-        </button>
-      )}
+    <div className="flex min-h-11 items-center border-b border-border px-3 py-2.5">
+      <span className={`text-sm font-semibold ${withCloseSpace ? "pr-10" : ""}`}>Известия</span>
     </div>
   );
 }
@@ -73,11 +63,34 @@ export function NotificationBell() {
   const unread = unreadQuery.data ?? 0;
   const items = listQuery.data ?? [];
 
+  // Snapshot which items were unread when the panel opened, so the styling
+  // stays visible for the session while the badge clears immediately.
+  const [sessionUnread, setSessionUnread] = useState<Set<string> | undefined>(undefined);
+  const snapshotTaken = useRef(false);
+
+  useEffect(() => {
+    if (!open) {
+      snapshotTaken.current = false;
+      setSessionUnread(undefined);
+      return;
+    }
+    if (snapshotTaken.current || listQuery.isLoading) return;
+    snapshotTaken.current = true;
+    setSessionUnread(new Set(items.filter((n) => !n.readAt).map((n) => n.id)));
+    if (items.some((n) => !n.readAt)) markAll.mutate();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [open, listQuery.isLoading]);
+
   const body = (
     <>
-      <PanelHeader onMarkAll={() => markAll.mutate()} canMarkAll={unread > 0} />
+      <PanelHeader withCloseSpace={isMobile} />
       <div className="max-h-[60vh] flex-1 overflow-y-auto md:max-h-[380px]">
-        <NotificationList items={items} isLoading={listQuery.isLoading} onNavigate={() => setOpen(false)} />
+        <NotificationList
+          items={items}
+          isLoading={listQuery.isLoading}
+          unreadIds={sessionUnread}
+          onNavigate={() => setOpen(false)}
+        />
       </div>
       <PanelFooter onNavigate={() => setOpen(false)} />
     </>
