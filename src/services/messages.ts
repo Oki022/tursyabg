@@ -105,13 +105,14 @@ export async function getConversations(
       .select("id, conversation_id, sender_id, receiver_id, content, created_at, read_at")
       .in("conversation_id", ids)
       .order("created_at", { ascending: false }),
-    supabase.from("profiles").select("id, full_name").in("id", otherIds),
+    supabase.from("profiles").select("id, full_name, avatar_url").in("id", otherIds),
     resolveImageUrls(
       rows.flatMap((r) => (r.tasks?.task_images ?? []).map((i) => i.image_url)),
     ),
   ]);
 
   const nameById = new Map((profiles ?? []).map((p) => [p.id, p.full_name ?? "Потребител"]));
+  const avatarById = new Map((profiles ?? []).map((p) => [p.id, p.avatar_url ?? null]));
   const lastByConv = new Map<string, string>();
   const unreadByConv = new Map<string, number>();
   for (const m of msgs ?? []) {
@@ -139,6 +140,7 @@ export async function getConversations(
         CATEGORY_IMAGES.drugi,
       otherUserId: otherId,
       otherUserName: nameById.get(otherId) ?? "Потребител",
+      otherUserAvatar: avatarById.get(otherId) ?? null,
       lastMessage: lastByConv.get(r.id) ?? "Няма съобщения още",
       lastMessageAt: r.last_message_at,
       unread: unreadByConv.get(r.id) ?? 0,
@@ -166,7 +168,7 @@ export async function getConversation(conversationId: string): Promise<Conversat
 
   const images = [...(row.tasks?.task_images ?? [])].sort((a, b) => a.sort_order - b.sort_order);
   const [{ data: profile }, imageMap] = await Promise.all([
-    supabase.from("profiles").select("full_name").eq("id", otherId).maybeSingle(),
+    supabase.from("profiles").select("full_name, avatar_url").eq("id", otherId).maybeSingle(),
     resolveImageUrls(images.map((i) => i.image_url)),
   ]);
   const firstPath = images[0]?.image_url;
@@ -183,6 +185,7 @@ export async function getConversation(conversationId: string): Promise<Conversat
       CATEGORY_IMAGES.drugi,
     otherUserId: otherId,
     otherUserName: profile?.full_name ?? "Потребител",
+    otherUserAvatar: profile?.avatar_url ?? null,
     lastMessage: "",
     lastMessageAt: row.last_message_at,
     unread: 0,
