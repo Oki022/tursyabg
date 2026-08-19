@@ -73,9 +73,7 @@ export function initMonitoring(config: MonitoringConfig): void {
     // Errors only — no performance/replay quota burn on the free tier.
     tracesSampleRate: 0,
     sendDefaultPii: false,
-    autoSessionTracking: false,
-    integrations: (defaults) =>
-      defaults.filter((i) => i.name !== "BrowserSession" && i.name !== "Breadcrumbs" ? true : i.name !== "BrowserSession"),
+    integrations: (defaults) => defaults.filter((i) => i.name !== "BrowserSession"),
     beforeSend: (event) => scrubEvent(event),
     beforeBreadcrumb: (crumb) => (crumb.category === "console" ? null : crumb),
   });
