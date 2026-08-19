@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { Sparkles, CheckCircle2, Lock, ImagePlus, X, UploadCloud, Info } from "lucide-react";
+import { Sparkles, CheckCircle2, Lock, ImagePlus, X, UploadCloud, Info, AlertCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -7,6 +7,16 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { LocationCombobox } from "@/components/location-combobox";
 import { categories, detectCategory } from "@/lib/mock-data";
+import {
+  DESCRIPTION_MAX,
+  DESCRIPTION_MIN,
+  TITLE_MAX,
+  TITLE_MIN,
+  budgetIssueBg,
+  descriptionIssueBg,
+  examplesFor,
+  titleIssueBg,
+} from "@/lib/content-quality";
 
 export type TaskFormValues = {
   title: string;
@@ -25,6 +35,35 @@ export type TaskFormSubmit = {
 };
 
 const MAX_IMAGES = 8;
+
+/** Debounces a value so inline hints appear only after the user pauses typing. */
+function useDebounced<T>(value: T, delay = 450) {
+  const [debounced, setDebounced] = useState(value);
+  useEffect(() => {
+    const t = setTimeout(() => setDebounced(value), delay);
+    return () => clearTimeout(t);
+  }, [value, delay]);
+  return debounced;
+}
+
+function FieldHint({ message }: { message: string }) {
+  return (
+    <p className="flex items-start gap-1.5 rounded-xl bg-destructive/10 px-3 py-2 text-xs text-destructive">
+      <AlertCircle className="mt-0.5 h-3.5 w-3.5 shrink-0" />
+      <span>{message}</span>
+    </p>
+  );
+}
+
+function Counter({ value, min, max }: { value: number; min: number; max: number }) {
+  const ok = value >= min && value <= max;
+  return (
+    <span className={`text-xs tabular-nums ${ok ? "text-muted-foreground" : "text-destructive"}`}>
+      {value}/{max}
+      {value < min ? ` (мин. ${min})` : ""}
+    </span>
+  );
+}
 
 /** Shared task form used both for posting a new task and editing an existing one. */
 export function TaskForm({
@@ -65,6 +104,16 @@ export function TaskForm({
 
   const keptExisting = existingImages.filter((i) => !removed.includes(i.id));
   const totalImages = keptExisting.length + photos.length;
+
+  const examples = examplesFor(category);
+  const debouncedTitle = useDebounced(title);
+  const debouncedDescription = useDebounced(description);
+  const debouncedBudget = useDebounced(budget);
+  const titleHint = debouncedTitle.trim() ? titleIssueBg(debouncedTitle) : null;
+  const descriptionHint = debouncedDescription.trim()
+    ? descriptionIssueBg(debouncedDescription, title)
+    : null;
+  const budgetHint = debouncedBudget.trim() ? budgetIssueBg(Number(debouncedBudget)) : null;
 
   const addFiles = (files: FileList | File[]) => {
     const arr = Array.from(files).filter((f) => f.type.startsWith("image/"));
@@ -107,6 +156,11 @@ export function TaskForm({
       onError(`Бюджетът не може да бъде под ${minBudget} €.`);
       return;
     }
+    const problem = titleIssueBg(title) ?? descriptionIssueBg(description, title) ?? budgetIssueBg(budgetValue);
+    if (problem) {
+      onError(problem);
+      return;
+    }
     await onSubmit({
       values: { title, category, description, budget: budgetValue, location },
       files: photos.map((p) => p.file),
@@ -117,14 +171,19 @@ export function TaskForm({
   return (
     <form onSubmit={handleSubmit} className="space-y-6 rounded-2xl border border-border bg-card p-6 md:p-8">
       <div className="space-y-2">
-        <Label htmlFor="title">Какво трябва да се направи?</Label>
+        <div className="flex items-center justify-between gap-2">
+          <Label htmlFor="title">Какво трябва да се направи?</Label>
+          <Counter value={title.trim().length} min={TITLE_MIN} max={TITLE_MAX} />
+        </div>
         <Input
           id="title"
-          placeholder="Напр. Смяна на плочки в баня"
+          placeholder={examples.title}
+          maxLength={TITLE_MAX}
           value={title}
           onChange={(e) => setTitle(e.target.value)}
           className="h-11"
         />
+        {titleHint && <FieldHint message={titleHint} />}
       </div>
 
       <div className="space-y-2">
@@ -167,14 +226,23 @@ export function TaskForm({
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="description">Подробности за задачата</Label>
+        <div className="flex items-center justify-between gap-2">
+          <Label htmlFor="description">Подробности за задачата</Label>
+          <Counter value={description.trim().length} min={DESCRIPTION_MIN} max={DESCRIPTION_MAX} />
+        </div>
         <Textarea
           id="description"
-          placeholder="Опиши какво точно трябва да се направи, материали, срокове и др."
+          placeholder={examples.description}
+          maxLength={DESCRIPTION_MAX}
           value={description}
           onChange={(e) => setDescription(e.target.value)}
           rows={6}
         />
+        <p className="text-xs text-muted-foreground">
+          Включи какво точно трябва да се направи, кога ти трябва и специфики като размери, материали
+          или достъп до мястото. Повече детайли означават по-точни предложения.
+        </p>
+        {descriptionHint && <FieldHint message={descriptionHint} />}
       </div>
 
       <div className="space-y-2">
@@ -295,6 +363,7 @@ export function TaskForm({
             €
           </span>
         </div>
+        {budgetHint && <FieldHint message={budgetHint} />}
         {minBudget != null && (
           <p className="flex items-start gap-1.5 rounded-xl bg-secondary/60 px-3 py-2 text-xs text-muted-foreground">
             <Info className="mt-0.5 h-3.5 w-3.5 shrink-0 text-primary" />
