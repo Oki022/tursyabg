@@ -114,6 +114,15 @@ function AdminDashboard() {
         </div>
       )}
 
+      {s?.moderation_auto_rate_7d != null &&
+        s.moderation_auto_rate_7d < 60 &&
+        (s.moderation_auto_7d ?? 0) + (s.moderation_manual_7d ?? 0) + (s.moderation_pending ?? 0) >= 5 && (
+          <div className="rounded-md border border-amber-300 bg-amber-50 px-3 py-2 text-sm font-medium text-amber-900">
+            Само {s.moderation_auto_rate_7d}% от проверките са минали автоматично през последните 7 дни. Провери дали
+            автоматичната проверка на съдържание работи нормално.
+          </div>
+        )}
+
       {(s?.credit_mismatches ?? 0) > 0 && (
         <div className="rounded-md border border-red-400 bg-red-50 px-3 py-2 text-sm font-medium text-red-900">
           Несъответствие в кредитите при {s?.credit_mismatches}{" "}
@@ -149,6 +158,11 @@ function AdminDashboard() {
           label="Задачи за одобрение"
           value={String(s?.tasks_pending ?? 0)}
           hint={s?.tasks_pending_oldest ? `най-старата от ${formatDateBg(s.tasks_pending_oldest)}` : "няма изчакващи"}
+        />
+        <Stat
+          label="Автоматично одобрени"
+          value={s?.moderation_auto_rate_7d != null ? `${s.moderation_auto_rate_7d}%` : "няма данни"}
+          hint={`последните 7 дни · ${s?.moderation_auto_7d ?? 0} автоматично · ${s?.moderation_manual_7d ?? 0} ръчно`}
         />
         <Stat
           label="Нови съобщения"
