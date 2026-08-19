@@ -1,4 +1,5 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { useEffect } from "react";
 import {
   Outlet,
   Link,
@@ -16,6 +17,7 @@ import { SiteFooter } from "@/components/site-footer";
 import { Toaster } from "@/components/ui/sonner";
 import { AuthProvider } from "@/lib/auth";
 import { BRAND, pageTitle } from "@/lib/brand";
+import { MonitoringBoot } from "@/components/monitoring-boot";
 
 const SUPABASE_ORIGIN =
   (import.meta as any).env?.VITE_SUPABASE_URL ?? "https://xrltdrxhtennbscgbyxb.supabase.co";
@@ -45,6 +47,15 @@ function NotFoundComponent() {
 function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
   console.error(error);
   const router = useRouter();
+
+  useEffect(() => {
+    captureIssue({
+      area: "ui",
+      action: "route render failed",
+      error,
+      route: typeof window !== "undefined" ? window.location.pathname : undefined,
+    });
+  }, [error]);
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-background px-4">
