@@ -56,8 +56,9 @@ export function landingIntro(opts: { city?: City; category?: Category }): string
 
 export function landingH1(opts: { city?: City; category?: Category }): string {
   const { city, category } = opts;
-  if (city && category) return `${BRAND} майстор за ${category.name.toLowerCase()} в ${city.name}`;
-  if (city) return `${BRAND} изпълнител в ${city.name}, задачи и услуги`;
+  // "Търся" here is the verb ("I'm looking for"), not the brand name.
+  if (city && category) return `Търся майстор за ${category.name.toLowerCase()} в ${city.name}`;
+  if (city) return `Търся изпълнител в ${city.name}, задачи и услуги`;
   if (category) return `${category.name}, задачи и майстори в цяла България`;
   return `${BRAND}, задачи и услуги`;
 }
