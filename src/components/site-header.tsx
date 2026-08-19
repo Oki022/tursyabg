@@ -1,6 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { UnreadBadge } from "@/components/unread-badge";
-import { Plus, CircleUserRound, LogOut, BadgeCheck, MessageCircle, Settings } from "lucide-react";
+import { Plus, CircleUserRound, LogOut, BadgeCheck, MessageCircle, Settings, Heart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { NotificationBell } from "@/components/notification-bell";
 import { useAuth } from "@/lib/auth";
@@ -104,6 +104,12 @@ export function SiteHeader() {
                     <Link to="/messages" className="cursor-pointer">
                       <MessageCircle className="mr-2 h-4 w-4" />
                       Съобщения
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Link to="/favourites" className="cursor-pointer">
+                      <Heart className="mr-2 h-4 w-4" />
+                      Любими задачи
                     </Link>
                   </DropdownMenuItem>
                   <DropdownMenuItem asChild>
