@@ -2,6 +2,7 @@ import { createContext, useContext, useEffect, useState, type ReactNode } from "
 import type { Session } from "@supabase/supabase-js";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
+import { captureIssue } from "@/lib/monitoring/client";
 
 export type AuthUser = {
   id: string;
@@ -126,7 +127,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const login: AuthContextValue["login"] = async (email, password) => {
     const { error } = await supabase.auth.signInWithPassword({ email, password });
-    if (error) throw error;
+    if (error) {
+      captureIssue({ area: "auth", action: "sign in with password", error });
+      throw error;
+    }
   };
 
   const loginSocial: AuthContextValue["loginSocial"] = async () => {
@@ -134,7 +138,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const result = await lovable.auth.signInWithOAuth("google", {
       redirect_uri: window.location.origin,
     });
-    if (result.error) throw new Error(result.error.message ?? "Неуспешен вход с Google");
+    if (result.error) {
+      const err = new Error(result.error.message ?? "Неуспешен вход с Google");
+      captureIssue({ area: "auth", action: "sign in with google", error: err });
+      throw err;
+    }
   };
 
   const register: AuthContextValue["register"] = async ({ name, email, password, phone }) => {
@@ -152,7 +160,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         data: { full_name: name, phone },
       },
     });
-    if (error) throw error;
+    if (error) {
+      captureIssue({ area: "auth", action: "register account", error });
+      throw error;
+    }
     // Телефонът е задължителен контакт, записва се в профила веднага след регистрация.
     if (data.session?.user?.id) {
       await supabase.from("profiles").upsert({ id: data.session.user.id, full_name: name }, { onConflict: "id" });
@@ -167,12 +178,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const { error } = await supabase.auth.resetPasswordForEmail(email, {
       redirectTo: `${window.location.origin}/reset-password`,
     });
-    if (error) throw error;
+    if (error) {
+      captureIssue({ area: "auth", action: "request password reset", error });
+      throw error;
+    }
   };
 
   const updatePassword: AuthContextValue["updatePassword"] = async (password) => {
     const { error } = await supabase.auth.updateUser({ password });
-    if (error) throw error;
+    if (error) {
+      captureIssue({ area: "auth", action: "update password", error });
+      throw error;
+    }
   };
 
   const logout = async () => {

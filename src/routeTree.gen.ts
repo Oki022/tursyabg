@@ -56,6 +56,7 @@ import { Route as AuthenticatedPostedIdRouteImport } from './routes/_authenticat
 import { Route as AuthenticatedMessagesConversationIdRouteImport } from './routes/_authenticated/messages.$conversationId'
 import { Route as AuthenticatedBillingSuccessRouteImport } from './routes/_authenticated/billing.success'
 import { Route as ApiPublicPaymentsWebhookRouteImport } from './routes/api/public/payments/webhook'
+import { Route as ApiPublicMonitoringCronCheckRouteImport } from './routes/api/public/monitoring/cron-check'
 import { Route as AuthenticatedTaskIdEditRouteImport } from './routes/_authenticated/task.$id.edit'
 
 const TermsRoute = TermsRouteImport.update({
@@ -302,6 +303,12 @@ const ApiPublicPaymentsWebhookRoute =
     path: '/api/public/payments/webhook',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiPublicMonitoringCronCheckRoute =
+  ApiPublicMonitoringCronCheckRouteImport.update({
+    id: '/api/public/monitoring/cron-check',
+    path: '/api/public/monitoring/cron-check',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const AuthenticatedTaskIdEditRoute = AuthenticatedTaskIdEditRouteImport.update({
   id: '/task/$id/edit',
   path: '/task/$id/edit',
@@ -355,6 +362,7 @@ export interface FileRoutesByFullPath {
   '/messages/': typeof AuthenticatedMessagesIndexRoute
   '/city/$city/': typeof CityCityIndexRoute
   '/task/$id/edit': typeof AuthenticatedTaskIdEditRoute
+  '/api/public/monitoring/cron-check': typeof ApiPublicMonitoringCronCheckRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
 }
 export interface FileRoutesByTo {
@@ -402,6 +410,7 @@ export interface FileRoutesByTo {
   '/messages': typeof AuthenticatedMessagesIndexRoute
   '/city/$city': typeof CityCityIndexRoute
   '/task/$id/edit': typeof AuthenticatedTaskIdEditRoute
+  '/api/public/monitoring/cron-check': typeof ApiPublicMonitoringCronCheckRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
 }
 export interface FileRoutesById {
@@ -453,6 +462,7 @@ export interface FileRoutesById {
   '/_authenticated/messages/': typeof AuthenticatedMessagesIndexRoute
   '/city/$city/': typeof CityCityIndexRoute
   '/_authenticated/task/$id/edit': typeof AuthenticatedTaskIdEditRoute
+  '/api/public/monitoring/cron-check': typeof ApiPublicMonitoringCronCheckRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
 }
 export interface FileRouteTypes {
@@ -504,6 +514,7 @@ export interface FileRouteTypes {
     | '/messages/'
     | '/city/$city/'
     | '/task/$id/edit'
+    | '/api/public/monitoring/cron-check'
     | '/api/public/payments/webhook'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -551,6 +562,7 @@ export interface FileRouteTypes {
     | '/messages'
     | '/city/$city'
     | '/task/$id/edit'
+    | '/api/public/monitoring/cron-check'
     | '/api/public/payments/webhook'
   id:
     | '__root__'
@@ -601,6 +613,7 @@ export interface FileRouteTypes {
     | '/_authenticated/messages/'
     | '/city/$city/'
     | '/_authenticated/task/$id/edit'
+    | '/api/public/monitoring/cron-check'
     | '/api/public/payments/webhook'
   fileRoutesById: FileRoutesById
 }
@@ -626,6 +639,7 @@ export interface RootRouteChildren {
   CityCityRoute: typeof CityCityRouteWithChildren
   TaskIdRoute: typeof TaskIdRoute
   UserIdRoute: typeof UserIdRoute
+  ApiPublicMonitoringCronCheckRoute: typeof ApiPublicMonitoringCronCheckRoute
   ApiPublicPaymentsWebhookRoute: typeof ApiPublicPaymentsWebhookRoute
 }
 
@@ -960,6 +974,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicPaymentsWebhookRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/monitoring/cron-check': {
+      id: '/api/public/monitoring/cron-check'
+      path: '/api/public/monitoring/cron-check'
+      fullPath: '/api/public/monitoring/cron-check'
+      preLoaderRoute: typeof ApiPublicMonitoringCronCheckRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_authenticated/task/$id/edit': {
       id: '/_authenticated/task/$id/edit'
       path: '/task/$id/edit'
@@ -1081,6 +1102,7 @@ const rootRouteChildren: RootRouteChildren = {
   CityCityRoute: CityCityRouteWithChildren,
   TaskIdRoute: TaskIdRoute,
   UserIdRoute: UserIdRoute,
+  ApiPublicMonitoringCronCheckRoute: ApiPublicMonitoringCronCheckRoute,
   ApiPublicPaymentsWebhookRoute: ApiPublicPaymentsWebhookRoute,
 }
 export const routeTree = rootRouteImport

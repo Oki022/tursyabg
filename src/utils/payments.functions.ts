@@ -25,6 +25,14 @@ export const createCheckoutSession = createServerFn({ method: "POST" })
         email: user?.email ?? undefined,
       });
     } catch (error) {
+      const { reportServerIssue } = await import("@/lib/monitoring/sentry.server");
+      reportServerIssue({
+        area: "payments.checkout",
+        action: "create credit checkout session",
+        error,
+        userId: context.userId,
+        extra: { package_id: data.packageId, stripe_env: data.environment },
+      });
       return { error: getStripeErrorMessage(error) };
     }
   });
@@ -58,6 +66,14 @@ export const createPromotionCheckoutSession = createServerFn({ method: "POST" })
         email: user?.email ?? undefined,
       });
     } catch (error) {
+      const { reportServerIssue } = await import("@/lib/monitoring/sentry.server");
+      reportServerIssue({
+        area: "payments.checkout",
+        action: "create promotion checkout session",
+        error,
+        userId: context.userId,
+        extra: { promo_product_id: data.promoProductId, stripe_env: data.environment },
+      });
       return { error: getStripeErrorMessage(error) };
     }
   });
