@@ -19,9 +19,9 @@ import {
 export const Route = createFileRoute("/_authenticated/review/$engagementId")({
   head: () => ({
     meta: [
-      { title: "Остави отзив | Търся" },
+      { title: "Остави отзив | ТърсяБГ" },
       { name: "description", content: "Оцени съвместната работа с 1 до 5 звезди и кратък коментар." },
-      { property: "og:title", content: "Остави отзив | Търся" },
+      { property: "og:title", content: "Остави отзив | ТърсяБГ" },
       { property: "og:description", content: "Двустранни отзиви след потвърдена работа." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },

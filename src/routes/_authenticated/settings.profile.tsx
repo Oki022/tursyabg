@@ -13,10 +13,10 @@ import { normalizeBgPhone, phoneError } from "@/lib/phone";
 export const Route = createFileRoute("/_authenticated/settings/profile")({
   head: () => ({
     meta: [
-      { title: "Редакция на профил | Търся" },
+      { title: "Редакция на профил | ТърсяБГ" },
       { name: "description", content: "Промени името и телефона за контакт в профила си." },
-      { property: "og:title", content: "Редакция на профил | Търся" },
-      { property: "og:description", content: "Промени данните в своя профил в Търся." },
+      { property: "og:title", content: "Редакция на профил | ТърсяБГ" },
+      { property: "og:description", content: "Промени данните в своя профил в ТърсяБГ." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
     ],

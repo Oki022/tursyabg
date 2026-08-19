@@ -17,10 +17,10 @@ export const Route = createFileRoute("/auth/verify")({
   }),
   head: () => ({
     meta: [
-      { title: "Потвърди имейла си | Търся" },
+      { title: "Потвърди имейла си | ТърсяБГ" },
       { name: "description", content: "Изпратихме ти линк за потвърждение. Отвори имейла си, за да активираш профила." },
-      { property: "og:title", content: "Потвърди имейла си | Търся" },
-      { property: "og:description", content: "Още една стъпка: потвърди имейла си, за да започнеш работа в Търся." },
+      { property: "og:title", content: "Потвърди имейла си | ТърсяБГ" },
+      { property: "og:description", content: "Още една стъпка: потвърди имейла си, за да започнеш работа в ТърсяБГ." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
       { name: "robots", content: "noindex, nofollow" },

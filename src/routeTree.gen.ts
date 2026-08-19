@@ -44,6 +44,7 @@ import { Route as AuthenticatedUnlockedRouteImport } from './routes/_authenticat
 import { Route as AuthenticatedProfileRouteImport } from './routes/_authenticated/profile'
 import { Route as AuthenticatedPostRouteImport } from './routes/_authenticated/post'
 import { Route as AuthenticatedNotificationsRouteImport } from './routes/_authenticated/notifications'
+import { Route as AuthenticatedFavouritesRouteImport } from './routes/_authenticated/favourites'
 import { Route as CityCityIndexRouteImport } from './routes/city.$city.index'
 import { Route as AuthenticatedMessagesIndexRouteImport } from './routes/_authenticated/messages.index'
 import { Route as CityCityCategoryRouteImport } from './routes/city.$city.$category'
@@ -234,6 +235,11 @@ const AuthenticatedNotificationsRoute =
     path: '/notifications',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedFavouritesRoute = AuthenticatedFavouritesRouteImport.update({
+  id: '/favourites',
+  path: '/favourites',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const CityCityIndexRoute = CityCityIndexRouteImport.update({
   id: '/',
   path: '/',
@@ -331,6 +337,7 @@ export interface FileRoutesByFullPath {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/tasks': typeof TasksRoute
   '/terms': typeof TermsRoute
+  '/favourites': typeof AuthenticatedFavouritesRoute
   '/notifications': typeof AuthenticatedNotificationsRoute
   '/post': typeof AuthenticatedPostRoute
   '/profile': typeof AuthenticatedProfileRoute
@@ -380,6 +387,7 @@ export interface FileRoutesByTo {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/tasks': typeof TasksRoute
   '/terms': typeof TermsRoute
+  '/favourites': typeof AuthenticatedFavouritesRoute
   '/notifications': typeof AuthenticatedNotificationsRoute
   '/post': typeof AuthenticatedPostRoute
   '/profile': typeof AuthenticatedProfileRoute
@@ -431,6 +439,7 @@ export interface FileRoutesById {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/tasks': typeof TasksRoute
   '/terms': typeof TermsRoute
+  '/_authenticated/favourites': typeof AuthenticatedFavouritesRoute
   '/_authenticated/notifications': typeof AuthenticatedNotificationsRoute
   '/_authenticated/post': typeof AuthenticatedPostRoute
   '/_authenticated/profile': typeof AuthenticatedProfileRoute
@@ -483,6 +492,7 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/tasks'
     | '/terms'
+    | '/favourites'
     | '/notifications'
     | '/post'
     | '/profile'
@@ -532,6 +542,7 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/tasks'
     | '/terms'
+    | '/favourites'
     | '/notifications'
     | '/post'
     | '/profile'
@@ -582,6 +593,7 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/tasks'
     | '/terms'
+    | '/_authenticated/favourites'
     | '/_authenticated/notifications'
     | '/_authenticated/post'
     | '/_authenticated/profile'
@@ -890,6 +902,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedNotificationsRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/favourites': {
+      id: '/_authenticated/favourites'
+      path: '/favourites'
+      fullPath: '/favourites'
+      preLoaderRoute: typeof AuthenticatedFavouritesRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/city/$city/': {
       id: '/city/$city/'
       path: '/'
@@ -992,6 +1011,7 @@ declare module '@tanstack/react-router' {
 }
 
 interface AuthenticatedRouteRouteChildren {
+  AuthenticatedFavouritesRoute: typeof AuthenticatedFavouritesRoute
   AuthenticatedNotificationsRoute: typeof AuthenticatedNotificationsRoute
   AuthenticatedPostRoute: typeof AuthenticatedPostRoute
   AuthenticatedProfileRoute: typeof AuthenticatedProfileRoute
@@ -1009,6 +1029,7 @@ interface AuthenticatedRouteRouteChildren {
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedFavouritesRoute: AuthenticatedFavouritesRoute,
   AuthenticatedNotificationsRoute: AuthenticatedNotificationsRoute,
   AuthenticatedPostRoute: AuthenticatedPostRoute,
   AuthenticatedProfileRoute: AuthenticatedProfileRoute,

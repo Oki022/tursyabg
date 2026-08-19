@@ -29,11 +29,11 @@ export function MobileNav() {
         <Link
           to="/post"
           aria-label="Възложи задача"
-          className="relative -mt-6 flex min-w-0 flex-1 flex-col items-center justify-end gap-1 px-1 pb-2 text-[11px] font-medium text-slate-400 transition-all duration-150 active:scale-95"
-          activeProps={{ className: "relative -mt-6 flex min-w-0 flex-1 flex-col items-center justify-end gap-1 px-1 pb-2 text-[11px] font-semibold text-primary transition-all duration-150 active:scale-95" }}
+          className="relative -mt-4 flex min-w-0 flex-1 flex-col items-center justify-end gap-1 px-1 pb-2 text-[11px] font-medium text-slate-400 transition-all duration-150 active:scale-95"
+          activeProps={{ className: "relative -mt-4 flex min-w-0 flex-1 flex-col items-center justify-end gap-1 px-1 pb-2 text-[11px] font-semibold text-primary transition-all duration-150 active:scale-95" }}
         >
-          <span className="grid h-14 w-14 place-items-center rounded-full bg-gradient-to-br from-orange-500 to-rose-500 text-white shadow-lg shadow-rose-500/30 ring-4 ring-background transition-transform duration-150 active:scale-95">
-            <Plus className="h-7 w-7" strokeWidth={2.5} />
+          <span className="grid h-10 w-10 place-items-center rounded-full bg-gradient-to-br from-orange-500 to-rose-500 text-white shadow-md shadow-rose-500/20 ring-2 ring-background transition-transform duration-150 active:scale-95">
+            <Plus className="h-5 w-5" strokeWidth={2.5} />
           </span>
           <span className="w-full truncate text-center">Възложи</span>
         </Link>

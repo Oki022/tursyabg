@@ -13,12 +13,12 @@ const PAGE = 20;
 export const Route = createFileRoute("/_authenticated/notifications")({
   head: () => ({
     meta: [
-      { title: "Известия | Търся" },
+      { title: "Известия | ТърсяБГ" },
       {
         name: "description",
-        content: "Всички твои известия за задачи, съобщения, кредити и промоции в Търся.",
+        content: "Всички твои известия за задачи, съобщения, кредити и промоции в ТърсяБГ.",
       },
-      { property: "og:title", content: "Известия | Търся" },
+      { property: "og:title", content: "Известия | ТърсяБГ" },
       { property: "og:description", content: "Следи новините по своите задачи и съобщения." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },

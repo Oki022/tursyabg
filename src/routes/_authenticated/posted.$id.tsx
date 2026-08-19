@@ -8,12 +8,12 @@ import { useTask } from "@/lib/tasks-api";
 export const Route = createFileRoute("/_authenticated/posted/$id")({
   head: () => ({
     meta: [
-      { title: "Задачата е публикувана | Търся" },
+      { title: "Задачата е публикувана | ТърсяБГ" },
       {
         name: "description",
         content: "Задачата ти е публикувана успешно. Промотирай я, за да получиш повече оферти от майстори.",
       },
-      { property: "og:title", content: "Задачата е публикувана | Търся" },
+      { property: "og:title", content: "Задачата е публикувана | ТърсяБГ" },
       { property: "og:description", content: "Промотирай новата си задача за повече прегледания и оферти." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },

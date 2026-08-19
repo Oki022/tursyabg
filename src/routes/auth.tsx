@@ -133,7 +133,7 @@ function AuthPage() {
           </h1>
           <p className="mt-1.5 text-sm text-muted-foreground">
             {isRegister
-              ? "Присъедини се към Търся за минути."
+              ? "Присъедини се към ТърсяБГ за минути."
               : "Влез в своя профил, за да продължиш."}
           </p>
         </div>
