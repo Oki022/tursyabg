@@ -397,7 +397,8 @@ export function useCreateTask() {
 
       // Automated gate: publishes the task immediately when every check came
       // back clean, keeps it held when something needs a human.
-      await supabase.rpc("finalize_task_publication", { _task_id: task.id });
+      const { error: finalizeError } = await supabase.rpc("finalize_task_publication", { _task_id: task.id });
+      if (finalizeError) console.error("finalize_task_publication", finalizeError);
 
       const { data: fresh } = await supabase.from("tasks").select("status").eq("id", task.id).maybeSingle();
 
