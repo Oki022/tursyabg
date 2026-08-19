@@ -15,6 +15,7 @@ import {
   KeyRound,
   Eye,
   Rocket,
+  Heart,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
@@ -28,6 +29,8 @@ import { PROMO_LABELS, remainingLabel, type TaskPromotion } from "@/services/pro
 import { PromoteDialog } from "@/components/promotions/promote-dialog";
 import { PromotedBadge, TopBadge, UrgentBadge } from "@/components/promotions/promo-badges";
 import { OwnerTaskControls } from "@/components/tasks/owner-task-controls";
+import { CreditBalanceCard } from "@/components/credits/credit-balance-card";
+import { useFavouritesCount } from "@/lib/favourites-api";
 import { EngagementInbox } from "@/components/reviews/engagement-cards";
 import type { Task } from "@/lib/mock-data";
 import { toast } from "sonner";
@@ -64,6 +67,7 @@ function ProfilePage() {
   const [promoteTaskId, setPromoteTaskId] = useState<string | null>(null);
   const navigate = useNavigate();
   const [tab, setTab] = useState<TaskStatus>("active");
+  const favouritesCount = useFavouritesCount();
 
   const byStatus = useMemo(() => {
     const map: Record<TaskStatus, typeof tasks> = {
@@ -237,6 +241,11 @@ function ProfilePage() {
                   <span className="min-w-0 flex-1 truncate text-sm font-medium text-foreground">
                     {item.label}
                   </span>
+                  {item.to === "/favourites" && (favouritesCount.data ?? 0) > 0 && (
+                    <span className="shrink-0 rounded-full bg-primary/10 px-2 py-0.5 text-xs font-semibold text-primary">
+                      {favouritesCount.data}
+                    </span>
+                  )}
                   <ChevronRight className="h-4 w-4 shrink-0 text-muted-foreground" />
                 </Link>
               );
@@ -296,6 +305,17 @@ function ProfilePage() {
               </div>
             </section>
           </>
+
+        <div className="pb-2 pt-2 text-center">
+          <button
+            type="button"
+            onClick={handleLogout}
+            className="inline-flex items-center gap-2 text-sm font-medium text-muted-foreground underline-offset-4 transition-colors hover:text-destructive hover:underline"
+          >
+            <LogOut className="h-4 w-4" />
+            Изход
+          </button>
+        </div>
       </div>
     </div>
   );
