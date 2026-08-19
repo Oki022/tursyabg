@@ -1627,6 +1627,7 @@ export type Database = {
           user_id: string
         }[]
       }
+      finalize_task_publication: { Args: { _task_id: string }; Returns: Json }
       find_or_create_conversation: {
         Args: { _other_user: string; _task_id: string }
         Returns: string
@@ -1773,6 +1774,7 @@ export type Database = {
         Args: { _comment: string; _engagement_id: string; _rating: number }
         Returns: Json
       }
+      sweep_autopublish: { Args: { _limit?: number }; Returns: number }
       sweep_engagements: { Args: { _batch?: number }; Returns: number }
       sweep_expiry_notifications: { Args: { _batch?: number }; Returns: number }
       task_unlockers: {
