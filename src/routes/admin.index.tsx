@@ -107,6 +107,20 @@ function AdminDashboard() {
         </div>
       )}
 
+      {(s?.rule_engine_errors_7d ?? 0) > 0 && (
+        <div className="rounded-md border border-rose-300 bg-rose-50 px-3 py-2 text-sm font-medium text-rose-900">
+          Автоматичната оценка на възстановявания е дала грешка {s?.rule_engine_errors_7d} пъти през последните 7 дни.
+          Заявките са изпратени за ръчен преглед.
+        </div>
+      )}
+
+      {(s?.credit_mismatches ?? 0) > 0 && (
+        <div className="rounded-md border border-red-400 bg-red-50 px-3 py-2 text-sm font-medium text-red-900">
+          Несъответствие в кредитите при {s?.credit_mismatches}{" "}
+          {s?.credit_mismatches === 1 ? "потребител" : "потребители"}: балансът не отговаря на историята на трансакциите.
+        </div>
+      )}
+
       <div className="grid grid-cols-2 gap-3 md:grid-cols-3 xl:grid-cols-4">
         <Stat label="Потребители" value={String(s?.total_users ?? "няма")} hint={`+${s?.new_users_7d ?? 0} за 7 дни · +${s?.new_users_30d ?? 0} за 30 дни`} />
         <Stat label="Задачи" value={String(s?.total_tasks ?? "няма")} hint={`${s?.active_tasks ?? 0} активни`} />

@@ -1380,6 +1380,16 @@ export type Database = {
         Args: { _category: string; _task_id: string }
         Returns: Json
       }
+      admin_credit_mismatches: {
+        Args: never
+        Returns: {
+          credits: number
+          diff: number
+          full_name: string
+          ledger: number
+          user_id: string
+        }[]
+      }
       admin_cron_health: {
         Args: never
         Returns: {
