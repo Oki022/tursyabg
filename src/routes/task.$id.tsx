@@ -40,6 +40,7 @@ import { toast } from "sonner";
 import { CONTACT_MASK_WARNING, containsContactInfo, isValidBgPhone } from "@/lib/phone";
 import { RequirePhoneNotice } from "@/components/require-phone-notice";
 import { ShareButton } from "@/components/share-button";
+import { FavouriteButton } from "@/components/favourite-button";
 import { ClaimTaskButton } from "@/components/tasks/claim-task-button";
 import { EngagementInbox } from "@/components/reviews/engagement-cards";
 import { fetchTaskSeo } from "@/lib/seo-loaders";
@@ -357,7 +358,15 @@ function TaskDetails() {
             <h1 className="break-words text-3xl font-bold tracking-tight text-slate-900 md:text-4xl">
               {task.title}
             </h1>
-            <ShareButton path={`/task/${task.id}`} title={task.title} className="mt-1 shrink-0" />
+            <div className="mt-1 flex shrink-0 items-center gap-2">
+              <FavouriteButton
+                taskId={task.id}
+                ownerId={task.userId}
+                size="md"
+                className="border border-border/60"
+              />
+              <ShareButton path={`/task/${task.id}`} title={task.title} />
+            </div>
           </div>
 
           <section className="mt-8 rounded-3xl border border-border/60 bg-card p-6 shadow-sm md:p-7">
