@@ -13,7 +13,7 @@ export const BUDGET_MAX = 500000;
 
 const VOWELS = /[аъоуеияюaeiouy]/g;
 const KEYBOARD_MASH =
-  /(asdf|sdfg|dfgh|fghj|ghjk|hjkl|qwer|wert|erty|rtyu|tyui|yuio|uiop|zxcv|xcvb|cvbn|vbnm|qazwsx|qwerty|йцук|цуке|укен|фыва|ячсм|абвгд)/;
+  /(asdf|sdfg|dfgh|fghj|ghjk|hjkl|qwer|wert|erty|rtyu|tyui|yuio|uiop|zxcv|xcvb|cvbn|vbnm|qazwsx|qwerty|йцук|цуке|укен|фыва|ячсм|абвгд|фдса|дсаф|ждло|ялдж|ъвер|ьбню|ючсм)/;
 
 const letters = (s: string) => s.replace(/[^\p{L}]/gu, "");
 
