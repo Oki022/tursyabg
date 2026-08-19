@@ -15,9 +15,9 @@ export const Route = createFileRoute("/_authenticated/billing/success")({
   }),
   head: () => ({
     meta: [
-      { title: "Потвърждение на плащане | Търся" },
+      { title: "Потвърждение на плащане | ТърсяБГ" },
       { name: "description", content: "Потвърждаваме плащането ти и зареждаме кредитите по баланса." },
-      { property: "og:title", content: "Потвърждение на плащане | Търся" },
+      { property: "og:title", content: "Потвърждение на плащане | ТърсяБГ" },
       { property: "og:description", content: "Проверяваме плащането и добавяме кредитите по баланса ти." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
