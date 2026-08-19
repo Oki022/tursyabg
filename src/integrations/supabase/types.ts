@@ -1408,6 +1408,25 @@ export type Database = {
         Args: { _reason: string; _review_id: string }
         Returns: Json
       }
+      admin_list_refunds: {
+        Args: { _status?: string }
+        Returns: {
+          admin_note: string
+          auto_rule: string
+          created_at: string
+          credits: number
+          details: string
+          id: string
+          reason: Database["public"]["Enums"]["refund_reason"]
+          resolution: string
+          resolved_at: string
+          status: Database["public"]["Enums"]["refund_status"]
+          task_id: string
+          task_title: string
+          user_id: string
+          user_name: string
+        }[]
+      }
       admin_list_reviews: {
         Args: { _filter?: string; _limit?: number }
         Returns: {
