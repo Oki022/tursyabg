@@ -51,6 +51,7 @@ function AdminUsers() {
       INVALID_INPUT: "Въведи валидна стойност и причина.",
       REASON_REQUIRED: "Причината е задължителна.",
       SELF: "Не можеш да блокираш собствения си профил.",
+      LAST_ADMIN: "Това е последният администратор — профилът не може да бъде блокиран.",
       USER_NOT_FOUND: "Потребителят не е намерен.",
     })[e.message] ?? "Действието не беше изпълнено.";
 
@@ -62,7 +63,10 @@ function AdminUsers() {
 
   const mBan = useMutation({
     mutationFn: () => setBan(banTarget!.id, !banTarget!.bannedAt, reason),
-    onSuccess: () => { toast.success("Готово."); setBanTarget(null); setReason(""); invalidate(); },
+    onSuccess: () => {
+      toast.success(banTarget?.bannedAt ? "Профилът е възстановен." : "Профилът е блокиран.");
+      setBanTarget(null); setReason(""); invalidate();
+    },
     onError: (e: Error) => toast.error(errorText(e)),
   });
 
