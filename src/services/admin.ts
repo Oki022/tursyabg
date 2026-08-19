@@ -41,7 +41,33 @@ export type DashboardStats = {
   tasks_pending: number;
   tasks_pending_oldest: string | null;
   contact_new: number;
+  credit_mismatches: number;
+  rule_engine_errors_7d: number;
 };
+
+export type CreditMismatch = { userId: string; userName: string; credits: number; ledger: number; diff: number };
+
+/** Users whose profiles.credits diverges from the sum of their credit_transactions. */
+export async function getCreditMismatches(): Promise<CreditMismatch[]> {
+  const { data, error } = await (supabase.rpc as unknown as (
+    fn: string,
+  ) => Promise<{ data: unknown; error: { message: string } | null }>)("admin_credit_mismatches");
+  if (error) throw error;
+  const rows = (data ?? []) as {
+    user_id: string;
+    full_name: string | null;
+    credits: number;
+    ledger: number;
+    diff: number;
+  }[];
+  return rows.map((r) => ({
+    userId: r.user_id,
+    userName: r.full_name ?? "Потребител",
+    credits: r.credits,
+    ledger: r.ledger,
+    diff: r.diff,
+  }));
+}
 
 export async function getDashboardStats(): Promise<DashboardStats> {
   const { data, error } = await supabase.rpc("admin_dashboard_stats");
