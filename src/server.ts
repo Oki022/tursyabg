@@ -62,7 +62,10 @@ async function normalizeCatastrophicSsrResponse(response: Response): Promise<Res
     return response;
   }
 
-  console.error(consumeLastCapturedError() ?? new Error(`h3 swallowed SSR error: ${body}`));
+  const captured = consumeLastCapturedError() ?? new Error(`h3 swallowed SSR error: ${body}`);
+  console.error(captured);
+  const { reportServerIssue } = await import("./lib/monitoring/sentry.server");
+  reportServerIssue({ area: "ssr", action: "ssr render failed", error: captured });
   return brandedErrorResponse();
 }
 
@@ -74,6 +77,13 @@ export default {
       return await normalizeCatastrophicSsrResponse(response);
     } catch (error) {
       console.error(error);
+      const { reportServerIssue } = await import("./lib/monitoring/sentry.server");
+      reportServerIssue({
+        area: "ssr",
+        action: "worker fetch failed",
+        error,
+        route: new URL(request.url).pathname,
+      });
       return brandedErrorResponse();
     }
   },
