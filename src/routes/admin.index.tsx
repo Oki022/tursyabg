@@ -151,6 +151,11 @@ function AdminDashboard() {
           hint={s?.tasks_pending_oldest ? `най-старата от ${formatDateBg(s.tasks_pending_oldest)}` : "няма изчакващи"}
         />
         <Stat
+          label="Автоматично одобрени"
+          value={s?.moderation_auto_rate_7d != null ? `${s.moderation_auto_rate_7d}%` : "няма данни"}
+          hint={`последните 7 дни · ${s?.moderation_auto_7d ?? 0} автоматично · ${s?.moderation_manual_7d ?? 0} ръчно`}
+        />
+        <Stat
           label="Нови съобщения"
           value={String(s?.contact_new ?? 0)}
           hint="Контактна форма"
