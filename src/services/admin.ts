@@ -37,6 +37,10 @@ export type DashboardStats = {
   pending_reports: number;
   moderation_pending: number;
   moderation_oldest: string | null;
+  moderation_auto_7d: number;
+  moderation_manual_7d: number;
+  /** Share of automated content checks resolved without a human, last 7 days. */
+  moderation_auto_rate_7d: number | null;
   violations_30d: number;
   tasks_pending: number;
   tasks_pending_oldest: string | null;
