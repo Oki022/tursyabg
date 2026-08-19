@@ -1,3 +1,4 @@
+import { contentQualityErrorBg } from "@/lib/content-quality";
 import { supabase } from "@/integrations/supabase/client";
 
 export type EngagementStatus = "claimed" | "confirmed" | "rejected" | "expired";
