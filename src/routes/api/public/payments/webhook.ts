@@ -82,14 +82,23 @@ export const Route = createFileRoute("/api/public/payments/webhook")({
   server: {
     handlers: {
       POST: async ({ request }) => {
+        const { reportServerIssue } = await import("@/lib/monitoring/sentry.server");
         const rawEnv = new URL(request.url).searchParams.get("env");
         if (rawEnv !== "sandbox" && rawEnv !== "live") {
           console.error("Webhook received with invalid env:", rawEnv);
+          reportServerIssue({
+            area: "payments.webhook",
+            action: "webhook received with invalid env",
+            error: new Error(`Invalid webhook env: ${String(rawEnv)}`),
+            route: "/api/public/payments/webhook",
+          });
           return Response.json({ received: true, ignored: "invalid env" });
         }
         const env: StripeEnv = rawEnv;
+        let eventType = "unknown";
         try {
           const event = await verifyWebhook(request, env);
+          eventType = event.type;
 
           const isNew = await markEventProcessed(event.id, event.type);
           if (!isNew) {
@@ -115,6 +124,14 @@ export const Route = createFileRoute("/api/public/payments/webhook")({
           return Response.json({ received: true });
         } catch (e) {
           console.error("Webhook error:", e);
+          // Payment taken but fulfilment failed: highest alert priority.
+          reportServerIssue({
+            area: "payments.webhook",
+            action: `stripe webhook failed (${eventType})`,
+            error: e,
+            route: "/api/public/payments/webhook",
+            extra: { stripe_env: env, event_type: eventType },
+          });
           return new Response("Webhook error", { status: 400 });
         }
       },
