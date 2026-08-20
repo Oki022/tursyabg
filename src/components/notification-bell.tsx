@@ -32,7 +32,7 @@ function BellButton({ unread }: { unread: number }) {
 
 function PanelHeader({ withCloseSpace }: { withCloseSpace: boolean }) {
   return (
-    <div className="flex min-h-11 items-center border-b border-border px-3 py-2.5">
+    <div className="flex min-h-11 shrink-0 items-center border-b border-border px-3 py-2.5">
       <span className={`text-sm font-semibold ${withCloseSpace ? "pr-10" : ""}`}>Известия</span>
     </div>
   );
@@ -40,7 +40,7 @@ function PanelHeader({ withCloseSpace }: { withCloseSpace: boolean }) {
 
 function PanelFooter({ onNavigate }: { onNavigate: () => void }) {
   return (
-    <div className="border-t border-border p-2">
+    <div className="shrink-0 border-t border-border p-2 pb-[max(0.5rem,env(safe-area-inset-bottom))]">
       <Link
         to="/notifications"
         onClick={onNavigate}
@@ -84,7 +84,13 @@ export function NotificationBell() {
   const body = (
     <>
       <PanelHeader withCloseSpace={isMobile} />
-      <div className="max-h-[60vh] flex-1 overflow-y-auto md:max-h-[380px]">
+      <div
+        className={
+          isMobile
+            ? "min-h-0 flex-1 overflow-y-auto overscroll-contain"
+            : "max-h-[380px] flex-1 overflow-y-auto"
+        }
+      >
         <NotificationList
           items={items}
           isLoading={listQuery.isLoading}
@@ -104,7 +110,10 @@ export function NotificationBell() {
             <BellButton unread={unread} />
           </span>
         </SheetTrigger>
-        <SheetContent side="right" className="flex w-full max-w-full flex-col gap-0 p-0 sm:max-w-md">
+        <SheetContent
+          side="right"
+          className="flex h-[100dvh] w-full max-w-full flex-col gap-0 p-0 pt-[env(safe-area-inset-top)] sm:max-w-md"
+        >
           <SheetTitle className="sr-only">Известия</SheetTitle>
           {body}
         </SheetContent>
