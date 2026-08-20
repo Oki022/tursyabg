@@ -84,7 +84,13 @@ export function NotificationBell() {
   const body = (
     <>
       <PanelHeader withCloseSpace={isMobile} />
-      <div className="max-h-[60vh] flex-1 overflow-y-auto md:max-h-[380px]">
+      <div
+        className={
+          isMobile
+            ? "min-h-0 flex-1 overflow-y-auto overscroll-contain"
+            : "max-h-[380px] flex-1 overflow-y-auto"
+        }
+      >
         <NotificationList
           items={items}
           isLoading={listQuery.isLoading}
@@ -104,7 +110,10 @@ export function NotificationBell() {
             <BellButton unread={unread} />
           </span>
         </SheetTrigger>
-        <SheetContent side="right" className="flex w-full max-w-full flex-col gap-0 p-0 sm:max-w-md">
+        <SheetContent
+          side="right"
+          className="flex h-[100dvh] w-full max-w-full flex-col gap-0 p-0 pt-[env(safe-area-inset-top)] sm:max-w-md"
+        >
           <SheetTitle className="sr-only">Известия</SheetTitle>
           {body}
         </SheetContent>
