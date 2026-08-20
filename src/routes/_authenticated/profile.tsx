@@ -365,15 +365,24 @@ function OwnerTaskCard({
   task,
   promotions,
   onPromote,
+  archived = false,
+  repostable = false,
 }: {
   task: Task;
   promotions: TaskPromotion[];
   onPromote: () => void;
+  archived?: boolean;
+  repostable?: boolean;
 }) {
   return (
     <div className="flex min-w-0 flex-col gap-2">
       <TaskCard task={{ ...task, isTop: promotions.some((p) => p.type === "top"), isUrgent: promotions.some((p) => p.type === "urgent") }} />
       <div className="min-w-0 rounded-xl border border-border/60 bg-card p-2 text-[11px]">
+        {archived && (
+          <p className="mb-1 rounded-full bg-muted px-2 py-0.5 text-center text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">
+            Архивирана
+          </p>
+        )}
         {promotions.length > 0 && <PromotedBadge className="mb-1" />}
         <div className="flex flex-wrap items-center gap-1 text-muted-foreground">
           <Eye className="h-3 w-3 shrink-0" />
@@ -401,10 +410,20 @@ function OwnerTaskCard({
         ) : (
           <p className="mt-1 text-muted-foreground">Няма активни промоции.</p>
         )}
-        <Button size="sm" variant="outline" className="mt-2 h-7 w-full gap-1 text-[11px]" onClick={onPromote}>
-          <Rocket className="h-3 w-3" />
-          {promotions.length > 0 ? "Управлявай" : "Промотирай"}
-        </Button>
+        {!archived && (
+          <Button size="sm" variant="outline" className="mt-2 h-7 w-full gap-1 text-[11px]" onClick={onPromote}>
+            <Rocket className="h-3 w-3" />
+            {promotions.length > 0 ? "Управлявай" : "Промотирай"}
+          </Button>
+        )}
+        {repostable && (
+          <Button asChild size="sm" variant="outline" className="mt-2 h-7 w-full gap-1 text-[11px]">
+            <Link to="/post" search={{ repost: task.id }}>
+              <RotateCcw className="h-3 w-3" />
+              Публикувай отново
+            </Link>
+          </Button>
+        )}
         {(task.status === "active" || task.status === "assigned") && (
           <div className="mt-2">
             <OwnerTaskControls task={task} compact />
