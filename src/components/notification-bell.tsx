@@ -32,7 +32,7 @@ function BellButton({ unread }: { unread: number }) {
 
 function PanelHeader({ withCloseSpace }: { withCloseSpace: boolean }) {
   return (
-    <div className="flex min-h-11 items-center border-b border-border px-3 py-2.5">
+    <div className="flex min-h-11 shrink-0 items-center border-b border-border px-3 py-2.5">
       <span className={`text-sm font-semibold ${withCloseSpace ? "pr-10" : ""}`}>Известия</span>
     </div>
   );
@@ -40,7 +40,7 @@ function PanelHeader({ withCloseSpace }: { withCloseSpace: boolean }) {
 
 function PanelFooter({ onNavigate }: { onNavigate: () => void }) {
   return (
-    <div className="border-t border-border p-2">
+    <div className="shrink-0 border-t border-border p-2 pb-[max(0.5rem,env(safe-area-inset-bottom))]">
       <Link
         to="/notifications"
         onClick={onNavigate}
