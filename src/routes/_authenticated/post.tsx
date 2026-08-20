@@ -1,5 +1,5 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useCreateTask } from "@/lib/tasks-api";
+import { useCreateTask, useTask } from "@/lib/tasks-api";
 import {
   IMAGE_HELD_BG,
   IMAGE_REJECT_BG,
@@ -14,6 +14,10 @@ import { contentQualityErrorBg } from "@/lib/content-quality";
 import { CONTACT_MASK_WARNING, containsContactInfo, isValidBgPhone } from "@/lib/phone";
 
 export const Route = createFileRoute("/_authenticated/post")({
+  validateSearch: (search: Record<string, unknown>): { repost?: string } =>
+    typeof search["repost"] === "string" && search["repost"]
+      ? { repost: search["repost"] as string }
+      : {},
   head: () => ({
     meta: [
       { title: "Възложи задача | ТърсяБГ" },
@@ -28,6 +32,26 @@ function PostPage() {
   const createTask = useCreateTask();
   const { user } = useAuth();
   const hasPhone = Boolean(user?.phone && isValidBgPhone(user.phone));
+  const { repost } = Route.useSearch();
+  const source = useTask(repost ?? "");
+  const initial =
+    repost && source.data
+      ? {
+          title: source.data.title,
+          category: source.data.category,
+          description: source.data.description,
+          budget: source.data.budget,
+          location: source.data.location,
+        }
+      : undefined;
+
+  if (repost && source.isLoading) {
+    return (
+      <div className="container mx-auto max-w-3xl px-4 py-16 text-center text-sm text-muted-foreground">
+        Зареждане на данните от предишната задача...
+      </div>
+    );
+  }
 
   return (
     <div className="container mx-auto max-w-3xl px-4 py-8 md:py-12">
@@ -47,7 +71,9 @@ function PostPage() {
       )}
 
       <TaskForm
+        key={initial ? `repost-${repost}` : "new"}
         mode="create"
+        {...(initial ? { initial } : {})}
         submitting={createTask.isPending}
         disabled={!hasPhone}
         submitLabel="Публикувай задачата"

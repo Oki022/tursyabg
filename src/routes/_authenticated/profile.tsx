@@ -16,6 +16,7 @@ import {
   Eye,
   Rocket,
   Heart,
+  RotateCcw,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
@@ -35,7 +36,19 @@ import { EngagementInbox } from "@/components/reviews/engagement-cards";
 import type { Task } from "@/lib/mock-data";
 import { toast } from "sonner";
 
-const TASK_TABS: { value: TaskStatus; label: string; empty: string }[] = [
+type TaskTabValue = TaskStatus | "archive";
+
+const ARCHIVE_AFTER_MS = 90 * 24 * 60 * 60 * 1000;
+
+/** Inactive or assigned tasks older than 3 months move to the archive tab. */
+function isArchived(task: Task): boolean {
+  if (task.status !== "inactive" && task.status !== "assigned") return false;
+  const iso = task.statusChangedAtIso ?? task.createdAtIso;
+  if (!iso) return false;
+  return Date.now() - new Date(iso).getTime() > ARCHIVE_AFTER_MS;
+}
+
+const TASK_TABS: { value: TaskTabValue; label: string; empty: string }[] = [
   { value: "active", label: "Активни", empty: "Нямаш активни задачи в момента." },
   { value: "assigned", label: "Възложени", empty: "Нямаш възложени задачи." },
   { value: "pending", label: "Изчакващи", empty: "Нямаш задачи, чакащи одобрение." },
@@ -45,6 +58,7 @@ const TASK_TABS: { value: TaskStatus; label: string; empty: string }[] = [
     empty: "Нямаш задачи, чакащи плащане.",
   },
   { value: "inactive", label: "Неактивни", empty: "Нямаш неактивни задачи." },
+  { value: "archive", label: "Архив", empty: "Няма архивирани задачи." },
 ];
 
 const SETTINGS_ITEMS: { icon: typeof Wallet; label: string; to: string }[] = [
@@ -66,21 +80,23 @@ function ProfilePage() {
   const { data: promotions = {} } = useOwnerPromotions(user?.id);
   const [promoteTaskId, setPromoteTaskId] = useState<string | null>(null);
   const navigate = useNavigate();
-  const [tab, setTab] = useState<TaskStatus>("active");
+  const [tab, setTab] = useState<TaskTabValue>("active");
   const favouritesCount = useFavouritesCount();
 
   const byStatus = useMemo(() => {
-    const map: Record<TaskStatus, typeof tasks> = {
+    const map: Record<TaskTabValue, typeof tasks> = {
       active: [],
       assigned: [],
       pending: [],
       pending_payment: [],
       inactive: [],
+      archive: [],
     };
     if (!user) return map;
     for (const t of tasks) {
       if (t.userId !== user.id) continue;
-      map[t.status ?? "active"].push(t);
+      if (isArchived(t)) map.archive.push(t);
+      else map[t.status ?? "active"].push(t);
     }
     return map;
   }, [tasks, user]);
@@ -178,7 +194,7 @@ function ProfilePage() {
           </div>
           <Tabs
             value={tab}
-            onValueChange={(v) => setTab(v as TaskStatus)}
+            onValueChange={(v) => setTab(v as TaskTabValue)}
             className="mt-4"
           >
             <TabsList className="flex h-auto w-full max-w-full justify-start gap-1 overflow-x-auto rounded-xl bg-muted/60 p-1 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
@@ -200,6 +216,8 @@ function ProfilePage() {
                       <OwnerTaskCard
                         key={task.id}
                         task={task}
+                        archived={t.value === "archive"}
+                        repostable={t.value === "archive" || t.value === "inactive"}
                         promotions={promotions[task.id] ?? []}
                         onPromote={() => setPromoteTaskId(task.id)}
                       />
@@ -348,15 +366,24 @@ function OwnerTaskCard({
   task,
   promotions,
   onPromote,
+  archived = false,
+  repostable = false,
 }: {
   task: Task;
   promotions: TaskPromotion[];
   onPromote: () => void;
+  archived?: boolean;
+  repostable?: boolean;
 }) {
   return (
     <div className="flex min-w-0 flex-col gap-2">
       <TaskCard task={{ ...task, isTop: promotions.some((p) => p.type === "top"), isUrgent: promotions.some((p) => p.type === "urgent") }} />
       <div className="min-w-0 rounded-xl border border-border/60 bg-card p-2 text-[11px]">
+        {archived && (
+          <p className="mb-1 rounded-full bg-muted px-2 py-0.5 text-center text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">
+            Архивирана
+          </p>
+        )}
         {promotions.length > 0 && <PromotedBadge className="mb-1" />}
         <div className="flex flex-wrap items-center gap-1 text-muted-foreground">
           <Eye className="h-3 w-3 shrink-0" />
@@ -384,10 +411,20 @@ function OwnerTaskCard({
         ) : (
           <p className="mt-1 text-muted-foreground">Няма активни промоции.</p>
         )}
-        <Button size="sm" variant="outline" className="mt-2 h-7 w-full gap-1 text-[11px]" onClick={onPromote}>
-          <Rocket className="h-3 w-3" />
-          {promotions.length > 0 ? "Управлявай" : "Промотирай"}
-        </Button>
+        {!archived && (
+          <Button size="sm" variant="outline" className="mt-2 h-7 w-full gap-1 text-[11px]" onClick={onPromote}>
+            <Rocket className="h-3 w-3" />
+            {promotions.length > 0 ? "Управлявай" : "Промотирай"}
+          </Button>
+        )}
+        {repostable && (
+          <Button asChild size="sm" variant="outline" className="mt-2 h-7 w-full gap-1 text-[11px]">
+            <Link to="/post" search={{ repost: task.id }}>
+              <RotateCcw className="h-3 w-3" />
+              Публикувай отново
+            </Link>
+          </Button>
+        )}
         {(task.status === "active" || task.status === "assigned") && (
           <div className="mt-2">
             <OwnerTaskControls task={task} compact />
