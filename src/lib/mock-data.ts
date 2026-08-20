@@ -116,21 +116,6 @@ export type Task = {
   statusChangedAtIso?: string;
 };
 
-const img = (id: string) => `https://images.unsplash.com/${id}?auto=format&fit=crop&w=800&q=80`;
-
-export const CATEGORY_IMAGES: Record<string, string> = {
-  remonti: img("photo-1581578731548-c64695cc6952"),
-  pochistvane: img("photo-1527515637462-cff94eecc1ac"),
-  prevoz: img("photo-1600585154340-be6161a56a0c"),
-  it: img("photo-1517336714731-489689fd1ca8"),
-  uroci: img("photo-1503676260728-1c00da094a0b"),
-  gradina: img("photo-1416879595882-3373a0480b5b"),
-  domashni: img("photo-1450778869180-41d0601e046e"),
-  foto: img("photo-1519741497674-611481863552"),
-  "krasota-zdrave": img("photo-1560750588-73207b1ef5b8"),
-  drugi: img("photo-1505691938895-1758d7feb511"),
-};
-
 export function getCategory(id: string) {
   return categories.find((c) => c.id === id) ?? categories[categories.length - 1];
 }

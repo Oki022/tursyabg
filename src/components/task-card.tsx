@@ -3,13 +3,13 @@ import { MapPin, Clock } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { TopBadge, UrgentBadge } from "@/components/promotions/promo-badges";
 import { FavouriteButton } from "@/components/favourite-button";
-import { getCategory, CATEGORY_IMAGES, type Task } from "@/lib/mock-data";
+import { getCategory, type Task } from "@/lib/mock-data";
+import { TaskThumb } from "@/components/task-thumb";
 
 export function TaskCard({ task }: { task: Task }) {
   const cat = getCategory(task.category);
   const Icon = cat.icon;
-  const thumb = task.image ?? CATEGORY_IMAGES[task.category] ?? CATEGORY_IMAGES.drugi;
-  const srcSet = responsiveSrcSet(thumb);
+  const thumb = task.image;
 
   return (
     <div className="relative h-full">
@@ -22,15 +22,12 @@ export function TaskCard({ task }: { task: Task }) {
       }`}
     >
       <div className="relative w-full overflow-hidden bg-muted">
-        <img
+        <TaskThumb
           src={thumb}
-          {...(srcSet ? { srcSet, sizes: "(min-width: 1024px) 320px, (min-width: 640px) 45vw, 90vw" } : {})}
-          alt={`${task.title}, ${cat.name}${task.location ? `, ${task.location}` : ""}`}
-          loading="lazy"
-          decoding="async"
-          width={640}
-          height={480}
-          className="aspect-[4/3] w-full object-cover"
+          category={task.category}
+          title={`${task.title}, ${cat.name}${task.location ? `, ${task.location}` : ""}`}
+          iconClassName="h-10 w-10"
+          className="aspect-[4/3] w-full"
         />
         <div className="pointer-events-none absolute inset-x-0 top-0 flex items-start justify-between gap-1.5 p-1.5">
           <Badge
@@ -91,10 +88,3 @@ export function TaskCardSkeleton() {
   );
 }
 
-/** Unsplash/Supabase-friendly srcset so mobile never downloads a desktop-sized image. */
-export function responsiveSrcSet(url?: string) {
-  if (!url || !url.includes("images.unsplash.com")) return undefined;
-  return [400, 640, 960]
-    .map((w) => `${url.replace(/([?&])w=\d+/, `$1w=${w}`)} ${w}w`)
-    .join(", ");
-}
