@@ -243,6 +243,7 @@ export function useTaskImages(taskId?: string) {
 export function useTask(id: string) {
   return useQuery({
     queryKey: ["tasks", "detail", id],
+    enabled: Boolean(id),
     queryFn: async () => {
       const { data, error } = await supabase.from("tasks").select(SELECT).eq("id", id).maybeSingle();
       if (error) throw error;
