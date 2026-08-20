@@ -9,6 +9,7 @@ import { useConversation, useMarkAsRead, useSendMessage, useThread } from "@/lib
 import type { ChatMessage } from "@/services/messages";
 import { CONTACT_MASK_WARNING, containsContactInfo, isValidBgPhone } from "@/lib/phone";
 import { RequirePhoneNotice } from "@/components/require-phone-notice";
+import { TaskThumb } from "@/components/task-thumb";
 import { ReportContentDialog } from "@/components/moderation/report-content-dialog";
 import { moderationErrorBg } from "@/lib/moderation-messages";
 import { toast } from "sonner";
@@ -116,7 +117,14 @@ export function ChatThread({ conversationId }: { conversationId: string }) {
           params={{ id: conversation.taskId }}
           className="flex shrink-0 items-center gap-3 border-b border-border/60 bg-card px-4 py-3 transition-colors hover:bg-accent/40"
         >
-          <img src={conversation.taskImage} alt="" className="h-11 w-11 shrink-0 rounded-xl object-cover" />
+          <TaskThumb
+            src={conversation.taskImage}
+            category={conversation.taskCategory}
+            title={conversation.taskTitle}
+            deleted={conversation.taskDeleted}
+            iconClassName="h-5 w-5"
+            className="h-11 w-11 shrink-0 rounded-xl"
+          />
           <div className="min-w-0 flex-1">
             <p className="truncate text-sm font-semibold text-foreground">{conversation.taskTitle}</p>
             <p className="text-xs text-muted-foreground">{conversation.taskBudget} €</p>
