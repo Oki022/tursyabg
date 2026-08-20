@@ -111,6 +111,9 @@ export type Task = {
   /** Contact-unlock slots (max 5 professionals per task by default). */
   unlockCount?: number;
   maxUnlocks?: number;
+  /** ISO timestamps used for archiving old tasks. */
+  createdAtIso?: string;
+  statusChangedAtIso?: string;
 };
 
 const img = (id: string) => `https://images.unsplash.com/${id}?auto=format&fit=crop&w=800&q=80`;
