@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState } from "react";
-import { createFileRoute, Link } from "@tanstack/react-router";
-import { ChevronLeft, TriangleAlert } from "lucide-react";
+import { createFileRoute } from "@tanstack/react-router";
+import { TriangleAlert } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { BackLink } from "@/components/back-link";
 import { NotificationList } from "@/components/notifications/notification-list";
 import {
   useMarkAllNotificationsRead,
@@ -48,13 +49,7 @@ function NotificationsPage() {
 
   return (
     <div className="mx-auto w-full max-w-2xl px-4 py-6">
-      <Link
-        to="/profile"
-        className="inline-flex items-center gap-1 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
-      >
-        <ChevronLeft className="h-4 w-4" />
-        Назад към профила
-      </Link>
+      <BackLink />
 
       <h1 className="mt-4 text-2xl font-bold tracking-tight text-foreground">Известия</h1>
 
