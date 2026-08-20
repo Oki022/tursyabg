@@ -3,6 +3,7 @@ import { UnreadBadge } from "@/components/unread-badge";
 import { Plus, CircleUserRound, LogOut, BadgeCheck, MessageCircle, Settings, Heart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { NotificationBell } from "@/components/notification-bell";
+import { FavouritesNavLink } from "@/components/favourites-nav-link";
 import { useAuth } from "@/lib/auth";
 import { Logo } from "@/components/Logo";
 import { useHideOnScroll } from "@/hooks/use-hide-on-scroll";
@@ -48,6 +49,7 @@ export function SiteHeader() {
           </Link>
         </nav>
         <div className="flex items-center gap-2">
+          {user && <FavouritesNavLink />}
           {user && <NotificationBell />}
           {!user ? (
             <>
