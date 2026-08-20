@@ -1,7 +1,8 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { Heart, ArrowLeft, X } from "lucide-react";
+import { Heart, X } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
+import { BackLink } from "@/components/back-link";
 import { TaskCard, TaskCardSkeleton } from "@/components/task-card";
 import { useFavouritesList, useToggleFavourite } from "@/lib/favourites-api";
 import { pageTitle } from "@/lib/brand";
@@ -30,13 +31,7 @@ function FavouritesPage() {
 
   return (
     <div className="container mx-auto max-w-6xl px-4 py-6 md:py-10">
-      <Link
-        to="/profile"
-        className="inline-flex items-center gap-1.5 text-sm font-medium text-muted-foreground hover:text-foreground"
-      >
-        <ArrowLeft className="h-4 w-4" />
-        Профил
-      </Link>
+      <BackLink />
       <h1 className="mt-3 text-2xl font-bold tracking-tight text-foreground md:text-3xl">Любими задачи</h1>
       <p className="mt-1 text-sm text-muted-foreground">Запазените от теб задачи, най-новите най-отгоре.</p>
 
