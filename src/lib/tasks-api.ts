@@ -24,6 +24,7 @@ type Row = {
   unlock_cost?: number | null;
   created_at: string;
   bumped_at?: string;
+  status_changed_at?: string;
   view_count?: number;
   unlock_count?: number;
   max_unlocks?: number;
@@ -33,7 +34,7 @@ type Row = {
 };
 
 const SELECT =
-  "id, title, description, category, budget, city, neighborhood, status, unlock_cost, created_at, bumped_at, view_count, unlock_count, max_unlocks, user_id, task_images(image_url, sort_order), profiles(full_name)";
+  "id, title, description, category, budget, city, neighborhood, status, unlock_cost, created_at, bumped_at, status_changed_at, view_count, unlock_count, max_unlocks, user_id, task_images(image_url, sort_order), profiles(full_name)";
 
 export function timeAgoBg(iso: string) {
   const diff = Date.now() - new Date(iso).getTime();
@@ -73,6 +74,8 @@ function mapRow(row: Row, signed: Record<string, string>): Task {
     viewCount: row.view_count ?? 0,
     unlockCount: row.unlock_count ?? 0,
     maxUnlocks: row.max_unlocks ?? 5,
+    createdAtIso: row.created_at,
+    statusChangedAtIso: row.status_changed_at ?? row.created_at,
   };
 }
 
