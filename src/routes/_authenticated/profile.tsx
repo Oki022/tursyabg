@@ -35,7 +35,19 @@ import { EngagementInbox } from "@/components/reviews/engagement-cards";
 import type { Task } from "@/lib/mock-data";
 import { toast } from "sonner";
 
-const TASK_TABS: { value: TaskStatus; label: string; empty: string }[] = [
+type TaskTabValue = TaskStatus | "archive";
+
+const ARCHIVE_AFTER_MS = 90 * 24 * 60 * 60 * 1000;
+
+/** Inactive or assigned tasks older than 3 months move to the archive tab. */
+function isArchived(task: Task): boolean {
+  if (task.status !== "inactive" && task.status !== "assigned") return false;
+  const iso = task.statusChangedAtIso ?? task.createdAtIso;
+  if (!iso) return false;
+  return Date.now() - new Date(iso).getTime() > ARCHIVE_AFTER_MS;
+}
+
+const TASK_TABS: { value: TaskTabValue; label: string; empty: string }[] = [
   { value: "active", label: "Активни", empty: "Нямаш активни задачи в момента." },
   { value: "assigned", label: "Възложени", empty: "Нямаш възложени задачи." },
   { value: "pending", label: "Изчакващи", empty: "Нямаш задачи, чакащи одобрение." },
@@ -45,6 +57,7 @@ const TASK_TABS: { value: TaskStatus; label: string; empty: string }[] = [
     empty: "Нямаш задачи, чакащи плащане.",
   },
   { value: "inactive", label: "Неактивни", empty: "Нямаш неактивни задачи." },
+  { value: "archive", label: "Архив", empty: "Няма архивирани задачи." },
 ];
 
 const SETTINGS_ITEMS: { icon: typeof Wallet; label: string; to: string }[] = [
@@ -66,21 +79,23 @@ function ProfilePage() {
   const { data: promotions = {} } = useOwnerPromotions(user?.id);
   const [promoteTaskId, setPromoteTaskId] = useState<string | null>(null);
   const navigate = useNavigate();
-  const [tab, setTab] = useState<TaskStatus>("active");
+  const [tab, setTab] = useState<TaskTabValue>("active");
   const favouritesCount = useFavouritesCount();
 
   const byStatus = useMemo(() => {
-    const map: Record<TaskStatus, typeof tasks> = {
+    const map: Record<TaskTabValue, typeof tasks> = {
       active: [],
       assigned: [],
       pending: [],
       pending_payment: [],
       inactive: [],
+      archive: [],
     };
     if (!user) return map;
     for (const t of tasks) {
       if (t.userId !== user.id) continue;
-      map[t.status ?? "active"].push(t);
+      if (isArchived(t)) map.archive.push(t);
+      else map[t.status ?? "active"].push(t);
     }
     return map;
   }, [tasks, user]);
@@ -178,7 +193,7 @@ function ProfilePage() {
           </div>
           <Tabs
             value={tab}
-            onValueChange={(v) => setTab(v as TaskStatus)}
+            onValueChange={(v) => setTab(v as TaskTabValue)}
             className="mt-4"
           >
             <TabsList className="flex h-auto w-full max-w-full justify-start gap-1 overflow-x-auto rounded-xl bg-muted/60 p-1 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
@@ -200,6 +215,8 @@ function ProfilePage() {
                       <OwnerTaskCard
                         key={task.id}
                         task={task}
+                        archived={t.value === "archive"}
+                        repostable={t.value === "archive" || t.value === "inactive"}
                         promotions={promotions[task.id] ?? []}
                         onPromote={() => setPromoteTaskId(task.id)}
                       />
