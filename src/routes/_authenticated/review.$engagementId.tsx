@@ -97,11 +97,7 @@ function ReviewPage() {
 
   return (
     <div className="container mx-auto max-w-2xl px-4 py-8 md:py-12">
-      <Button asChild variant="ghost" size="sm" className="mb-4 gap-1.5">
-        <Link to="/profile">
-          <ArrowLeft className="h-4 w-4" /> Назад
-        </Link>
-      </Button>
+      <BackLink className="mb-4" />
 
       <div className="min-w-0 rounded-2xl border border-border/60 bg-card p-5 shadow-sm md:p-7">
         <h1 className="text-xl font-bold tracking-tight md:text-2xl">{REVIEW_HEADING[direction]}</h1>
