@@ -47,30 +47,7 @@ import { fetchTaskSeo } from "@/lib/seo-loaders";
 import { breadcrumbLd, clampDescription, jsonLd, seo } from "@/lib/seo";
 import { absoluteUrl, BRAND } from "@/lib/brand";
 import { slugify } from "@/lib/geo";
-
-const GALLERY_BY_CATEGORY: Record<string, string[]> = {
-  remonti: [
-    "https://images.unsplash.com/photo-1581578731548-c64695cc6952?auto=format&fit=crop&w=1400&q=80",
-    "https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?auto=format&fit=crop&w=1400&q=80",
-    "https://images.unsplash.com/photo-1604147706283-d7119b5b822c?auto=format&fit=crop&w=1400&q=80",
-  ],
-  pochistvane: [
-    "https://images.unsplash.com/photo-1527515637462-cff94eecc1ac?auto=format&fit=crop&w=1400&q=80",
-    "https://images.unsplash.com/photo-1583947215259-38e31be8751f?auto=format&fit=crop&w=1400&q=80",
-  ],
-  prevoz: [
-    "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1400&q=80",
-    "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?auto=format&fit=crop&w=1400&q=80",
-  ],
-  gradina: [
-    "https://images.unsplash.com/photo-1416879595882-3373a0480b5b?auto=format&fit=crop&w=1400&q=80",
-    "https://images.unsplash.com/photo-1523348837708-15d4a09cfac2?auto=format&fit=crop&w=1400&q=80",
-  ],
-  default: [
-    "https://images.unsplash.com/photo-1505691938895-1758d7feb511?auto=format&fit=crop&w=1400&q=80",
-    "https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?auto=format&fit=crop&w=1400&q=80",
-  ],
-};
+import { TaskThumb } from "@/components/task-thumb";
 
 export const Route = createFileRoute("/task/$id")({
   loader: ({ params }) => fetchTaskSeo(params.id),
@@ -226,8 +203,7 @@ function TaskDetails() {
 
   const cat = getCategory(task.category);
   const Icon = cat.icon;
-  const baseImages = GALLERY_BY_CATEGORY[task.category] ?? GALLERY_BY_CATEGORY.default;
-  const images = task.gallery && task.gallery.length > 0 ? task.gallery : baseImages;
+  const images = task.gallery ?? [];
 
   const prev = () => setActive((index) => (index - 1 + images.length) % images.length);
   const next = () => setActive((index) => (index + 1) % images.length);
@@ -288,6 +264,14 @@ function TaskDetails() {
         <div className="min-w-0">
           <div className="group relative overflow-hidden rounded-3xl bg-slate-100 shadow-xl shadow-primary/10 ring-1 ring-border/60">
             <div className="relative h-[320px] w-full sm:h-[420px] lg:h-[520px]">
+              {images.length === 0 && (
+                <TaskThumb
+                  title={task.title}
+                  category={task.category}
+                  iconClassName="h-16 w-16"
+                  className="absolute inset-0 h-full w-full"
+                />
+              )}
               {images.map((src, index) => (
                 <img
                   key={src}
@@ -512,12 +496,21 @@ function TaskDetails() {
             </DialogDescription>
           </DialogHeader>
 
-          <div className="rounded-xl bg-slate-100 px-4 py-3 ring-1 ring-border/60">
-            <div className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-              Задача
-            </div>
-            <div className="mt-1 line-clamp-2 text-sm font-semibold text-slate-900">
-              {task.title}
+          <div className="flex items-center gap-3 rounded-xl bg-slate-100 px-4 py-3 ring-1 ring-border/60">
+            <TaskThumb
+              src={task.gallery?.[0]}
+              category={task.category}
+              title={task.title}
+              iconClassName="h-5 w-5"
+              className="h-12 w-12 shrink-0 rounded-lg"
+            />
+            <div className="min-w-0">
+              <div className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                Задача
+              </div>
+              <div className="mt-1 line-clamp-2 text-sm font-semibold text-slate-900">
+                {task.title}
+              </div>
             </div>
           </div>
 

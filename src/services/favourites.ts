@@ -1,5 +1,5 @@
 import { supabase } from "@/integrations/supabase/client";
-import { CATEGORY_IMAGES, type Task, type TaskStatus } from "@/lib/mock-data";
+import { type Task, type TaskStatus } from "@/lib/mock-data";
 import { resolveImageUrls } from "@/services/storage";
 import { timeAgoBg } from "@/lib/tasks-api";
 
@@ -92,7 +92,7 @@ export async function getFavouritesPage(cursor?: string): Promise<{
         userId: t.user_id,
         status: t.status,
         unlockCost: t.unlock_cost ?? undefined,
-        image: gallery[0] ?? CATEGORY_IMAGES[t.category] ?? CATEGORY_IMAGES.drugi,
+        image: gallery[0],
         gallery,
       } as Task,
     };

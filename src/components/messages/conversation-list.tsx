@@ -3,6 +3,7 @@ import { Inbox, Loader2 } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { getInitials } from "@/lib/auth";
+import { TaskThumb } from "@/components/task-thumb";
 import { useConversations } from "@/lib/messages-api";
 import type { ConversationSummary } from "@/services/messages";
 
@@ -81,11 +82,13 @@ export function ConversationList({ selectedId, onSelect, variant = "desktop" }: 
                   {getInitials(c.otherUserName)}
                 </AvatarFallback>
               </Avatar>
-              <img
+              <TaskThumb
                 src={c.taskImage}
-                alt={c.taskTitle}
-                loading="lazy"
-                className="absolute -bottom-1 -right-1 h-5 w-5 rounded-md border border-background object-cover shadow-sm"
+                category={c.taskCategory}
+                title={c.taskTitle}
+                deleted={c.taskDeleted}
+                iconClassName="h-3 w-3"
+                className="absolute -bottom-1 -right-1 h-5 w-5 rounded-md border border-background shadow-sm"
               />
             </span>
             <div className="min-w-0 flex-1">

@@ -1,6 +1,5 @@
 import { supabase } from "@/integrations/supabase/client";
 import { resolveImageUrls } from "@/services/storage";
-import { CATEGORY_IMAGES } from "@/lib/mock-data";
 
 export const MESSAGES_PAGE_SIZE = 30;
 export const CONVERSATIONS_PAGE_SIZE = 20;
@@ -20,7 +19,10 @@ export type ConversationSummary = {
   taskId: string;
   taskTitle: string;
   taskBudget: number;
-  taskImage: string;
+  /** Signed URL of the task's first image, or null when it has none. */
+  taskImage: string | null;
+  taskCategory: string | null;
+  taskDeleted: boolean;
   otherUserId: string;
   otherUserName: string;
   otherUserAvatar: string | null;
@@ -40,12 +42,13 @@ type ConversationRow = {
     title: string;
     budget: number;
     category: string;
+    deleted_at?: string | null;
     task_images: { image_url: string; sort_order: number }[] | null;
   } | null;
 };
 
 const CONVERSATION_SELECT =
-  "id, task_id, participant_a, participant_b, last_message_at, tasks(id, title, budget, category, task_images(image_url, sort_order))";
+  "id, task_id, participant_a, participant_b, last_message_at, tasks(id, title, budget, category, deleted_at, task_images(image_url, sort_order))";
 
 function mapMessage(row: {
   id: string;
@@ -128,16 +131,14 @@ export async function getConversations(
     const otherId = r.participant_a === me ? r.participant_b : r.participant_a;
     const images = [...(r.tasks?.task_images ?? [])].sort((a, b) => a.sort_order - b.sort_order);
     const firstPath = images[0]?.image_url;
-    const category = r.tasks?.category ?? "drugi";
     return {
       id: r.id,
       taskId: r.task_id,
       taskTitle: r.tasks?.title ?? "Задача",
       taskBudget: Number(r.tasks?.budget ?? 0),
-      taskImage:
-        (firstPath ? imageMap[firstPath] : undefined) ??
-        CATEGORY_IMAGES[category] ??
-        CATEGORY_IMAGES.drugi,
+      taskImage: (firstPath ? imageMap[firstPath] : undefined) ?? null,
+      taskCategory: r.tasks?.category ?? null,
+      taskDeleted: !r.tasks || Boolean(r.tasks.deleted_at),
       otherUserId: otherId,
       otherUserName: nameById.get(otherId) ?? "Потребител",
       otherUserAvatar: avatarById.get(otherId) ?? null,
@@ -172,17 +173,15 @@ export async function getConversation(conversationId: string): Promise<Conversat
     resolveImageUrls(images.map((i) => i.image_url)),
   ]);
   const firstPath = images[0]?.image_url;
-  const category = row.tasks?.category ?? "drugi";
 
   return {
     id: row.id,
     taskId: row.task_id,
     taskTitle: row.tasks?.title ?? "Задача",
     taskBudget: Number(row.tasks?.budget ?? 0),
-    taskImage:
-      (firstPath ? imageMap[firstPath] : undefined) ??
-      CATEGORY_IMAGES[category] ??
-      CATEGORY_IMAGES.drugi,
+    taskImage: (firstPath ? imageMap[firstPath] : undefined) ?? null,
+    taskCategory: row.tasks?.category ?? null,
+    taskDeleted: !row.tasks || Boolean(row.tasks.deleted_at),
     otherUserId: otherId,
     otherUserName: profile?.full_name ?? "Потребител",
     otherUserAvatar: profile?.avatar_url ?? null,

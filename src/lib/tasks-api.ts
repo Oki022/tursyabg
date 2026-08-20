@@ -6,7 +6,7 @@ import {
 } from "@tanstack/react-query";
 import { useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { CATEGORY_IMAGES, type Task, type TaskStatus } from "@/lib/mock-data";
+import { type Task, type TaskStatus } from "@/lib/mock-data";
 import { resolveImageUrls } from "@/services/storage";
 import { uploadModeratedTaskImage } from "@/lib/moderation.functions";
 
@@ -68,7 +68,7 @@ function mapRow(row: Row, signed: Record<string, string>): Task {
     userId: row.user_id,
     status: row.status,
     unlockCost: row.unlock_cost ?? undefined,
-    image: gallery[0] ?? CATEGORY_IMAGES[row.category] ?? CATEGORY_IMAGES.drugi,
+    image: gallery[0],
     gallery,
     bumpedAt: row.bumped_at ?? row.created_at,
     viewCount: row.view_count ?? 0,
@@ -141,7 +141,7 @@ async function mapFeedRows(rows: FeedRow[]): Promise<Task[]> {
       userId: row.user_id,
       status: row.status,
       unlockCost: row.unlock_cost ?? undefined,
-      image: gallery[0] ?? CATEGORY_IMAGES[row.category] ?? CATEGORY_IMAGES.drugi,
+      image: gallery[0],
       gallery,
       isTop: row.is_top,
       isUrgent: row.is_urgent,
