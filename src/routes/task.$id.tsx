@@ -1,5 +1,5 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   ArrowLeft,
   CalendarDays,
@@ -11,6 +11,7 @@ import {
   Rocket,
   ShieldCheck,
   ShieldAlert,
+  Maximize2,
 } from "lucide-react";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
@@ -48,6 +49,7 @@ import { breadcrumbLd, clampDescription, jsonLd, seo } from "@/lib/seo";
 import { absoluteUrl, BRAND } from "@/lib/brand";
 import { slugify } from "@/lib/geo";
 import { TaskThumb } from "@/components/task-thumb";
+import { ImageLightbox } from "@/components/image-lightbox";
 
 export const Route = createFileRoute("/task/$id")({
   loader: ({ params }) => fetchTaskSeo(params.id),
@@ -120,6 +122,8 @@ function TaskDetails() {
   const { data: task, isLoading } = useTask(id);
   const { user } = useAuth();
   const [active, setActive] = useState(0);
+  const [lightboxOpen, setLightboxOpen] = useState(false);
+  const galleryButtonRef = useRef<HTMLButtonElement>(null);
   const [messageOpen, setMessageOpen] = useState(false);
   const [messageText, setMessageText] = useState("");
   const [sending, setSending] = useState(false);
@@ -285,6 +289,20 @@ function TaskDetails() {
                   className={`absolute inset-0 mx-auto h-full w-full object-contain transition-opacity duration-300 ${index === active ? "opacity-100" : "opacity-0"}`}
                 />
               ))}
+              {images.length > 0 && (
+                <button
+                  type="button"
+                  ref={galleryButtonRef}
+                  onClick={() => setLightboxOpen(true)}
+                  aria-label={`Отвори снимка ${active + 1} на цял екран`}
+                  className="absolute inset-0 z-0 cursor-zoom-in transition-transform duration-150 active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-primary"
+                >
+                  <span className="pointer-events-none absolute right-4 top-4 grid h-10 w-10 place-items-center rounded-full bg-slate-900/60 text-white opacity-0 backdrop-blur transition-opacity duration-200 group-hover:opacity-100 motion-reduce:transition-none">
+                    <Maximize2 className="h-4 w-4" aria-hidden="true" />
+                  </span>
+                </button>
+              )}
+
               {images.length > 1 && (
                 <>
                   <button
@@ -569,6 +587,20 @@ function TaskDetails() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {lightboxOpen && images.length > 0 && (
+        <ImageLightbox
+          images={images}
+          index={active}
+          onIndexChange={setActive}
+          title={task.title}
+          onClose={() => {
+            setLightboxOpen(false);
+            galleryButtonRef.current?.focus();
+          }}
+        />
+      )}
+
     </div>
   );
 }
