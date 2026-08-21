@@ -113,8 +113,6 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { rel: "manifest", href: "/manifest.webmanifest" },
       { rel: "preconnect", href: SUPABASE_ORIGIN, crossOrigin: "anonymous" },
       { rel: "dns-prefetch", href: SUPABASE_ORIGIN },
-      { rel: "preconnect", href: "https://images.unsplash.com", crossOrigin: "anonymous" },
-      { rel: "dns-prefetch", href: "https://images.unsplash.com" },
     ],
   }),
   shellComponent: RootShell,
