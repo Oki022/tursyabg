@@ -285,6 +285,20 @@ function TaskDetails() {
                   className={`absolute inset-0 mx-auto h-full w-full object-contain transition-opacity duration-300 ${index === active ? "opacity-100" : "opacity-0"}`}
                 />
               ))}
+              {images.length > 0 && (
+                <button
+                  type="button"
+                  ref={galleryButtonRef}
+                  onClick={() => setLightboxOpen(true)}
+                  aria-label={`Отвори снимка ${active + 1} на цял екран`}
+                  className="absolute inset-0 z-0 cursor-zoom-in transition-transform duration-150 active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-primary"
+                >
+                  <span className="pointer-events-none absolute right-4 top-4 grid h-10 w-10 place-items-center rounded-full bg-slate-900/60 text-white opacity-0 backdrop-blur transition-opacity duration-200 group-hover:opacity-100 motion-reduce:transition-none">
+                    <Maximize2 className="h-4 w-4" aria-hidden="true" />
+                  </span>
+                </button>
+              )}
+
               {images.length > 1 && (
                 <>
                   <button
