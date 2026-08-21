@@ -1,5 +1,5 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   ArrowLeft,
   CalendarDays,
@@ -11,6 +11,7 @@ import {
   Rocket,
   ShieldCheck,
   ShieldAlert,
+  Maximize2,
 } from "lucide-react";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
@@ -48,6 +49,7 @@ import { breadcrumbLd, clampDescription, jsonLd, seo } from "@/lib/seo";
 import { absoluteUrl, BRAND } from "@/lib/brand";
 import { slugify } from "@/lib/geo";
 import { TaskThumb } from "@/components/task-thumb";
+import { ImageLightbox } from "@/components/image-lightbox";
 
 export const Route = createFileRoute("/task/$id")({
   loader: ({ params }) => fetchTaskSeo(params.id),
@@ -120,6 +122,8 @@ function TaskDetails() {
   const { data: task, isLoading } = useTask(id);
   const { user } = useAuth();
   const [active, setActive] = useState(0);
+  const [lightboxOpen, setLightboxOpen] = useState(false);
+  const galleryButtonRef = useRef<HTMLButtonElement>(null);
   const [messageOpen, setMessageOpen] = useState(false);
   const [messageText, setMessageText] = useState("");
   const [sending, setSending] = useState(false);
