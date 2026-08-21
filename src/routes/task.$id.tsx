@@ -587,6 +587,20 @@ function TaskDetails() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {lightboxOpen && images.length > 0 && (
+        <ImageLightbox
+          images={images}
+          index={active}
+          onIndexChange={setActive}
+          title={task.title}
+          onClose={() => {
+            setLightboxOpen(false);
+            galleryButtonRef.current?.focus();
+          }}
+        />
+      )}
+
     </div>
   );
 }
