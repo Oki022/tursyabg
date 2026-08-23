@@ -19,6 +19,8 @@ import { AuthProvider } from "@/lib/auth";
 import { BRAND, pageTitle } from "@/lib/brand";
 import { MonitoringBoot } from "@/components/monitoring-boot";
 import { captureIssue } from "@/lib/monitoring/client";
+import { CookieConsentProvider } from "@/lib/cookie-consent";
+import { CookieConsent } from "@/components/cookie-consent";
 
 const SUPABASE_ORIGIN =
   (import.meta as any).env?.VITE_SUPABASE_URL ?? "https://xrltdrxhtennbscgbyxb.supabase.co";
