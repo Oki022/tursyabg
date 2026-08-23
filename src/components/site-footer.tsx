@@ -1,7 +1,9 @@
 import { Link } from "@tanstack/react-router";
 import { Logo, BRAND_NAME } from "@/components/Logo";
+import { useCookieConsent } from "@/lib/cookie-consent";
 
 export function SiteFooter() {
+  const { openPreferences } = useCookieConsent();
   return (
     <footer className="border-t border-border/60 bg-background">
       <div className="container mx-auto flex flex-col items-center gap-3 px-4 py-8 text-center text-sm text-muted-foreground">
@@ -13,6 +15,16 @@ export function SiteFooter() {
           <Link to="/privacy" className="hover:text-foreground hover:underline">
             Политика за поверителност
           </Link>
+          <Link to="/cookies" className="hover:text-foreground hover:underline">
+            Бисквитки
+          </Link>
+          <button
+            type="button"
+            onClick={openPreferences}
+            className="hover:text-foreground hover:underline"
+          >
+            Настройки на бисквитките
+          </button>
           <Link to="/faq" className="hover:text-foreground hover:underline">
             Често задавани въпроси
           </Link>
