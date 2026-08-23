@@ -15,6 +15,16 @@ export function SiteFooter() {
           <Link to="/privacy" className="hover:text-foreground hover:underline">
             Политика за поверителност
           </Link>
+          <Link to="/cookies" className="hover:text-foreground hover:underline">
+            Бисквитки
+          </Link>
+          <button
+            type="button"
+            onClick={openPreferences}
+            className="hover:text-foreground hover:underline"
+          >
+            Настройки на бисквитките
+          </button>
           <Link to="/faq" className="hover:text-foreground hover:underline">
             Често задавани въпроси
           </Link>
