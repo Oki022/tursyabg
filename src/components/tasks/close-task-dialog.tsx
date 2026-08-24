@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { CheckCircle2, EyeOff, UserX } from "lucide-react";
+import { CheckCircle2, EyeOff, Megaphone, UserX } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import {
