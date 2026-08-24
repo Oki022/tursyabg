@@ -16,7 +16,9 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useAssignEngagement, useSubmitReview, useTaskUnlockers } from "@/lib/reviews-api";
 import { useCloseTask } from "@/lib/tasks-api";
+import { useTaskPromotions } from "@/lib/promotions-api";
 import { RatingInline, StarSelector } from "@/components/reviews/stars";
+import { PROMO_LABELS, remainingLabel } from "@/services/promotions";
 import {
   DOUBLE_BLIND_NOTE,
   REVIEW_PLACEHOLDER,
@@ -45,6 +47,7 @@ export function CloseTaskDialog({
   assignOnly?: boolean;
 }) {
   const { data: unlockers = [], isLoading } = useTaskUnlockers(taskId, open);
+  const { data: activePromos = [] } = useTaskPromotions(open ? taskId : undefined);
   const assign = useAssignEngagement();
   const close = useCloseTask();
   const submitReview = useSubmitReview();
