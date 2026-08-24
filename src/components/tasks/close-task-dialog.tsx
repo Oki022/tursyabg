@@ -204,7 +204,21 @@ export function CloseTaskDialog({
                     </div>
                   </>
                 )}
-              </RadioGroup>
+            </RadioGroup>
+            )}
+
+            {activePromos.length > 0 && (
+              <div className="flex items-start gap-2 rounded-xl border border-amber-200 bg-amber-50 px-3 py-2 text-xs leading-relaxed text-amber-900">
+                <Megaphone className="mt-0.5 h-3.5 w-3.5 shrink-0 text-amber-700" />
+                <span>
+                  По тази задача тече активна промоция:{" "}
+                  {activePromos
+                    .map((p) => `${PROMO_LABELS[p.type]} (${remainingLabel(p.expiresAt).toLowerCase()})`)
+                    .join(", ")}
+                  . При затваряне на задачата останалото време от промоцията се губи и не може да се
+                  прехвърли на друга задача.
+                </span>
+              </div>
             )}
 
             <DialogFooter>
