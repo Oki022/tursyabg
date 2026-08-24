@@ -1813,6 +1813,10 @@ export type Database = {
         Args: { _comment: string; _engagement_id: string; _rating: number }
         Returns: Json
       }
+      suppress_task_lifecycle_notifications: {
+        Args: { _task_id: string }
+        Returns: undefined
+      }
       sweep_autopublish: { Args: { _limit?: number }; Returns: number }
       sweep_engagements: { Args: { _batch?: number }; Returns: number }
       sweep_expiry_notifications: { Args: { _batch?: number }; Returns: number }

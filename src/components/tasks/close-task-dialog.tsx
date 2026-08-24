@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { CheckCircle2, EyeOff, UserX } from "lucide-react";
+import { CheckCircle2, EyeOff, Megaphone, UserX } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import {
@@ -16,7 +16,9 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useAssignEngagement, useSubmitReview, useTaskUnlockers } from "@/lib/reviews-api";
 import { useCloseTask } from "@/lib/tasks-api";
+import { useTaskPromotions } from "@/lib/promotions-api";
 import { RatingInline, StarSelector } from "@/components/reviews/stars";
+import { PROMO_LABELS, remainingLabel } from "@/services/promotions";
 import {
   DOUBLE_BLIND_NOTE,
   REVIEW_PLACEHOLDER,
@@ -45,6 +47,7 @@ export function CloseTaskDialog({
   assignOnly?: boolean;
 }) {
   const { data: unlockers = [], isLoading } = useTaskUnlockers(taskId, open);
+  const { data: activePromos = [] } = useTaskPromotions(open ? taskId : undefined);
   const assign = useAssignEngagement();
   const close = useCloseTask();
   const submitReview = useSubmitReview();
@@ -201,7 +204,21 @@ export function CloseTaskDialog({
                     </div>
                   </>
                 )}
-              </RadioGroup>
+            </RadioGroup>
+            )}
+
+            {activePromos.length > 0 && (
+              <div className="flex items-start gap-2 rounded-xl border border-amber-200 bg-amber-50 px-3 py-2 text-xs leading-relaxed text-amber-900">
+                <Megaphone className="mt-0.5 h-3.5 w-3.5 shrink-0 text-amber-700" />
+                <span>
+                  По тази задача тече активна промоция:{" "}
+                  {activePromos
+                    .map((p) => `${PROMO_LABELS[p.type]} (${remainingLabel(p.expiresAt).toLowerCase()})`)
+                    .join(", ")}
+                  . При затваряне на задачата останалото време от промоцията се губи и не може да се
+                  прехвърли на друга задача.
+                </span>
+              </div>
             )}
 
             <DialogFooter>
