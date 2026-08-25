@@ -334,6 +334,8 @@ export type CreateTaskInput = {
   files: File[];
   /** When reposting, the archived task whose approved photos carry over. */
   repostFrom?: string;
+  /** Source-task image ids the user removed in the form; they are not carried over. */
+  repostExclude?: string[];
 };
 
 function blobToDataUrl(blob: Blob): Promise<string> {
