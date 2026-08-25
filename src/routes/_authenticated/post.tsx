@@ -34,6 +34,10 @@ function PostPage() {
   const hasPhone = Boolean(user?.phone && isValidBgPhone(user.phone));
   const { repost } = Route.useSearch();
   const source = useTask(repost ?? "");
+  const sourceImages = useTaskImages(repost);
+  // Only approved photos can carry over (held/rejected ones never will), so
+  // the form shows exactly what will be copied to the new task.
+  const carriedImages = (sourceImages.data ?? []).filter((i) => i.status === "approved" && i.url);
   const initial =
     repost && source.data
       ? {
@@ -45,10 +49,21 @@ function PostPage() {
         }
       : undefined;
 
-  if (repost && source.isLoading) {
+  if (repost && (source.isLoading || sourceImages.isLoading)) {
     return (
       <div className="container mx-auto max-w-3xl px-4 py-16 text-center text-sm text-muted-foreground">
         Зареждане на данните от предишната задача...
+      </div>
+    );
+  }
+
+  if (repost && !source.data) {
+    return (
+      <div className="container mx-auto max-w-3xl px-4 py-16 text-center">
+        <h1 className="text-2xl font-bold">Задачата не е намерена</h1>
+        <p className="mt-2 text-sm text-muted-foreground">
+          Предишната задача липсва или нямаш права да я публикуваш отново.
+        </p>
       </div>
     );
   }
@@ -62,9 +77,10 @@ function PostPage() {
         </p>
       </div>
 
-      {repost && source.data && (source.data.gallery?.length ?? 0) > 0 && (
+      {repost && carriedImages.length > 0 && (
         <p className="mb-6 rounded-xl bg-primary-soft/50 px-4 py-3 text-sm text-muted-foreground">
-          Снимките от предишната задача ({source.data.gallery?.length}) ще бъдат добавени автоматично.
+          Снимките от предишната задача ({carriedImages.length}) са добавени по-долу. Можеш да
+          премахнеш някоя или да качиш нови, преди да публикуваш.
         </p>
       )}
 
@@ -80,11 +96,12 @@ function PostPage() {
         key={initial ? `repost-${repost}` : "new"}
         mode="create"
         {...(initial ? { initial } : {})}
+        existingImages={repost ? carriedImages : []}
         submitting={createTask.isPending}
         disabled={!hasPhone}
         submitLabel="Публикувай задачата"
         onError={(m) => toast.error(m)}
-        onSubmit={async ({ values, files }) => {
+        onSubmit={async ({ values, files, removedImageIds }) => {
           if (!hasPhone) {
             toast.error("Добави телефон в профила си, за да публикуваш задача.");
             return;
@@ -93,8 +110,14 @@ function PostPage() {
             const result = await createTask.mutateAsync({
               ...values,
               files,
-              ...(repost ? { repostFrom: repost } : {}),
+              ...(repost ? { repostFrom: repost, repostExclude: removedImageIds } : {}),
             });
+            if (result.copyFailed) {
+              toast.error("Снимките не бяха копирани", {
+                description:
+                  "Задачата е създадена, но снимките от предишната задача не можаха да се копират. Добави ги от „Редактирай“ на новата задача.",
+              });
+            }
             if (result.rejected.length > 0) {
               toast.error(`${result.rejected.length} снимка(и) не бяха приети`, {
                 description: `${IMAGE_REJECT_BG} Причина: ${categoryBg(result.rejected[0])}.`,
