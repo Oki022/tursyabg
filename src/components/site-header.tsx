@@ -19,9 +19,9 @@ import {
 } from "@/components/ui/dropdown-menu";
 
 const NAV_UNDERLINE =
-  "after:absolute after:inset-x-4 after:bottom-0.5 after:h-0.5 after:origin-left after:scale-x-0 after:rounded-full after:bg-gradient-to-r after:from-orange-500 after:to-rose-500 after:transition-transform after:duration-200";
+  "after:absolute after:inset-x-4 after:bottom-0.5 after:h-0.5 after:origin-left after:rounded-full after:bg-gradient-to-r after:from-orange-500 after:to-rose-500 after:transition-transform after:duration-200";
 
-const navLinkIdle = `group relative rounded-full px-4 py-1.5 text-[15px] font-medium tracking-[0.01em] text-muted-foreground transition-colors duration-200 hover:text-foreground hover:after:scale-x-100 ${NAV_UNDERLINE}`;
+const navLinkIdle = `relative rounded-full px-4 py-1.5 text-[15px] font-medium tracking-[0.01em] text-muted-foreground transition-colors duration-200 after:scale-x-0 hover:text-foreground hover:after:scale-x-100 ${NAV_UNDERLINE}`;
 const navLinkActive = `relative rounded-full bg-gradient-to-r from-orange-500 to-rose-500 bg-clip-text px-4 py-1.5 text-[15px] font-semibold tracking-[0.01em] text-transparent after:scale-x-100 ${NAV_UNDERLINE}`;
 const navLinkCta =
   "rounded-full bg-gradient-to-r from-orange-500 to-rose-500 px-4 py-1.5 text-sm font-semibold tracking-[0.01em] text-white shadow-sm transition-all duration-200 hover:shadow-md hover:brightness-110";
