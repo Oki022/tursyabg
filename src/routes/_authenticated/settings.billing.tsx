@@ -119,7 +119,7 @@ function SettingsBillingPage() {
         </div>
       </div>
 
-      <div className="rounded-2xl border border-border/60 bg-card p-5 shadow-sm md:p-6">
+      <div id="history" className="scroll-mt-24 rounded-2xl border border-border/60 bg-card p-5 shadow-sm md:p-6">
         <div className="flex items-center gap-2">
           <History className="h-4 w-4 text-primary" />
           <h2 className="text-lg font-semibold text-foreground">История на движенията</h2>

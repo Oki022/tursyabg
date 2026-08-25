@@ -31,6 +31,8 @@ export type PublicProfile = {
   reviewCountAsPro: number;
   ratingAsClient: number | null;
   reviewCountAsClient: number;
+  skillCategories: string[];
+  skillTags: string[];
 };
 
 export type PublicReview = {
@@ -67,7 +69,7 @@ export const REVIEW_PLACEHOLDER: Record<ReviewDirection, string> = {
 
 export const REVIEW_HEADING: Record<ReviewDirection, string> = {
   client_to_pro: "Оцени изпълнителя",
-  pro_to_client: "Оцени клиента",
+  pro_to_client: "Оцени възложителя",
 };
 
 function unwrap(data: unknown): Record<string, unknown> {
@@ -142,6 +144,8 @@ export async function getPublicProfile(userId: string): Promise<PublicProfile | 
     reviewCountAsPro: Number(r["review_count_as_pro"] ?? 0),
     ratingAsClient: r["rating_as_client"] == null ? null : Number(r["rating_as_client"]),
     reviewCountAsClient: Number(r["review_count_as_client"] ?? 0),
+    skillCategories: (r["skill_categories"] as string[] | null) ?? [],
+    skillTags: (r["skill_tags"] as string[] | null) ?? [],
   };
 }
 

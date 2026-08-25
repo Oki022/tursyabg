@@ -22,7 +22,7 @@ export function RequirePhoneNotice({
           <p className="text-sm font-semibold text-amber-900">{title}</p>
           <p className="mt-1 text-sm text-amber-800">{description}</p>
           <Button asChild size="sm" className="mt-3">
-            <Link to="/settings/profile">Добави телефон</Link>
+            <Link to="/settings/security">Добави телефон</Link>
           </Button>
         </div>
       </div>

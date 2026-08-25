@@ -1,0 +1,1 @@
+REVOKE EXECUTE ON FUNCTION public.profiles_moderate_skills() FROM anon, authenticated;

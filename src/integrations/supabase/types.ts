@@ -864,6 +864,8 @@ export type Database = {
           rating_as_pro: number | null
           review_count_as_client: number
           review_count_as_pro: number
+          skill_categories: string[]
+          skill_tags: string[]
           suspended_until: string | null
           trust_level: number
         }
@@ -885,6 +887,8 @@ export type Database = {
           rating_as_pro?: number | null
           review_count_as_client?: number
           review_count_as_pro?: number
+          skill_categories?: string[]
+          skill_tags?: string[]
           suspended_until?: string | null
           trust_level?: number
         }
@@ -906,6 +910,8 @@ export type Database = {
           rating_as_pro?: number | null
           review_count_as_client?: number
           review_count_as_pro?: number
+          skill_categories?: string[]
+          skill_tags?: string[]
           suspended_until?: string | null
           trust_level?: number
         }

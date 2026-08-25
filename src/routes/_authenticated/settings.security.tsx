@@ -1,7 +1,11 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { ShieldCheck, KeyRound, AlertTriangle } from "lucide-react";
+import { useEffect, useState, type FormEvent } from "react";
+import { ShieldCheck, KeyRound, AlertTriangle, Loader2, PhoneCall, UserCog } from "lucide-react";
+import { toast } from "sonner";
 import { SettingsPageShell } from "@/components/settings-page-shell";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -14,15 +18,18 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { useAuth } from "@/lib/auth";
-import { toast } from "sonner";
+import { nameError } from "@/lib/auth-errors";
+import { normalizeBgPhone, phoneError } from "@/lib/phone";
+import { SkillsEditor } from "@/components/settings/skills-editor";
+import { useMySkills, useSaveSkills } from "@/lib/skills-api";
 
 export const Route = createFileRoute("/_authenticated/settings/security")({
   head: () => ({
     meta: [
       { title: "Влизане и сигурност | ТърсяБГ" },
-      { name: "description", content: "Смени паролата си и управлявай сигурността и статуса на акаунта си." },
+      { name: "description", content: "Редактирай профила и умението си и управлявай сигурността на акаунта си." },
       { property: "og:title", content: "Влизане и сигурност | ТърсяБГ" },
-      { property: "og:description", content: "Настройки за сигурност на профила в ТърсяБГ." },
+      { property: "og:description", content: "Профил, умения и настройки за сигурност в ТърсяБГ." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
     ],
@@ -31,8 +38,57 @@ export const Route = createFileRoute("/_authenticated/settings/security")({
 });
 
 function SettingsSecurityPage() {
-  const { user, logout } = useAuth();
+  const { user, logout, updateUser } = useAuth();
   const navigate = useNavigate();
+
+  const [name, setName] = useState("");
+  const [phone, setPhone] = useState("");
+  const [skillCategories, setSkillCategories] = useState<string[]>([]);
+  const [skillTags, setSkillTags] = useState<string[]>([]);
+  const [saving, setSaving] = useState(false);
+  const [touched, setTouched] = useState(false);
+
+  const skills = useMySkills(user?.id);
+  const saveSkills = useSaveSkills();
+
+  useEffect(() => {
+    if (!user) return;
+    setName(user.name ?? "");
+    setPhone(user.phone ?? "");
+  }, [user?.id]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  useEffect(() => {
+    if (!skills.data) return;
+    setSkillCategories(skills.data.categories);
+    setSkillTags(skills.data.tags);
+  }, [skills.data]);
+
+  const phoneMsg = touched ? phoneError(phone) : null;
+  const nameMsg = touched ? nameError(name) : null;
+
+  const onSubmit = async (e: FormEvent) => {
+    e.preventDefault();
+    setTouched(true);
+    if (nameError(name) || phoneError(phone)) {
+      toast.error("Провери маркираните полета.");
+      return;
+    }
+    if (!user) return;
+    setSaving(true);
+    try {
+      await updateUser({ name: name.trim(), phone: normalizeBgPhone(phone) });
+      await saveSkills.mutateAsync({ userId: user.id, categories: skillCategories, tags: skillTags });
+      toast.success("Профилът е обновен.");
+    } catch (err) {
+      if (err instanceof Error && err.message === "SKILL_TAG_BLOCKED") {
+        toast.error("Един от етикетите съдържа непозволено съдържание. Премахни го и опитай пак.");
+      } else {
+        toast.error("Промените не бяха запазени. Опитай пак.");
+      }
+    } finally {
+      setSaving(false);
+    }
+  };
 
   const handleDeactivate = () => {
     toast.success("Профилът ти е деактивиран. Можеш да го активираш при следващо влизане.");
@@ -47,8 +103,75 @@ function SettingsSecurityPage() {
   return (
     <SettingsPageShell
       title="Влизане и сигурност"
-      description="Управлявай паролата и достъпа до своя акаунт."
+      description="Профил, умения и настройки за достъп до твоя акаунт."
     >
+      {/* Профил */}
+      <form onSubmit={onSubmit} className="space-y-5 rounded-2xl border border-border/60 bg-card p-5 shadow-sm md:p-6">
+        <div className="flex items-center gap-2">
+          <UserCog className="h-4 w-4 text-primary" />
+          <h2 className="text-lg font-semibold text-foreground">Профил</h2>
+        </div>
+
+        <div className="grid gap-1.5">
+          <Label htmlFor="name">Име</Label>
+          <Input
+            id="name"
+            value={name}
+            onChange={(e) => {
+              setName(e.target.value);
+              setTouched(true);
+            }}
+            placeholder="Иван Петров"
+            className="h-11"
+          />
+          {nameMsg && <p className="text-xs text-destructive">{nameMsg}</p>}
+        </div>
+
+        <div className="grid gap-1.5">
+          <Label htmlFor="phone">Телефон</Label>
+          <div className="relative">
+            <PhoneCall className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+            <Input
+              id="phone"
+              inputMode="tel"
+              value={phone}
+              onChange={(e) => {
+                setPhone(e.target.value);
+                setTouched(true);
+              }}
+              placeholder="0888123456"
+              className={`h-11 pl-9 ${phoneMsg ? "border-destructive focus-visible:ring-destructive" : ""}`}
+            />
+          </div>
+          {phoneMsg ? (
+            <p className="text-xs text-destructive">{phoneMsg}</p>
+          ) : (
+            <p className="flex items-center gap-1.5 text-xs text-muted-foreground">
+              <ShieldCheck className="h-3.5 w-3.5 text-primary" />
+              Номерът е скрит и се показва само на майстор, отключил контакта с кредити.
+            </p>
+          )}
+        </div>
+
+        <div className="border-t border-border/60 pt-5">
+          <SkillsEditor
+            categories={skillCategories}
+            tags={skillTags}
+            onChange={(next) => {
+              setSkillCategories(next.categories);
+              setSkillTags(next.tags);
+            }}
+            disabled={saving || skills.isLoading}
+          />
+        </div>
+
+        <Button type="submit" disabled={saving || skills.isLoading} className="gap-2">
+          {saving && <Loader2 className="h-4 w-4 animate-spin" />}
+          Запази промените
+        </Button>
+      </form>
+
+      {/* Вход в акаунта */}
       <div className="rounded-2xl border border-border/60 bg-card p-5 shadow-sm md:p-6">
         <div className="flex items-center gap-2">
           <ShieldCheck className="h-4 w-4 text-primary" />

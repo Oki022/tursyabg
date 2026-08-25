@@ -50,7 +50,6 @@ import { Route as CityCityIndexRouteImport } from './routes/city.$city.index'
 import { Route as AuthenticatedMessagesIndexRouteImport } from './routes/_authenticated/messages.index'
 import { Route as CityCityCategoryRouteImport } from './routes/city.$city.$category'
 import { Route as AuthenticatedSettingsSecurityRouteImport } from './routes/_authenticated/settings.security'
-import { Route as AuthenticatedSettingsProfileRouteImport } from './routes/_authenticated/settings.profile'
 import { Route as AuthenticatedSettingsNotificationsRouteImport } from './routes/_authenticated/settings.notifications'
 import { Route as AuthenticatedSettingsBillingRouteImport } from './routes/_authenticated/settings.billing'
 import { Route as AuthenticatedReviewEngagementIdRouteImport } from './routes/_authenticated/review.$engagementId'
@@ -268,12 +267,6 @@ const AuthenticatedSettingsSecurityRoute =
     path: '/settings/security',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
-const AuthenticatedSettingsProfileRoute =
-  AuthenticatedSettingsProfileRouteImport.update({
-    id: '/settings/profile',
-    path: '/settings/profile',
-    getParentRoute: () => AuthenticatedRouteRoute,
-  } as any)
 const AuthenticatedSettingsNotificationsRoute =
   AuthenticatedSettingsNotificationsRouteImport.update({
     id: '/settings/notifications',
@@ -370,7 +363,6 @@ export interface FileRoutesByFullPath {
   '/review/$engagementId': typeof AuthenticatedReviewEngagementIdRoute
   '/settings/billing': typeof AuthenticatedSettingsBillingRoute
   '/settings/notifications': typeof AuthenticatedSettingsNotificationsRoute
-  '/settings/profile': typeof AuthenticatedSettingsProfileRoute
   '/settings/security': typeof AuthenticatedSettingsSecurityRoute
   '/city/$city/$category': typeof CityCityCategoryRoute
   '/messages/': typeof AuthenticatedMessagesIndexRoute
@@ -420,7 +412,6 @@ export interface FileRoutesByTo {
   '/review/$engagementId': typeof AuthenticatedReviewEngagementIdRoute
   '/settings/billing': typeof AuthenticatedSettingsBillingRoute
   '/settings/notifications': typeof AuthenticatedSettingsNotificationsRoute
-  '/settings/profile': typeof AuthenticatedSettingsProfileRoute
   '/settings/security': typeof AuthenticatedSettingsSecurityRoute
   '/city/$city/$category': typeof CityCityCategoryRoute
   '/messages': typeof AuthenticatedMessagesIndexRoute
@@ -474,7 +465,6 @@ export interface FileRoutesById {
   '/_authenticated/review/$engagementId': typeof AuthenticatedReviewEngagementIdRoute
   '/_authenticated/settings/billing': typeof AuthenticatedSettingsBillingRoute
   '/_authenticated/settings/notifications': typeof AuthenticatedSettingsNotificationsRoute
-  '/_authenticated/settings/profile': typeof AuthenticatedSettingsProfileRoute
   '/_authenticated/settings/security': typeof AuthenticatedSettingsSecurityRoute
   '/city/$city/$category': typeof CityCityCategoryRoute
   '/_authenticated/messages/': typeof AuthenticatedMessagesIndexRoute
@@ -528,7 +518,6 @@ export interface FileRouteTypes {
     | '/review/$engagementId'
     | '/settings/billing'
     | '/settings/notifications'
-    | '/settings/profile'
     | '/settings/security'
     | '/city/$city/$category'
     | '/messages/'
@@ -578,7 +567,6 @@ export interface FileRouteTypes {
     | '/review/$engagementId'
     | '/settings/billing'
     | '/settings/notifications'
-    | '/settings/profile'
     | '/settings/security'
     | '/city/$city/$category'
     | '/messages'
@@ -631,7 +619,6 @@ export interface FileRouteTypes {
     | '/_authenticated/review/$engagementId'
     | '/_authenticated/settings/billing'
     | '/_authenticated/settings/notifications'
-    | '/_authenticated/settings/profile'
     | '/_authenticated/settings/security'
     | '/city/$city/$category'
     | '/_authenticated/messages/'
@@ -957,13 +944,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedSettingsSecurityRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/_authenticated/settings/profile': {
-      id: '/_authenticated/settings/profile'
-      path: '/settings/profile'
-      fullPath: '/settings/profile'
-      preLoaderRoute: typeof AuthenticatedSettingsProfileRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
     '/_authenticated/settings/notifications': {
       id: '/_authenticated/settings/notifications'
       path: '/settings/notifications'
@@ -1042,7 +1022,6 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedReviewEngagementIdRoute: typeof AuthenticatedReviewEngagementIdRoute
   AuthenticatedSettingsBillingRoute: typeof AuthenticatedSettingsBillingRoute
   AuthenticatedSettingsNotificationsRoute: typeof AuthenticatedSettingsNotificationsRoute
-  AuthenticatedSettingsProfileRoute: typeof AuthenticatedSettingsProfileRoute
   AuthenticatedSettingsSecurityRoute: typeof AuthenticatedSettingsSecurityRoute
   AuthenticatedMessagesIndexRoute: typeof AuthenticatedMessagesIndexRoute
   AuthenticatedTaskIdEditRoute: typeof AuthenticatedTaskIdEditRoute
@@ -1062,7 +1041,6 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedSettingsBillingRoute: AuthenticatedSettingsBillingRoute,
   AuthenticatedSettingsNotificationsRoute:
     AuthenticatedSettingsNotificationsRoute,
-  AuthenticatedSettingsProfileRoute: AuthenticatedSettingsProfileRoute,
   AuthenticatedSettingsSecurityRoute: AuthenticatedSettingsSecurityRoute,
   AuthenticatedMessagesIndexRoute: AuthenticatedMessagesIndexRoute,
   AuthenticatedTaskIdEditRoute: AuthenticatedTaskIdEditRoute,
