@@ -23,8 +23,6 @@ const NAV_UNDERLINE =
 
 const navLinkIdle = `relative rounded-full px-4 py-1.5 text-[15px] font-medium tracking-[0.01em] text-muted-foreground transition-colors duration-200 after:scale-x-0 hover:text-foreground hover:after:scale-x-100 ${NAV_UNDERLINE}`;
 const navLinkActive = `relative rounded-full bg-gradient-to-r from-orange-500 to-rose-500 bg-clip-text px-4 py-1.5 text-[15px] font-semibold tracking-[0.01em] text-transparent after:scale-x-100 ${NAV_UNDERLINE}`;
-const navLinkCta =
-  "rounded-full bg-gradient-to-r from-orange-500 to-rose-500 px-4 py-1.5 text-sm font-semibold tracking-[0.01em] text-white shadow-sm transition-all duration-200 hover:shadow-md hover:brightness-110";
 
 export function SiteHeader() {
   const { user, logout } = useAuth();
@@ -50,7 +48,7 @@ export function SiteHeader() {
             <Link to="/tasks" className={navLinkIdle} activeProps={{ className: navLinkActive }}>
               Намери задачи
             </Link>
-            <Link to="/post" className={navLinkCta} activeProps={{ className: `${navLinkCta} shadow-md brightness-110` }}>
+            <Link to="/post" className={navLinkIdle} activeProps={{ className: navLinkActive }}>
               Възложи задача
             </Link>
           </nav>
