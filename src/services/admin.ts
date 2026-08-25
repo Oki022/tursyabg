@@ -362,7 +362,8 @@ export const REPORT_REASON_BG: Record<string, string> = {
   spam: "Спам",
   fraud: "Измама",
   inappropriate: "Неподходящо съдържание",
-  wrong_category: "Грешна категория",
+  stale: "Задачата вече не е актуална",
+  wrong_category: "Грешна категория", // legacy rows only, no longer offered
   duplicate: "Дублирана задача",
   other: "Друго",
 };

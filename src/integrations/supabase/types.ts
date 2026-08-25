@@ -1600,6 +1600,10 @@ export type Database = {
         Returns: Json
       }
       confirm_task_active: { Args: { _task_id: string }; Returns: Json }
+      copy_task_images: {
+        Args: { _new_task_id: string; _source_task_id: string }
+        Returns: number
+      }
       delete_own_task: {
         Args: { _reason: string; _task_id: string }
         Returns: Json
@@ -1617,13 +1621,6 @@ export type Database = {
           _severity: string
           _task_id: string
           _user_id: string
-        }
-        Returns: string
-      }
-      evaluate_refund_rule: {
-        Args: {
-          _reason: Database["public"]["Enums"]["refund_reason"]
-          _unlock_id: string
         }
         Returns: string
       }
@@ -1782,14 +1779,6 @@ export type Database = {
         }
         Returns: Json
       }
-      request_credit_refund: {
-        Args: {
-          _details: string
-          _reason: Database["public"]["Enums"]["refund_reason"]
-          _unlock_id: string
-        }
-        Returns: Json
-      }
       respond_engagement: {
         Args: { _confirm: boolean; _engagement_id: string }
         Returns: Json
@@ -1911,6 +1900,7 @@ export type Database = {
         | "wrong_category"
         | "duplicate"
         | "other"
+        | "stale"
       report_status: "pending" | "reviewed" | "dismissed"
       review_direction: "client_to_pro" | "pro_to_client"
       task_status:
@@ -2099,6 +2089,7 @@ export const Constants = {
         "wrong_category",
         "duplicate",
         "other",
+        "stale",
       ],
       report_status: ["pending", "reviewed", "dismissed"],
       review_direction: ["client_to_pro", "pro_to_client"],

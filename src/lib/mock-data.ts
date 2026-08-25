@@ -119,11 +119,3 @@ export type Task = {
 export function getCategory(id: string) {
   return categories.find((c) => c.id === id) ?? categories[categories.length - 1];
 }
-
-export function detectCategory(title: string): string | null {
-  const t = title.toLowerCase();
-  for (const cat of categories) {
-    if (cat.keywords.some((k) => t.includes(k))) return cat.id;
-  }
-  return null;
-}

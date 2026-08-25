@@ -5,9 +5,7 @@ import {
   getMyUnlock,
   getMyUnlockedTasks,
   getTransactions,
-  requestRefund,
   unlockTaskContact,
-  type RefundReason,
 } from "@/services/credits";
 import { captureIssue } from "@/lib/monitoring/client";
 
@@ -50,24 +48,6 @@ export function useUnlockTask() {
     onError: (error, taskId) => {
       // Credits may have been debited without the contact being revealed.
       captureIssue({ area: "credits.spend", action: "unlock task contact", error, extra: { task_id: taskId } });
-    },
-    onSuccess: () => {
-      void qc.invalidateQueries({ queryKey: ["credits"] });
-    },
-  });
-}
-
-export function useRequestRefund() {
-  const qc = useQueryClient();
-  return useMutation({
-    mutationFn: (input: { unlockId: string; reason: RefundReason; details: string }) => requestRefund(input),
-    onError: (error, input) => {
-      captureIssue({
-        area: "credits.refund",
-        action: "request credit refund",
-        error,
-        extra: { unlock_id: input.unlockId, reason: input.reason },
-      });
     },
     onSuccess: () => {
       void qc.invalidateQueries({ queryKey: ["credits"] });

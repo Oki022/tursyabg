@@ -62,6 +62,12 @@ function PostPage() {
         </p>
       </div>
 
+      {repost && source.data && (source.data.gallery?.length ?? 0) > 0 && (
+        <p className="mb-6 rounded-xl bg-primary-soft/50 px-4 py-3 text-sm text-muted-foreground">
+          Снимките от предишната задача ({source.data.gallery?.length}) ще бъдат добавени автоматично.
+        </p>
+      )}
+
       {user && !hasPhone && (
         <RequirePhoneNotice
           className="mb-6"
@@ -84,7 +90,11 @@ function PostPage() {
             return;
           }
           try {
-            const result = await createTask.mutateAsync({ ...values, files });
+            const result = await createTask.mutateAsync({
+              ...values,
+              files,
+              ...(repost ? { repostFrom: repost } : {}),
+            });
             if (result.rejected.length > 0) {
               toast.error(`${result.rejected.length} снимка(и) не бяха приети`, {
                 description: `${IMAGE_REJECT_BG} Причина: ${categoryBg(result.rejected[0])}.`,

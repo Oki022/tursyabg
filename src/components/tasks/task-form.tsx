@@ -1,12 +1,13 @@
-import { useEffect, useRef, useState } from "react";
-import { Sparkles, CheckCircle2, Lock, ImagePlus, X, UploadCloud, Info, AlertCircle } from "lucide-react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { Sparkles, Lock, ImagePlus, X, UploadCloud, Info, AlertCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { LocationCombobox } from "@/components/location-combobox";
-import { categories, detectCategory } from "@/lib/mock-data";
+import { categories } from "@/lib/mock-data";
+import { suggestCategories } from "@/lib/category-suggest";
 import {
   DESCRIPTION_MAX,
   DESCRIPTION_MIN,
@@ -95,7 +96,6 @@ export function TaskForm({
   const [description, setDescription] = useState(initial?.description ?? "");
   const [budget, setBudget] = useState(initial?.budget != null ? String(initial.budget) : "");
   const [location, setLocation] = useState<string | undefined>(initial?.location || undefined);
-  const [autoPicked, setAutoPicked] = useState(false);
   const [manuallyTouched, setManuallyTouched] = useState(mode === "edit");
   const [photos, setPhotos] = useState<{ id: string; url: string; name: string; file: File }[]>([]);
   const [removed, setRemoved] = useState<string[]>([]);
@@ -134,16 +134,12 @@ export function TaskForm({
     });
   };
 
-  useEffect(() => {
-    if (manuallyTouched) return;
-    const detected = detectCategory(title);
-    if (detected && detected !== category) {
-      setCategory(detected);
-      setAutoPicked(true);
-    } else if (!detected && autoPicked) {
-      setAutoPicked(false);
-    }
-  }, [title]); // eslint-disable-line react-hooks/exhaustive-deps
+  // Full-text analysis (title + description) with weighted Bulgarian phrase
+  // scoring; the top 2-3 candidates are offered as one-tap chips.
+  const candidates = useMemo(
+    () => (manuallyTouched ? [] : suggestCategories(debouncedTitle, debouncedDescription)),
+    [debouncedTitle, debouncedDescription, manuallyTouched],
+  );
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -189,19 +185,37 @@ export function TaskForm({
       <div className="space-y-2">
         <div className="flex items-center justify-between">
           <Label htmlFor="category">Категория</Label>
-          {autoPicked && (
-            <span className="inline-flex items-center gap-1 text-xs font-medium text-primary">
-              <Sparkles className="h-3.5 w-3.5" />
-              Автоматично избрана
-            </span>
-          )}
         </div>
+        {candidates.length > 0 && (
+          <div className="flex flex-wrap items-center gap-1.5">
+            <span className="inline-flex items-center gap-1 text-xs font-medium text-muted-foreground">
+              <Sparkles className="h-3.5 w-3.5 text-amber-500" />
+              Предложения:
+            </span>
+            {candidates.map((c, i) => (
+              <button
+                key={c.id}
+                type="button"
+                onClick={() => {
+                  setCategory(c.id);
+                  setManuallyTouched(true);
+                }}
+                className={
+                  i === 0
+                    ? "inline-flex items-center rounded-full bg-amber-100 px-3 py-1.5 text-xs font-medium text-amber-800 transition hover:bg-amber-200"
+                    : "inline-flex items-center rounded-full bg-muted px-3 py-1.5 text-xs font-medium text-muted-foreground transition hover:bg-accent hover:text-foreground"
+                }
+              >
+                {c.name}
+              </button>
+            ))}
+          </div>
+        )}
         <Select
           value={category}
           onValueChange={(v) => {
             setCategory(v);
             setManuallyTouched(true);
-            setAutoPicked(false);
           }}
         >
           <SelectTrigger id="category" className="h-11">
@@ -217,12 +231,6 @@ export function TaskForm({
             ))}
           </SelectContent>
         </Select>
-        {autoPicked && (
-          <p className="flex items-center gap-1.5 text-xs text-muted-foreground">
-            <CheckCircle2 className="h-3.5 w-3.5 text-primary" />
-            Категорията е избрана автоматично според описанието. Можеш да я смениш.
-          </p>
-        )}
       </div>
 
       <div className="space-y-2">

@@ -29,14 +29,13 @@ export type UnlockedTask = {
   category: string;
   ownerName: string;
   phone: string | null;
-  hasRefundRequest: boolean;
+  taskStatus: string;
+  taskDeleted: boolean;
 };
 
 export type UnlockResult =
   | { ok: true; already: boolean; phone: string | null; name: string | null; creditsSpent: number; unlockId: string }
   | { ok: false; error: string; cost?: number; balance?: number };
-
-export type RefundReason = "fake_task" | "already_taken" | "no_response" | "wrong_category" | "other";
 
 export const TRANSACTIONS_PAGE_SIZE = 10;
 
@@ -146,7 +145,7 @@ export async function getMyUnlockedTasks(): Promise<UnlockedTask[]> {
   const { data, error } = await supabase
     .from("task_unlocks")
     .select(
-      "id, task_id, credits_spent, unlocked_at, expires_at, tasks(title, budget, category, user_id, profiles(full_name))",
+      "id, task_id, credits_spent, unlocked_at, expires_at, tasks(title, budget, category, status, deleted_at, user_id, profiles(full_name))",
     )
     .order("unlocked_at", { ascending: false });
   if (error) throw error;
@@ -156,7 +155,15 @@ export async function getMyUnlockedTasks(): Promise<UnlockedTask[]> {
     credits_spent: number;
     unlocked_at: string;
     expires_at: string;
-    tasks: { title: string; budget: number; category: string; user_id: string; profiles: { full_name: string | null } | null } | null;
+    tasks: {
+      title: string;
+      budget: number;
+      category: string;
+      status: string;
+      deleted_at: string | null;
+      user_id: string;
+      profiles: { full_name: string | null } | null;
+    } | null;
   }[];
 
   const ownerIds = [...new Set(rows.map((r) => r.tasks?.user_id).filter(Boolean) as string[])];
@@ -167,9 +174,6 @@ export async function getMyUnlockedTasks(): Promise<UnlockedTask[]> {
       phones[c.user_id] = c.phone;
     });
   }
-
-  const { data: refunds } = await supabase.from("credit_refund_requests").select("unlock_id");
-  const refunded = new Set((refunds ?? []).map((r) => r.unlock_id));
 
   return rows.map((r) => ({
     unlockId: r.id,
@@ -182,36 +186,7 @@ export async function getMyUnlockedTasks(): Promise<UnlockedTask[]> {
     category: r.tasks?.category ?? "drugi",
     ownerName: r.tasks?.profiles?.full_name ?? "Потребител",
     phone: r.tasks?.user_id ? (phones[r.tasks.user_id] ?? null) : null,
-    hasRefundRequest: refunded.has(r.id),
+    taskStatus: r.tasks?.status ?? "active",
+    taskDeleted: Boolean(r.tasks?.deleted_at),
   }));
-}
-
-export type RefundRequestResult =
-  | { ok: true; auto: boolean; credits?: number }
-  | { ok: false; error: string; availableAt?: string };
-
-/**
- * Submits a refund request through the server-side rule engine, which can
- * auto-approve clear-cut cases (closed task, confirmed silence, mass-reported task).
- */
-export async function requestRefund(input: {
-  unlockId: string;
-  reason: RefundReason;
-  details: string;
-}): Promise<RefundRequestResult> {
-  const { data, error } = await supabase.rpc("request_credit_refund", {
-    _unlock_id: input.unlockId,
-    _reason: input.reason,
-    _details: input.details,
-  });
-  if (error) throw error;
-  const r = (data ?? {}) as Record<string, unknown>;
-  if (r["ok"]) {
-    return { ok: true, auto: Boolean(r["auto"]), credits: Number(r["credits"] ?? 0) };
-  }
-  return {
-    ok: false,
-    error: String(r["error"] ?? "UNKNOWN"),
-    availableAt: (r["available_at"] as string | undefined) ?? undefined,
-  };
 }
