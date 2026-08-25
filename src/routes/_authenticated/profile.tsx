@@ -212,8 +212,8 @@ function ProfilePage() {
                       <OwnerTaskCard
                         key={task.id}
                         task={task}
-                        archived={t.value === "archive"}
-                        repostable={t.value === "archive" || t.value === "inactive"}
+                        archived={isArchived(task)}
+                        repostable={t.value === "archive"}
                         promotions={promotions[task.id] ?? []}
                         onPromote={() => setPromoteTaskId(task.id)}
                       />
