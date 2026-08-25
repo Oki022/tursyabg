@@ -141,7 +141,14 @@ function PostPage() {
             }
             navigate({ to: "/posted/$id", params: { id: result.id } });
           } catch (err) {
-            const raw = err instanceof Error ? err.message : "";
+            // PostgREST errors are plain objects, not Error instances — read
+            // their message too, otherwise the real cause is lost.
+            const raw =
+              err instanceof Error
+                ? err.message
+                : typeof err === "object" && err !== null && "message" in err
+                  ? String((err as { message: unknown }).message)
+                  : "";
             const quality = contentQualityErrorBg(raw);
             if (quality) {
               toast.error(quality.title, { description: quality.description });
