@@ -1607,7 +1607,11 @@ export type Database = {
       }
       confirm_task_active: { Args: { _task_id: string }; Returns: Json }
       copy_task_images: {
-        Args: { _new_task_id: string; _source_task_id: string }
+        Args: {
+          _exclude_ids?: string[]
+          _new_task_id: string
+          _source_task_id: string
+        }
         Returns: number
       }
       delete_own_task: {

@@ -49,7 +49,10 @@ function useDebounced<T>(value: T, delay = 450) {
 
 function FieldHint({ message }: { message: string }) {
   return (
-    <p className="flex items-start gap-1.5 rounded-xl bg-destructive/10 px-3 py-2 text-xs text-destructive">
+    <p
+      data-field-hint
+      className="flex items-start gap-1.5 rounded-xl bg-destructive/10 px-3 py-2 text-xs text-destructive"
+    >
       <AlertCircle className="mt-0.5 h-3.5 w-3.5 shrink-0" />
       <span>{message}</span>
     </p>
@@ -141,8 +144,16 @@ export function TaskForm({
     [debouncedTitle, debouncedDescription, manuallyTouched],
   );
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    const form = e.currentTarget;
+    // Validation failures also surface an inline hint; scroll to it so the
+    // reason is visible instead of looking like "nothing happened".
+    const scrollToHint = () =>
+      setTimeout(
+        () => form.querySelector("[data-field-hint]")?.scrollIntoView({ behavior: "smooth", block: "center" }),
+        500,
+      );
     if (!title || !category || !description || !budget || !location) {
       onError("Моля, попълни всички полета");
       return;
@@ -155,6 +166,7 @@ export function TaskForm({
     const problem = titleIssueBg(title) ?? descriptionIssueBg(description, title) ?? budgetIssueBg(budgetValue);
     if (problem) {
       onError(problem);
+      scrollToHint();
       return;
     }
     await onSubmit({

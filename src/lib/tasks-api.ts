@@ -215,7 +215,7 @@ export function useTasksFeed(filters: TaskFilters = {}) {
   });
 }
 
-export type TaskImage = { id: string; path: string; url: string };
+export type TaskImage = { id: string; path: string; url: string; status: string };
 
 /** Owner-facing image list for the edit form (ids are needed to remove them). */
 export function useTaskImages(taskId?: string) {
@@ -225,7 +225,7 @@ export function useTaskImages(taskId?: string) {
     queryFn: async (): Promise<TaskImage[]> => {
       const { data, error } = await supabase
         .from("task_images")
-        .select("id, image_url, sort_order")
+        .select("id, image_url, sort_order, moderation_status")
         .eq("task_id", taskId!)
         .order("sort_order");
       if (error) throw error;
@@ -235,6 +235,7 @@ export function useTaskImages(taskId?: string) {
         id: r.id,
         path: r.image_url,
         url: r.image_url.startsWith("http") ? r.image_url : (signed[r.image_url] ?? ""),
+        status: r.moderation_status,
       }));
     },
   });
@@ -333,6 +334,8 @@ export type CreateTaskInput = {
   files: File[];
   /** When reposting, the archived task whose approved photos carry over. */
   repostFrom?: string;
+  /** Source-task image ids the user removed in the form; they are not carried over. */
+  repostExclude?: string[];
 };
 
 function blobToDataUrl(blob: Blob): Promise<string> {
@@ -352,6 +355,8 @@ export type CreateTaskResult = {
   held: number;
   /** True when the task itself was held (pending) instead of published. */
   pending: boolean;
+  /** True when the repost photo carry-over failed (task was still created). */
+  copyFailed: boolean;
 };
 
 export function useCreateTask() {
@@ -401,15 +406,20 @@ export function useCreateTask() {
         }
       }
 
-      // Repost: carry over the already-approved photos from the source task.
+      // Repost: carry over the already-approved photos from the source task,
+      // minus the ones the user removed in the form. The source rows and the
+      // stored files are never touched — new rows point at the same paths.
+      let copyFailed = false;
       if (input.repostFrom) {
-        try {
-          await supabase.rpc("copy_task_images", {
-            _source_task_id: input.repostFrom,
-            _new_task_id: task.id,
-          });
-        } catch (e) {
-          console.error("copy_task_images", e);
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const { error: copyError } = await supabase.rpc("copy_task_images" as any, {
+          _source_task_id: input.repostFrom,
+          _new_task_id: task.id,
+          _exclude_ids: input.repostExclude ?? [],
+        } as any);
+        if (copyError) {
+          console.error("copy_task_images", copyError);
+          copyFailed = true;
         }
       }
 
@@ -425,6 +435,7 @@ export function useCreateTask() {
         rejected,
         held,
         pending: (fresh?.status ?? task.status) === "pending",
+        copyFailed,
       };
     },
     onSuccess: () => {
