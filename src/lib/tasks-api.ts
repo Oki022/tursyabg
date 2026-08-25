@@ -435,6 +435,7 @@ export function useCreateTask() {
         rejected,
         held,
         pending: (fresh?.status ?? task.status) === "pending",
+        copyFailed,
       };
     },
     onSuccess: () => {
