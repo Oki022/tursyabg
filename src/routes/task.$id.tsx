@@ -135,6 +135,7 @@ function TaskDetails() {
   const previousMessages = (existingThread.data?.pages ?? []).flatMap((page) => page.items);
 
   const isOwner = Boolean(user && task?.userId && user.id === task.userId);
+  const myUnlock = useMyUnlock(task?.id ?? "", user?.id);
   const hasPhone = Boolean(user?.phone && isValidBgPhone(user.phone));
   const [promoteOpen, setPromoteOpen] = useState(false);
   const taskPromotions = useTaskPromotions(task?.id);
@@ -428,12 +429,14 @@ function TaskDetails() {
                 />
               )}
               {isOwner && <OwnerTaskControls task={task} redirectAfterDelete="profile" />}
-              {!isOwner && (
+              {!isOwner && myUnlock.data && (
                 <Button size="lg" className="w-full gap-2" onClick={openMessageModal}>
                   <MessageSquare className="h-4 w-4" /> Изпрати съобщение
                 </Button>
               )}
-              {!isOwner && user && <ClaimTaskButton taskId={task.id} size="lg" />}
+              {!isOwner && user && task.status === "active" && (
+                <ClaimTaskButton taskId={task.id} size="lg" />
+              )}
             </div>
 
             <div className="mt-4">
