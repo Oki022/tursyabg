@@ -215,7 +215,7 @@ export function useTasksFeed(filters: TaskFilters = {}) {
   });
 }
 
-export type TaskImage = { id: string; path: string; url: string };
+export type TaskImage = { id: string; path: string; url: string; status: string };
 
 /** Owner-facing image list for the edit form (ids are needed to remove them). */
 export function useTaskImages(taskId?: string) {
@@ -225,7 +225,7 @@ export function useTaskImages(taskId?: string) {
     queryFn: async (): Promise<TaskImage[]> => {
       const { data, error } = await supabase
         .from("task_images")
-        .select("id, image_url, sort_order")
+        .select("id, image_url, sort_order, moderation_status")
         .eq("task_id", taskId!)
         .order("sort_order");
       if (error) throw error;
@@ -235,6 +235,7 @@ export function useTaskImages(taskId?: string) {
         id: r.id,
         path: r.image_url,
         url: r.image_url.startsWith("http") ? r.image_url : (signed[r.image_url] ?? ""),
+        status: r.moderation_status,
       }));
     },
   });
