@@ -1,28 +1,12 @@
 import { useState } from "react";
 import { Link } from "@tanstack/react-router";
-import {
-  CheckCircle2,
-  HelpCircle,
-  Info,
-  MoreHorizontal,
-  Pencil,
-  RefreshCw,
-  Trash2,
-  Users,
-} from "lucide-react";
+import { CheckCircle2, HelpCircle, Info, Pencil, RefreshCw, Users } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import { useConfirmTaskActive } from "@/lib/tasks-api";
 import { useMyEngagements } from "@/lib/reviews-api";
 import { CloseTaskDialog } from "@/components/tasks/close-task-dialog";
-import { DeleteTaskDialog } from "@/components/tasks/delete-task-dialog";
 import type { Task } from "@/lib/mock-data";
 
 const LIMIT_HELP =
