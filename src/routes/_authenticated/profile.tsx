@@ -17,6 +17,7 @@ import {
   Rocket,
   Heart,
   RotateCcw,
+  Trash2,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
@@ -30,6 +31,7 @@ import { PROMO_LABELS, remainingLabel, type TaskPromotion } from "@/services/pro
 import { PromoteDialog } from "@/components/promotions/promote-dialog";
 import { PromotedBadge, TopBadge, UrgentBadge } from "@/components/promotions/promo-badges";
 import { OwnerTaskControls } from "@/components/tasks/owner-task-controls";
+import { DeleteTaskDialog } from "@/components/tasks/delete-task-dialog";
 import { CreditBalanceCard } from "@/components/credits/credit-balance-card";
 import { useFavouritesCount } from "@/lib/favourites-api";
 import { EngagementInbox } from "@/components/reviews/engagement-cards";
@@ -371,6 +373,7 @@ function OwnerTaskCard({
   archived?: boolean;
   repostable?: boolean;
 }) {
+  const [deleteOpen, setDeleteOpen] = useState(false);
   return (
     <div className="flex min-w-0 flex-col gap-2">
       <TaskCard task={{ ...task, isTop: promotions.some((p) => p.type === "top"), isUrgent: promotions.some((p) => p.type === "urgent") }} />
@@ -414,12 +417,24 @@ function OwnerTaskCard({
           </Button>
         )}
         {repostable && (
-          <Button asChild size="sm" variant="outline" className="mt-2 h-7 w-full gap-1 text-[11px]">
-            <Link to="/post" search={{ repost: task.id }}>
-              <RotateCcw className="h-3 w-3" />
-              Публикувай отново
-            </Link>
-          </Button>
+          <>
+            <Button asChild size="sm" variant="outline" className="mt-2 h-7 w-full gap-1 text-[11px]">
+              <Link to="/post" search={{ repost: task.id }}>
+                <RotateCcw className="h-3 w-3" />
+                Публикувай отново
+              </Link>
+            </Button>
+            <Button
+              size="sm"
+              variant="ghost"
+              className="mt-1 h-7 w-full gap-1 text-[11px] text-destructive hover:bg-destructive/10 hover:text-destructive"
+              onClick={() => setDeleteOpen(true)}
+            >
+              <Trash2 className="h-3 w-3" />
+              Изтрий
+            </Button>
+            <DeleteTaskDialog taskId={task.id} open={deleteOpen} onOpenChange={setDeleteOpen} />
+          </>
         )}
         {(task.status === "active" || task.status === "assigned") && (
           <div className="mt-2">
