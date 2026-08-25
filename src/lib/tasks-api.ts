@@ -331,6 +331,8 @@ export type CreateTaskInput = {
   budget: number;
   location: string;
   files: File[];
+  /** When reposting, the archived task whose approved photos carry over. */
+  repostFrom?: string;
 };
 
 function blobToDataUrl(blob: Blob): Promise<string> {
@@ -396,6 +398,18 @@ export function useCreateTask() {
           if (res.status === "pending") held += 1;
         } catch {
           rejected.push(null);
+        }
+      }
+
+      // Repost: carry over the already-approved photos from the source task.
+      if (input.repostFrom) {
+        try {
+          await supabase.rpc("copy_task_images", {
+            _source_task_id: input.repostFrom,
+            _new_task_id: task.id,
+          });
+        } catch (e) {
+          console.error("copy_task_images", e);
         }
       }
 
