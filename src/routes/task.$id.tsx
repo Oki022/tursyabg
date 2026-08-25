@@ -28,6 +28,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { getInitials, useAuth } from "@/lib/auth";
 import { findOrCreateConversation, useSendMessage, useThread } from "@/lib/messages-api";
 import { getCategory } from "@/lib/mock-data";
+import { useMyUnlock } from "@/lib/credits-api";
 import { useTask } from "@/lib/tasks-api";
 import { UnlockContactCard } from "@/components/credits/unlock-contact-card";
 import { OwnerTaskControls } from "@/components/tasks/owner-task-controls";
