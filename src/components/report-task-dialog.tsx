@@ -18,6 +18,18 @@ import { Textarea } from "@/components/ui/textarea";
 import { useAuth } from "@/lib/auth";
 import { getMyReport, reportTask, REPORT_REASON_BG } from "@/services/admin";
 
+const REPORT_OPTIONS: { value: string; hint?: string }[] = [
+  { value: "spam" },
+  { value: "fraud" },
+  { value: "inappropriate" },
+  {
+    value: "stale",
+    hint: "Изпълнена или неактуална задача, която все още стои видима в борсата.",
+  },
+  { value: "duplicate" },
+  { value: "other" },
+];
+
 export function ReportTaskDialog({ taskId }: { taskId: string }) {
   const { user } = useAuth();
   const navigate = useNavigate();
@@ -74,12 +86,15 @@ export function ReportTaskDialog({ taskId }: { taskId: string }) {
           </DialogHeader>
 
           <RadioGroup value={reason} onValueChange={setReason} className="gap-2">
-            {Object.entries(REPORT_REASON_BG).map(([value, label]) => (
-              <div key={value} className="flex items-center gap-2 rounded-xl border border-border/60 px-3 py-2">
-                <RadioGroupItem value={value} id={`report-${value}`} />
-                <Label htmlFor={`report-${value}`} className="cursor-pointer text-sm font-normal">
-                  {label}
-                </Label>
+            {REPORT_OPTIONS.map(({ value, hint }) => (
+              <div key={value} className="rounded-xl border border-border/60 px-3 py-2">
+                <div className="flex items-center gap-2">
+                  <RadioGroupItem value={value} id={`report-${value}`} />
+                  <Label htmlFor={`report-${value}`} className="cursor-pointer text-sm font-normal">
+                    {REPORT_REASON_BG[value]}
+                  </Label>
+                </div>
+                {hint && <p className="mt-1 pl-6 text-xs text-muted-foreground">{hint}</p>}
               </div>
             ))}
           </RadioGroup>
