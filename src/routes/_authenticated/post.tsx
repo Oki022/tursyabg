@@ -1,5 +1,5 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useCreateTask, useTask } from "@/lib/tasks-api";
+import { useCreateTask, useTask, useTaskImages } from "@/lib/tasks-api";
 import {
   IMAGE_HELD_BG,
   IMAGE_REJECT_BG,
