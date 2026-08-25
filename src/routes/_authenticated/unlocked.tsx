@@ -1,13 +1,11 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useState } from "react";
-import { KeyRound, Phone, RotateCcw, MapPin } from "lucide-react";
+import { KeyRound, Phone, MapPin } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { BackLink } from "@/components/back-link";
 import { Badge } from "@/components/ui/badge";
 import { useUnlockedTasks } from "@/lib/credits-api";
 import { creditsLabel } from "@/services/credits";
 import { getCategory } from "@/lib/mock-data";
-import { RefundRequestDialog } from "@/components/credits/refund-request-dialog";
 import { ClaimTaskButton } from "@/components/tasks/claim-task-button";
 
 export const Route = createFileRoute("/_authenticated/unlocked")({
@@ -16,7 +14,7 @@ export const Route = createFileRoute("/_authenticated/unlocked")({
       { title: "Отключени задачи | ТърсяБГ" },
       { name: "description", content: "Всички задачи, за които си отключил контакт, с телефон и срок на достъп." },
       { property: "og:title", content: "Отключени задачи | ТърсяБГ" },
-      { property: "og:description", content: "Преглед на отключените контакти и заявки за връщане на кредити." },
+      { property: "og:description", content: "Преглед на отключените контакти по задачи." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
     ],
@@ -26,7 +24,6 @@ export const Route = createFileRoute("/_authenticated/unlocked")({
 
 function UnlockedPage() {
   const { data, isLoading } = useUnlockedTasks();
-  const [refundFor, setRefundFor] = useState<string | null>(null);
 
   return (
     <div className="container mx-auto max-w-3xl px-4 py-8 md:py-12">
@@ -101,31 +98,15 @@ function UnlockedPage() {
                 )}
               </div>
 
-              <div className="mt-3">
-                <ClaimTaskButton taskId={u.taskId} size="sm" />
-              </div>
-
-              {u.hasRefundRequest ? (
-                <p className="mt-3 text-xs text-muted-foreground">Заявка за връщане е подадена.</p>
-              ) : (
-                <button
-                  type="button"
-                  onClick={() => setRefundFor(u.unlockId)}
-                  className="mt-3 inline-flex items-center gap-1.5 text-xs font-medium text-muted-foreground hover:text-foreground"
-                >
-                  <RotateCcw className="h-3.5 w-3.5" /> Заяви връщане
-                </button>
+              {u.taskStatus === "active" && !u.taskDeleted && (
+                <div className="mt-3">
+                  <ClaimTaskButton taskId={u.taskId} size="sm" />
+                </div>
               )}
             </div>
           );
         })}
       </div>
-
-      <RefundRequestDialog
-        open={Boolean(refundFor)}
-        onOpenChange={(v) => !v && setRefundFor(null)}
-        unlockId={refundFor}
-      />
     </div>
   );
 }
