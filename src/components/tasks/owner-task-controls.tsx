@@ -16,7 +16,6 @@ const LIMIT_HELP =
 export function OwnerTaskControls({
   task,
   compact = false,
-  redirectAfterDelete,
 }: {
   task: Task;
   compact?: boolean;
@@ -25,7 +24,6 @@ export function OwnerTaskControls({
   const confirm = useConfirmTaskActive();
   const [closeOpen, setCloseOpen] = useState(false);
   const [assignOpen, setAssignOpen] = useState(false);
-  const [deleteOpen, setDeleteOpen] = useState(false);
   const [dismissed, setDismissed] = useState(false);
   const unlockCount = task.unlockCount ?? 0;
   const maxUnlocks = task.maxUnlocks ?? 5;
@@ -120,56 +118,13 @@ export function OwnerTaskControls({
       )}
 
       <div className="w-full min-w-0 border-t border-border/60 pt-2">
-        {compact ? (
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="sm" className={`${btn} gap-1.5`}>
-                <MoreHorizontal className="h-3.5 w-3.5 shrink-0" />
-                Още
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-44">
-              <DropdownMenuItem asChild>
-                <Link to="/task/$id/edit" params={{ id: task.id }}>
-                  <Pencil className="mr-2 h-4 w-4" />
-                  Редактирай
-                </Link>
-              </DropdownMenuItem>
-              <DropdownMenuItem
-                className="text-destructive focus:text-destructive"
-                onSelect={() => setDeleteOpen(true)}
-              >
-                <Trash2 className="mr-2 h-4 w-4" />
-                Изтрий
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        ) : (
-          <div className="flex w-full min-w-0 flex-col gap-1.5 sm:flex-row">
-            <Button asChild variant="ghost" size="sm" className={`${btn} gap-1.5 sm:flex-1`}>
-              <Link to="/task/$id/edit" params={{ id: task.id }}>
-                <Pencil className="h-4 w-4 shrink-0" />
-                Редактирай
-              </Link>
-            </Button>
-            <Button
-              variant="ghost"
-              size="sm"
-              className={`${btn} gap-1.5 text-destructive hover:bg-destructive/10 hover:text-destructive sm:flex-1`}
-              onClick={() => setDeleteOpen(true)}
-            >
-              <Trash2 className="h-4 w-4 shrink-0" />
-              Изтрий
-            </Button>
-          </div>
-        )}
+        <Button asChild variant="ghost" size="sm" className={`${btn} gap-1.5`}>
+          <Link to="/task/$id/edit" params={{ id: task.id }}>
+            <Pencil className="h-4 w-4 shrink-0" />
+            Редактирай
+          </Link>
+        </Button>
       </div>
-      <DeleteTaskDialog
-        taskId={task.id}
-        open={deleteOpen}
-        onOpenChange={setDeleteOpen}
-        {...(redirectAfterDelete ? { redirectTo: redirectAfterDelete } : {})}
-      />
     </div>
   );
 }
