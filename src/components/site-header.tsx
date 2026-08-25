@@ -1,9 +1,9 @@
-import { Link } from "@tanstack/react-router";
-import { UnreadBadge } from "@/components/unread-badge";
-import { Plus, CircleUserRound, LogOut, BadgeCheck, MessageCircle, Settings, Heart } from "lucide-react";
+import { Link, useRouterState } from "@tanstack/react-router";
+import { CircleUserRound, LogOut, BadgeCheck, MessageCircle, Settings, Heart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { NotificationBell } from "@/components/notification-bell";
 import { FavouritesNavLink } from "@/components/favourites-nav-link";
+import { MessagesNavLink } from "@/components/messages-nav-link";
 import { useAuth } from "@/lib/auth";
 import { Logo } from "@/components/Logo";
 import { useHideOnScroll } from "@/hooks/use-hide-on-scroll";
@@ -23,6 +23,7 @@ export function SiteHeader() {
   const balance = useCreditBalance(user?.id);
   const credits = balance.data ?? user?.credits ?? 0;
   const hidden = useHideOnScroll(10);
+  const isHome = useRouterState({ select: (s) => s.location.pathname }) === "/";
   return (
     <header
       className={cn(
@@ -33,22 +34,18 @@ export function SiteHeader() {
     >
       <div className="mx-auto flex h-16 w-full max-w-7xl items-center justify-between gap-2 px-4">
         <Logo size="md" />
-        <nav className="hidden items-center gap-1 md:flex">
-          <Link to="/" className="rounded-md px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground" activeOptions={{ exact: true }} activeProps={{ className: "rounded-md px-3 py-2 text-sm font-medium text-foreground" }}>
-            Начало
-          </Link>
-          <Link to="/tasks" className="rounded-md px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground" activeProps={{ className: "rounded-md px-3 py-2 text-sm font-medium text-foreground" }}>
-            Намери задачи
-          </Link>
-          <Link to="/post" className="rounded-md px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground" activeProps={{ className: "rounded-md px-3 py-2 text-sm font-medium text-foreground" }}>
-            Възложи задача
-          </Link>
-          <Link to="/messages" className="flex items-center gap-1.5 rounded-md px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground" activeProps={{ className: "flex items-center gap-1.5 rounded-md px-3 py-2 text-sm font-medium text-foreground" }}>
-            Съобщения
-            <UnreadBadge />
-          </Link>
-        </nav>
+        {!isHome && (
+          <nav className="hidden items-center gap-1 md:flex">
+            <Link to="/" className="rounded-md px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground" activeOptions={{ exact: true }} activeProps={{ className: "rounded-md px-3 py-2 text-sm font-medium text-foreground" }}>
+              Начало
+            </Link>
+            <Link to="/tasks" className="rounded-md px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground" activeProps={{ className: "rounded-md px-3 py-2 text-sm font-medium text-foreground" }}>
+              Намери задачи
+            </Link>
+          </nav>
+        )}
         <div className="flex items-center gap-2">
+          {user && <MessagesNavLink />}
           {user && <FavouritesNavLink />}
           {user && <NotificationBell />}
           {!user ? (
@@ -62,12 +59,6 @@ export function SiteHeader() {
             </>
           ) : (
             <>
-              <Button asChild size="sm" variant="outline" className="hidden gap-1.5 sm:inline-flex">
-                <Link to="/post">
-                  <Plus className="h-4 w-4" />
-                  <span>Възложи</span>
-                </Link>
-              </Button>
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <button

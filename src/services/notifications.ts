@@ -41,10 +41,12 @@ export function relativeTimeBg(iso: string): string {
   return `преди ${m} мес`;
 }
 
+// Chat messages surface via the messages icon/badge, never in the bell.
 export async function getNotifications(limit = NOTIFICATIONS_PAGE_SIZE): Promise<AppNotification[]> {
   const { data, error } = await supabase
     .from("notifications")
     .select("id, type, title, body, link, task_id, read_at, created_at")
+    .neq("type", "new_message")
     .order("created_at", { ascending: false })
     .limit(limit);
   if (error) throw error;
@@ -64,6 +66,7 @@ export async function getUnreadNotificationCount(): Promise<number> {
   const { count, error } = await supabase
     .from("notifications")
     .select("id", { count: "exact", head: true })
+    .neq("type", "new_message")
     .is("read_at", null);
   if (error) throw error;
   return count ?? 0;
