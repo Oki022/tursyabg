@@ -406,15 +406,20 @@ export function useCreateTask() {
         }
       }
 
-      // Repost: carry over the already-approved photos from the source task.
+      // Repost: carry over the already-approved photos from the source task,
+      // minus the ones the user removed in the form. The source rows and the
+      // stored files are never touched — new rows point at the same paths.
+      let copyFailed = false;
       if (input.repostFrom) {
-        try {
-          await supabase.rpc("copy_task_images", {
-            _source_task_id: input.repostFrom,
-            _new_task_id: task.id,
-          });
-        } catch (e) {
-          console.error("copy_task_images", e);
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const { error: copyError } = await supabase.rpc("copy_task_images" as any, {
+          _source_task_id: input.repostFrom,
+          _new_task_id: task.id,
+          _exclude_ids: input.repostExclude ?? [],
+        } as any);
+        if (copyError) {
+          console.error("copy_task_images", copyError);
+          copyFailed = true;
         }
       }
 
