@@ -27,8 +27,8 @@ export const Route = createFileRoute("/_authenticated/messages/$conversationId")
 function ConversationPage() {
   const { conversationId } = Route.useParams();
   return (
-    <div className="mx-auto flex w-full max-w-3xl flex-col px-0 sm:px-4 sm:py-6">
-      <div className="flex items-center gap-2 px-3 py-3 sm:px-0">
+    <div className="mx-auto flex min-h-0 w-full max-w-3xl flex-1 flex-col px-0 sm:px-4 sm:py-6">
+      <div className="flex shrink-0 items-center gap-2 px-3 py-3 sm:px-0">
         <Link
           to="/messages"
           className="inline-flex h-9 w-9 items-center justify-center rounded-full hover:bg-accent"
@@ -38,7 +38,7 @@ function ConversationPage() {
         </Link>
         <span className="text-sm font-semibold">Назад към съобщенията</span>
       </div>
-      <div className="flex h-[calc(100dvh-11rem)] min-w-0 overflow-hidden border-y border-border/60 bg-card sm:h-[70vh] sm:rounded-2xl sm:border sm:shadow-sm">
+      <div className="flex min-h-0 min-w-0 flex-1 overflow-hidden border-y border-border/60 bg-card sm:rounded-2xl sm:border sm:shadow-sm">
         <ChatThread conversationId={conversationId} />
       </div>
     </div>

@@ -22,12 +22,14 @@ function MessagesInbox() {
   const [selectedId, setSelectedId] = useState<string | undefined>(undefined);
 
   return (
-    <div className="mx-auto w-full max-w-6xl px-3 py-4 sm:px-4 sm:py-8">
-      <h1 className="mb-4 text-2xl font-bold tracking-tight text-foreground">Съобщения</h1>
+    <div className="mx-auto flex min-h-0 w-full max-w-6xl flex-1 flex-col px-3 py-3 sm:px-4 md:block md:flex-none md:py-8">
+      <h1 className="mb-3 shrink-0 text-2xl font-bold tracking-tight text-foreground md:mb-4">Съобщения</h1>
 
-      {/* Мобилно: само списък */}
-      <div className="overflow-hidden rounded-2xl border border-border/60 bg-card shadow-sm md:hidden">
-        <ConversationList variant="mobile" />
+      {/* Мобилно: само списък, запълва екрана без скрол на страницата */}
+      <div className="flex min-h-0 flex-1 flex-col overflow-hidden rounded-2xl border border-border/60 bg-card shadow-sm md:hidden">
+        <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain">
+          <ConversationList variant="mobile" />
+        </div>
       </div>
 
       {/* Десктоп: две колони */}

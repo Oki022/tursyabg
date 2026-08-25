@@ -5,6 +5,7 @@ import {
   Link,
   createRootRouteWithContext,
   useRouter,
+  useRouterState,
   HeadContent,
   Scripts,
 } from "@tanstack/react-router";
@@ -139,19 +140,37 @@ function RootShell({ children }: { children: React.ReactNode }) {
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
+  const pathname = useRouterState({ select: (s) => s.location.pathname });
+  // Messages screens behave like a native app view: fixed viewport height,
+  // no footer / cookie banner, and no page-level scroll on mobile.
+  const isMessages = pathname.startsWith("/messages");
 
   return (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
         <CookieConsentProvider>
           <MonitoringBoot />
-          <div className="flex min-h-screen w-full max-w-full flex-col overflow-x-hidden bg-background pb-24 md:pb-0">
+          <div
+            className={
+              isMessages
+                ? "flex h-[100dvh] w-full max-w-full flex-col overflow-x-hidden overflow-y-hidden bg-background pb-[calc(4rem+env(safe-area-inset-bottom))] md:h-auto md:min-h-screen md:overflow-visible md:pb-0"
+                : "flex min-h-screen w-full max-w-full flex-col overflow-x-hidden bg-background pb-24 md:pb-0"
+            }
+          >
             <SiteHeader />
-            <main className="w-full max-w-full flex-1"><Outlet /></main>
-            <SiteFooter />
+            <main
+              className={
+                isMessages
+                  ? "flex min-h-0 w-full max-w-full flex-1 flex-col"
+                  : "w-full max-w-full flex-1"
+              }
+            >
+              <Outlet />
+            </main>
+            {!isMessages && <SiteFooter />}
             <MobileNav />
           </div>
-          <CookieConsent />
+          {!isMessages && <CookieConsent />}
         </CookieConsentProvider>
         <ClientOnly fallback={null}><Toaster /></ClientOnly>
       </AuthProvider>
