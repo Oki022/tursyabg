@@ -1,11 +1,10 @@
 import { useState } from "react";
 import { Link, useNavigate } from "@tanstack/react-router";
-import { Lock, Phone, RotateCcw, Coins, Users } from "lucide-react";
+import { Lock, Phone, Coins, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/lib/auth";
 import { useCreditBalance, useMyUnlock, useUnlockTask } from "@/lib/credits-api";
 import { creditsLabel, getUnlockedContact, unlockCostForBudget } from "@/services/credits";
-import { RefundRequestDialog } from "@/components/credits/refund-request-dialog";
 import { useQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
 
@@ -32,7 +31,6 @@ export function UnlockContactCard({
   const unlockQuery = useMyUnlock(taskId, user?.id);
   const balanceQuery = useCreditBalance(user?.id);
   const unlock = useUnlockTask();
-  const [refundOpen, setRefundOpen] = useState(false);
   const [revealed, setRevealed] = useState<string | null>(null);
 
   const isUnlocked = Boolean(unlockQuery.data);
@@ -90,18 +88,6 @@ export function UnlockContactCard({
             </a>
           </Button>
         )}
-        <button
-          type="button"
-          onClick={() => setRefundOpen(true)}
-          className="mt-3 inline-flex items-center gap-1.5 text-xs font-medium text-muted-foreground hover:text-foreground"
-        >
-          <RotateCcw className="h-3.5 w-3.5" /> Заяви връщане
-        </button>
-        <RefundRequestDialog
-          open={refundOpen}
-          onOpenChange={setRefundOpen}
-          unlockId={unlockQuery.data?.id ?? null}
-        />
       </div>
     );
   }
