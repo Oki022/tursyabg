@@ -1,9 +1,9 @@
-import { Link } from "@tanstack/react-router";
-import { UnreadBadge } from "@/components/unread-badge";
-import { Plus, CircleUserRound, LogOut, BadgeCheck, MessageCircle, Settings, Heart } from "lucide-react";
+import { Link, useRouterState } from "@tanstack/react-router";
+import { CircleUserRound, LogOut, BadgeCheck, MessageCircle, Settings, Heart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { NotificationBell } from "@/components/notification-bell";
 import { FavouritesNavLink } from "@/components/favourites-nav-link";
+import { MessagesNavLink } from "@/components/messages-nav-link";
 import { useAuth } from "@/lib/auth";
 import { Logo } from "@/components/Logo";
 import { useHideOnScroll } from "@/hooks/use-hide-on-scroll";
