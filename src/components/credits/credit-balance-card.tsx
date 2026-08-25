@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { Coins, AlertTriangle } from "lucide-react";
+import { Coins, AlertTriangle, History } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/lib/auth";
 import { useCreditBalance } from "@/lib/credits-api";
@@ -30,12 +30,23 @@ export function CreditBalanceCard({ className }: { className?: string }) {
             {isLoading ? "—" : credits}
           </p>
         </div>
-        <Link
-          to="/settings/billing"
-          className="shrink-0 rounded-full bg-gradient-to-r from-orange-500 to-rose-500 px-3.5 py-2 text-xs font-semibold text-white shadow-sm transition-transform active:scale-95"
-        >
-          Купи кредити
-        </Link>
+        <div className="flex shrink-0 items-center gap-1.5">
+          <Link
+            to="/settings/billing"
+            hash="history"
+            aria-label="История на движенията"
+            title="История на движенията"
+            className="grid h-9 w-9 place-items-center rounded-full border border-border/60 bg-background/70 text-muted-foreground transition-colors hover:text-foreground"
+          >
+            <History className="h-4 w-4" />
+          </Link>
+          <Link
+            to="/settings/billing"
+            className="rounded-full bg-gradient-to-r from-orange-500 to-rose-500 px-3.5 py-2 text-xs font-semibold text-white shadow-sm transition-transform active:scale-95"
+          >
+            Купи кредити
+          </Link>
+        </div>
       </div>
       {low && (
         <p className="mt-3 flex items-start gap-1.5 rounded-lg bg-amber-500/10 px-2.5 py-2 text-xs font-medium text-amber-700">

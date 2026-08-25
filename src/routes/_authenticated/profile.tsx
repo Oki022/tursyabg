@@ -8,14 +8,12 @@ import {
   LogOut,
   ClipboardList,
   Wallet,
-  UserCog,
   ShieldCheck,
   Bell,
   ChevronRight,
   KeyRound,
   Eye,
   Rocket,
-  Heart,
   RotateCcw,
   Trash2,
 } from "lucide-react";
@@ -34,6 +32,7 @@ import { OwnerTaskControls } from "@/components/tasks/owner-task-controls";
 import { DeleteTaskDialog } from "@/components/tasks/delete-task-dialog";
 import { CreditBalanceCard } from "@/components/credits/credit-balance-card";
 import { useFavouritesCount } from "@/lib/favourites-api";
+import { useMySkills } from "@/lib/skills-api";
 import { EngagementInbox } from "@/components/reviews/engagement-cards";
 import type { Task } from "@/lib/mock-data";
 import { toast } from "sonner";
@@ -64,11 +63,9 @@ const TASK_TABS: { value: TaskTabValue; label: string; empty: string }[] = [
 ];
 
 const SETTINGS_ITEMS: { icon: typeof Wallet; label: string; to: string }[] = [
-  { icon: UserCog, label: "Редакция на профил", to: "/settings/profile" },
   { icon: ShieldCheck, label: "Влизане и сигурност", to: "/settings/security" },
   { icon: Wallet, label: "Баланс и плащания", to: "/settings/billing" },
   { icon: KeyRound, label: "Отключени задачи", to: "/unlocked" },
-  { icon: Heart, label: "Любими задачи", to: "/favourites" },
   { icon: Bell, label: "Нотификации", to: "/settings/notifications" },
 ];
 
@@ -84,6 +81,7 @@ function ProfilePage() {
   const navigate = useNavigate();
   const [tab, setTab] = useState<TaskTabValue>("active");
   const favouritesCount = useFavouritesCount();
+  const mySkills = useMySkills(user?.id);
 
   const byStatus = useMemo(() => {
     const map: Record<TaskTabValue, typeof tasks> = {
@@ -111,12 +109,6 @@ function ProfilePage() {
     await logout();
     toast.success("Излязохте от профила си.");
     navigate({ to: "/" });
-  };
-
-  const toggleSkill = (id: string) => {
-    const current = user.skills ?? [];
-    const next = current.includes(id) ? current.filter((s) => s !== id) : [...current, id];
-    updateUser({ skills: next });
   };
 
   const mockVerify = () => {
@@ -271,30 +263,43 @@ function ProfilePage() {
 
         <>
           <section className="min-w-0 rounded-2xl border border-border/60 bg-card p-5 shadow-sm md:p-7">
-              <h2 className="text-lg font-semibold text-foreground">Моите умения</h2>
-              <p className="mt-1 text-sm text-muted-foreground">
-                Избери категориите, в които предлагаш услуги.
-              </p>
-              <div className="mt-4 flex flex-wrap gap-2">
-                {categories.map((c) => {
-                  const Icon = c.icon;
-                  const active = (user.skills ?? []).includes(c.id);
-                  return (
-                    <button
-                      key={c.id}
-                      onClick={() => toggleSkill(c.id)}
-                      className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-sm transition-colors ${
-                        active
-                          ? "border-primary bg-primary text-primary-foreground"
-                          : "border-border bg-background text-foreground hover:bg-accent"
-                      }`}
-                    >
-                      <Icon className="h-3.5 w-3.5" />
-                      {c.name}
-                    </button>
-                  );
-                })}
+              <div className="flex items-start justify-between gap-3">
+                <div className="min-w-0">
+                  <h2 className="text-lg font-semibold text-foreground">Моите умения</h2>
+                  <p className="mt-1 text-sm text-muted-foreground">
+                    Видими са на публичния ти профил, под името и рейтинга.
+                  </p>
+                </div>
+                <Button asChild variant="outline" size="sm" className="shrink-0">
+                  <Link to="/settings/security">Редактирай</Link>
+                </Button>
               </div>
+              {mySkills.isLoading ? (
+                <div className="mt-4 h-8 animate-pulse rounded-xl bg-muted" />
+              ) : (mySkills.data?.categories.length ?? 0) + (mySkills.data?.tags.length ?? 0) === 0 ? (
+                <p className="mt-4 text-sm text-muted-foreground">
+                  Все още нямаш добавени умения. Избери категории или добави свои етикети от настройките.
+                </p>
+              ) : (
+                <div className="mt-4 flex min-w-0 flex-wrap gap-1.5">
+                  {(mySkills.data?.categories ?? []).map((id) => (
+                    <span
+                      key={id}
+                      className="rounded-full bg-primary/10 px-3 py-1 text-xs font-medium text-primary"
+                    >
+                      {categories.find((c) => c.id === id)?.name ?? id}
+                    </span>
+                  ))}
+                  {(mySkills.data?.tags ?? []).map((t) => (
+                    <span
+                      key={t}
+                      className="rounded-full border border-border bg-secondary/60 px-3 py-1 text-xs text-foreground"
+                    >
+                      {t}
+                    </span>
+                  ))}
+                </div>
+              )}
             </section>
 
             <section className="min-w-0 rounded-2xl border border-border/60 bg-card p-5 shadow-sm md:p-7">

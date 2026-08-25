@@ -5,6 +5,8 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { getInitials } from "@/lib/auth";
+import { BackLink } from "@/components/back-link";
+import { categories } from "@/lib/mock-data";
 import { usePublicProfile, usePublicReviews } from "@/lib/reviews-api";
 import { ReviewList } from "@/components/reviews/review-list";
 import { Stars } from "@/components/reviews/stars";
@@ -101,7 +103,8 @@ function PublicProfilePage() {
 
   return (
     <div className="container mx-auto max-w-3xl px-4 py-8 md:py-12">
-      <section className="min-w-0 rounded-2xl border border-border/60 bg-card p-5 shadow-sm md:p-7">
+      <BackLink />
+      <section className="mt-4 min-w-0 rounded-2xl border border-border/60 bg-card p-5 shadow-sm md:p-7">
         <div className="flex min-w-0 items-center gap-4">
           <Avatar className="h-16 w-16 shrink-0 border border-border">
             <AvatarFallback className="bg-primary/10 text-lg font-semibold text-primary">
@@ -143,12 +146,37 @@ function PublicProfilePage() {
           )}
         </div>
 
+        {(profile.skillCategories.length > 0 || profile.skillTags.length > 0) && (
+          <div className="mt-4 flex min-w-0 flex-wrap gap-1.5">
+            {profile.skillCategories.map((id) => {
+              const c = categories.find((x) => x.id === id);
+              return (
+                <span
+                  key={id}
+                  className="rounded-full bg-primary/10 px-3 py-1 text-xs font-medium text-primary"
+                >
+                  {c?.name ?? id}
+                </span>
+              );
+            })}
+            {profile.skillTags.map((t) => (
+              <span
+                key={t}
+                className="rounded-full border border-border bg-secondary/60 px-3 py-1 text-xs text-foreground"
+              >
+                {t}
+              </span>
+            ))}
+          </div>
+        )}
+
         <div className="mt-3 flex justify-end">
           <ReportContentDialog contentType="profile" contentId={profile.id} />
         </div>
       </section>
 
       <section className="mt-6 min-w-0">
+        <h2 className="mb-3 text-xl font-bold tracking-tight text-foreground md:text-2xl">Отзиви</h2>
         <Tabs
           value={direction}
           onValueChange={(v) => {

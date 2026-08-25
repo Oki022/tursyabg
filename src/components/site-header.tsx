@@ -117,7 +117,7 @@ export function SiteHeader() {
                     </Link>
                   </DropdownMenuItem>
                   <DropdownMenuItem asChild>
-                    <Link to="/settings/profile" className="cursor-pointer">
+                    <Link to="/settings/security" className="cursor-pointer">
                       <Settings className="mr-2 h-4 w-4" />
                       Настройки
                     </Link>
