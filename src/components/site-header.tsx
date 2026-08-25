@@ -18,6 +18,14 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
+const NAV_UNDERLINE =
+  "after:absolute after:inset-x-4 after:bottom-0.5 after:h-0.5 after:origin-left after:rounded-full after:bg-gradient-to-r after:from-orange-500 after:to-rose-500 after:transition-transform after:duration-200";
+
+const navLinkIdle = `relative rounded-full px-4 py-1.5 text-[15px] font-medium tracking-[0.01em] text-muted-foreground transition-colors duration-200 after:scale-x-0 hover:text-foreground hover:after:scale-x-100 ${NAV_UNDERLINE}`;
+const navLinkActive = `relative rounded-full bg-gradient-to-r from-orange-500 to-rose-500 bg-clip-text px-4 py-1.5 text-[15px] font-semibold tracking-[0.01em] text-transparent after:scale-x-100 ${NAV_UNDERLINE}`;
+const navLinkCta =
+  "rounded-full bg-gradient-to-r from-orange-500 to-rose-500 px-4 py-1.5 text-sm font-semibold tracking-[0.01em] text-white shadow-sm transition-all duration-200 hover:shadow-md hover:brightness-110";
+
 export function SiteHeader() {
   const { user, logout } = useAuth();
   const balance = useCreditBalance(user?.id);
@@ -32,19 +40,22 @@ export function SiteHeader() {
       )}
       style={{ paddingTop: "env(safe-area-inset-top)" }}
     >
-      <div className="mx-auto flex h-16 w-full max-w-7xl items-center justify-between gap-2 px-4">
+      <div className="mx-auto flex h-16 w-full max-w-7xl items-center justify-between gap-2 px-4 md:grid md:grid-cols-[1fr_auto_1fr]">
         <Logo size="md" />
         {!isHome && (
-          <nav className="hidden items-center gap-1 md:flex">
-            <Link to="/" className="rounded-md px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground" activeOptions={{ exact: true }} activeProps={{ className: "rounded-md px-3 py-2 text-sm font-medium text-foreground" }}>
+          <nav className="hidden items-center gap-1 justify-self-center md:flex">
+            <Link to="/" className={navLinkIdle} activeOptions={{ exact: true }} activeProps={{ className: navLinkActive }}>
               Начало
             </Link>
-            <Link to="/tasks" className="rounded-md px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground" activeProps={{ className: "rounded-md px-3 py-2 text-sm font-medium text-foreground" }}>
+            <Link to="/tasks" className={navLinkIdle} activeProps={{ className: navLinkActive }}>
               Намери задачи
+            </Link>
+            <Link to="/post" className={navLinkCta} activeProps={{ className: `${navLinkCta} shadow-md brightness-110` }}>
+              Възложи задача
             </Link>
           </nav>
         )}
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 justify-self-end md:col-start-3">
           {user && <MessagesNavLink />}
           {user && <FavouritesNavLink />}
           {user && <NotificationBell />}
