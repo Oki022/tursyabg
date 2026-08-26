@@ -110,9 +110,15 @@ function EditTaskPage() {
             if (containsContactInfo(`${values.title} ${values.description}`)) {
               toast.warning("Контактите са скрити автоматично", { description: CONTACT_MASK_WARNING });
             }
-            if (result.pending) {
+            if (result.pending && result.keptLive) {
+              toast.warning("Редакцията чака преглед", {
+                description: `Новият текст съвпадна с правило за съдържание${
+                  result.reason ? ` (${result.reason})` : ""
+                }. Задачата остава активна с досегашния одобрен текст, докато проверим промените.`,
+              });
+            } else if (result.pending) {
               toast.warning("Задачата чака преглед", {
-                description: "Проверяваме промените, преди задачата да е отново публична.",
+                description: "Проверяваме промените, преди задачата да е публична.",
               });
             } else {
               toast.success("Промените са запазени.");
