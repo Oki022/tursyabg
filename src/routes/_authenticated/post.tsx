@@ -141,34 +141,11 @@ function PostPage() {
             }
             navigate({ to: "/posted/$id", params: { id: result.id } });
           } catch (err) {
-            // PostgREST errors are plain objects, not Error instances — read
-            // their message too, otherwise the real cause is lost.
-            const raw =
-              err instanceof Error
-                ? err.message
-                : typeof err === "object" && err !== null && "message" in err
-                  ? String((err as { message: unknown }).message)
-                  : "";
-            const quality = contentQualityErrorBg(raw);
-            if (quality) {
-              toast.error(quality.title, { description: quality.description });
-              return;
-            }
-            const moderation = moderationErrorBg(raw);
-            if (moderation) {
-              toast.error(moderation.title, { description: moderation.description });
-              return;
-            }
-            const limitReached = raw.includes("FREE_TASK_LIMIT") || raw.includes("лимит");
-            if (raw.includes("PHONE_REQUIRED")) {
-              toast.error("Добави телефон в профила си, за да публикуваш задача.");
-              return;
-            }
-            toast.error(
-              limitReached ? "Достигна лимита от 5 безплатни задачи този месец." : "Задачата не беше публикувана.",
-              { description: limitReached ? "Опитай отново следващия месец." : raw || undefined },
-            );
+            // PostgREST грешките са обикновени обекти, не Error инстанции —
+            // общият форматер ги разпознава и връща конкретна причина.
+            toastError(err, { title: "Задачата не беше публикувана" });
           }
+
         }}
       />
     </div>
