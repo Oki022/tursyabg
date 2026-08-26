@@ -10,6 +10,7 @@ import {
   Mail,
   ArrowLeft,
   ShieldAlert,
+  UserMinus,
 } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
@@ -41,6 +42,7 @@ const NAV = [
   { to: "/admin/users", label: "Потребители", icon: Users },
   { to: "/admin/payments", label: "Плащания", icon: CreditCard },
   { to: "/admin/contact", label: "Контакти", icon: Mail },
+  { to: "/admin/deletions", label: "Изтриване на профил", icon: UserMinus },
   { to: "/admin/audit", label: "Одит лог", icon: ScrollText },
 ] as { to: string; label: string; icon: typeof LayoutDashboard; exact?: boolean }[];
 
