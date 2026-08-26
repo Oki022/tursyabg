@@ -15,6 +15,7 @@ import type { ReviewDirection } from "@/services/reviews";
 import { fetchProfileSeo } from "@/lib/seo-loaders";
 import { breadcrumbLd, clampDescription, jsonLd, seo } from "@/lib/seo";
 import { absoluteUrl, BRAND } from "@/lib/brand";
+import { formatRatingBg, reviewCountBg } from "@/lib/public-profiles";
 
 export const Route = createFileRoute("/user/$id")({
   loader: ({ params }) => fetchProfileSeo(params.id),
@@ -250,10 +251,11 @@ function RatingSummary({
       {rating ? (
         <>
           <span className="inline-flex items-center gap-1 font-semibold text-foreground">
+            {formatRatingBg(rating, 2)}
             <Star className="h-4 w-4 fill-amber-400 text-amber-400" />
-            {rating.toFixed(1).replace(".", ",")}
           </span>
-          <span className="text-xs text-muted-foreground">({count})</span>
+          <span className="text-muted-foreground">·</span>
+          <span className="text-xs text-muted-foreground">{reviewCountBg(count)}</span>
         </>
       ) : (
         <span className="text-muted-foreground">Нов потребител</span>
