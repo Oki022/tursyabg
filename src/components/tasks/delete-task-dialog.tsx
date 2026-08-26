@@ -14,6 +14,8 @@ import {
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { useDeletePreview, useDeleteTask } from "@/lib/tasks-api";
+import { toastError } from "@/lib/toast-error";
+
 
 const REASONS = [
   { value: "completed", label: "Задачата вече е свършена" },
@@ -57,9 +59,9 @@ export function DeleteTaskDialog({
       });
       if (redirectTo === "profile") void navigate({ to: "/profile" });
     } catch (err) {
-      const raw = err instanceof Error ? err.message : "";
-      toast.error("Задачата не беше изтрита.", { description: raw || undefined });
+      toastError(err, { title: "Задачата не беше изтрита" });
     }
+
   };
 
   return (

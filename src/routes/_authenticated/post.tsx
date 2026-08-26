@@ -1,17 +1,13 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useCreateTask, useTask, useTaskImages } from "@/lib/tasks-api";
-import {
-  IMAGE_HELD_BG,
-  IMAGE_REJECT_BG,
-  categoryBg,
-  moderationErrorBg,
-} from "@/lib/moderation-messages";
+import { IMAGE_HELD_BG, IMAGE_REJECT_BG, categoryBg } from "@/lib/moderation-messages";
 import { toast } from "sonner";
+import { toastError } from "@/lib/toast-error";
 import { useAuth } from "@/lib/auth";
 import { RequirePhoneNotice } from "@/components/require-phone-notice";
 import { TaskForm } from "@/components/tasks/task-form";
-import { contentQualityErrorBg } from "@/lib/content-quality";
 import { CONTACT_MASK_WARNING, containsContactInfo, isValidBgPhone } from "@/lib/phone";
+
 
 export const Route = createFileRoute("/_authenticated/post")({
   validateSearch: (search: Record<string, unknown>): { repost?: string } =>
@@ -141,34 +137,11 @@ function PostPage() {
             }
             navigate({ to: "/posted/$id", params: { id: result.id } });
           } catch (err) {
-            // PostgREST errors are plain objects, not Error instances — read
-            // their message too, otherwise the real cause is lost.
-            const raw =
-              err instanceof Error
-                ? err.message
-                : typeof err === "object" && err !== null && "message" in err
-                  ? String((err as { message: unknown }).message)
-                  : "";
-            const quality = contentQualityErrorBg(raw);
-            if (quality) {
-              toast.error(quality.title, { description: quality.description });
-              return;
-            }
-            const moderation = moderationErrorBg(raw);
-            if (moderation) {
-              toast.error(moderation.title, { description: moderation.description });
-              return;
-            }
-            const limitReached = raw.includes("FREE_TASK_LIMIT") || raw.includes("лимит");
-            if (raw.includes("PHONE_REQUIRED")) {
-              toast.error("Добави телефон в профила си, за да публикуваш задача.");
-              return;
-            }
-            toast.error(
-              limitReached ? "Достигна лимита от 5 безплатни задачи този месец." : "Задачата не беше публикувана.",
-              { description: limitReached ? "Опитай отново следващия месец." : raw || undefined },
-            );
+            // PostgREST грешките са обикновени обекти, не Error инстанции —
+            // общият форматер ги разпознава и връща конкретна причина.
+            toastError(err, { title: "Задачата не беше публикувана" });
           }
+
         }}
       />
     </div>
