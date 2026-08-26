@@ -1712,10 +1712,12 @@ export type Database = {
           other_submitted: boolean
           professional_id: string
           professional_name: string
+          promo_expires_at: string
           review_deadline: string
           status: Database["public"]["Enums"]["engagement_status"]
           task_category: string
           task_id: string
+          task_status: Database["public"]["Enums"]["task_status"]
           task_title: string
         }[]
       }
