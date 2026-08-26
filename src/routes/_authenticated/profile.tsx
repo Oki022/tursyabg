@@ -72,7 +72,7 @@ export const Route = createFileRoute("/_authenticated/profile")({
 });
 
 function ProfilePage() {
-  const { user, logout, updateUser } = useAuth();
+  const { user, logout } = useAuth();
   const { data: tasks = [] } = useMyTasks(user?.id);
   const { data: promotions = {} } = useOwnerPromotions(user?.id);
   const [promoteTaskId, setPromoteTaskId] = useState<string | null>(null);
