@@ -26,7 +26,7 @@ export function authErrorMessage(err: unknown): string {
   if (raw.includes("signups not allowed") || raw.includes("signup is disabled"))
     return "В момента регистрациите са спрени. Опитай по-късно.";
   if (raw.includes("phone_required"))
-    return "Добави телефон в профила си (Настройки → Редакция на профил), за да продължиш.";
+    return "Добави телефон в профила си (Настройки → Влизане и сигурност), за да продължиш.";
   if (raw.includes("profile_contacts_phone_valid"))
     return "Въведи валиден български мобилен номер, например 0888123456.";
 

@@ -7,6 +7,8 @@ import { useCreditBalance, useMyUnlock, useUnlockTask } from "@/lib/credits-api"
 import { creditsLabel, getUnlockedContact, unlockCostForBudget } from "@/services/credits";
 import { useQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
+import { toastError } from "@/lib/toast-error";
+
 
 export function UnlockContactCard({
   taskId,
@@ -60,17 +62,21 @@ export function UnlockContactCard({
       if (res.ok) {
         setRevealed(res.phone);
         if (!res.already) toast.success(`Контактът е отключен за ${creditsLabel(res.creditsSpent)}.`);
-      } else if (res.error === "INSUFFICIENT_CREDITS") {
-        void navigate({ to: "/settings/billing" });
-      } else if (res.error === "TASK_NOT_ACTIVE") {
-        toast.error("Задачата вече не е активна.");
-      } else {
-        toast.error("Контактът не беше отключен.");
+        return;
       }
-    } catch {
-      toast.error("Възникна грешка. Опитай отново.");
+      if (res.error === "INSUFFICIENT_CREDITS") {
+        toast.error("Нямаш достатъчно кредити", { description: "Купи кредити, за да отключиш контакта." });
+        void navigate({ to: "/settings/billing" });
+        return;
+      }
+      // Всяка друга причина (лимит, затворена задача, липса на права) идва
+      // като код от базата и се превежда от общия форматер.
+      toastError(res.error, { title: "Контактът не беше отключен" });
+    } catch (err) {
+      toastError(err, { title: "Контактът не беше отключен" });
     }
   };
+
 
   if (isUnlocked) {
     return (

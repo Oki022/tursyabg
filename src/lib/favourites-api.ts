@@ -58,9 +58,12 @@ export function useToggleFavourite() {
       );
       return { previous };
     },
-    onError: (_error, _vars, ctx) => {
+    onError: (error, _vars, ctx) => {
       if (ctx?.previous) qc.setQueryData(key, ctx.previous);
+      // Оптимистичното сърце се връща назад — потребителят трябва да разбере защо.
+      toastError(error, { title: "Запазването не беше успешно" });
     },
+
     onSettled: () => {
       void qc.invalidateQueries({ queryKey: ["favourites"] });
     },
