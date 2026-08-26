@@ -234,7 +234,7 @@ export function LocationCombobox({
                   <CommandItem key={m.id} value={m.slug} onSelect={() => pick(m)}>
                     <MapPin className="mr-2 h-4 w-4 shrink-0 opacity-60" />
                     <span className="min-w-0 truncate">
-                      {m.name}
+                      {municipalityLabel(m.name, m.hasNeighborhoods)}
                       <span className="ml-1 text-xs text-muted-foreground">
                         обл. {m.regionName}
                       </span>
@@ -253,5 +253,10 @@ export function LocationCombobox({
         )}
       </PopoverContent>
     </Popover>
+      <p className="text-xs text-muted-foreground">
+        Избери общината си, тя покрива всички села в нея, а конкретното село опиши в описанието.
+      </p>
+    </div>
   );
 }
+
