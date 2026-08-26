@@ -1803,6 +1803,7 @@ export type Database = {
           avatar_url: string
           city: string
           completed_jobs: number
+          created_at: string
           full_name: string
           id: string
           neighborhood: string
