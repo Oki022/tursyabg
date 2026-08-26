@@ -355,6 +355,9 @@ export type CreateTaskResult = {
   held: number;
   /** True when the task itself was held (pending) instead of published. */
   pending: boolean;
+  /** True when the auto-publish RPC failed (task exists, needs manual review). */
+  finalizeFailed: boolean;
+
   /** True when the repost photo carry-over failed (task was still created). */
   copyFailed: boolean;
 };

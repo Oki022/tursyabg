@@ -8,6 +8,8 @@ import { getInitials, useAuth } from "@/lib/auth";
 import { useConversation, useMarkAsRead, useSendMessage, useThread } from "@/lib/messages-api";
 import type { ChatMessage } from "@/services/messages";
 import { CONTACT_MASK_WARNING, containsContactInfo, isValidBgPhone } from "@/lib/phone";
+import { toastError } from "@/lib/toast-error";
+
 import { RequirePhoneNotice } from "@/components/require-phone-notice";
 import { TaskThumb } from "@/components/task-thumb";
 import { ReportContentDialog } from "@/components/moderation/report-content-dialog";
