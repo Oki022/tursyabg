@@ -108,7 +108,9 @@ export async function getConversations(
       .select("id, conversation_id, sender_id, receiver_id, content, created_at, read_at")
       .in("conversation_id", ids)
       .order("created_at", { ascending: false }),
-    supabase.from("profiles").select("id, full_name, avatar_url").in("id", otherIds),
+    supabase.rpc("public_profiles" as never, { _ids: otherIds } as never) as unknown as Promise<{
+      data: { id: string; full_name: string | null; avatar_url: string | null }[] | null;
+    }>,
     resolveImageUrls(
       rows.flatMap((r) => (r.tasks?.task_images ?? []).map((i) => i.image_url)),
     ),
