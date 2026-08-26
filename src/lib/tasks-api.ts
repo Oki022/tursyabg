@@ -178,6 +178,7 @@ async function fetchTasksPage({
     ...(city ? { _city: city } : {}),
     ...(neighborhood ? { _neighborhood: neighborhood } : {}),
     ...(filters.q ? { _q: filters.q } : {}),
+    ...(filters.region ? { _region: filters.region } : {}),
   });
   if (error) throw error;
 
