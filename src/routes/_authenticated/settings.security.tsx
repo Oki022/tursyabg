@@ -22,6 +22,8 @@ import { nameError } from "@/lib/auth-errors";
 import { normalizeBgPhone, phoneError } from "@/lib/phone";
 import { SkillsEditor } from "@/components/settings/skills-editor";
 import { useMySkills, useSaveSkills } from "@/lib/skills-api";
+import { toastError } from "@/lib/toast-error";
+
 
 export const Route = createFileRoute("/_authenticated/settings/security")({
   head: () => ({
@@ -80,12 +82,9 @@ function SettingsSecurityPage() {
       await saveSkills.mutateAsync({ userId: user.id, categories: skillCategories, tags: skillTags });
       toast.success("Профилът е обновен.");
     } catch (err) {
-      if (err instanceof Error && err.message === "SKILL_TAG_BLOCKED") {
-        toast.error("Един от етикетите съдържа непозволено съдържание. Премахни го и опитай пак.");
-      } else {
-        toast.error("Промените не бяха запазени. Опитай пак.");
-      }
+      toastError(err, { title: "Промените не бяха запазени" });
     } finally {
+
       setSaving(false);
     }
   };

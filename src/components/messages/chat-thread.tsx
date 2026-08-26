@@ -74,14 +74,10 @@ export function ChatThread({ conversationId }: { conversationId: string }) {
       }
     } catch (err) {
       setText(content);
-      const moderation = moderationErrorBg(err instanceof Error ? err.message : "");
-      if (moderation) {
-        toast.error(moderation.title, { description: moderation.description });
-        return;
-      }
-      toast.error("Съобщението не беше изпратено.");
+      toastError(err, { title: "Съобщението не беше изпратено" });
     }
   };
+
 
   if (thread.isLoading) {
     return (
