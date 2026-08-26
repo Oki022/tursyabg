@@ -302,29 +302,6 @@ function ProfilePage() {
               )}
             </section>
 
-            <section className="min-w-0 rounded-2xl border border-border/60 bg-card p-5 shadow-sm md:p-7">
-              <h2 className="text-lg font-semibold text-foreground">Проверка на самоличността</h2>
-              <p className="mt-1 text-sm text-muted-foreground">
-                Качи документ за самоличност, за да получиш синя значка и повече доверие.
-              </p>
-              <div className="mt-4 flex flex-col gap-3 rounded-lg border border-dashed border-border bg-muted/40 p-5 sm:flex-row sm:items-center sm:justify-between">
-                <div className="flex items-center gap-3">
-                  <span className="grid h-10 w-10 place-items-center rounded-full bg-primary/10 text-primary">
-                    <Upload className="h-4 w-4" />
-                  </span>
-                  <div>
-                    <p className="text-sm font-medium text-foreground">
-                      {user.verified ? "Самоличността ти е потвърдена" : "Качи лична карта или паспорт"}
-                    </p>
-                    <p className="text-xs text-muted-foreground">JPG, PNG или PDF, до 5 MB</p>
-                  </div>
-                </div>
-                <Button onClick={mockVerify} disabled={user.verified} className="gap-2">
-                  <Upload className="h-4 w-4" />
-                  {user.verified ? "Потвърдено" : "Качи документ"}
-                </Button>
-              </div>
-            </section>
           </>
 
         <div className="pb-2 pt-2 text-center">
