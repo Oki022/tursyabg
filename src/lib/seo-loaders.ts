@@ -56,13 +56,9 @@ export type ProfileSeo = {
 
 export async function fetchProfileSeo(id: string): Promise<ProfileSeo | null> {
   try {
-    const { data } = await supabase
-      .from("profiles")
-      .select("id, full_name, city, rating_as_pro, review_count_as_pro, rating_as_client, review_count_as_client, completed_jobs")
-      .eq("id", id)
-      .maybeSingle();
-    if (!data) return null;
-    const row = data as any;
+    const { data } = await supabase.rpc("public_profiles" as never, { _ids: [id] } as never);
+    const row = ((data as any[] | null) ?? [])[0];
+    if (!row) return null;
     const count = (row.review_count_as_pro ?? 0) + (row.review_count_as_client ?? 0);
     const sum =
       (row.rating_as_pro ?? 0) * (row.review_count_as_pro ?? 0) +
