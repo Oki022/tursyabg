@@ -1,17 +1,13 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useCreateTask, useTask, useTaskImages } from "@/lib/tasks-api";
-import {
-  IMAGE_HELD_BG,
-  IMAGE_REJECT_BG,
-  categoryBg,
-  moderationErrorBg,
-} from "@/lib/moderation-messages";
+import { IMAGE_HELD_BG, IMAGE_REJECT_BG, categoryBg } from "@/lib/moderation-messages";
 import { toast } from "sonner";
+import { toastError } from "@/lib/toast-error";
 import { useAuth } from "@/lib/auth";
 import { RequirePhoneNotice } from "@/components/require-phone-notice";
 import { TaskForm } from "@/components/tasks/task-form";
-import { contentQualityErrorBg } from "@/lib/content-quality";
 import { CONTACT_MASK_WARNING, containsContactInfo, isValidBgPhone } from "@/lib/phone";
+
 
 export const Route = createFileRoute("/_authenticated/post")({
   validateSearch: (search: Record<string, unknown>): { repost?: string } =>
