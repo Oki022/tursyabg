@@ -1769,6 +1769,7 @@ export type Database = {
         Args: { _reason: string; _user_id: string }
         Returns: Json
       }
+      bg_slug: { Args: { _input: string }; Returns: string }
       can_bump_task: { Args: { _task_id: string }; Returns: boolean }
       cancel_account_deletion: { Args: never; Returns: undefined }
       claim_engagement: { Args: { _task_id: string }; Returns: Json }
