@@ -26,7 +26,8 @@ export const Route = createFileRoute("/tasks")({
     const s = (match.search ?? {}) as Search;
     const cat = s.category ? getCategory(s.category).name : undefined;
     const city = s.location ? s.location.split(",")[0]!.trim() : undefined;
-    const label = [cat, city ? `в ${city}` : undefined].filter(Boolean).join(" ");
+    const label = [cat, city ? `в ${municipalityLabel(city)}` : undefined].filter(Boolean).join(" ");
+
     return seo({
       title: label ? `${label}, обяви за задачи` : "Активни задачи и обяви",
       description: clampDescription(
