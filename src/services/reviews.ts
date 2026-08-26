@@ -127,6 +127,8 @@ export async function getMyEngagements(): Promise<Engagement[]> {
     reviewDeadline: r.review_deadline,
     myReviewId: r.my_review_id,
     otherSubmitted: Boolean(r.other_submitted),
+    taskStatus: r.task_status ?? null,
+    promoExpiresAt: r.promo_expires_at ?? null,
   }));
 }
 
