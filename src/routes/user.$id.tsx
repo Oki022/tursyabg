@@ -16,6 +16,8 @@ import { fetchProfileSeo } from "@/lib/seo-loaders";
 import { breadcrumbLd, clampDescription, jsonLd, seo } from "@/lib/seo";
 import { absoluteUrl, BRAND } from "@/lib/brand";
 import { formatRatingBg, reviewCountBg } from "@/lib/public-profiles";
+import { municipalityLabel } from "@/lib/locations";
+
 
 export const Route = createFileRoute("/user/$id")({
   loader: ({ params }) => fetchProfileSeo(params.id),
