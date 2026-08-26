@@ -45,7 +45,7 @@ function postingLocationHint(value: string | undefined, municipalities: Municipa
   const muni = municipalities.find((m) => m.name === city);
   const isCity = muni?.hasNeighborhoods ?? CITIES_WITH_NEIGHBORHOODS.has(city);
   if (isCity) return "Публично се показват само градът и кварталът.";
-  return "Общината покрива всички села в нея — селото посочи в описанието.";
+  return "Общината покрива всички села в нея. Селото посочи в описанието.";
 }
 
 export function LocationCombobox({
