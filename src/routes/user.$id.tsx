@@ -15,6 +15,7 @@ import type { ReviewDirection } from "@/services/reviews";
 import { fetchProfileSeo } from "@/lib/seo-loaders";
 import { breadcrumbLd, clampDescription, jsonLd, seo } from "@/lib/seo";
 import { absoluteUrl, BRAND } from "@/lib/brand";
+import { formatRatingBg, reviewCountBg } from "@/lib/public-profiles";
 
 export const Route = createFileRoute("/user/$id")({
   loader: ({ params }) => fetchProfileSeo(params.id),
@@ -128,23 +129,31 @@ function PublicProfilePage() {
           </div>
         </div>
 
-        <div className="mt-5 flex min-w-0 flex-wrap items-center gap-3 rounded-2xl bg-secondary/60 px-4 py-3">
+        <div className="mt-5 min-w-0 rounded-2xl bg-secondary/60 px-4 py-3">
           {overall ? (
-            <>
-              <span className="text-2xl font-bold text-foreground">
-                {overall.toFixed(1).replace(".", ",")}
-              </span>
-              <Stars value={overall} size={18} />
-              <span className="text-xs text-muted-foreground">
-                {overallCount} {overallCount === 1 ? "отзив" : "отзива"}
-              </span>
-            </>
+            <div className="flex min-w-0 flex-wrap items-center gap-x-5 gap-y-2">
+              <div className="min-w-0">
+                <p className="text-[11px] uppercase tracking-wide text-muted-foreground">Среден рейтинг</p>
+                <div className="mt-0.5 flex items-center gap-2">
+                  <span className="inline-flex items-baseline gap-1 text-2xl font-bold text-foreground">
+                    {formatRatingBg(overall, 2)}
+                    <Star className="h-5 w-5 fill-amber-400 text-amber-400" />
+                  </span>
+                  <Stars value={overall} size={16} />
+                </div>
+              </div>
+              <div className="min-w-0">
+                <p className="text-[11px] uppercase tracking-wide text-muted-foreground">Общо отзиви</p>
+                <p className="mt-0.5 text-sm font-semibold text-foreground">{reviewCountBg(overallCount)}</p>
+              </div>
+            </div>
           ) : (
             <span className="inline-flex items-center gap-2 text-sm text-muted-foreground">
               <BadgeCheck className="h-4 w-4 text-primary" /> Нов потребител, още няма отзиви
             </span>
           )}
         </div>
+
 
         {(profile.skillCategories.length > 0 || profile.skillTags.length > 0) && (
           <div className="mt-4 flex min-w-0 flex-wrap gap-1.5">
@@ -242,10 +251,11 @@ function RatingSummary({
       {rating ? (
         <>
           <span className="inline-flex items-center gap-1 font-semibold text-foreground">
+            {formatRatingBg(rating, 2)}
             <Star className="h-4 w-4 fill-amber-400 text-amber-400" />
-            {rating.toFixed(1).replace(".", ",")}
           </span>
-          <span className="text-xs text-muted-foreground">({count})</span>
+          <span className="text-muted-foreground">·</span>
+          <span className="text-xs text-muted-foreground">{reviewCountBg(count)}</span>
         </>
       ) : (
         <span className="text-muted-foreground">Нов потребител</span>

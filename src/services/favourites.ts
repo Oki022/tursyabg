@@ -2,6 +2,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { type Task, type TaskStatus } from "@/lib/mock-data";
 import { resolveImageUrls } from "@/services/storage";
 import { timeAgoBg } from "@/lib/tasks-api";
+import { fetchPublicNames, FALLBACK_NAME } from "@/lib/public-profiles";
 
 export const FAVOURITES_PAGE_SIZE = 20;
 
@@ -64,7 +65,10 @@ export async function getFavouritesPage(cursor?: string): Promise<{
   const paths = rows
     .flatMap((r) => (r.tasks?.task_images ?? []).map((i) => i.image_url))
     .filter((p) => !p.startsWith("http"));
-  const signed = await resolveImageUrls(paths);
+  const [signed, names] = await Promise.all([
+    resolveImageUrls(paths),
+    fetchPublicNames(rows.map((r) => r.tasks?.user_id)),
+  ]);
 
   const items: FavouriteItem[] = rows.map((r) => {
     const t = r.tasks;
@@ -88,7 +92,7 @@ export async function getFavouritesPage(cursor?: string): Promise<{
         budget: Number(t.budget),
         location: [t.city, t.neighborhood].filter(Boolean).join(", "),
         postedAt: timeAgoBg(t.created_at),
-        author: "Потребител",
+        author: names[t.user_id] ?? FALLBACK_NAME,
         userId: t.user_id,
         status: t.status,
         unlockCost: t.unlock_cost ?? undefined,

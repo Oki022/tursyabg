@@ -9,6 +9,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { type Task, type TaskStatus } from "@/lib/mock-data";
 import { resolveImageUrls } from "@/services/storage";
 import { uploadModeratedTaskImage } from "@/lib/moderation.functions";
+import { fetchPublicNames, FALLBACK_NAME } from "@/lib/public-profiles";
 
 export const PAGE_SIZE = 20;
 
@@ -30,11 +31,10 @@ type Row = {
   max_unlocks?: number;
   user_id: string;
   task_images?: { image_url: string; sort_order: number }[] | null;
-  profiles?: { full_name: string | null } | null;
 };
 
 const SELECT =
-  "id, title, description, category, budget, city, neighborhood, status, unlock_cost, created_at, bumped_at, status_changed_at, view_count, unlock_count, max_unlocks, user_id, task_images(image_url, sort_order), profiles(full_name)";
+  "id, title, description, category, budget, city, neighborhood, status, unlock_cost, created_at, bumped_at, status_changed_at, view_count, unlock_count, max_unlocks, user_id, task_images(image_url, sort_order)";
 
 export function timeAgoBg(iso: string) {
   const diff = Date.now() - new Date(iso).getTime();
@@ -50,7 +50,7 @@ export function timeAgoBg(iso: string) {
   return `преди ${m} мес.`;
 }
 
-function mapRow(row: Row, signed: Record<string, string>): Task {
+function mapRow(row: Row, signed: Record<string, string>, names: Record<string, string> = {}): Task {
   const images = [...(row.task_images ?? [])].sort((a, b) => a.sort_order - b.sort_order);
   const gallery = images
     .map((i) => (i.image_url.startsWith("http") ? i.image_url : signed[i.image_url]))
@@ -64,7 +64,7 @@ function mapRow(row: Row, signed: Record<string, string>): Task {
     budget: Number(row.budget),
     location: [row.city, row.neighborhood].filter(Boolean).join(", "),
     postedAt: timeAgoBg(row.created_at),
-    author: row.profiles?.full_name ?? "Потребител",
+    author: names[row.user_id] ?? FALLBACK_NAME,
     userId: row.user_id,
     status: row.status,
     unlockCost: row.unlock_cost ?? undefined,
@@ -81,8 +81,11 @@ function mapRow(row: Row, signed: Record<string, string>): Task {
 
 async function mapRows(rows: Row[]): Promise<Task[]> {
   const paths = rows.flatMap((r) => (r.task_images ?? []).map((i) => i.image_url)).filter((p) => !p.startsWith("http"));
-  const signed = await resolveImageUrls(paths);
-  return rows.map((r) => mapRow(r, signed));
+  const [signed, names] = await Promise.all([
+    resolveImageUrls(paths),
+    fetchPublicNames(rows.map((r) => r.user_id)),
+  ]);
+  return rows.map((r) => mapRow(r, signed, names));
 }
 
 export type TaskFilters = { q?: string; category?: string; location?: string };
@@ -137,7 +140,7 @@ async function mapFeedRows(rows: FeedRow[]): Promise<Task[]> {
       budget: Number(row.budget),
       location: [row.city, row.neighborhood].filter(Boolean).join(", "),
       postedAt: timeAgoBg(row.bumped_at),
-      author: row.author ?? "Потребител",
+      author: row.author ?? FALLBACK_NAME,
       userId: row.user_id,
       status: row.status,
       unlockCost: row.unlock_cost ?? undefined,

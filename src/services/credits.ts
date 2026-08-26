@@ -1,4 +1,5 @@
 import { supabase } from "@/integrations/supabase/client";
+import { fetchPublicNames, FALLBACK_NAME } from "@/lib/public-profiles";
 
 export type CreditPackage = {
   id: string;
@@ -145,7 +146,7 @@ export async function getMyUnlockedTasks(): Promise<UnlockedTask[]> {
   const { data, error } = await supabase
     .from("task_unlocks")
     .select(
-      "id, task_id, credits_spent, unlocked_at, expires_at, tasks(title, budget, category, status, deleted_at, user_id, profiles(full_name))",
+      "id, task_id, credits_spent, unlocked_at, expires_at, tasks(title, budget, category, status, deleted_at, user_id)",
     )
     .order("unlocked_at", { ascending: false });
   if (error) throw error;
@@ -162,11 +163,11 @@ export async function getMyUnlockedTasks(): Promise<UnlockedTask[]> {
       status: string;
       deleted_at: string | null;
       user_id: string;
-      profiles: { full_name: string | null } | null;
     } | null;
   }[];
 
   const ownerIds = [...new Set(rows.map((r) => r.tasks?.user_id).filter(Boolean) as string[])];
+  const ownerNames = await fetchPublicNames(ownerIds);
   const phones: Record<string, string | null> = {};
   if (ownerIds.length) {
     const { data: contacts } = await supabase.from("profile_contacts").select("user_id, phone").in("user_id", ownerIds);
@@ -184,7 +185,7 @@ export async function getMyUnlockedTasks(): Promise<UnlockedTask[]> {
     title: r.tasks?.title ?? "Задача",
     budget: Number(r.tasks?.budget ?? 0),
     category: r.tasks?.category ?? "drugi",
-    ownerName: r.tasks?.profiles?.full_name ?? "Потребител",
+    ownerName: (r.tasks?.user_id ? ownerNames[r.tasks.user_id] : null) ?? FALLBACK_NAME,
     phone: r.tasks?.user_id ? (phones[r.tasks.user_id] ?? null) : null,
     taskStatus: r.tasks?.status ?? "active",
     taskDeleted: Boolean(r.tasks?.deleted_at),
