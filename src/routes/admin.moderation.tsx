@@ -3,6 +3,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Check, Flag, ImageIcon, MessageSquareWarning, ShieldAlert, X } from "lucide-react";
 import { toast } from "sonner";
+import { toastError } from "@/lib/toast-error";
 import { AdminCard, AdminPage, EmptyState } from "@/components/admin/admin-page";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
