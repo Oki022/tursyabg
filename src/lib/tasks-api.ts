@@ -467,7 +467,12 @@ export type UpdateTaskInput = {
 };
 
 export type UpdateTaskResult = {
+  /** True when the edit itself was held for review. */
   pending: boolean;
+  /** True when the previously approved version stays live while the edit waits. */
+  keptLive: boolean;
+  /** Rule note/category that caused the hold, when there was one. */
+  reason: string | null;
   rejected: (string | null)[];
   held: number;
 };
