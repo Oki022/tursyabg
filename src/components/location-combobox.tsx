@@ -137,7 +137,7 @@ export function LocationCombobox({
         >
           <span className="inline-flex min-w-0 items-center gap-2">
             <MapPin className="h-4 w-4 shrink-0 opacity-70" />
-            <span className="truncate">{value ?? placeholder}</span>
+            <span className="truncate">{value ? formatLocation(value) : placeholder}</span>
           </span>
           {allowClear && value ? (
             <span

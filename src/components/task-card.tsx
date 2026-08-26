@@ -4,7 +4,9 @@ import { Badge } from "@/components/ui/badge";
 import { TopBadge, UrgentBadge } from "@/components/promotions/promo-badges";
 import { FavouriteButton } from "@/components/favourite-button";
 import { getCategory, type Task } from "@/lib/mock-data";
+import { formatLocation } from "@/lib/locations";
 import { TaskThumb } from "@/components/task-thumb";
+
 
 export function TaskCard({ task }: { task: Task }) {
   const cat = getCategory(task.category);
