@@ -14,11 +14,15 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { useMunicipalities, useNeighborhoods } from "@/lib/locations-api";
 import {
   buildLocation,
+  formatLocation,
+  municipalityLabel,
   nearestMunicipality,
   rankMunicipalities,
+  searchKey,
   splitLocation,
   type Municipality,
 } from "@/lib/locations";
+
 
 type Props = {
   value?: string;
