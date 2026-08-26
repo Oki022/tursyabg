@@ -1,12 +1,12 @@
 import { createFileRoute } from "@tanstack/react-router";
 import type {} from "@tanstack/react-start";
-import { cityList, categoryList } from "@/lib/geo";
-import { urlsetXml, xmlResponse, type SitemapEntry } from "@/lib/sitemap.server";
+import { categoryList } from "@/lib/geo";
+import { fetchMunicipalitySlugs, urlsetXml, xmlResponse, type SitemapEntry } from "@/lib/sitemap.server";
 
 export const Route = createFileRoute("/sitemap-pages.xml")({
   server: {
     handlers: {
-      GET: () => {
+      GET: async () => {
         const entries: SitemapEntry[] = [
           { path: "/", changefreq: "daily", priority: "1.0" },
           { path: "/tasks", changefreq: "hourly", priority: "0.9" },
@@ -19,11 +19,14 @@ export const Route = createFileRoute("/sitemap-pages.xml")({
         for (const category of categoryList) {
           entries.push({ path: `/categories/${category.id}`, changefreq: "daily", priority: "0.8" });
         }
-        for (const city of cityList) {
-          entries.push({ path: `/city/${city.slug}`, changefreq: "daily", priority: "0.8" });
+        // Municipality level only (265), never village level — village pages
+        // would be thin, near-duplicate content across thousands of URLs.
+        const municipalities = await fetchMunicipalitySlugs();
+        for (const slug of municipalities) {
+          entries.push({ path: `/city/${slug}`, changefreq: "daily", priority: "0.8" });
           for (const category of categoryList) {
             entries.push({
-              path: `/city/${city.slug}/${category.id}`,
+              path: `/city/${slug}/${category.id}`,
               changefreq: "daily",
               priority: "0.7",
             });
