@@ -3,6 +3,7 @@ import { LandingView } from "@/components/seo/landing-view";
 import { findCategoryBySlug } from "@/lib/geo";
 import { fetchMunicipalityBySlug, fetchNeighborhoods } from "@/lib/locations-api";
 import { landingH1, landingIntro } from "@/lib/landing-content";
+import { municipalityLabel } from "@/lib/locations";
 import { breadcrumbLd, clampDescription, seo } from "@/lib/seo";
 
 export const Route = createFileRoute("/city/$city/$category")({
@@ -22,7 +23,9 @@ export const Route = createFileRoute("/city/$city/$category")({
     return { municipality, neighborhoods, categoryId: category.id, categoryName: category.name };
   },
   head: ({ params, loaderData }) => {
-    const cityName = loaderData?.municipality.name ?? "България";
+    const cityName = loaderData?.municipality
+      ? municipalityLabel(loaderData.municipality.name, loaderData.municipality.hasNeighborhoods)
+      : "България";
     const region = loaderData?.municipality.regionName;
     const catName = loaderData?.categoryName ?? "Задачи";
     const path = `/city/${params.city}/${params.category}`;

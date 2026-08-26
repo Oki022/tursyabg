@@ -14,11 +14,15 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { useMunicipalities, useNeighborhoods } from "@/lib/locations-api";
 import {
   buildLocation,
+  formatLocation,
+  municipalityLabel,
   nearestMunicipality,
   rankMunicipalities,
+  searchKey,
   splitLocation,
   type Municipality,
 } from "@/lib/locations";
+
 
 type Props = {
   value?: string;
@@ -44,6 +48,7 @@ export function LocationCombobox({
   const [query, setQuery] = React.useState("");
   /** Second step: община с квартали asks for the квартал. */
   const [pending, setPending] = React.useState<Municipality | null>(null);
+  const [nbQuery, setNbQuery] = React.useState("");
   const [locating, setLocating] = React.useState(false);
   const [geoError, setGeoError] = React.useState<string | null>(null);
 
@@ -54,6 +59,13 @@ export function LocationCombobox({
     () => rankMunicipalities(municipalities, query).slice(0, 60),
     [municipalities, query],
   );
+
+  const nbResults = React.useMemo(() => {
+    const q = searchKey(nbQuery);
+    if (!q) return neighborhoods;
+    return neighborhoods.filter((n) => searchKey(n.name).includes(q));
+  }, [neighborhoods, nbQuery]);
+
 
   const selected = splitLocation(value);
 
@@ -96,6 +108,7 @@ export function LocationCombobox({
   }
 
   return (
+    <div className="space-y-1.5">
     <Popover
       open={open}
       onOpenChange={(next) => {
@@ -103,10 +116,12 @@ export function LocationCombobox({
         if (!next) {
           setPending(null);
           setQuery("");
+          setNbQuery("");
           setGeoError(null);
         }
       }}
     >
+
       <PopoverTrigger asChild>
         <Button
           id={id}
@@ -122,7 +137,7 @@ export function LocationCombobox({
         >
           <span className="inline-flex min-w-0 items-center gap-2">
             <MapPin className="h-4 w-4 shrink-0 opacity-70" />
-            <span className="truncate">{value ?? placeholder}</span>
+            <span className="truncate">{value ? formatLocation(value) : placeholder}</span>
           </span>
           {allowClear && value ? (
             <span
@@ -144,11 +159,14 @@ export function LocationCombobox({
       </PopoverTrigger>
       <PopoverContent className="w-[--radix-popover-trigger-width] p-0" align="start">
         {pending ? (
-          <Command>
+          <Command shouldFilter={false}>
             <div className="flex items-center gap-2 border-b border-border px-3 py-2 text-sm">
               <button
                 type="button"
-                onClick={() => setPending(null)}
+                onClick={() => {
+                  setPending(null);
+                  setNbQuery("");
+                }}
                 className="text-primary hover:underline"
               >
                 Назад
@@ -157,27 +175,34 @@ export function LocationCombobox({
                 Квартал в {pending.name}
               </span>
             </div>
+            <CommandInput
+              placeholder="Търси квартал..."
+              value={nbQuery}
+              onValueChange={setNbQuery}
+            />
             <CommandList>
-              <CommandEmpty>Няма квартали за тази община.</CommandEmpty>
+              <CommandEmpty>Няма намерен квартал.</CommandEmpty>
               <CommandGroup>
                 <CommandItem
                   value={`__all-${pending.slug}`}
                   onSelect={() => {
                     onChange(pending.name);
                     setPending(null);
+                    setNbQuery("");
                     setOpen(false);
                   }}
                 >
                   <MapPin className="mr-2 h-4 w-4 opacity-60" />
-                  Цялата община {pending.name}
+                  Не искам да посочвам квартал
                 </CommandItem>
-                {neighborhoods.map((n) => (
+                {nbResults.map((n) => (
                   <CommandItem
                     key={n.id}
                     value={n.name}
                     onSelect={() => {
                       onChange(buildLocation(pending.name, n.name));
                       setPending(null);
+                      setNbQuery("");
                       setOpen(false);
                     }}
                   >
@@ -194,6 +219,7 @@ export function LocationCombobox({
               </CommandGroup>
             </CommandList>
           </Command>
+
         ) : (
           <Command shouldFilter={false}>
             <CommandInput
@@ -230,7 +256,7 @@ export function LocationCombobox({
                   <CommandItem key={m.id} value={m.slug} onSelect={() => pick(m)}>
                     <MapPin className="mr-2 h-4 w-4 shrink-0 opacity-60" />
                     <span className="min-w-0 truncate">
-                      {m.name}
+                      {municipalityLabel(m.name, m.hasNeighborhoods)}
                       <span className="ml-1 text-xs text-muted-foreground">
                         обл. {m.regionName}
                       </span>
@@ -249,5 +275,10 @@ export function LocationCombobox({
         )}
       </PopoverContent>
     </Popover>
+      <p className="text-xs text-muted-foreground">
+        Избери общината си, тя покрива всички села в нея, а конкретното село опиши в описанието.
+      </p>
+    </div>
   );
 }
+

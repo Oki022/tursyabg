@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { useTasksFeed } from "@/lib/tasks-api";
 import { categoryList } from "@/lib/geo";
 import { useMunicipalities, useRegionCounts } from "@/lib/locations-api";
-import type { Municipality } from "@/lib/locations";
+import { municipalityLabel, type Municipality } from "@/lib/locations";
 import type { Category } from "@/lib/mock-data";
 
 export function LandingView({
@@ -50,7 +50,7 @@ export function LandingView({
             <>
               <li>
                 <Link to="/city/$city" params={{ city: municipality.slug }} className="hover:text-foreground hover:underline">
-                  {municipality.name}
+                  {municipalityLabel(municipality.name, municipality.hasNeighborhoods)}
                 </Link>
               </li>
               {category && <li aria-hidden="true">/</li>}
@@ -88,7 +88,7 @@ export function LandingView({
       </div>
 
       <h2 className="mt-10 text-xl font-semibold text-foreground">
-        Активни задачи{category ? `, ${category.name}` : ""}{municipality ? ` в ${municipality.name}` : ""}
+        Активни задачи{category ? `, ${category.name}` : ""}{municipality ? ` в ${municipalityLabel(municipality.name, municipality.hasNeighborhoods)}` : ""}
       </h2>
 
       {isLoading ? (
@@ -119,7 +119,7 @@ export function LandingView({
                     params={{ city: c.slug, category: category.id }}
                     className="inline-flex rounded-full border border-border px-3 py-1.5 text-sm text-muted-foreground transition-colors hover:text-foreground"
                   >
-                    {category.name} в {c.name}
+                    {category.name} в {municipalityLabel(c.name)}
                     {c.count ? ` (${c.count})` : ""}
                   </Link>
                 ) : (
@@ -128,7 +128,7 @@ export function LandingView({
                     params={{ city: c.slug }}
                     className="inline-flex rounded-full border border-border px-3 py-1.5 text-sm text-muted-foreground transition-colors hover:text-foreground"
                   >
-                    {c.name}
+                    {municipalityLabel(c.name)}
                     {c.count ? ` (${c.count})` : ""}
                   </Link>
                 )}
@@ -147,7 +147,7 @@ export function LandingView({
                     params={{ city: municipality.slug, category: c.id }}
                     className="inline-flex rounded-full border border-border px-3 py-1.5 text-sm text-muted-foreground transition-colors hover:text-foreground"
                   >
-                    {c.name} в {municipality.name}
+                    {c.name} в {municipalityLabel(municipality.name, municipality.hasNeighborhoods)}
                   </Link>
                 ) : (
                   <Link

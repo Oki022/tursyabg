@@ -24,9 +24,47 @@ export function searchKey(input: string): string {
     input
       .normalize("NFD")
       .replace(/[\u0300-\u036f]/g, "")
-      .replace(/\bкв\.?\b/gi, " "),
+      .replace(/\b(кв|общ|обл)\.?\b/gi, " "),
   ).replace(/-/g, "");
 }
+
+/**
+ * Градовете с квартали. Те се показват с чисто име ("Шумен"), докато всички
+ * останали общини получават префикс "общ.", за да е ясно нивото.
+ */
+export const CITIES_WITH_NEIGHBORHOODS = new Set([
+  "София",
+  "Пловдив",
+  "Варна",
+  "Бургас",
+  "Русе",
+  "Стара Загора",
+  "Плевен",
+  "Шумен",
+  "Велико Търново",
+  "Благоевград",
+  "Сливен",
+  "Перник",
+  "Хасково",
+  "Добрич",
+]);
+
+/** "общ. Каспичан" за общини, "Шумен" за градовете с квартали. */
+export function municipalityLabel(name: string, hasNeighborhoods?: boolean): string {
+  if (!name) return name;
+  if (/^общ\./i.test(name)) return name;
+  const isCity = hasNeighborhoods ?? CITIES_WITH_NEIGHBORHOODS.has(name);
+  return isCity ? name : `общ. ${name}`;
+}
+
+/** Форматира съхранената локация ("Каспичан, кв. Х") за показване. */
+export function formatLocation(value?: string | null): string {
+  if (!value) return "";
+  const { city, neighborhood } = splitLocation(value);
+  if (!city) return value;
+  return [municipalityLabel(city), neighborhood].filter(Boolean).join(", ");
+}
+
 
 /** Free-text match over the община name and its област, ranked by prefix hits. */
 export function rankMunicipalities(list: Municipality[], query: string): Municipality[] {

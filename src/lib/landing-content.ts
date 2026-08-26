@@ -1,6 +1,6 @@
 import { BRAND } from "@/lib/brand";
 import type { Category } from "@/lib/mock-data";
-import type { Municipality } from "@/lib/locations";
+import { municipalityLabel, type Municipality } from "@/lib/locations";
 
 function hash(str: string) {
   let h = 0;
@@ -51,7 +51,7 @@ export function landingIntro(opts: {
   category?: Category;
 }): string {
   const { municipality, category, neighborhoods = [] } = opts;
-  const cityName = municipality?.name ?? "България";
+  const cityName = municipality ? municipalityLabel(municipality.name, municipality.hasNeighborhoods) : "България";
   const catName = category?.name ?? "Услуги и задачи";
   const seed = hash(`${municipality?.slug ?? "bg"}-${category?.id ?? "all"}`);
 
@@ -79,8 +79,10 @@ export function landingIntro(opts: {
 export function landingH1(opts: { municipality?: Municipality; category?: Category }): string {
   const { municipality, category } = opts;
   // "Търся" here is the verb ("I'm looking for"), not the brand name.
-  if (municipality && category) return `Търся майстор за ${category.name.toLowerCase()} в ${municipality.name}`;
-  if (municipality) return `Търся изпълнител в ${municipality.name}, задачи и услуги`;
+  if (municipality && category)
+    return `Търся майстор за ${category.name.toLowerCase()} в ${municipalityLabel(municipality.name, municipality.hasNeighborhoods)}`;
+  if (municipality)
+    return `Търся изпълнител в ${municipalityLabel(municipality.name, municipality.hasNeighborhoods)}, задачи и услуги`;
   if (category) return `${category.name}, задачи и майстори в цяла България`;
   return `${BRAND}, задачи и услуги`;
 }

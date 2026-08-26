@@ -16,6 +16,8 @@ import { fetchProfileSeo } from "@/lib/seo-loaders";
 import { breadcrumbLd, clampDescription, jsonLd, seo } from "@/lib/seo";
 import { absoluteUrl, BRAND } from "@/lib/brand";
 import { formatRatingBg, reviewCountBg } from "@/lib/public-profiles";
+import { municipalityLabel } from "@/lib/locations";
+
 
 export const Route = createFileRoute("/user/$id")({
   loader: ({ params }) => fetchProfileSeo(params.id),
@@ -119,7 +121,7 @@ function PublicProfilePage() {
             <div className="mt-1 flex min-w-0 flex-wrap items-center gap-x-3 gap-y-1 text-xs text-muted-foreground">
               {profile.city && (
                 <span className="inline-flex items-center gap-1">
-                  <MapPin className="h-3.5 w-3.5" /> {profile.city}
+                  <MapPin className="h-3.5 w-3.5" /> {municipalityLabel(profile.city)}
                 </span>
               )}
               <span className="inline-flex items-center gap-1">

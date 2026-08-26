@@ -4,7 +4,9 @@ import { Badge } from "@/components/ui/badge";
 import { TopBadge, UrgentBadge } from "@/components/promotions/promo-badges";
 import { FavouriteButton } from "@/components/favourite-button";
 import { getCategory, type Task } from "@/lib/mock-data";
+import { formatLocation } from "@/lib/locations";
 import { TaskThumb } from "@/components/task-thumb";
+
 
 export function TaskCard({ task }: { task: Task }) {
   const cat = getCategory(task.category);
@@ -54,7 +56,7 @@ export function TaskCard({ task }: { task: Task }) {
         <div className="mt-auto flex min-w-0 flex-col gap-0.5 pt-1 text-[11px] text-muted-foreground">
           <span className="flex min-w-0 items-center gap-1">
             <MapPin className="h-3 w-3 shrink-0" />
-            <span className="truncate">{task.location}</span>
+            <span className="truncate">{formatLocation(task.location)}</span>
           </span>
           <span className="flex min-w-0 items-center gap-1">
             <Clock className="h-3 w-3 shrink-0" />

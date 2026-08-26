@@ -9,7 +9,7 @@ import { LocationCombobox } from "@/components/location-combobox";
 import { categories, getCategory } from "@/lib/mock-data";
 import { useTasksFeed } from "@/lib/tasks-api";
 import { useMunicipalities, useRegionCounts, useRegions } from "@/lib/locations-api";
-import { splitLocation } from "@/lib/locations";
+import { formatLocation, municipalityLabel, splitLocation } from "@/lib/locations";
 import {
   Select,
   SelectContent,
@@ -26,7 +26,8 @@ export const Route = createFileRoute("/tasks")({
     const s = (match.search ?? {}) as Search;
     const cat = s.category ? getCategory(s.category).name : undefined;
     const city = s.location ? s.location.split(",")[0]!.trim() : undefined;
-    const label = [cat, city ? `в ${city}` : undefined].filter(Boolean).join(" ");
+    const label = [cat, city ? `в ${municipalityLabel(city)}` : undefined].filter(Boolean).join(" ");
+
     return seo({
       title: label ? `${label}, обяви за задачи` : "Активни задачи и обяви",
       description: clampDescription(
@@ -197,7 +198,8 @@ function TasksPage() {
               )}
               {search.location && (
                 <Badge variant="secondary" className="gap-1.5">
-                  {search.location}
+                  {formatLocation(search.location)}
+
                   <button onClick={() => update({ location: undefined })}><X className="h-3 w-3" /></button>
                 </Badge>
               )}
@@ -237,7 +239,7 @@ function TasksPage() {
                           params={{ city: c.slug }}
                           className="inline-flex rounded-full border border-border px-3 py-1.5 text-sm text-muted-foreground transition-colors hover:text-foreground"
                         >
-                          {c.name} ({c.taskCount})
+                          {municipalityLabel(c.name)} ({c.taskCount})
                         </Link>
                       </li>
                     ))}
