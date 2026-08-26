@@ -65,13 +65,13 @@ export function landingIntro(opts: {
     municipality
       ? `Община ${municipality.name} е част от област ${municipality.regionName}, така че задачи от съседните общини също са на един клик разстояние.`
       : `Локацията се избира до ниво община, а в големите градове и до квартал.`,
-    MIDDLES[(seed >> 3) % MIDDLES.length]!,
-    MIDDLES[(seed >> 7) % MIDDLES.length]!,
+    MIDDLES[(seed >>> 3) % MIDDLES.length]!,
+    MIDDLES[(seed >>> 7) % MIDDLES.length]!,
     category
       ? `В категория „${catName}“ попадат задачи като ${(category.keywords.length ? category.keywords.slice(0, 6) : ["дребни ремонти", "монтаж", "поддръжка"]).join(", ")} и други сходни услуги.`
       : `Категориите обхващат ремонти, почистване, превоз, ИТ поддръжка, уроци, градина, домашни любимци, фото и услуги за красота и здраве.`,
     `${BRAND} свързва хора, които имат нужда от свършена работа, с изпълнители, които я търсят, прозрачно, с публични отзиви и без скрити такси.`,
-    CLOSINGS[(seed >> 5) % CLOSINGS.length]!(catName, cityName),
+    CLOSINGS[(seed >>> 5) % CLOSINGS.length]!(catName, cityName),
   ];
   return parts.join(" ");
 }
