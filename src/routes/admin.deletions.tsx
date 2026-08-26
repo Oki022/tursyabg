@@ -37,22 +37,20 @@ function AdminDeletions() {
       title="Заявки за изтриване на профил"
       description="Заявките се изпълняват автоматично 14 дни след подаване. Профилът е деактивиран през целия период."
     >
-      <AdminCard
-        title={`Заявки (${rows.length})`}
-        actions={
-          <Select value={status} onValueChange={setStatus}>
-            <SelectTrigger className="h-9 w-52">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="pending">Изчакващи</SelectItem>
-              <SelectItem value="completed">Изпълнени</SelectItem>
-              <SelectItem value="cancelled">Отказани</SelectItem>
-              <SelectItem value="all">Всички</SelectItem>
-            </SelectContent>
-          </Select>
-        }
-      >
+      <div className="flex justify-end">
+        <Select value={status} onValueChange={setStatus}>
+          <SelectTrigger className="h-9 w-52">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="pending">Изчакващи</SelectItem>
+            <SelectItem value="completed">Изпълнени</SelectItem>
+            <SelectItem value="cancelled">Отказани</SelectItem>
+            <SelectItem value="all">Всички</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
+      <AdminCard>
         {list.isLoading ? (
           <EmptyState text="Зареждане…" />
         ) : rows.length === 0 ? (
