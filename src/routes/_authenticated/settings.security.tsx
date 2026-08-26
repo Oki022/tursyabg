@@ -89,14 +89,79 @@ function SettingsSecurityPage() {
     }
   };
 
-  const handleDeactivate = () => {
-    toast.success("Профилът ти е деактивиран. Можеш да го активираш при следващо влизане.");
+  const handleDeactivate = async () => {
+    setBusy(true);
+    try {
+      await deactivate.mutateAsync();
+      toast.success("Профилът ти е деактивиран. Можеш да го активираш при следващо влизане.");
+      await logout();
+      navigate({ to: "/" });
+    } catch (err) {
+      toastError(err, { title: "Профилът не беше деактивиран" });
+    } finally {
+      setBusy(false);
+    }
   };
 
   const handleDelete = async () => {
-    toast.success("Заявката за изтриване на профила е приета.");
-    await logout();
-    navigate({ to: "/" });
+    setBusy(true);
+    try {
+      const scheduledFor = await requestDeletion.mutateAsync();
+      toast.success(
+        `Заявката е приета. Профилът ще бъде изтрит на ${formatDate(scheduledFor)}. Можеш да откажеш до тази дата.`,
+      );
+      await logout();
+      navigate({ to: "/" });
+    } catch (err) {
+      toastError(err, { title: "Заявката не беше приета" });
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const handleExport = async () => {
+    try {
+      const data = await exportData.mutateAsync();
+      downloadJson(data, `tursya-danni-${new Date().toISOString().slice(0, 10)}.json`);
+      toast.success("Данните ти са изтеглени като JSON файл.");
+    } catch (err) {
+      toastError(err, { title: "Експортът не беше успешен" });
+    }
+  };
+
+  const handleChangePassword = async (e: FormEvent) => {
+    e.preventDefault();
+    if (newPassword.length < 8) {
+      toast.error("Новата парола трябва да е поне 8 знака.");
+      return;
+    }
+    if (newPassword !== confirmPassword) {
+      toast.error("Двете нови пароли не съвпадат.");
+      return;
+    }
+    setChangingPassword(true);
+    try {
+      await changePassword(currentPassword, newPassword);
+      setCurrentPassword("");
+      setNewPassword("");
+      setConfirmPassword("");
+      setPasswordOpen(false);
+      toast.success("Паролата е сменена успешно.");
+    } catch (err) {
+      toastError(err, { title: "Паролата не беше сменена" });
+    } finally {
+      setChangingPassword(false);
+    }
+  };
+
+  const handleResetByEmail = async () => {
+    if (!user?.email) return;
+    try {
+      await resetPassword(user.email);
+      toast.success(`Изпратихме линк за смяна на паролата на ${user.email}.`);
+    } catch (err) {
+      toastError(err, { title: "Линкът не беше изпратен" });
+    }
   };
 
   return (
