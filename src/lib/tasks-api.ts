@@ -426,6 +426,8 @@ export function useCreateTask() {
       // Automated gate: publishes the task immediately when every check came
       // back clean, keeps it held when something needs a human.
       const { error: finalizeError } = await supabase.rpc("finalize_task_publication", { _task_id: task.id });
+      // Тихият провал тук изглежда като „задачата изчезна“ — връщаме флаг,
+      // за да покаже UI-ят ясно съобщение вместо нищо.
       if (finalizeError) console.error("finalize_task_publication", finalizeError);
 
       const { data: fresh } = await supabase.from("tasks").select("status").eq("id", task.id).maybeSingle();
@@ -436,7 +438,9 @@ export function useCreateTask() {
         held,
         pending: (fresh?.status ?? task.status) === "pending",
         copyFailed,
+        finalizeFailed: Boolean(finalizeError),
       };
+
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["tasks"] });
