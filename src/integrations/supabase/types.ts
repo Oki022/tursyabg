@@ -53,13 +53,6 @@ export type Database = {
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "account_deletion_requests_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "profiles_public"
-            referencedColumns: ["id"]
-          },
         ]
       }
       admin_actions: {
@@ -140,13 +133,6 @@ export type Database = {
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "contact_messages_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "profiles_public"
-            referencedColumns: ["id"]
-          },
         ]
       }
       content_violations: {
@@ -194,13 +180,6 @@ export type Database = {
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "content_violations_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "profiles_public"
-            referencedColumns: ["id"]
-          },
         ]
       }
       conversations: {
@@ -237,24 +216,10 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "conversations_participant_a_fkey"
-            columns: ["participant_a"]
-            isOneToOne: false
-            referencedRelation: "profiles_public"
-            referencedColumns: ["id"]
-          },
-          {
             foreignKeyName: "conversations_participant_b_fkey"
             columns: ["participant_b"]
             isOneToOne: false
             referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "conversations_participant_b_fkey"
-            columns: ["participant_b"]
-            isOneToOne: false
-            referencedRelation: "profiles_public"
             referencedColumns: ["id"]
           },
           {
@@ -357,13 +322,6 @@ export type Database = {
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "credit_refund_requests_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "profiles_public"
-            referencedColumns: ["id"]
-          },
         ]
       }
       credit_transactions: {
@@ -420,13 +378,6 @@ export type Database = {
             columns: ["user_id"]
             isOneToOne: false
             referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "credit_transactions_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "profiles_public"
             referencedColumns: ["id"]
           },
         ]
@@ -504,24 +455,10 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "engagements_client_id_fkey"
-            columns: ["client_id"]
-            isOneToOne: false
-            referencedRelation: "profiles_public"
-            referencedColumns: ["id"]
-          },
-          {
             foreignKeyName: "engagements_professional_id_fkey"
             columns: ["professional_id"]
             isOneToOne: false
             referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "engagements_professional_id_fkey"
-            columns: ["professional_id"]
-            isOneToOne: false
-            referencedRelation: "profiles_public"
             referencedColumns: ["id"]
           },
           {
@@ -565,13 +502,6 @@ export type Database = {
             columns: ["user_id"]
             isOneToOne: false
             referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "favourites_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "profiles_public"
             referencedColumns: ["id"]
           },
         ]
@@ -623,24 +553,10 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "messages_receiver_id_fkey"
-            columns: ["receiver_id"]
-            isOneToOne: false
-            referencedRelation: "profiles_public"
-            referencedColumns: ["id"]
-          },
-          {
             foreignKeyName: "messages_sender_id_fkey"
             columns: ["sender_id"]
             isOneToOne: false
             referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "messages_sender_id_fkey"
-            columns: ["sender_id"]
-            isOneToOne: false
-            referencedRelation: "profiles_public"
             referencedColumns: ["id"]
           },
           {
@@ -722,13 +638,6 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "moderation_items_reporter_id_fkey"
-            columns: ["reporter_id"]
-            isOneToOne: false
-            referencedRelation: "profiles_public"
-            referencedColumns: ["id"]
-          },
-          {
             foreignKeyName: "moderation_items_task_id_fkey"
             columns: ["task_id"]
             isOneToOne: false
@@ -740,13 +649,6 @@ export type Database = {
             columns: ["user_id"]
             isOneToOne: false
             referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "moderation_items_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "profiles_public"
             referencedColumns: ["id"]
           },
         ]
@@ -834,13 +736,6 @@ export type Database = {
             columns: ["user_id"]
             isOneToOne: false
             referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "notifications_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "profiles_public"
             referencedColumns: ["id"]
           },
         ]
@@ -987,13 +882,6 @@ export type Database = {
             columns: ["user_id"]
             isOneToOne: true
             referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "profile_contacts_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: true
-            referencedRelation: "profiles_public"
             referencedColumns: ["id"]
           },
         ]
@@ -1152,13 +1040,6 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "review_reports_reporter_id_fkey"
-            columns: ["reporter_id"]
-            isOneToOne: false
-            referencedRelation: "profiles_public"
-            referencedColumns: ["id"]
-          },
-          {
             foreignKeyName: "review_reports_review_id_fkey"
             columns: ["review_id"]
             isOneToOne: false
@@ -1226,24 +1107,10 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "reviews_reviewee_id_fkey"
-            columns: ["reviewee_id"]
-            isOneToOne: false
-            referencedRelation: "profiles_public"
-            referencedColumns: ["id"]
-          },
-          {
             foreignKeyName: "reviews_reviewer_id_fkey"
             columns: ["reviewer_id"]
             isOneToOne: false
             referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "reviews_reviewer_id_fkey"
-            columns: ["reviewer_id"]
-            isOneToOne: false
-            referencedRelation: "profiles_public"
             referencedColumns: ["id"]
           },
           {
@@ -1390,13 +1257,6 @@ export type Database = {
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "task_promotions_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "profiles_public"
-            referencedColumns: ["id"]
-          },
         ]
       }
       task_reports: {
@@ -1433,13 +1293,6 @@ export type Database = {
             columns: ["reporter_id"]
             isOneToOne: false
             referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "task_reports_reporter_id_fkey"
-            columns: ["reporter_id"]
-            isOneToOne: false
-            referencedRelation: "profiles_public"
             referencedColumns: ["id"]
           },
           {
@@ -1489,13 +1342,6 @@ export type Database = {
             columns: ["user_id"]
             isOneToOne: false
             referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "task_unlocks_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "profiles_public"
             referencedColumns: ["id"]
           },
         ]
@@ -1596,13 +1442,6 @@ export type Database = {
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "tasks_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "profiles_public"
-            referencedColumns: ["id"]
-          },
         ]
       }
       user_roles: {
@@ -1628,54 +1467,7 @@ export type Database = {
       }
     }
     Views: {
-      profiles_public: {
-        Row: {
-          avatar_url: string | null
-          city: string | null
-          completed_jobs: number | null
-          created_at: string | null
-          full_name: string | null
-          id: string | null
-          neighborhood: string | null
-          rating_as_client: number | null
-          rating_as_pro: number | null
-          review_count_as_client: number | null
-          review_count_as_pro: number | null
-          skill_categories: string[] | null
-          skill_tags: string[] | null
-        }
-        Insert: {
-          avatar_url?: string | null
-          city?: string | null
-          completed_jobs?: number | null
-          created_at?: string | null
-          full_name?: string | null
-          id?: string | null
-          neighborhood?: string | null
-          rating_as_client?: number | null
-          rating_as_pro?: number | null
-          review_count_as_client?: number | null
-          review_count_as_pro?: number | null
-          skill_categories?: string[] | null
-          skill_tags?: string[] | null
-        }
-        Update: {
-          avatar_url?: string | null
-          city?: string | null
-          completed_jobs?: number | null
-          created_at?: string | null
-          full_name?: string | null
-          id?: string | null
-          neighborhood?: string | null
-          rating_as_client?: number | null
-          rating_as_pro?: number | null
-          review_count_as_client?: number | null
-          review_count_as_pro?: number | null
-          skill_categories?: string[] | null
-          skill_tags?: string[] | null
-        }
-        Relationships: []
-      }
+      [_ in never]: never
     }
     Functions: {
       admin_adjust_credits: {
@@ -2005,6 +1797,23 @@ export type Database = {
       needs_prepublish_review: { Args: { _user_id: string }; Returns: boolean }
       own_task_delete_preview: { Args: { _task_id: string }; Returns: Json }
       public_profile: { Args: { _user_id: string }; Returns: Json }
+      public_profiles: {
+        Args: { _ids: string[] }
+        Returns: {
+          avatar_url: string
+          city: string
+          completed_jobs: number
+          full_name: string
+          id: string
+          neighborhood: string
+          rating_as_client: number
+          rating_as_pro: number
+          review_count_as_client: number
+          review_count_as_pro: number
+          skill_categories: string[]
+          skill_tags: string[]
+        }[]
+      }
       public_reviews: {
         Args: {
           _direction: Database["public"]["Enums"]["review_direction"]
