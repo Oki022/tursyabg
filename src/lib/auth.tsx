@@ -14,6 +14,8 @@ export type AuthUser = {
   skills?: string[];
   banned?: boolean;
   banReason?: string | null;
+  deactivated?: boolean;
+  deletionScheduledFor?: string | null;
 };
 
 type AuthContextValue = {
@@ -24,6 +26,8 @@ type AuthContextValue = {
   register: (data: { name: string; email: string; password: string; phone: string }) => Promise<{ needsConfirmation: boolean }>;
   resetPassword: (email: string) => Promise<void>;
   updatePassword: (password: string) => Promise<void>;
+  changePassword: (currentPassword: string, newPassword: string) => Promise<void>;
+  refreshUser: () => Promise<void>;
   logout: () => Promise<void>;
   updateUser: (patch: Partial<AuthUser>) => Promise<void>;
 };
@@ -44,8 +48,14 @@ async function buildUser(session: Session): Promise<AuthUser> {
   const meta = (session.user.user_metadata ?? {}) as Record<string, unknown>;
   const { data: profile } = await supabase
     .from("profiles")
-    .select("id, full_name, avatar_url, credits, banned_at, ban_reason")
+    .select("id, full_name, avatar_url, credits, banned_at, ban_reason, deactivated_at")
     .eq("id", session.user.id)
+    .maybeSingle();
+  const { data: deletion } = await supabase
+    .from("account_deletion_requests")
+    .select("scheduled_for")
+    .eq("user_id", session.user.id)
+    .eq("status", "pending")
     .maybeSingle();
   const { data: contact } = await supabase
     .from("profile_contacts")
@@ -73,6 +83,8 @@ async function buildUser(session: Session): Promise<AuthUser> {
     skills: Array.isArray(meta.skills) ? (meta.skills as string[]) : [],
     banned: Boolean(profile?.banned_at),
     banReason: profile?.ban_reason ?? null,
+    deactivated: Boolean(profile?.deactivated_at),
+    deletionScheduledFor: deletion?.scheduled_for ?? null,
   };
 }
 
@@ -190,6 +202,27 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   };
 
+  /** Смяна на паролата с потвърждение на текущата (повторна автентикация). */
+  const changePassword: AuthContextValue["changePassword"] = async (currentPassword, newPassword) => {
+    const email = user?.email;
+    if (!email) throw new Error("Няма активна сесия.");
+    const { error: reauthError } = await supabase.auth.signInWithPassword({
+      email,
+      password: currentPassword,
+    });
+    if (reauthError) throw new Error("Текущата парола е грешна.");
+    const { error } = await supabase.auth.updateUser({ password: newPassword });
+    if (error) {
+      captureIssue({ area: "auth", action: "change password", error });
+      throw error;
+    }
+  };
+
+  const refreshUser = async () => {
+    const { data } = await supabase.auth.getSession();
+    if (data.session) setUser(await buildUser(data.session));
+  };
+
   const logout = async () => {
     await supabase.auth.signOut();
     setUser(null);
@@ -223,7 +256,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   return (
     <AuthContext.Provider
-      value={{ user, loading, login, loginSocial, register, resetPassword, updatePassword, logout, updateUser }}
+      value={{ user, loading, login, loginSocial, register, resetPassword, updatePassword, changePassword, refreshUser, logout, updateUser }}
     >
       {children}
     </AuthContext.Provider>

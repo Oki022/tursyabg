@@ -22,6 +22,7 @@ import { MonitoringBoot } from "@/components/monitoring-boot";
 import { captureIssue } from "@/lib/monitoring/client";
 import { CookieConsentProvider } from "@/lib/cookie-consent";
 import { CookieConsent } from "@/components/cookie-consent";
+import { AccountStatusGate } from "@/components/account/account-status-gate";
 
 const SUPABASE_ORIGIN =
   (import.meta as any).env?.VITE_SUPABASE_URL ?? "https://xrltdrxhtennbscgbyxb.supabase.co";
@@ -172,6 +173,7 @@ function RootComponent() {
           </div>
           {!isMessages && <CookieConsent />}
         </CookieConsentProvider>
+        <ClientOnly fallback={null}><AccountStatusGate /></ClientOnly>
         <ClientOnly fallback={null}><Toaster /></ClientOnly>
       </AuthProvider>
     </QueryClientProvider>

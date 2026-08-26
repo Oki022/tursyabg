@@ -39,6 +39,7 @@ import { Route as AdminReviewsRouteImport } from './routes/admin.reviews'
 import { Route as AdminRefundsRouteImport } from './routes/admin.refunds'
 import { Route as AdminPaymentsRouteImport } from './routes/admin.payments'
 import { Route as AdminModerationRouteImport } from './routes/admin.moderation'
+import { Route as AdminDeletionsRouteImport } from './routes/admin.deletions'
 import { Route as AdminContactRouteImport } from './routes/admin.contact'
 import { Route as AdminAuditRouteImport } from './routes/admin.audit'
 import { Route as AuthenticatedUnlockedRouteImport } from './routes/_authenticated/unlocked'
@@ -209,6 +210,11 @@ const AdminModerationRoute = AdminModerationRouteImport.update({
   path: '/moderation',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminDeletionsRoute = AdminDeletionsRouteImport.update({
+  id: '/deletions',
+  path: '/deletions',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminContactRoute = AdminContactRouteImport.update({
   id: '/contact',
   path: '/contact',
@@ -344,6 +350,7 @@ export interface FileRoutesByFullPath {
   '/unlocked': typeof AuthenticatedUnlockedRoute
   '/admin/audit': typeof AdminAuditRoute
   '/admin/contact': typeof AdminContactRoute
+  '/admin/deletions': typeof AdminDeletionsRoute
   '/admin/moderation': typeof AdminModerationRoute
   '/admin/payments': typeof AdminPaymentsRoute
   '/admin/refunds': typeof AdminRefundsRoute
@@ -394,6 +401,7 @@ export interface FileRoutesByTo {
   '/unlocked': typeof AuthenticatedUnlockedRoute
   '/admin/audit': typeof AdminAuditRoute
   '/admin/contact': typeof AdminContactRoute
+  '/admin/deletions': typeof AdminDeletionsRoute
   '/admin/moderation': typeof AdminModerationRoute
   '/admin/payments': typeof AdminPaymentsRoute
   '/admin/refunds': typeof AdminRefundsRoute
@@ -446,6 +454,7 @@ export interface FileRoutesById {
   '/_authenticated/unlocked': typeof AuthenticatedUnlockedRoute
   '/admin/audit': typeof AdminAuditRoute
   '/admin/contact': typeof AdminContactRoute
+  '/admin/deletions': typeof AdminDeletionsRoute
   '/admin/moderation': typeof AdminModerationRoute
   '/admin/payments': typeof AdminPaymentsRoute
   '/admin/refunds': typeof AdminRefundsRoute
@@ -499,6 +508,7 @@ export interface FileRouteTypes {
     | '/unlocked'
     | '/admin/audit'
     | '/admin/contact'
+    | '/admin/deletions'
     | '/admin/moderation'
     | '/admin/payments'
     | '/admin/refunds'
@@ -549,6 +559,7 @@ export interface FileRouteTypes {
     | '/unlocked'
     | '/admin/audit'
     | '/admin/contact'
+    | '/admin/deletions'
     | '/admin/moderation'
     | '/admin/payments'
     | '/admin/refunds'
@@ -600,6 +611,7 @@ export interface FileRouteTypes {
     | '/_authenticated/unlocked'
     | '/admin/audit'
     | '/admin/contact'
+    | '/admin/deletions'
     | '/admin/moderation'
     | '/admin/payments'
     | '/admin/refunds'
@@ -867,6 +879,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminModerationRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/deletions': {
+      id: '/admin/deletions'
+      path: '/deletions'
+      fullPath: '/admin/deletions'
+      preLoaderRoute: typeof AdminDeletionsRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/contact': {
       id: '/admin/contact'
       path: '/contact'
@@ -1052,6 +1071,7 @@ const AuthenticatedRouteRouteWithChildren =
 interface AdminRouteChildren {
   AdminAuditRoute: typeof AdminAuditRoute
   AdminContactRoute: typeof AdminContactRoute
+  AdminDeletionsRoute: typeof AdminDeletionsRoute
   AdminModerationRoute: typeof AdminModerationRoute
   AdminPaymentsRoute: typeof AdminPaymentsRoute
   AdminRefundsRoute: typeof AdminRefundsRoute
@@ -1064,6 +1084,7 @@ interface AdminRouteChildren {
 const AdminRouteChildren: AdminRouteChildren = {
   AdminAuditRoute: AdminAuditRoute,
   AdminContactRoute: AdminContactRoute,
+  AdminDeletionsRoute: AdminDeletionsRoute,
   AdminModerationRoute: AdminModerationRoute,
   AdminPaymentsRoute: AdminPaymentsRoute,
   AdminRefundsRoute: AdminRefundsRoute,

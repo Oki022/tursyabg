@@ -14,6 +14,47 @@ export type Database = {
   }
   public: {
     Tables: {
+      account_deletion_requests: {
+        Row: {
+          completed_at: string | null
+          created_at: string
+          id: string
+          requested_at: string
+          scheduled_for: string
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          completed_at?: string | null
+          created_at?: string
+          id?: string
+          requested_at?: string
+          scheduled_for: string
+          status?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          completed_at?: string | null
+          created_at?: string
+          id?: string
+          requested_at?: string
+          scheduled_for?: string
+          status?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "account_deletion_requests_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       admin_actions: {
         Row: {
           action_type: string
@@ -847,6 +888,7 @@ export type Database = {
       }
       profiles: {
         Row: {
+          anonymized_at: string | null
           avatar_url: string | null
           balance: number
           ban_reason: string | null
@@ -855,6 +897,7 @@ export type Database = {
           completed_jobs: number
           created_at: string
           credits: number
+          deactivated_at: string | null
           free_tasks_reset_at: string
           free_tasks_used_this_month: number
           full_name: string | null
@@ -870,6 +913,7 @@ export type Database = {
           trust_level: number
         }
         Insert: {
+          anonymized_at?: string | null
           avatar_url?: string | null
           balance?: number
           ban_reason?: string | null
@@ -878,6 +922,7 @@ export type Database = {
           completed_jobs?: number
           created_at?: string
           credits?: number
+          deactivated_at?: string | null
           free_tasks_reset_at?: string
           free_tasks_used_this_month?: number
           full_name?: string | null
@@ -893,6 +938,7 @@ export type Database = {
           trust_level?: number
         }
         Update: {
+          anonymized_at?: string | null
           avatar_url?: string | null
           balance?: number
           ban_reason?: string | null
@@ -901,6 +947,7 @@ export type Database = {
           completed_jobs?: number
           created_at?: string
           credits?: number
+          deactivated_at?: string | null
           free_tasks_reset_at?: string
           free_tasks_used_this_month?: number
           full_name?: string | null
@@ -1318,6 +1365,9 @@ export type Database = {
           max_unlocks: number
           neighborhood: string | null
           status: Database["public"]["Enums"]["task_status"]
+          status_before_deactivation:
+            | Database["public"]["Enums"]["task_status"]
+            | null
           status_changed_at: string
           title: string
           unlock_cost: number | null
@@ -1344,6 +1394,9 @@ export type Database = {
           max_unlocks?: number
           neighborhood?: string | null
           status?: Database["public"]["Enums"]["task_status"]
+          status_before_deactivation?:
+            | Database["public"]["Enums"]["task_status"]
+            | null
           status_changed_at?: string
           title: string
           unlock_cost?: number | null
@@ -1370,6 +1423,9 @@ export type Database = {
           max_unlocks?: number
           neighborhood?: string | null
           status?: Database["public"]["Enums"]["task_status"]
+          status_before_deactivation?:
+            | Database["public"]["Enums"]["task_status"]
+            | null
           status_changed_at?: string
           title?: string
           unlock_cost?: number | null
@@ -1459,6 +1515,18 @@ export type Database = {
       admin_hide_review: {
         Args: { _reason: string; _review_id: string }
         Returns: Json
+      }
+      admin_list_deletion_requests: {
+        Args: { _status?: string }
+        Returns: {
+          completed_at: string
+          full_name: string
+          id: string
+          requested_at: string
+          scheduled_for: string
+          status: string
+          user_id: string
+        }[]
       }
       admin_list_refunds: {
         Args: { _status?: string }
@@ -1575,6 +1643,7 @@ export type Database = {
         Returns: Json
       }
       admin_task_delete_preview: { Args: { _task_id: string }; Returns: Json }
+      anonymize_account: { Args: { _uid: string }; Returns: undefined }
       assign_engagement: {
         Args: { _professional_id: string; _task_id: string }
         Returns: Json
@@ -1584,6 +1653,7 @@ export type Database = {
         Returns: Json
       }
       can_bump_task: { Args: { _task_id: string }; Returns: boolean }
+      cancel_account_deletion: { Args: never; Returns: undefined }
       claim_engagement: { Args: { _task_id: string }; Returns: Json }
       close_task: {
         Args: { _outcome?: string; _task_id: string }
@@ -1614,6 +1684,7 @@ export type Database = {
         }
         Returns: number
       }
+      deactivate_own_account: { Args: never; Returns: undefined }
       delete_own_task: {
         Args: { _reason: string; _task_id: string }
         Returns: Json
@@ -1634,6 +1705,7 @@ export type Database = {
         }
         Returns: string
       }
+      export_my_data: { Args: never; Returns: Json }
       feed_tasks: {
         Args: {
           _category?: string
@@ -1700,6 +1772,7 @@ export type Database = {
       }
       mask_contacts: { Args: { input: string }; Returns: string }
       moderate_text: { Args: { _text: string }; Returns: Json }
+      my_account_state: { Args: never; Returns: Json }
       my_engagements: {
         Args: never
         Returns: {
@@ -1752,6 +1825,7 @@ export type Database = {
         }
         Returns: string
       }
+      reactivate_own_account: { Args: never; Returns: undefined }
       recompute_review_aggregates: {
         Args: { _user_id: string }
         Returns: undefined
@@ -1791,6 +1865,7 @@ export type Database = {
         }
         Returns: Json
       }
+      request_account_deletion: { Args: never; Returns: string }
       respond_engagement: {
         Args: { _confirm: boolean; _engagement_id: string }
         Returns: Json
@@ -1818,6 +1893,7 @@ export type Database = {
         Args: { _task_id: string }
         Returns: undefined
       }
+      sweep_account_deletions: { Args: { _limit?: number }; Returns: number }
       sweep_autopublish: { Args: { _limit?: number }; Returns: number }
       sweep_engagements: { Args: { _batch?: number }; Returns: number }
       sweep_expiry_notifications: { Args: { _batch?: number }; Returns: number }
@@ -1897,6 +1973,8 @@ export type Database = {
         | "account_suspended"
         | "account_banned"
         | "contact_message"
+        | "account_deletion_scheduled"
+        | "account_deletion_cancelled"
       promo_type: "bump" | "urgent" | "top"
       refund_reason:
         | "fake_task"
@@ -2084,6 +2162,8 @@ export const Constants = {
         "account_suspended",
         "account_banned",
         "contact_message",
+        "account_deletion_scheduled",
+        "account_deletion_cancelled",
       ],
       promo_type: ["bump", "urgent", "top"],
       refund_reason: [
