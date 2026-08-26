@@ -349,7 +349,7 @@ function TaskDetails() {
               <Clock className="h-3.5 w-3.5" /> {task.postedAt}
             </span>
             <span className="inline-flex items-center gap-1 rounded-full bg-secondary px-3 py-1 text-xs font-medium text-muted-foreground">
-              <MapPin className="h-3.5 w-3.5" /> {task.location}
+              <MapPin className="h-3.5 w-3.5" /> {formatLocation(task.location)}
             </span>
           </div>
 
@@ -500,7 +500,7 @@ function TaskDetails() {
                     <span className="grid h-6 w-6 place-items-center rounded-full bg-primary text-primary-foreground">
                       <MapPin className="h-3.5 w-3.5" />
                     </span>
-                    {task.location}
+                    {formatLocation(task.location)}
                   </div>
                 </div>
               </div>
