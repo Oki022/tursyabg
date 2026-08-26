@@ -13,7 +13,6 @@ import { toastError } from "@/lib/toast-error";
 import { RequirePhoneNotice } from "@/components/require-phone-notice";
 import { TaskThumb } from "@/components/task-thumb";
 import { ReportContentDialog } from "@/components/moderation/report-content-dialog";
-import { moderationErrorBg } from "@/lib/moderation-messages";
 import { toast } from "sonner";
 
 function dayLabel(iso: string) {

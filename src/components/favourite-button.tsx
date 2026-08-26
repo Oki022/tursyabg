@@ -1,6 +1,5 @@
 import { useNavigate } from "@tanstack/react-router";
 import { Heart } from "lucide-react";
-import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/lib/auth";
 import { useFavouriteIds, useToggleFavourite } from "@/lib/favourites-api";
