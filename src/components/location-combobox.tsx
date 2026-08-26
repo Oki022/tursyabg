@@ -48,6 +48,7 @@ export function LocationCombobox({
   const [query, setQuery] = React.useState("");
   /** Second step: община с квартали asks for the квартал. */
   const [pending, setPending] = React.useState<Municipality | null>(null);
+  const [nbQuery, setNbQuery] = React.useState("");
   const [locating, setLocating] = React.useState(false);
   const [geoError, setGeoError] = React.useState<string | null>(null);
 
@@ -58,6 +59,13 @@ export function LocationCombobox({
     () => rankMunicipalities(municipalities, query).slice(0, 60),
     [municipalities, query],
   );
+
+  const nbResults = React.useMemo(() => {
+    const q = searchKey(nbQuery);
+    if (!q) return neighborhoods;
+    return neighborhoods.filter((n) => searchKey(n.name).includes(q));
+  }, [neighborhoods, nbQuery]);
+
 
   const selected = splitLocation(value);
 
