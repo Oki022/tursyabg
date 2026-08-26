@@ -148,11 +148,14 @@ export function LocationCombobox({
       </PopoverTrigger>
       <PopoverContent className="w-[--radix-popover-trigger-width] p-0" align="start">
         {pending ? (
-          <Command>
+          <Command shouldFilter={false}>
             <div className="flex items-center gap-2 border-b border-border px-3 py-2 text-sm">
               <button
                 type="button"
-                onClick={() => setPending(null)}
+                onClick={() => {
+                  setPending(null);
+                  setNbQuery("");
+                }}
                 className="text-primary hover:underline"
               >
                 Назад
@@ -161,27 +164,34 @@ export function LocationCombobox({
                 Квартал в {pending.name}
               </span>
             </div>
+            <CommandInput
+              placeholder="Търси квартал..."
+              value={nbQuery}
+              onValueChange={setNbQuery}
+            />
             <CommandList>
-              <CommandEmpty>Няма квартали за тази община.</CommandEmpty>
+              <CommandEmpty>Няма намерен квартал.</CommandEmpty>
               <CommandGroup>
                 <CommandItem
                   value={`__all-${pending.slug}`}
                   onSelect={() => {
                     onChange(pending.name);
                     setPending(null);
+                    setNbQuery("");
                     setOpen(false);
                   }}
                 >
                   <MapPin className="mr-2 h-4 w-4 opacity-60" />
-                  Цялата община {pending.name}
+                  Не искам да посочвам квартал
                 </CommandItem>
-                {neighborhoods.map((n) => (
+                {nbResults.map((n) => (
                   <CommandItem
                     key={n.id}
                     value={n.name}
                     onSelect={() => {
                       onChange(buildLocation(pending.name, n.name));
                       setPending(null);
+                      setNbQuery("");
                       setOpen(false);
                     }}
                   >
@@ -198,6 +208,7 @@ export function LocationCombobox({
               </CommandGroup>
             </CommandList>
           </Command>
+
         ) : (
           <Command shouldFilter={false}>
             <CommandInput
