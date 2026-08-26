@@ -51,6 +51,9 @@ function useInvalidate() {
     void qc.invalidateQueries({ queryKey: ["public-profile"] });
     void qc.invalidateQueries({ queryKey: ["public-reviews"] });
     void qc.invalidateQueries({ queryKey: ["notifications"] });
+    void qc.invalidateQueries({ queryKey: ["tasks"] });
+    void qc.invalidateQueries({ queryKey: ["task"] });
+    void qc.invalidateQueries({ queryKey: ["feed"] });
   };
 }
 
