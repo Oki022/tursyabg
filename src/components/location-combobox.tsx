@@ -14,6 +14,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { useMunicipalities, useNeighborhoods } from "@/lib/locations-api";
 import {
   buildLocation,
+  CITIES_WITH_NEIGHBORHOODS,
   formatLocation,
   municipalityLabel,
   nearestMunicipality,
@@ -33,7 +34,19 @@ type Props = {
   allowClear?: boolean;
   /** Offer "use my location" (browser geolocation) above the list. */
   allowGeolocation?: boolean;
+  /** One-line hint under the picker, adapted to the selected община vs град. */
+  postingHint?: boolean;
 };
+
+function postingLocationHint(value: string | undefined, municipalities: Municipality[]): string {
+  if (!value) return "Избери общината или града си.";
+  const { city } = splitLocation(value);
+  if (!city) return "Избери общината или града си.";
+  const muni = municipalities.find((m) => m.name === city);
+  const isCity = muni?.hasNeighborhoods ?? CITIES_WITH_NEIGHBORHOODS.has(city);
+  if (isCity) return "Публично се показват само градът и кварталът.";
+  return "Общината покрива всички села в нея — селото посочи в описанието.";
+}
 
 export function LocationCombobox({
   value,
@@ -43,6 +56,7 @@ export function LocationCombobox({
   className,
   allowClear = false,
   allowGeolocation = true,
+  postingHint = false,
 }: Props) {
   const [open, setOpen] = React.useState(false);
   const [query, setQuery] = React.useState("");
@@ -275,9 +289,11 @@ export function LocationCombobox({
         )}
       </PopoverContent>
     </Popover>
-      <p className="text-xs text-muted-foreground">
-        Избери общината си, тя покрива всички села в нея, а конкретното село опиши в описанието.
-      </p>
+      {postingHint && (
+        <p className="text-xs text-muted-foreground">
+          {postingLocationHint(value, municipalities)}
+        </p>
+      )}
     </div>
   );
 }

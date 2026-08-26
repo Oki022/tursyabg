@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Sparkles, Lock, ImagePlus, X, UploadCloud, Info, AlertCircle } from "lucide-react";
+import { Sparkles, ImagePlus, X, UploadCloud, Info, AlertCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -398,11 +398,7 @@ export function TaskForm({
 
       <div className="space-y-2">
         <Label htmlFor="location">Град и квартал</Label>
-        <LocationCombobox id="location" value={location} onChange={setLocation} />
-        <p className="flex items-center gap-1.5 text-xs text-muted-foreground">
-          <Lock className="h-3.5 w-3.5" />
-          Точният ви адрес е скрит. Ще се показва само вашият квартал.
-        </p>
+        <LocationCombobox id="location" value={location} onChange={setLocation} postingHint />
       </div>
 
       <div className="flex flex-col-reverse gap-3 border-t border-border pt-6 sm:flex-row sm:items-center sm:justify-between">
