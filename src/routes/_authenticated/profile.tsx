@@ -132,15 +132,6 @@ function ProfilePage() {
                 <h1 className="text-xl font-bold tracking-tight text-foreground md:text-2xl">
                   {user.name}
                 </h1>
-                {user.verified && (
-                  <span
-                    title="Потвърден профил"
-                    className="inline-flex items-center gap-1 rounded-full bg-[#1da1f2]/10 px-2 py-0.5 text-xs font-medium text-[#1da1f2]"
-                  >
-                    <BadgeCheck className="h-4 w-4 fill-[#1da1f2] text-white" />
-                    Потвърден
-                  </span>
-                )}
               </div>
               <p className="mt-1.5 text-sm text-muted-foreground">
                 Възлагай задачи и отключвай контакти без ограничения.
