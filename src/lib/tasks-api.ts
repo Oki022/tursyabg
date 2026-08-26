@@ -467,7 +467,12 @@ export type UpdateTaskInput = {
 };
 
 export type UpdateTaskResult = {
+  /** True when the edit itself was held for review. */
   pending: boolean;
+  /** True when the previously approved version stays live while the edit waits. */
+  keptLive: boolean;
+  /** Rule note/category that caused the hold, when there was one. */
+  reason: string | null;
   rejected: (string | null)[];
   held: number;
 };
@@ -518,13 +523,15 @@ export function useUpdateTask() {
         }
       }
 
-      const { data: fresh } = await supabase
-        .from("tasks")
-        .select("status")
-        .eq("id", input.taskId)
-        .maybeSingle();
-
-      return { pending: (fresh?.status ?? "active") === "pending", rejected, held };
+      // Правилният източник е самата RPC: при задържана редакция задачата
+      // остава активна с одобрения текст, така че статусът не е показателен.
+      return {
+        pending: Boolean(res["pending"]),
+        keptLive: Boolean(res["kept_live"]),
+        reason: (res["reason"] as string | null) ?? null,
+        rejected,
+        held,
+      };
     },
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: ["tasks"] });
