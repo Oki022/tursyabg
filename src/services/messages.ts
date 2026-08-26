@@ -170,10 +170,13 @@ export async function getConversation(conversationId: string): Promise<Conversat
   const otherId = row.participant_a === me ? row.participant_b : row.participant_a;
 
   const images = [...(row.tasks?.task_images ?? [])].sort((a, b) => a.sort_order - b.sort_order);
-  const [{ data: profile }, imageMap] = await Promise.all([
-    supabase.from("profiles").select("full_name, avatar_url").eq("id", otherId).maybeSingle(),
+  const [{ data: profileRows }, imageMap] = await Promise.all([
+    supabase.rpc("public_profiles" as never, { _ids: [otherId] } as never) as unknown as Promise<{
+      data: { full_name: string | null; avatar_url: string | null }[] | null;
+    }>,
     resolveImageUrls(images.map((i) => i.image_url)),
   ]);
+  const profile = profileRows?.[0] ?? null;
   const firstPath = images[0]?.image_url;
 
   return {
