@@ -1,10 +1,8 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import {
-  BadgeCheck,
   Mail,
   Phone,
-  Upload,
   LogOut,
   ClipboardList,
   Wallet,
