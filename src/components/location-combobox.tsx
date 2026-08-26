@@ -100,6 +100,7 @@ export function LocationCombobox({
   }
 
   return (
+    <div className="space-y-1.5">
     <Popover
       open={open}
       onOpenChange={(next) => {
@@ -107,10 +108,12 @@ export function LocationCombobox({
         if (!next) {
           setPending(null);
           setQuery("");
+          setNbQuery("");
           setGeoError(null);
         }
       }}
     >
+
       <PopoverTrigger asChild>
         <Button
           id={id}
