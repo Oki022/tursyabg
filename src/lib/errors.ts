@@ -118,6 +118,10 @@ export const APP_ERROR_BG: Record<string, { title: string; description: string }
     title: "Твърде много опити",
     description: "Изчакай малко и опитай отново.",
   },
+  ACCOUNT_DEACTIVATED: {
+    title: "Профилът е деактивиран",
+    description: "Активирай профила си отново, за да публикуваш задачи, да отключваш контакти или да изпращаш съобщения.",
+  },
   CONTACT_RATE_LIMIT: {
     title: "Твърде много съобщения",
     description: "Изпрати не повече от 5 съобщения на час. Опитай отново по-късно.",
