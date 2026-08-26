@@ -27,7 +27,7 @@ export function CreditBalanceCard({ className }: { className?: string }) {
             Кредити
           </p>
           <p className="mt-0.5 truncate text-3xl font-extrabold leading-tight text-primary md:text-4xl">
-            {isLoading ? "—" : credits}
+            {isLoading ? "..." : credits}
           </p>
         </div>
         <div className="flex shrink-0 items-center gap-1.5">
