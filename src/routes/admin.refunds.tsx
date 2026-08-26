@@ -87,14 +87,8 @@ function AdminRefunds() {
       setNote("");
       void qc.invalidateQueries({ queryKey: ["admin"] });
     },
-    onError: (e: Error) => {
-      const map: Record<string, string> = {
-        FORBIDDEN: "Нямаш права за това действие.",
-        ALREADY_RESOLVED: "Заявката вече е обработена.",
-        NOTE_REQUIRED: "Бележката е задължителна.",
-      };
-      toast.error(map[e.message] ?? "Действието не беше изпълнено.");
-    },
+    onError: (e: unknown) => toastError(e, { title: "Действието не беше изпълнено" }),
+
   });
 
   const all = list.data ?? [];

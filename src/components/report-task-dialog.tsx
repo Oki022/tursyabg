@@ -52,9 +52,8 @@ export function ReportTaskDialog({ taskId }: { taskId: string }) {
       setDetails("");
       void qc.invalidateQueries({ queryKey: ["task-report", taskId] });
     },
-    onError: (e: Error) => {
-      toast.error(e.message === "DUPLICATE" ? "Вече си докладвал тази задача." : "Докладът не беше изпратен.");
-    },
+    onError: (e: unknown) => toastError(e, { title: "Докладът не беше изпратен" }),
+
   });
 
   const alreadyReported = Boolean(mine.data);

@@ -53,16 +53,8 @@ function ContactPage() {
       setBody("");
       toast.success("Съобщението е изпратено.");
     },
-    onError: (err: Error) => {
-      const raw = err.message || "";
-      if (raw.includes("CONTACT_RATE_LIMIT")) {
-        toast.error("Твърде много съобщения", {
-          description: "Изпрати не повече от 5 съобщения на час. Опитай отново по-късно.",
-        });
-        return;
-      }
-      toast.error("Съобщението не беше изпратено.", { description: raw || undefined });
-    },
+    onError: (err: unknown) => toastError(err, { title: "Съобщението не беше изпратено" }),
+
   });
 
   const submit = (e: React.FormEvent) => {

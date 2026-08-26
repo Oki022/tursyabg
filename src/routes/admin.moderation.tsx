@@ -185,7 +185,7 @@ function AdminModerationPage() {
       void qc.invalidateQueries({ queryKey: ["admin-moderation"] });
       void qc.invalidateQueries({ queryKey: ["admin-stats"] });
     },
-    onError: (e: Error) => toast.error("Действието не беше записано.", { description: e.message }),
+    onError: (e: unknown) => toastError(e, { title: "Действието не беше записано" }),
   });
 
   const items = queue.data ?? [];

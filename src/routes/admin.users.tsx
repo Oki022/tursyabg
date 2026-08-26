@@ -45,15 +45,8 @@ function AdminUsers() {
   const list = useQuery({ queryKey: ["admin", "users", query], queryFn: () => getAdminUsers(query) });
   const invalidate = () => void qc.invalidateQueries({ queryKey: ["admin"] });
 
-  const errorText = (e: Error) =>
-    ({
-      FORBIDDEN: "Нямаш права за това действие.",
-      INVALID_INPUT: "Въведи валидна стойност и причина.",
-      REASON_REQUIRED: "Причината е задължителна.",
-      SELF: "Не можеш да блокираш собствения си профил.",
-      LAST_ADMIN: "Това е последният администратор — профилът не може да бъде блокиран.",
-      USER_NOT_FOUND: "Потребителят не е намерен.",
-    })[e.message] ?? "Действието не беше изпълнено.";
+  const showError = (e: unknown) => toastError(e, { title: "Действието не беше изпълнено" });
+
 
   const mCredits = useMutation({
     mutationFn: () => adjustCredits(creditsTarget!.id, Number(amount), reason),

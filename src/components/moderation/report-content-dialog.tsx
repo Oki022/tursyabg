@@ -55,14 +55,8 @@ export function ReportContentDialog({
       setOpen(false);
       setDetails("");
     },
-    onError: (e: Error) => {
-      const map: Record<string, string> = {
-        DUPLICATE: "Вече си докладвал това съдържание.",
-        SELF: "Не можеш да докладваш собственото си съдържание.",
-        NOT_FOUND: "Съдържанието вече не е налично.",
-      };
-      toast.error(map[e.message] ?? "Докладът не беше изпратен.");
-    },
+    onError: (e: unknown) => toastError(e, { title: "Докладът не беше изпратен" }),
+
   });
 
   return (
