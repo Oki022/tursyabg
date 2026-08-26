@@ -1797,6 +1797,23 @@ export type Database = {
       needs_prepublish_review: { Args: { _user_id: string }; Returns: boolean }
       own_task_delete_preview: { Args: { _task_id: string }; Returns: Json }
       public_profile: { Args: { _user_id: string }; Returns: Json }
+      public_profiles: {
+        Args: { _ids: string[] }
+        Returns: {
+          avatar_url: string
+          city: string
+          completed_jobs: number
+          full_name: string
+          id: string
+          neighborhood: string
+          rating_as_client: number
+          rating_as_pro: number
+          review_count_as_client: number
+          review_count_as_pro: number
+          skill_categories: string[]
+          skill_tags: string[]
+        }[]
+      }
       public_reviews: {
         Args: {
           _direction: Database["public"]["Enums"]["review_direction"]

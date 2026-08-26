@@ -108,7 +108,9 @@ export async function getConversations(
       .select("id, conversation_id, sender_id, receiver_id, content, created_at, read_at")
       .in("conversation_id", ids)
       .order("created_at", { ascending: false }),
-    supabase.from("profiles").select("id, full_name, avatar_url").in("id", otherIds),
+    supabase.rpc("public_profiles" as never, { _ids: otherIds } as never) as unknown as Promise<{
+      data: { id: string; full_name: string | null; avatar_url: string | null }[] | null;
+    }>,
     resolveImageUrls(
       rows.flatMap((r) => (r.tasks?.task_images ?? []).map((i) => i.image_url)),
     ),
@@ -168,10 +170,13 @@ export async function getConversation(conversationId: string): Promise<Conversat
   const otherId = row.participant_a === me ? row.participant_b : row.participant_a;
 
   const images = [...(row.tasks?.task_images ?? [])].sort((a, b) => a.sort_order - b.sort_order);
-  const [{ data: profile }, imageMap] = await Promise.all([
-    supabase.from("profiles").select("full_name, avatar_url").eq("id", otherId).maybeSingle(),
+  const [{ data: profileRows }, imageMap] = await Promise.all([
+    supabase.rpc("public_profiles" as never, { _ids: [otherId] } as never) as unknown as Promise<{
+      data: { full_name: string | null; avatar_url: string | null }[] | null;
+    }>,
     resolveImageUrls(images.map((i) => i.image_url)),
   ]);
+  const profile = profileRows?.[0] ?? null;
   const firstPath = images[0]?.image_url;
 
   return {
