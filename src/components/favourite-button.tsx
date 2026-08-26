@@ -37,10 +37,9 @@ export function FavouriteButton({ taskId, ownerId, className, size = "sm" }: Fav
           navigate({ to: "/auth", search: { mode: "login", redirect: window.location.pathname } });
           return;
         }
-        toggle.mutate(
-          { taskId, saved },
-          { onError: () => toast.error("Неуспешно запазване. Опитай пак.") },
-        );
+        // Грешката се показва централно от мутацията (виж favourites-api).
+        toggle.mutate({ taskId, saved });
+
       }}
       className={cn(
         "grid place-items-center rounded-full bg-background/90 shadow-sm backdrop-blur transition-transform active:scale-90",

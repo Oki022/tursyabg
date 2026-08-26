@@ -7,6 +7,8 @@ import {
   getFavouritesPage,
   removeFavourite,
 } from "@/services/favourites";
+import { toastError } from "@/lib/toast-error";
+
 
 export function useFavouriteIds() {
   const { user } = useAuth();
