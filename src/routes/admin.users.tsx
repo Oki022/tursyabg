@@ -2,6 +2,7 @@ import { useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
+import { toastError } from "@/lib/toast-error";
 import { AdminCard, AdminPage, EmptyState } from "@/components/admin/admin-page";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -45,20 +46,13 @@ function AdminUsers() {
   const list = useQuery({ queryKey: ["admin", "users", query], queryFn: () => getAdminUsers(query) });
   const invalidate = () => void qc.invalidateQueries({ queryKey: ["admin"] });
 
-  const errorText = (e: Error) =>
-    ({
-      FORBIDDEN: "Нямаш права за това действие.",
-      INVALID_INPUT: "Въведи валидна стойност и причина.",
-      REASON_REQUIRED: "Причината е задължителна.",
-      SELF: "Не можеш да блокираш собствения си профил.",
-      LAST_ADMIN: "Това е последният администратор — профилът не може да бъде блокиран.",
-      USER_NOT_FOUND: "Потребителят не е намерен.",
-    })[e.message] ?? "Действието не беше изпълнено.";
+  const showError = (e: unknown) => toastError(e, { title: "Действието не беше изпълнено" });
+
 
   const mCredits = useMutation({
     mutationFn: () => adjustCredits(creditsTarget!.id, Number(amount), reason),
     onSuccess: () => { toast.success("Балансът е коригиран."); setCreditsTarget(null); setAmount(""); setReason(""); invalidate(); },
-    onError: (e: Error) => toast.error(errorText(e)),
+    onError: showError,
   });
 
   const mBan = useMutation({
@@ -67,13 +61,13 @@ function AdminUsers() {
       toast.success(banTarget?.bannedAt ? "Профилът е възстановен." : "Профилът е блокиран.");
       setBanTarget(null); setReason(""); invalidate();
     },
-    onError: (e: Error) => toast.error(errorText(e)),
+    onError: showError,
   });
 
   const mRole = useMutation({
     mutationFn: (v: { id: string; grant: boolean }) => setModerator(v.id, v.grant),
     onSuccess: () => { toast.success("Ролята е обновена."); invalidate(); },
-    onError: (e: Error) => toast.error(errorText(e)),
+    onError: showError,
   });
 
   const rows = list.data ?? [];

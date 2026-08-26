@@ -7,6 +7,8 @@ import {
   getFavouritesPage,
   removeFavourite,
 } from "@/services/favourites";
+import { toastError } from "@/lib/toast-error";
+
 
 export function useFavouriteIds() {
   const { user } = useAuth();
@@ -58,9 +60,12 @@ export function useToggleFavourite() {
       );
       return { previous };
     },
-    onError: (_error, _vars, ctx) => {
+    onError: (error, _vars, ctx) => {
       if (ctx?.previous) qc.setQueryData(key, ctx.previous);
+      // Оптимистичното сърце се връща назад — потребителят трябва да разбере защо.
+      toastError(error, { title: "Запазването не беше успешно" });
     },
+
     onSettled: () => {
       void qc.invalidateQueries({ queryKey: ["favourites"] });
     },

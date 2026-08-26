@@ -1,6 +1,11 @@
+import { errorBg, errorRaw } from "@/lib/errors";
+
 /** Превежда техническите грешки от бекенда в разбираем български език. */
 export function authErrorMessage(err: unknown): string {
-  const raw = (err instanceof Error ? err.message : String(err ?? "")).toLowerCase();
+  // `errorRaw` покрива и Supabase обектите `{ message, code, status }`,
+  // при които `String(err)` даваше безполезното „[object Object]“.
+  const raw = errorRaw(err).toLowerCase();
+
 
   if (raw.includes("invalid login credentials") || raw.includes("invalid credentials"))
     return "Грешен имейл или парола. Провери ги и опитай пак.";
@@ -21,12 +26,15 @@ export function authErrorMessage(err: unknown): string {
   if (raw.includes("signups not allowed") || raw.includes("signup is disabled"))
     return "В момента регистрациите са спрени. Опитай по-късно.";
   if (raw.includes("phone_required"))
-    return "Добави телефон в профила си (Настройки → Редакция на профил), за да продължиш.";
+    return "Добави телефон в профила си (Настройки → Влизане и сигурност), за да продължиш.";
   if (raw.includes("profile_contacts_phone_valid"))
     return "Въведи валиден български мобилен номер, например 0888123456.";
 
-  return "Нещо се обърка. Опитай отново след малко.";
+  // Последна инстанция: общият форматер, вместо анонимно „Нещо се обърка“.
+  const { title, description } = errorBg(err, { title: "Нещо се обърка" });
+  return description && description !== title ? `${title}. ${description}` : title;
 }
+
 
 export const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[a-zA-Z]{2,}$/;
 

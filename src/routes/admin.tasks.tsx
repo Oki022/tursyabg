@@ -2,6 +2,7 @@ import { useMemo, useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
+import { toastError } from "@/lib/toast-error";
 import { AlertTriangle, ExternalLink } from "lucide-react";
 import { AdminCard, AdminPage, EmptyState } from "@/components/admin/admin-page";
 import { Badge } from "@/components/ui/badge";
@@ -107,7 +108,7 @@ function AdminTasks() {
       setReason("");
       invalidate();
     },
-    onError: () => toast.error("Действието не беше изпълнено."),
+    onError: (e: unknown) => toastError(e, { title: "Действието не беше изпълнено" }),
   });
 
   const mDelete = useMutation({
@@ -128,19 +129,19 @@ function AdminTasks() {
       setDeleteNote("");
       invalidate();
     },
-    onError: () => toast.error("Изтриването не беше изпълнено."),
+    onError: (e: unknown) => toastError(e, { title: "Изтриването не беше изпълнено" }),
   });
 
   const mActivate = useMutation({
     mutationFn: (id: string) => activateTask(id),
     onSuccess: () => { toast.success("Задачата е активирана."); invalidate(); },
-    onError: () => toast.error("Действието не беше изпълнено."),
+    onError: (e: unknown) => toastError(e, { title: "Действието не беше изпълнено" }),
   });
 
   const mCategory = useMutation({
     mutationFn: (v: { id: string; category: string }) => updateTaskCategory(v.id, v.category),
     onSuccess: () => { toast.success("Категорията е обновена."); invalidate(); },
-    onError: () => toast.error("Действието не беше изпълнено."),
+    onError: (e: unknown) => toastError(e, { title: "Действието не беше изпълнено" }),
   });
 
   const mReport = useMutation({

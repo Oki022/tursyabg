@@ -2,6 +2,7 @@ import { useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
+import { toastError } from "@/lib/toast-error";
 import { AdminCard, AdminPage, EmptyState } from "@/components/admin/admin-page";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -87,14 +88,8 @@ function AdminRefunds() {
       setNote("");
       void qc.invalidateQueries({ queryKey: ["admin"] });
     },
-    onError: (e: Error) => {
-      const map: Record<string, string> = {
-        FORBIDDEN: "Нямаш права за това действие.",
-        ALREADY_RESOLVED: "Заявката вече е обработена.",
-        NOTE_REQUIRED: "Бележката е задължителна.",
-      };
-      toast.error(map[e.message] ?? "Действието не беше изпълнено.");
-    },
+    onError: (e: unknown) => toastError(e, { title: "Действието не беше изпълнено" }),
+
   });
 
   const all = list.data ?? [];

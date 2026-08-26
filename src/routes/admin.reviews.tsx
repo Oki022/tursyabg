@@ -3,6 +3,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { AlertTriangle, EyeOff } from "lucide-react";
 import { toast } from "sonner";
+import { toastError } from "@/lib/toast-error";
 import { AdminCard, AdminPage, EmptyState } from "@/components/admin/admin-page";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -58,7 +59,7 @@ function AdminReviewsPage() {
       setReason("");
       void qc.invalidateQueries({ queryKey: ["admin-reviews"] });
     },
-    onError: () => toast.error("Скриването не беше изпълнено."),
+    onError: (e: unknown) => toastError(e, { title: "Скриването не беше изпълнено" }),
   });
 
   const f = flags.data;

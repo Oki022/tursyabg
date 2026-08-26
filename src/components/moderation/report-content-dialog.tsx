@@ -3,6 +3,7 @@ import { useNavigate } from "@tanstack/react-router";
 import { useMutation } from "@tanstack/react-query";
 import { Flag } from "lucide-react";
 import { toast } from "sonner";
+import { toastError } from "@/lib/toast-error";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -55,14 +56,8 @@ export function ReportContentDialog({
       setOpen(false);
       setDetails("");
     },
-    onError: (e: Error) => {
-      const map: Record<string, string> = {
-        DUPLICATE: "Вече си докладвал това съдържание.",
-        SELF: "Не можеш да докладваш собственото си съдържание.",
-        NOT_FOUND: "Съдържанието вече не е налично.",
-      };
-      toast.error(map[e.message] ?? "Докладът не беше изпратен.");
-    },
+    onError: (e: unknown) => toastError(e, { title: "Докладът не беше изпратен" }),
+
   });
 
   return (

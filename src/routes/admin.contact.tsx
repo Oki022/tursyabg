@@ -2,6 +2,7 @@ import { useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
+import { toastError } from "@/lib/toast-error";
 import { AdminCard, AdminPage, EmptyState } from "@/components/admin/admin-page";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -48,7 +49,7 @@ function AdminContact() {
       void qc.invalidateQueries({ queryKey: ["admin", "contact"] });
       void qc.invalidateQueries({ queryKey: ["admin", "stats"] });
     },
-    onError: () => toast.error("Статусът не беше обновен."),
+    onError: (e: unknown) => toastError(e, { title: "Статусът не беше обновен" }),
   });
 
   const rows = list.data ?? [];

@@ -122,6 +122,13 @@ function PostPage() {
             if (result.held > 0) {
               toast.warning("Снимки в проверка", { description: IMAGE_HELD_BG });
             }
+            if (result.finalizeFailed) {
+              toast.warning("Задачата чака проверка", {
+                description:
+                  "Създадохме задачата, но автоматичното публикуване не мина. Ще я прегледаме ръчно и ще те уведомим.",
+              });
+            }
+
             if (result.pending) {
               toast.warning("Задачата се проверява", {
                 description:

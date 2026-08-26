@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { CheckCircle2, Mail, MessageSquare, ShieldQuestion } from "lucide-react";
 import { toast } from "sonner";
+import { toastError } from "@/lib/toast-error";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -53,16 +54,8 @@ function ContactPage() {
       setBody("");
       toast.success("Съобщението е изпратено.");
     },
-    onError: (err: Error) => {
-      const raw = err.message || "";
-      if (raw.includes("CONTACT_RATE_LIMIT")) {
-        toast.error("Твърде много съобщения", {
-          description: "Изпрати не повече от 5 съобщения на час. Опитай отново по-късно.",
-        });
-        return;
-      }
-      toast.error("Съобщението не беше изпратено.", { description: raw || undefined });
-    },
+    onError: (err: unknown) => toastError(err, { title: "Съобщението не беше изпратено" }),
+
   });
 
   const submit = (e: React.FormEvent) => {
