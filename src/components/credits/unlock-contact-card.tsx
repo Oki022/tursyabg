@@ -116,23 +116,34 @@ export function UnlockContactCard({
       )}
       <Button
         size="lg"
-        className="h-auto min-h-14 w-full whitespace-normal break-words px-5 py-3 text-center text-sm leading-snug"
+        className="h-auto min-h-16 w-full px-5 py-3.5 text-center"
         onClick={handleUnlock}
         disabled={unlock.isPending || slotsFull || taskClosed}
       >
-        <span className="inline-flex items-center justify-center gap-2">
-          {user && canAfford && !slotsFull && !taskClosed && <Lock className="h-4 w-4 shrink-0" />}
-          {taskClosed
-            ? "Задачата е затворена"
-            : slotsFull
-            ? "Местата са запълнени"
-            : !user
-            ? "Влез, за да отключиш контакта"
-            : !canAfford
-              ? "Купи кредити"
-              : unlock.isPending
-                ? "Отключване..."
-                : `Отключи контакта (${creditsLabel(cost)})`}
+        <span className="flex items-center justify-center gap-2">
+          {user && canAfford && !slotsFull && !taskClosed && !unlock.isPending && (
+            <Lock className="h-4 w-4 shrink-0" />
+          )}
+          <span className="flex flex-col items-center leading-snug">
+            <span className="text-sm font-semibold">
+              {taskClosed
+                ? "Задачата е затворена"
+                : slotsFull
+                  ? "Местата са запълнени"
+                  : !user
+                    ? "Влез, за да отключиш контакта"
+                    : !canAfford
+                      ? "Купи кредити"
+                      : unlock.isPending
+                        ? "Отключване..."
+                        : "Отключи контакта"}
+            </span>
+            {user && canAfford && !slotsFull && !taskClosed && !unlock.isPending && (
+              <span className="text-xs font-medium text-primary-foreground/80">
+                {creditsLabel(cost)}
+              </span>
+            )}
+          </span>
         </span>
       </Button>
       <div className="mt-3 flex flex-wrap items-center justify-between gap-2 text-xs text-muted-foreground">
