@@ -2,6 +2,7 @@ import { createFileRoute, notFound, redirect } from "@tanstack/react-router";
 import { LandingView } from "@/components/seo/landing-view";
 import { fetchMunicipalityBySlug, fetchNeighborhoods } from "@/lib/locations-api";
 import { landingH1, landingIntro } from "@/lib/landing-content";
+import { municipalityLabel } from "@/lib/locations";
 import { breadcrumbLd, clampDescription, seo } from "@/lib/seo";
 
 export const Route = createFileRoute("/city/$city/")({
@@ -18,7 +19,9 @@ export const Route = createFileRoute("/city/$city/")({
     return { municipality, neighborhoods };
   },
   head: ({ params, loaderData }) => {
-    const name = loaderData?.municipality.name ?? "България";
+    const name = loaderData?.municipality
+      ? municipalityLabel(loaderData.municipality.name, loaderData.municipality.hasNeighborhoods)
+      : "България";
     const region = loaderData?.municipality.regionName;
     const path = `/city/${params.city}`;
     const { meta, links } = seo({
