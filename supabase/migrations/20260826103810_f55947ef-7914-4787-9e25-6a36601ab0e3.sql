@@ -1,0 +1,14 @@
+REVOKE ALL ON FUNCTION public.deactivate_own_account() FROM PUBLIC, anon;
+REVOKE ALL ON FUNCTION public.reactivate_own_account() FROM PUBLIC, anon;
+REVOKE ALL ON FUNCTION public.request_account_deletion() FROM PUBLIC, anon;
+REVOKE ALL ON FUNCTION public.cancel_account_deletion() FROM PUBLIC, anon;
+REVOKE ALL ON FUNCTION public.my_account_state() FROM PUBLIC, anon;
+REVOKE ALL ON FUNCTION public.export_my_data() FROM PUBLIC, anon;
+REVOKE ALL ON FUNCTION public.admin_list_deletion_requests(text) FROM PUBLIC, anon;
+GRANT EXECUTE ON FUNCTION public.deactivate_own_account() TO authenticated;
+GRANT EXECUTE ON FUNCTION public.reactivate_own_account() TO authenticated;
+GRANT EXECUTE ON FUNCTION public.request_account_deletion() TO authenticated;
+GRANT EXECUTE ON FUNCTION public.cancel_account_deletion() TO authenticated;
+GRANT EXECUTE ON FUNCTION public.my_account_state() TO authenticated;
+GRANT EXECUTE ON FUNCTION public.export_my_data() TO authenticated;
+GRANT EXECUTE ON FUNCTION public.admin_list_deletion_requests(text) TO authenticated;
