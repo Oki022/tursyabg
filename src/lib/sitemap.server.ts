@@ -40,6 +40,13 @@ export function urlsetXml(entries: SitemapEntry[]) {
   ].join("\n");
 }
 
+/** All 265 municipality slugs, used for the община-level landing pages. */
+export async function fetchMunicipalitySlugs(): Promise<string[]> {
+  const { data, error } = await supabase.from("municipalities").select("slug").order("slug");
+  if (error || !data) return [];
+  return data.map((row: any) => row.slug as string);
+}
+
 export async function countActiveTasks(): Promise<number> {
   const { count, error } = await supabase
     .from("tasks")

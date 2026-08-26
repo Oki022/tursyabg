@@ -8,9 +8,18 @@ import { TaskCard, TaskCardSkeleton } from "@/components/task-card";
 import { LocationCombobox } from "@/components/location-combobox";
 import { categories, getCategory } from "@/lib/mock-data";
 import { useTasksFeed } from "@/lib/tasks-api";
+import { useMunicipalities, useRegionCounts, useRegions } from "@/lib/locations-api";
+import { splitLocation } from "@/lib/locations";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { clampDescription, seo } from "@/lib/seo";
 
-type Search = { q?: string; category?: string; location?: string };
+type Search = { q?: string; category?: string; location?: string; region?: string };
 
 export const Route = createFileRoute("/tasks")({
   head: ({ match }) => {
@@ -32,6 +41,7 @@ export const Route = createFileRoute("/tasks")({
     q: typeof s.q === "string" ? s.q : undefined,
     category: typeof s.category === "string" ? s.category : undefined,
     location: typeof s.location === "string" ? s.location : undefined,
+    region: typeof s.region === "string" ? s.region : undefined,
   }),
   component: TasksPage,
 });
@@ -44,6 +54,7 @@ function TasksPage() {
     q: search.q,
     category: search.category,
     location: search.location,
+    region: search.region,
   });
   const filtered = data?.pages.flatMap((p) => p.items) ?? [];
   const sentinelRef = useRef<HTMLDivElement | null>(null);
@@ -61,7 +72,20 @@ function TasksPage() {
   const update = (next: Partial<Search>) =>
     navigate({ search: (prev: Search) => ({ ...prev, ...next }) });
 
-  const activeFilters = [search.category, search.location, search.q].filter(Boolean).length;
+  const activeFilters = [search.category, search.location, search.region, search.q].filter(Boolean).length;
+
+  const { data: regions = [] } = useRegions();
+  const { data: municipalities = [] } = useMunicipalities();
+  const selectedCity = splitLocation(search.location).city;
+  const selectedMunicipality = municipalities.find((m) => m.name === selectedCity);
+  // Fallback suggestions come from the област of the selected община, or from
+  // the explicitly chosen област, so an empty result never looks like a dead site.
+  const fallbackRegion = selectedMunicipality?.regionSlug ?? search.region;
+  const { data: regionCounts = [] } = useRegionCounts(fallbackRegion, search.category);
+  const nearby = regionCounts
+    .filter((c) => c.taskCount > 0 && c.name !== selectedCity)
+    .slice(0, 8);
+  const fallbackRegionName = regions.find((r) => r.slug === fallbackRegion)?.name;
 
   return (
     <div className="container mx-auto px-4 py-8 md:py-12">
@@ -129,7 +153,29 @@ function TasksPage() {
 
           <div>
             <h3 className="mb-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-              Локация
+              Област
+            </h3>
+            <Select
+              value={search.region ?? "all"}
+              onValueChange={(v) => update({ region: v === "all" ? undefined : v })}
+            >
+              <SelectTrigger className="h-11">
+                <SelectValue placeholder="Всички области" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">Всички области</SelectItem>
+                {regions.map((r) => (
+                  <SelectItem key={r.slug} value={r.slug}>
+                    {r.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div>
+            <h3 className="mb-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+              Община или квартал
             </h3>
             <LocationCombobox
               value={search.location}
@@ -155,6 +201,12 @@ function TasksPage() {
                   <button onClick={() => update({ location: undefined })}><X className="h-3 w-3" /></button>
                 </Badge>
               )}
+              {search.region && (
+                <Badge variant="secondary" className="gap-1.5">
+                  обл. {regions.find((r) => r.slug === search.region)?.name ?? search.region}
+                  <button onClick={() => update({ region: undefined })}><X className="h-3 w-3" /></button>
+                </Badge>
+              )}
               {search.q && (
                 <Badge variant="secondary" className="gap-1.5">
                   „{search.q}"
@@ -172,7 +224,27 @@ function TasksPage() {
             <div className="rounded-2xl border border-dashed border-border bg-card p-12 text-center">
               <p className="text-foreground font-medium">Няма намерени задачи</p>
               <p className="mt-1 text-sm text-muted-foreground">Опитай с по-малко филтри или публикувай своя задача.</p>
-              <Button asChild className="mt-4">
+              {nearby.length > 0 && (
+                <div className="mt-6 text-left">
+                  <p className="text-sm font-medium text-foreground">
+                    Задачи в близки общини{fallbackRegionName ? `, област ${fallbackRegionName}` : ""}
+                  </p>
+                  <ul className="mt-3 flex flex-wrap justify-center gap-2">
+                    {nearby.map((c) => (
+                      <li key={c.slug}>
+                        <Link
+                          to="/city/$city"
+                          params={{ city: c.slug }}
+                          className="inline-flex rounded-full border border-border px-3 py-1.5 text-sm text-muted-foreground transition-colors hover:text-foreground"
+                        >
+                          {c.name} ({c.taskCount})
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+              <Button asChild className="mt-6">
                 <Link to="/post">Възложи задача</Link>
               </Button>
             </div>

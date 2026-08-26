@@ -88,7 +88,8 @@ async function mapRows(rows: Row[]): Promise<Task[]> {
   return rows.map((r) => mapRow(r, signed, names));
 }
 
-export type TaskFilters = { q?: string; category?: string; location?: string };
+/** `location` is "Община" or "Община, кв. Х"; `region` is an област slug. */
+export type TaskFilters = { q?: string; category?: string; location?: string; region?: string };
 
 type FeedRow = {
   id: string;
@@ -177,6 +178,7 @@ async function fetchTasksPage({
     ...(city ? { _city: city } : {}),
     ...(neighborhood ? { _neighborhood: neighborhood } : {}),
     ...(filters.q ? { _q: filters.q } : {}),
+    ...(filters.region ? { _region: filters.region } : {}),
   });
   if (error) throw error;
 

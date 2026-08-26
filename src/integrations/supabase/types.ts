@@ -689,6 +689,82 @@ export type Database = {
         }
         Relationships: []
       }
+      municipalities: {
+        Row: {
+          created_at: string
+          has_neighborhoods: boolean
+          id: string
+          lat: number | null
+          lng: number | null
+          name: string
+          region_id: string
+          slug: string
+        }
+        Insert: {
+          created_at?: string
+          has_neighborhoods?: boolean
+          id?: string
+          lat?: number | null
+          lng?: number | null
+          name: string
+          region_id: string
+          slug: string
+        }
+        Update: {
+          created_at?: string
+          has_neighborhoods?: boolean
+          id?: string
+          lat?: number | null
+          lng?: number | null
+          name?: string
+          region_id?: string
+          slug?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "municipalities_region_id_fkey"
+            columns: ["region_id"]
+            isOneToOne: false
+            referencedRelation: "regions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      neighborhoods: {
+        Row: {
+          created_at: string
+          id: string
+          municipality_id: string
+          name: string
+          slug: string
+          sort_order: number
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          municipality_id: string
+          name: string
+          slug: string
+          sort_order?: number
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          municipality_id?: string
+          name?: string
+          slug?: string
+          sort_order?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "neighborhoods_municipality_id_fkey"
+            columns: ["municipality_id"]
+            isOneToOne: false
+            referencedRelation: "municipalities"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       notifications: {
         Row: {
           body: string
@@ -1000,6 +1076,27 @@ export type Database = {
           sort_order?: number
           type?: Database["public"]["Enums"]["promo_type"]
           updated_at?: string
+        }
+        Relationships: []
+      }
+      regions: {
+        Row: {
+          created_at: string
+          id: string
+          name: string
+          slug: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          name: string
+          slug: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          name?: string
+          slug?: string
         }
         Relationships: []
       }
@@ -1363,7 +1460,9 @@ export type Database = {
           freshness_prompt_at: string | null
           id: string
           max_unlocks: number
+          municipality_id: string | null
           neighborhood: string | null
+          region_id: string | null
           status: Database["public"]["Enums"]["task_status"]
           status_before_deactivation:
             | Database["public"]["Enums"]["task_status"]
@@ -1392,7 +1491,9 @@ export type Database = {
           freshness_prompt_at?: string | null
           id?: string
           max_unlocks?: number
+          municipality_id?: string | null
           neighborhood?: string | null
+          region_id?: string | null
           status?: Database["public"]["Enums"]["task_status"]
           status_before_deactivation?:
             | Database["public"]["Enums"]["task_status"]
@@ -1421,7 +1522,9 @@ export type Database = {
           freshness_prompt_at?: string | null
           id?: string
           max_unlocks?: number
+          municipality_id?: string | null
           neighborhood?: string | null
+          region_id?: string | null
           status?: Database["public"]["Enums"]["task_status"]
           status_before_deactivation?:
             | Database["public"]["Enums"]["task_status"]
@@ -1435,6 +1538,20 @@ export type Database = {
           view_count?: number
         }
         Relationships: [
+          {
+            foreignKeyName: "tasks_municipality_id_fkey"
+            columns: ["municipality_id"]
+            isOneToOne: false
+            referencedRelation: "municipalities"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "tasks_region_id_fkey"
+            columns: ["region_id"]
+            isOneToOne: false
+            referencedRelation: "regions"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "tasks_user_id_fkey"
             columns: ["user_id"]
@@ -1715,6 +1832,7 @@ export type Database = {
           _neighborhood?: string
           _promo_offset?: number
           _q?: string
+          _region?: string
           _seed?: string
         }
         Returns: {
@@ -1873,6 +1991,14 @@ export type Database = {
       refund_payment: {
         Args: { _payment_intent: string; _status: string }
         Returns: Json
+      }
+      region_municipality_counts: {
+        Args: { _category?: string; _region: string }
+        Returns: {
+          name: string
+          slug: string
+          task_count: number
+        }[]
       }
       report_content: {
         Args: {

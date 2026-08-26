@@ -2,27 +2,42 @@ import { Link } from "@tanstack/react-router";
 import { TaskCard, TaskCardSkeleton } from "@/components/task-card";
 import { Button } from "@/components/ui/button";
 import { useTasksFeed } from "@/lib/tasks-api";
-import { cityList, categoryList, type City } from "@/lib/geo";
+import { categoryList } from "@/lib/geo";
+import { useMunicipalities, useRegionCounts } from "@/lib/locations-api";
+import type { Municipality } from "@/lib/locations";
 import type { Category } from "@/lib/mock-data";
 
 export function LandingView({
   h1,
   intro,
-  city,
+  municipality,
   category,
 }: {
   h1: string;
   intro: string;
-  city?: City;
+  municipality?: Municipality;
   category?: Category;
 }) {
   const { data, isLoading } = useTasksFeed({
     category: category?.id,
-    location: city?.name,
+    location: municipality?.name,
   });
   const tasks = data?.pages.flatMap((p) => p.items) ?? [];
 
-  const relatedCities = cityList.filter((c) => c.slug !== city?.slug).slice(0, 8);
+  // Nearby = other общини in the same област, ranked by how many active tasks
+  // they have, so a quiet община never renders an empty dead end.
+  const { data: regionCounts = [] } = useRegionCounts(municipality?.regionSlug, category?.id);
+  const { data: allMunicipalities = [] } = useMunicipalities();
+  const bigCities = allMunicipalities.filter((m) => m.hasNeighborhoods).slice(0, 8);
+
+  const nearby = municipality
+    ? regionCounts
+        .filter((c) => c.slug !== municipality.slug)
+        .sort((a, b) => b.taskCount - a.taskCount)
+        .slice(0, 8)
+        .map((c) => ({ slug: c.slug, name: c.name, count: c.taskCount }))
+    : bigCities.map((m) => ({ slug: m.slug, name: m.name, count: undefined as number | undefined }));
+
   const relatedCategories = categoryList.filter((c) => c.id !== category?.id).slice(0, 8);
 
   return (
@@ -31,22 +46,25 @@ export function LandingView({
         <ol className="flex flex-wrap items-center gap-1.5">
           <li><Link to="/" className="hover:text-foreground hover:underline">Начало</Link></li>
           <li aria-hidden="true">/</li>
-          {city && (
+          {municipality && (
             <>
               <li>
-                <Link to="/city/$city" params={{ city: city.slug }} className="hover:text-foreground hover:underline">
-                  {city.name}
+                <Link to="/city/$city" params={{ city: municipality.slug }} className="hover:text-foreground hover:underline">
+                  {municipality.name}
                 </Link>
               </li>
               {category && <li aria-hidden="true">/</li>}
             </>
           )}
           {category && <li className="text-foreground">{category.name}</li>}
-          {!category && !city && <li className="text-foreground">Задачи</li>}
+          {!category && !municipality && <li className="text-foreground">Задачи</li>}
         </ol>
       </nav>
 
       <h1 className="text-3xl font-bold tracking-tight text-foreground md:text-4xl">{h1}</h1>
+      {municipality && (
+        <p className="mt-2 text-sm text-muted-foreground">Област {municipality.regionName}</p>
+      )}
 
       <div className="mt-4 max-w-3xl space-y-3 text-[15px] leading-relaxed text-muted-foreground">
         {intro.split(/(?<=\.)\s(?=[А-ЯA-Z])/).reduce<string[][]>((acc, sentence, i) => {
@@ -63,14 +81,14 @@ export function LandingView({
           <Link to="/post">Публикувай задача безплатно</Link>
         </Button>
         <Button asChild variant="outline">
-          <Link to="/tasks" search={{ category: category?.id, location: city?.name }}>
+          <Link to="/tasks" search={{ category: category?.id, location: municipality?.name }}>
             Всички активни задачи
           </Link>
         </Button>
       </div>
 
       <h2 className="mt-10 text-xl font-semibold text-foreground">
-        Активни задачи{category ? `, ${category.name}` : ""}{city ? ` в ${city.name}` : ""}
+        Активни задачи{category ? `, ${category.name}` : ""}{municipality ? ` в ${municipality.name}` : ""}
       </h2>
 
       {isLoading ? (
@@ -79,7 +97,7 @@ export function LandingView({
         </div>
       ) : tasks.length === 0 ? (
         <p className="mt-4 text-sm text-muted-foreground">
-          В момента няма активни задачи в тази комбинация. Виж свързаните градове и категории по-долу или публикувай своята задача.
+          В момента няма активни задачи в тази комбинация. Виж близките общини и категории по-долу или публикувай своята задача.
         </p>
       ) : (
         <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -89,25 +107,29 @@ export function LandingView({
 
       <section className="mt-12 grid gap-8 md:grid-cols-2">
         <div>
-          <h2 className="text-lg font-semibold text-foreground">Задачи в други градове</h2>
+          <h2 className="text-lg font-semibold text-foreground">
+            {municipality ? `Близки общини в област ${municipality.regionName}` : "Задачи в големите градове"}
+          </h2>
           <ul className="mt-3 flex flex-wrap gap-2">
-            {relatedCities.map((c) => (
+            {nearby.map((c) => (
               <li key={c.slug}>
                 {category ? (
                   <Link
                     to="/city/$city/$category"
                     params={{ city: c.slug, category: category.id }}
-                    className="inline-flex rounded-full border border-border px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground"
+                    className="inline-flex rounded-full border border-border px-3 py-1.5 text-sm text-muted-foreground transition-colors hover:text-foreground"
                   >
                     {category.name} в {c.name}
+                    {c.count ? ` (${c.count})` : ""}
                   </Link>
                 ) : (
                   <Link
                     to="/city/$city"
                     params={{ city: c.slug }}
-                    className="inline-flex rounded-full border border-border px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground"
+                    className="inline-flex rounded-full border border-border px-3 py-1.5 text-sm text-muted-foreground transition-colors hover:text-foreground"
                   >
                     {c.name}
+                    {c.count ? ` (${c.count})` : ""}
                   </Link>
                 )}
               </li>
@@ -119,19 +141,19 @@ export function LandingView({
           <ul className="mt-3 flex flex-wrap gap-2">
             {relatedCategories.map((c) => (
               <li key={c.id}>
-                {city ? (
+                {municipality ? (
                   <Link
                     to="/city/$city/$category"
-                    params={{ city: city.slug, category: c.id }}
-                    className="inline-flex rounded-full border border-border px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground"
+                    params={{ city: municipality.slug, category: c.id }}
+                    className="inline-flex rounded-full border border-border px-3 py-1.5 text-sm text-muted-foreground transition-colors hover:text-foreground"
                   >
-                    {c.name} в {city.name}
+                    {c.name} в {municipality.name}
                   </Link>
                 ) : (
                   <Link
                     to="/categories/$category"
                     params={{ category: c.id }}
-                    className="inline-flex rounded-full border border-border px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground"
+                    className="inline-flex rounded-full border border-border px-3 py-1.5 text-sm text-muted-foreground transition-colors hover:text-foreground"
                   >
                     {c.name}
                   </Link>

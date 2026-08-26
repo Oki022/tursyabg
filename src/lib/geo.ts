@@ -1,4 +1,4 @@
-import { locations, categories } from "@/lib/mock-data";
+import { categories } from "@/lib/mock-data";
 
 const BG_TO_LAT: Record<string, string> = {
   а: "a", б: "b", в: "v", г: "g", д: "d", е: "e", ж: "zh", з: "z", и: "i", й: "y",
@@ -15,34 +15,6 @@ export function slugify(input: string): string {
     .join("")
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/^-|-$/g, "");
-}
-
-export type City = { name: string; slug: string; neighborhoods: string[] };
-
-/** All cities derived from the location config, so landing pages scale automatically. */
-export const cityList: City[] = (() => {
-  const map = new Map<string, City>();
-  for (const loc of locations) {
-    const [city, neighborhood] = loc.split(",").map((s) => s.trim());
-    if (!city) continue;
-    const existing = map.get(city) ?? { name: city, slug: slugify(city), neighborhoods: [] };
-    if (neighborhood) existing.neighborhoods.push(neighborhood);
-    map.set(city, existing);
-  }
-  return [...map.values()];
-})();
-
-/** Common Latin spellings people type/link, mapped to the canonical slug. */
-const SLUG_ALIASES: Record<string, string> = {
-  sofia: "sofiya",
-  bourgas: "burgas",
-  rousse: "ruse",
-  plovdif: "plovdiv",
-};
-
-export function findCityBySlug(slug: string): City | undefined {
-  const normalized = SLUG_ALIASES[slug] ?? slug;
-  return cityList.find((c) => c.slug === normalized);
 }
 
 export const categoryList = categories;
