@@ -19,6 +19,8 @@ export type Engagement = {
   reviewDeadline: string | null;
   myReviewId: string | null;
   otherSubmitted: boolean;
+  taskStatus: string | null;
+  promoExpiresAt: string | null;
 };
 
 export type PublicProfile = {
