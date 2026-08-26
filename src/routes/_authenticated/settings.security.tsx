@@ -1,6 +1,6 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState, type FormEvent } from "react";
-import { ShieldCheck, KeyRound, AlertTriangle, Loader2, PhoneCall, UserCog } from "lucide-react";
+import { ShieldCheck, KeyRound, AlertTriangle, Loader2, PhoneCall, UserCog, Download, Mail } from "lucide-react";
 import { toast } from "sonner";
 import { SettingsPageShell } from "@/components/settings-page-shell";
 import { Button } from "@/components/ui/button";
@@ -23,6 +23,17 @@ import { normalizeBgPhone, phoneError } from "@/lib/phone";
 import { SkillsEditor } from "@/components/settings/skills-editor";
 import { useMySkills, useSaveSkills } from "@/lib/skills-api";
 import { toastError } from "@/lib/toast-error";
+import {
+  downloadJson,
+  useDeactivateAccount,
+  useExportMyData,
+  useRequestAccountDeletion,
+} from "@/lib/account-api";
+
+function formatDate(iso?: string | null) {
+  if (!iso) return "";
+  return new Date(iso).toLocaleDateString("bg-BG", { day: "numeric", month: "long", year: "numeric" });
+}
 
 
 export const Route = createFileRoute("/_authenticated/settings/security")({
@@ -40,7 +51,7 @@ export const Route = createFileRoute("/_authenticated/settings/security")({
 });
 
 function SettingsSecurityPage() {
-  const { user, logout, updateUser } = useAuth();
+  const { user, logout, updateUser, changePassword, resetPassword } = useAuth();
   const navigate = useNavigate();
 
   const [name, setName] = useState("");
@@ -50,8 +61,18 @@ function SettingsSecurityPage() {
   const [saving, setSaving] = useState(false);
   const [touched, setTouched] = useState(false);
 
+  const [passwordOpen, setPasswordOpen] = useState(false);
+  const [currentPassword, setCurrentPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [changingPassword, setChangingPassword] = useState(false);
+  const [busy, setBusy] = useState(false);
+
   const skills = useMySkills(user?.id);
   const saveSkills = useSaveSkills();
+  const deactivate = useDeactivateAccount();
+  const requestDeletion = useRequestAccountDeletion();
+  const exportData = useExportMyData();
 
   useEffect(() => {
     if (!user) return;
@@ -244,9 +265,89 @@ function SettingsSecurityPage() {
         <p className="mt-2 text-sm text-muted-foreground">
           Имейл за вход: <span className="font-medium text-foreground">{user?.email}</span>
         </p>
-        <Button variant="outline" className="mt-4 gap-2">
-          <KeyRound className="h-4 w-4" />
-          Смени паролата
+        {passwordOpen ? (
+          <form onSubmit={handleChangePassword} className="mt-4 space-y-3">
+            <div className="grid gap-1.5">
+              <Label htmlFor="current-password">Текуща парола</Label>
+              <Input
+                id="current-password"
+                type="password"
+                autoComplete="current-password"
+                value={currentPassword}
+                onChange={(e) => setCurrentPassword(e.target.value)}
+                className="h-11"
+              />
+            </div>
+            <div className="grid gap-1.5">
+              <Label htmlFor="new-password">Нова парола</Label>
+              <Input
+                id="new-password"
+                type="password"
+                autoComplete="new-password"
+                value={newPassword}
+                onChange={(e) => setNewPassword(e.target.value)}
+                className="h-11"
+              />
+              <p className="text-xs text-muted-foreground">Минимум 8 знака.</p>
+            </div>
+            <div className="grid gap-1.5">
+              <Label htmlFor="confirm-password">Потвърди новата парола</Label>
+              <Input
+                id="confirm-password"
+                type="password"
+                autoComplete="new-password"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                className="h-11"
+              />
+            </div>
+            <div className="flex flex-wrap gap-2">
+              <Button type="submit" disabled={changingPassword} className="gap-2">
+                {changingPassword && <Loader2 className="h-4 w-4 animate-spin" />}
+                Смени паролата
+              </Button>
+              <Button type="button" variant="ghost" onClick={() => setPasswordOpen(false)}>
+                Откажи
+              </Button>
+            </div>
+            <button
+              type="button"
+              onClick={handleResetByEmail}
+              className="flex items-center gap-1.5 text-xs font-medium text-primary hover:underline"
+            >
+              <Mail className="h-3.5 w-3.5" />
+              Забравих текущата си парола — изпрати линк на имейла ми
+            </button>
+          </form>
+        ) : (
+          <Button variant="outline" className="mt-4 gap-2" onClick={() => setPasswordOpen(true)}>
+            <KeyRound className="h-4 w-4" />
+            Смени паролата
+          </Button>
+        )}
+      </div>
+
+      {/* Моите данни */}
+      <div className="rounded-2xl border border-border/60 bg-card p-5 shadow-sm md:p-6">
+        <div className="flex items-center gap-2">
+          <Download className="h-4 w-4 text-primary" />
+          <h2 className="text-lg font-semibold text-foreground">Моите данни</h2>
+        </div>
+        <p className="mt-2 text-sm text-muted-foreground">
+          Изтегли копие на профила си, задачите, отзивите и историята на кредитите във формат JSON.
+        </p>
+        <Button
+          variant="outline"
+          className="mt-4 gap-2"
+          onClick={handleExport}
+          disabled={exportData.isPending}
+        >
+          {exportData.isPending ? (
+            <Loader2 className="h-4 w-4 animate-spin" />
+          ) : (
+            <Download className="h-4 w-4" />
+          )}
+          Изтегли моите данни
         </Button>
       </div>
 
@@ -257,7 +358,8 @@ function SettingsSecurityPage() {
           <h2 className="text-lg font-semibold text-destructive">Действия по моя профил</h2>
         </div>
         <p className="mt-2 text-sm text-muted-foreground">
-          Тези действия са необратими или ще ограничат достъпа ти до платформата.
+          Деактивирането е обратимо. Изтриването се изпълнява след 14 дни и можеш да го откажеш
+          през този период.
         </p>
 
         <div className="mt-4 space-y-3">
@@ -265,19 +367,40 @@ function SettingsSecurityPage() {
             <div className="min-w-0">
               <p className="text-sm font-medium text-foreground">Деактивирай профила</p>
               <p className="text-xs text-muted-foreground">
-                Задачите ти се скриват, но данните се запазват.
+                Активните ти задачи се скриват от каталога, никой не може да отключва контакта ти и
+                няма да можеш да публикуваш или да пишеш съобщения. Отзивите, договорките и кредитите
+                ти се запазват. Можеш да активираш профила при следващо влизане.
               </p>
             </div>
-            <Button variant="outline" size="sm" onClick={handleDeactivate}>
-              Деактивирай
-            </Button>
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <Button variant="outline" size="sm" disabled={busy}>
+                  Деактивирай
+                </Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Да деактивираме ли профила ти?</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    Задачите ти ще бъдат скрити и ще излезеш от профила. Всичките ти данни се
+                    запазват и при следващо влизане ще те попитаме дали искаш да го активираш отново
+                    — задачите ти ще се върнат в предишното си състояние.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Откажи</AlertDialogCancel>
+                  <AlertDialogAction onClick={handleDeactivate}>Да, деактивирай</AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
           </div>
 
           <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-destructive/30 bg-background px-4 py-3">
             <div className="min-w-0">
               <p className="text-sm font-medium text-foreground">Изтрий профила</p>
               <p className="text-xs text-muted-foreground">
-                Профилът и всички твои задачи се премахват завинаги.
+                Изтриването се изпълнява 14 дни след заявката. Дотогава профилът е деактивиран и
+                можеш да откажеш изтриването при влизане.
               </p>
             </div>
             <AlertDialog>
@@ -288,10 +411,13 @@ function SettingsSecurityPage() {
               </AlertDialogTrigger>
               <AlertDialogContent>
                 <AlertDialogHeader>
-                  <AlertDialogTitle>Сигурен ли си?</AlertDialogTitle>
+                  <AlertDialogTitle>Заявка за изтриване на профила</AlertDialogTitle>
                   <AlertDialogDescription>
-                    Това действие е необратимо. Профилът, задачите и съобщенията ти ще бъдат
-                    изтрити завинаги.
+                    Профилът ти се деактивира веднага, а окончателното изтриване се изпълнява след 14
+                    дни. През този период можеш да откажеш заявката при влизане. След това името,
+                    телефонът, снимката, задачите, снимките, съобщенията и известията ти се изтриват
+                    безвъзвратно. Отзивите, които си получил и оставил, и историята на плащанията
+                    остават, но без твоята самоличност — заменя се с анонимен потребител.
                   </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
@@ -300,7 +426,7 @@ function SettingsSecurityPage() {
                     onClick={handleDelete}
                     className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
                   >
-                    Да, изтрий
+                    Да, заяви изтриване
                   </AlertDialogAction>
                 </AlertDialogFooter>
               </AlertDialogContent>
