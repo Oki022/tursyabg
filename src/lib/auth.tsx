@@ -12,7 +12,6 @@ export type AuthUser = {
   credits?: number;
   avatarUrl?: string;
   skills?: string[];
-  verified?: boolean;
   banned?: boolean;
   banReason?: string | null;
 };
@@ -72,7 +71,6 @@ async function buildUser(session: Session): Promise<AuthUser> {
     credits: profile?.credits ?? 0,
     avatarUrl: profile?.avatar_url ?? undefined,
     skills: Array.isArray(meta.skills) ? (meta.skills as string[]) : [],
-    verified: meta.verified === true,
     banned: Boolean(profile?.banned_at),
     banReason: profile?.ban_reason ?? null,
   };
@@ -216,9 +214,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         .from("profile_contacts")
         .upsert({ user_id: user.id, phone: next.phone ?? null }, { onConflict: "user_id" });
     }
-    if (patch.skills !== undefined || patch.verified !== undefined || patch.name !== undefined) {
+    if (patch.skills !== undefined || patch.name !== undefined) {
       await supabase.auth.updateUser({
-        data: { full_name: next.name, skills: next.skills ?? [], verified: next.verified === true },
+        data: { full_name: next.name, skills: next.skills ?? [] },
       });
     }
   };

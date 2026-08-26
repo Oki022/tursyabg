@@ -1,5 +1,5 @@
 import { Link, useRouterState } from "@tanstack/react-router";
-import { CircleUserRound, LogOut, BadgeCheck, MessageCircle, Settings, Heart } from "lucide-react";
+import { CircleUserRound, LogOut, MessageCircle, Settings, Heart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { NotificationBell } from "@/components/notification-bell";
 import { FavouritesNavLink } from "@/components/favourites-nav-link";
@@ -80,9 +80,6 @@ export function SiteHeader() {
                 <DropdownMenuContent align="end" className="w-64">
                   <DropdownMenuLabel className="flex items-center gap-2">
                     <span className="truncate">{user.name}</span>
-                    {user.verified && (
-                      <BadgeCheck className="h-4 w-4 fill-[#1da1f2] text-white" />
-                    )}
                   </DropdownMenuLabel>
                   <div className="mx-1 mb-1 flex items-center justify-between gap-2 rounded-lg bg-gradient-to-r from-primary/10 to-accent/10 px-2.5 py-2">
                     <span className="min-w-0 truncate text-sm font-bold text-primary">
