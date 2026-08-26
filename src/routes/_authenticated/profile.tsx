@@ -111,10 +111,6 @@ function ProfilePage() {
     navigate({ to: "/" });
   };
 
-  const mockVerify = () => {
-    updateUser({ verified: true });
-    toast.success("Самоличността е потвърдена (демо).");
-  };
 
   return (
     <div className="container mx-auto max-w-4xl px-4 py-8 md:py-12">
