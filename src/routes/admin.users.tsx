@@ -51,7 +51,7 @@ function AdminUsers() {
   const mCredits = useMutation({
     mutationFn: () => adjustCredits(creditsTarget!.id, Number(amount), reason),
     onSuccess: () => { toast.success("Балансът е коригиран."); setCreditsTarget(null); setAmount(""); setReason(""); invalidate(); },
-    onError: (e: Error) => toast.error(errorText(e)),
+    onError: showError,
   });
 
   const mBan = useMutation({
@@ -60,13 +60,13 @@ function AdminUsers() {
       toast.success(banTarget?.bannedAt ? "Профилът е възстановен." : "Профилът е блокиран.");
       setBanTarget(null); setReason(""); invalidate();
     },
-    onError: (e: Error) => toast.error(errorText(e)),
+    onError: showError,
   });
 
   const mRole = useMutation({
     mutationFn: (v: { id: string; grant: boolean }) => setModerator(v.id, v.grant),
     onSuccess: () => { toast.success("Ролята е обновена."); invalidate(); },
-    onError: (e: Error) => toast.error(errorText(e)),
+    onError: showError,
   });
 
   const rows = list.data ?? [];
