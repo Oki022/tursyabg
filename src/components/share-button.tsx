@@ -49,11 +49,11 @@ export function ShareButton({
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
-      <PopoverTrigger asChild>
+      <PopoverAnchor asChild>
         <Button type="button" variant="outline" size="sm" className={className} onClick={onShare}>
           <Share2 className="h-4 w-4" /> Сподели
         </Button>
-      </PopoverTrigger>
+      </PopoverAnchor>
       <PopoverContent align="end" className="w-72 space-y-3">
         <p className="text-sm font-medium text-foreground">Копирай линка</p>
         <div className="flex gap-2">
