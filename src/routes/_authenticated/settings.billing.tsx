@@ -110,7 +110,7 @@ function SettingsBillingPage() {
         </div>
         <div className="mt-4 divide-y divide-border/60">
           {(paymentsQuery.data ?? []).map((p) => (
-            <PaymentRow key={p.id} payment={p} />
+            <PaymentRow key={p.id} payment={p} promo={p.promoProductId ? promoProducts[p.promoProductId] : undefined} />
           ))}
           {!paymentsQuery.isLoading && (paymentsQuery.data?.length ?? 0) === 0 && (
             <p className="py-6 text-center text-sm text-muted-foreground">Още нямаш плащания.</p>
