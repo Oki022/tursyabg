@@ -9,6 +9,7 @@ import { useCreditBalance, useCreditPackages, useCreditTransactions } from "@/li
 import { creditsLabel, formatEur } from "@/services/credits";
 import { getMyPayments, type Payment } from "@/services/payments";
 import { BuyCreditsDialog } from "@/components/credits/buy-credits-dialog";
+import { durationLabel, getPromoProductsByIds, type PromoProduct } from "@/services/promotions";
 
 export const Route = createFileRoute("/_authenticated/settings/billing")({
   head: () => ({
