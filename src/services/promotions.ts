@@ -113,3 +113,19 @@ export function durationLabel(days: number): string {
   if (days <= 0) return "еднократно";
   return `${days} ${days === 1 ? "ден" : "дни"}`;
 }
+
+/** Promo products by id (including inactive ones), for rendering payment history. */
+export async function getPromoProductsByIds(ids: string[]): Promise<Record<string, PromoProduct>> {
+  if (ids.length === 0) return {};
+  const { data, error } = await supabase
+    .from("promo_products")
+    .select("id, code, name_bg, type, duration_days, price_eur, sort_order")
+    .in("id", ids);
+  if (error) throw error;
+  const out: Record<string, PromoProduct> = {};
+  for (const row of data ?? []) {
+    const p = mapProduct(row);
+    out[p.id] = p;
+  }
+  return out;
+}
