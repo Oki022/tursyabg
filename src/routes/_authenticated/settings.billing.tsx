@@ -32,6 +32,15 @@ function SettingsBillingPage() {
   const txQuery = useCreditTransactions(page);
   const balance = balanceQuery.data ?? user?.credits ?? 0;
   const paymentsQuery = useQuery({ queryKey: ["payments", "mine"], queryFn: getMyPayments });
+  const promoIds = Array.from(
+    new Set((paymentsQuery.data ?? []).map((p) => p.promoProductId).filter((id): id is string => Boolean(id))),
+  );
+  const promoQuery = useQuery({
+    queryKey: ["promo-products", "by-id", promoIds.join(",")],
+    enabled: promoIds.length > 0,
+    queryFn: () => getPromoProductsByIds(promoIds),
+  });
+  const promoProducts = promoQuery.data ?? {};
   const [buying, setBuying] = useState<{ id: string; name: string; credits: number; priceEur: number } | null>(
     null,
   );
