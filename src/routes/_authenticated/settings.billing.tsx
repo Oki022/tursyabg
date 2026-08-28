@@ -205,13 +205,36 @@ const statusLabels: Record<string, string> = {
   failed: "Неуспешно",
 };
 
-function PaymentRow({ payment }: { payment: Payment }) {
+function PaymentRow({ payment, promo }: { payment: Payment; promo?: PromoProduct }) {
+  const isPromo = payment.kind === "promotion";
+  const promoName = promo ? `${promo.name}, ${durationLabel(promo.durationDays)}` : "Промоция на задача";
+  const label = isPromo
+    ? promoName
+    : payment.credits > 0
+      ? creditsLabel(payment.credits)
+      : "Плащане";
   return (
     <div className="flex items-center justify-between gap-3 py-3">
       <div className="min-w-0">
-        <p className="truncate text-sm font-medium text-foreground">
-          {creditsLabel(payment.credits)} · {formatEur(payment.amountEur)}
+        <p className="flex items-center gap-1.5 truncate text-sm font-medium text-foreground">
+          {isPromo ? (
+            <Rocket className="h-4 w-4 shrink-0 text-primary" />
+          ) : (
+            <Package className="h-4 w-4 shrink-0 text-muted-foreground" />
+          )}
+          <span className="truncate">
+            {label} · {formatEur(payment.amountEur)}
+          </span>
         </p>
+        {isPromo && payment.taskId && (
+          <Link
+            to="/task/$id"
+            params={{ id: payment.taskId }}
+            className="text-xs text-primary underline-offset-2 hover:underline"
+          >
+            Виж задачата
+          </Link>
+        )}
         <p className="text-xs text-muted-foreground">
           {new Date(payment.createdAt).toLocaleDateString("bg-BG", {
             day: "numeric",
