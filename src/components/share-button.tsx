@@ -3,7 +3,7 @@ import { Share2, Copy, Mail } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Popover, PopoverAnchor, PopoverContent } from "@/components/ui/popover";
 import { absoluteUrl } from "@/lib/brand";
 
 /** Shares the clean canonical URL of a page (never the current URL with tracking params). */
