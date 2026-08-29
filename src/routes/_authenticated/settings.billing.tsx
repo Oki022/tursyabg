@@ -1,7 +1,18 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { Package, FileText, History, KeyRound, Receipt, CreditCard, Rocket } from "lucide-react";
+import {
+  Package,
+  History,
+  KeyRound,
+  Receipt,
+  CreditCard,
+  Rocket,
+  Gift,
+  RotateCcw,
+  Coins,
+} from "lucide-react";
+
 import { SettingsPageShell } from "@/components/settings-page-shell";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/lib/auth";
