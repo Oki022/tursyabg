@@ -11,10 +11,12 @@ import {
   ChevronRight,
   KeyRound,
   Eye,
+  MapPin,
   Rocket,
   RotateCcw,
   Trash2,
 } from "lucide-react";
+
 import { Button } from "@/components/ui/button";
 import { BackLink } from "@/components/back-link";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
