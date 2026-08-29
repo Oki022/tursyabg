@@ -146,18 +146,26 @@ function SettingsBillingPage() {
           <h2 className="text-lg font-semibold text-foreground">История на движенията</h2>
         </div>
         <div className="mt-4 divide-y divide-border/60">
-          {(txQuery.data?.items ?? []).map((t) => (
+          {(txQuery.data?.items ?? []).map((t) => {
+            const meta = TX_META[t.type] ?? { Icon: Coins, className: "text-muted-foreground" };
+            return (
             <div key={t.id} className="flex items-center justify-between gap-3 py-3">
-              <div className="min-w-0">
-                <p className="truncate text-sm font-medium text-foreground">{t.description || "Движение"}</p>
-                <p className="text-xs text-muted-foreground">
-                  {new Date(t.createdAt).toLocaleDateString("bg-BG", {
-                    day: "numeric",
-                    month: "short",
-                    year: "numeric",
-                  })}
-                </p>
+              <div className="flex min-w-0 items-center gap-3">
+                <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-muted">
+                  <meta.Icon className={`h-4 w-4 ${meta.className}`} aria-hidden="true" />
+                </span>
+                <div className="min-w-0">
+                  <p className="truncate text-sm font-medium text-foreground">{t.description || "Движение"}</p>
+                  <p className="text-xs text-muted-foreground">
+                    {new Date(t.createdAt).toLocaleDateString("bg-BG", {
+                      day: "numeric",
+                      month: "short",
+                      year: "numeric",
+                    })}
+                  </p>
+                </div>
               </div>
+
               <div className="text-right">
                 <p
                   className={`text-sm font-semibold ${t.amount < 0 ? "text-rose-600" : "text-emerald-600"}`}
