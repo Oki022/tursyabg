@@ -80,13 +80,14 @@ export function StarSelector({
           aria-label={`${i} звезди`}
           aria-pressed={value === i}
           onClick={() => onChange(i)}
-          className="grid h-12 w-12 shrink-0 place-items-center rounded-2xl transition-transform hover:scale-110 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring sm:h-14 sm:w-14"
+          className="grid h-11 w-11 shrink-0 place-items-center rounded-xl transition-transform hover:scale-110 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring sm:h-13 sm:w-13"
         >
           <Star
-            className={`h-8 w-8 sm:h-9 sm:w-9 ${i <= value ? "fill-amber-400 text-amber-400" : "text-muted-foreground/40"}`}
+            className={`h-7 w-7 sm:h-9 sm:w-9 ${i <= value ? "fill-amber-400 text-amber-400" : "text-muted-foreground/40"}`}
           />
         </button>
       ))}
     </div>
   );
+
 }
