@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { MessageCircle } from "lucide-react";
+import { BackLink } from "@/components/back-link";
 import { ChatThread } from "@/components/messages/chat-thread";
 import { ConversationList } from "@/components/messages/conversation-list";
 
@@ -23,7 +24,10 @@ function MessagesInbox() {
 
   return (
     <div className="mx-auto flex min-h-0 w-full max-w-6xl flex-1 flex-col px-3 py-3 sm:px-4 md:block md:flex-none md:py-8">
-      <h1 className="mb-3 shrink-0 text-2xl font-bold tracking-tight text-foreground md:mb-4">Съобщения</h1>
+      <div className="mb-3 flex shrink-0 items-center gap-3 md:mb-4">
+        <BackLink />
+        <h1 className="text-2xl font-bold tracking-tight text-foreground">Съобщения</h1>
+      </div>
 
       {/* Мобилно: само списък, запълва екрана без скрол на страницата */}
       <div className="flex min-h-0 flex-1 flex-col overflow-hidden rounded-2xl border border-border/60 bg-card shadow-sm md:hidden">

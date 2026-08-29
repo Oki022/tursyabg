@@ -1,7 +1,18 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { Package, FileText, History, KeyRound, Receipt, CreditCard, Rocket } from "lucide-react";
+import {
+  Package,
+  History,
+  KeyRound,
+  Receipt,
+  CreditCard,
+  Rocket,
+  Gift,
+  RotateCcw,
+  Coins,
+} from "lucide-react";
+
 import { SettingsPageShell } from "@/components/settings-page-shell";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/lib/auth";
@@ -135,18 +146,26 @@ function SettingsBillingPage() {
           <h2 className="text-lg font-semibold text-foreground">История на движенията</h2>
         </div>
         <div className="mt-4 divide-y divide-border/60">
-          {(txQuery.data?.items ?? []).map((t) => (
+          {(txQuery.data?.items ?? []).map((t) => {
+            const meta = TX_META[t.type] ?? { Icon: Coins, className: "text-muted-foreground" };
+            return (
             <div key={t.id} className="flex items-center justify-between gap-3 py-3">
-              <div className="min-w-0">
-                <p className="truncate text-sm font-medium text-foreground">{t.description || "Движение"}</p>
-                <p className="text-xs text-muted-foreground">
-                  {new Date(t.createdAt).toLocaleDateString("bg-BG", {
-                    day: "numeric",
-                    month: "short",
-                    year: "numeric",
-                  })}
-                </p>
+              <div className="flex min-w-0 items-center gap-3">
+                <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-muted">
+                  <meta.Icon className={`h-4 w-4 ${meta.className}`} aria-hidden="true" />
+                </span>
+                <div className="min-w-0">
+                  <p className="truncate text-sm font-medium text-foreground">{t.description || "Движение"}</p>
+                  <p className="text-xs text-muted-foreground">
+                    {new Date(t.createdAt).toLocaleDateString("bg-BG", {
+                      day: "numeric",
+                      month: "short",
+                      year: "numeric",
+                    })}
+                  </p>
+                </div>
               </div>
+
               <div className="text-right">
                 <p
                   className={`text-sm font-semibold ${t.amount < 0 ? "text-rose-600" : "text-emerald-600"}`}
@@ -157,7 +176,9 @@ function SettingsBillingPage() {
                 <p className="text-xs text-muted-foreground">баланс: {t.balanceAfter}</p>
               </div>
             </div>
-          ))}
+            );
+          })}
+
           {!txQuery.isLoading && (txQuery.data?.items.length ?? 0) === 0 && (
             <p className="py-6 text-center text-sm text-muted-foreground">Все още няма движения по сметката.</p>
           )}
@@ -180,25 +201,25 @@ function SettingsBillingPage() {
         )}
       </div>
 
-      <div className="rounded-2xl border border-border/60 bg-card p-5 shadow-sm md:p-6">
-        <div className="flex items-center gap-2">
-          <FileText className="h-4 w-4 text-primary" />
-          <h2 className="text-lg font-semibold text-foreground">Данни за фактура</h2>
-        </div>
-        <p className="mt-2 text-sm text-muted-foreground">
-          Попълни фирмени данни, за да получаваш фактури автоматично след всяко плащане.
-        </p>
-        <Button variant="outline" className="mt-4">
-          Добави данни за фактура
-        </Button>
-      </div>
+
+
 
       <BuyCreditsDialog pkg={buying} onOpenChange={(open) => !open && setBuying(null)} />
     </SettingsPageShell>
   );
 }
 
+/** Всеки тип движение има свой разпознаваем знак. */
+const TX_META: Record<string, { Icon: typeof Package; className: string }> = {
+  purchase: { Icon: Package, className: "text-primary" },
+  promo_spend: { Icon: Rocket, className: "text-primary" },
+  unlock: { Icon: KeyRound, className: "text-amber-600" },
+  refund: { Icon: RotateCcw, className: "text-emerald-600" },
+  bonus: { Icon: Gift, className: "text-emerald-600" },
+};
+
 const statusLabels: Record<string, string> = {
+
   pending: "Изчаква потвърждение",
   completed: "Платено",
   refunded: "Възстановено",

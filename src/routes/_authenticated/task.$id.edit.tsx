@@ -1,7 +1,8 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { ArrowLeft, Loader2 } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
+import { BackLink } from "@/components/back-link";
 import { TaskForm } from "@/components/tasks/task-form";
 import { useAuth } from "@/lib/auth";
 import { useDeletePreview, useTask, useTaskImages, useUpdateTask } from "@/lib/tasks-api";
@@ -59,14 +60,7 @@ function EditTaskPage() {
 
   return (
     <div className="container mx-auto max-w-3xl px-4 py-8 md:py-12">
-      <Link
-        to="/task/$id"
-        params={{ id }}
-        className="mb-4 inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground"
-      >
-        <ArrowLeft className="h-4 w-4" />
-        Обратно към задачата
-      </Link>
+      <BackLink className="mb-4" label="Обратно към задачата" />
       <div className="mb-8">
         <h1 className="text-3xl font-bold tracking-tight md:text-4xl">Редактирай задачата</h1>
         <p className="mt-2 text-muted-foreground">

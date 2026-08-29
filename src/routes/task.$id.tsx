@@ -1,7 +1,6 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 import {
-  ArrowLeft,
   CalendarDays,
   ChevronLeft,
   ChevronRight,
@@ -51,6 +50,7 @@ import { fetchTaskSeo } from "@/lib/seo-loaders";
 import { breadcrumbLd, clampDescription, jsonLd, seo } from "@/lib/seo";
 import { absoluteUrl, BRAND } from "@/lib/brand";
 import { slugify } from "@/lib/geo";
+import { BackLink } from "@/components/back-link";
 import { TaskThumb } from "@/components/task-thumb";
 import { ImageLightbox } from "@/components/image-lightbox";
 
@@ -262,11 +262,7 @@ function TaskDetails() {
 
   return (
     <div className="container mx-auto max-w-6xl px-4 py-6 md:py-10">
-      <Button asChild variant="ghost" size="sm" className="mb-5 gap-1.5">
-        <Link to="/tasks">
-          <ArrowLeft className="h-4 w-4" /> Назад
-        </Link>
-      </Button>
+      <BackLink className="mb-5" />
 
       <div className="grid gap-8 lg:grid-cols-[minmax(0,1.75fr)_minmax(320px,0.8fr)]">
         <div className="min-w-0">

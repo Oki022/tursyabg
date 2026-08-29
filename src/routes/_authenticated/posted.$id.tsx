@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { CheckCircle2, Clock, Rocket } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { BackLink } from "@/components/back-link";
 import { TaskCard } from "@/components/task-card";
 import { PromoPicker } from "@/components/promotions/promo-picker";
 import { useTask } from "@/lib/tasks-api";
@@ -29,6 +30,7 @@ function PostedPage() {
 
   return (
     <div className="container mx-auto max-w-3xl px-4 py-8 md:py-12">
+      <BackLink className="mb-4" />
       <div className="text-center">
         <span
           className={`mx-auto grid h-14 w-14 place-items-center rounded-2xl ${

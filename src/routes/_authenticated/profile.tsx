@@ -16,6 +16,7 @@ import {
   Trash2,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { BackLink } from "@/components/back-link";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { TaskCard } from "@/components/task-card";
@@ -112,6 +113,7 @@ function ProfilePage() {
 
   return (
     <div className="container mx-auto max-w-4xl px-4 py-8 md:py-12">
+      <BackLink className="mb-4" />
       {/* Header card */}
       <div className="rounded-2xl border border-border/60 bg-card p-5 shadow-sm md:p-7">
         <div className="flex flex-col gap-5 md:flex-row md:items-center md:justify-between">
