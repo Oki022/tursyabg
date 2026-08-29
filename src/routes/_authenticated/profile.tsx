@@ -129,6 +129,18 @@ function ProfilePage() {
                   {user.name}
                 </h1>
               </div>
+              <div className="mt-1 flex min-w-0 flex-wrap items-center gap-x-3 gap-y-1 text-xs text-muted-foreground">
+                {locationLabel && (
+                  <span className="inline-flex min-w-0 items-center gap-1">
+                    <MapPin className="h-3.5 w-3.5 shrink-0" />
+                    <span className="truncate">{locationLabel}</span>
+                  </span>
+                )}
+                <RatingInline
+                  rating={overallRating}
+                  count={overallCount}
+                />
+              </div>
               <p className="mt-1.5 text-sm text-muted-foreground">
                 Възлагай задачи и отключвай контакти без ограничения.
               </p>
@@ -152,7 +164,47 @@ function ProfilePage() {
             value={user.phone || "Не е въведен"}
           />
         </div>
+
+        {/* Моите умения, част от профила */}
+        <div className="mt-5 min-w-0 rounded-xl border border-border bg-background p-4">
+          <div className="flex min-w-0 items-center justify-between gap-3">
+            <h2 className="text-sm font-semibold text-foreground">Моите умения</h2>
+            <Link
+              to="/settings/security"
+              className="shrink-0 text-xs font-medium text-primary underline-offset-4 hover:underline"
+            >
+              Редактирай
+            </Link>
+          </div>
+          {mySkills.isLoading ? (
+            <div className="mt-3 h-7 animate-pulse rounded-lg bg-muted" />
+          ) : (mySkills.data?.categories.length ?? 0) + (mySkills.data?.tags.length ?? 0) === 0 ? (
+            <p className="mt-2 text-xs text-muted-foreground">
+              Все още нямаш умения. Добави категории или свои етикети, за да те намират по-лесно.
+            </p>
+          ) : (
+            <div className="mt-3 flex min-w-0 flex-wrap gap-1.5">
+              {(mySkills.data?.categories ?? []).map((id) => (
+                <span
+                  key={id}
+                  className="rounded-full bg-primary/10 px-3 py-1 text-xs font-medium text-primary"
+                >
+                  {categories.find((c) => c.id === id)?.name ?? id}
+                </span>
+              ))}
+              {(mySkills.data?.tags ?? []).map((t) => (
+                <span
+                  key={t}
+                  className="rounded-full border border-border bg-secondary/60 px-3 py-1 text-xs text-foreground"
+                >
+                  {t}
+                </span>
+              ))}
+            </div>
+          )}
+        </div>
       </div>
+
 
       {/* Кредити */}
       <CreditBalanceCard className="mt-4" />
