@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { CheckCircle2, Loader2, Receipt, TriangleAlert } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { BackLink } from "@/components/back-link";
 import { getPaymentByReference, subscribeToPayment } from "@/services/payments";
 import { creditsLabel, formatEur } from "@/services/credits";
 
@@ -140,6 +141,7 @@ function Shell({
 }) {
   return (
     <div className="container mx-auto flex max-w-md flex-col items-center px-4 py-16 text-center">
+      <BackLink className="mb-4 self-start" />
       {icon}
       <h1 className="mt-4 text-2xl font-bold tracking-tight text-foreground">{title}</h1>
       <div className="mt-2 flex flex-col items-center gap-3">{children}</div>

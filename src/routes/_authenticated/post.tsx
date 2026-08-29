@@ -5,6 +5,7 @@ import { toast } from "sonner";
 import { toastError } from "@/lib/toast-error";
 import { useAuth } from "@/lib/auth";
 import { RequirePhoneNotice } from "@/components/require-phone-notice";
+import { BackLink } from "@/components/back-link";
 import { TaskForm } from "@/components/tasks/task-form";
 import { CONTACT_MASK_WARNING, containsContactInfo, isValidBgPhone } from "@/lib/phone";
 
@@ -66,6 +67,7 @@ function PostPage() {
 
   return (
     <div className="container mx-auto max-w-3xl px-4 py-8 md:py-12">
+      <BackLink className="mb-4" />
       <div className="mb-8">
         <h1 className="text-3xl font-bold tracking-tight md:text-4xl">Възложи задача</h1>
         <p className="mt-2 text-muted-foreground">
