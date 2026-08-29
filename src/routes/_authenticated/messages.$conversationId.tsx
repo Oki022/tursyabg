@@ -1,5 +1,5 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
-import { ArrowLeft } from "lucide-react";
+import { createFileRoute } from "@tanstack/react-router";
+import { BackLink } from "@/components/back-link";
 import { ChatThread } from "@/components/messages/chat-thread";
 
 export const Route = createFileRoute("/_authenticated/messages/$conversationId")({
@@ -29,14 +29,8 @@ function ConversationPage() {
   return (
     <div className="mx-auto flex min-h-0 w-full max-w-3xl flex-1 flex-col px-0 sm:px-4 sm:py-6">
       <div className="flex shrink-0 items-center gap-2 px-3 py-3 sm:px-0">
-        <Link
-          to="/messages"
-          className="inline-flex h-9 w-9 items-center justify-center rounded-full hover:bg-accent"
-          aria-label="Назад"
-        >
-          <ArrowLeft className="h-5 w-5" />
-        </Link>
-        <span className="text-sm font-semibold">Назад към съобщенията</span>
+        <BackLink />
+        <span className="text-sm font-semibold">Съобщения</span>
       </div>
       <div className="flex min-h-0 min-w-0 flex-1 overflow-hidden border-y border-border/60 bg-card sm:rounded-2xl sm:border sm:shadow-sm">
         <ChatThread conversationId={conversationId} />

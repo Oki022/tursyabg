@@ -15,6 +15,7 @@ import {
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { getMyStaffRole } from "@/services/admin";
+import { BackLink } from "@/components/back-link";
 import { noindexSeo } from "@/lib/seo";
 
 export const Route = createFileRoute("/admin")({
@@ -87,7 +88,9 @@ function AdminLayout() {
 
         <div className="min-w-0 flex-1">
           <div className="sticky top-0 z-20 border-b border-slate-200 bg-white lg:hidden">
-            <div className="flex gap-1 overflow-x-auto px-3 py-2">
+            <div className="flex items-center gap-1 px-3 py-2">
+              <BackLink className="shrink-0" />
+              <div className="flex gap-1 overflow-x-auto">
               {NAV.map((item) => {
                 const active = item.exact ? pathname === item.to : pathname.startsWith(item.to);
                 return (
@@ -102,6 +105,7 @@ function AdminLayout() {
                   </Link>
                 );
               })}
+              </div>
             </div>
           </div>
           <main className="px-4 py-5 lg:px-0 lg:py-0">
