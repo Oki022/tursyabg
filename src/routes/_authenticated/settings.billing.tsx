@@ -176,7 +176,9 @@ function SettingsBillingPage() {
                 <p className="text-xs text-muted-foreground">баланс: {t.balanceAfter}</p>
               </div>
             </div>
-          ))}
+            );
+          })}
+
           {!txQuery.isLoading && (txQuery.data?.items.length ?? 0) === 0 && (
             <p className="py-6 text-center text-sm text-muted-foreground">Все още няма движения по сметката.</p>
           )}
