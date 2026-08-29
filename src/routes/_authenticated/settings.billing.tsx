@@ -209,7 +209,17 @@ function SettingsBillingPage() {
   );
 }
 
+/** Всеки тип движение има свой разпознаваем знак. */
+const TX_META: Record<string, { Icon: typeof Package; className: string }> = {
+  purchase: { Icon: Package, className: "text-primary" },
+  promo_spend: { Icon: Rocket, className: "text-primary" },
+  unlock: { Icon: KeyRound, className: "text-amber-600" },
+  refund: { Icon: RotateCcw, className: "text-emerald-600" },
+  bonus: { Icon: Gift, className: "text-emerald-600" },
+};
+
 const statusLabels: Record<string, string> = {
+
   pending: "Изчаква потвърждение",
   completed: "Платено",
   refunded: "Възстановено",
