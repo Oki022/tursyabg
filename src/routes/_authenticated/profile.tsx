@@ -87,6 +87,17 @@ function ProfilePage() {
   const [tab, setTab] = useState<TaskTabValue>("active");
   const favouritesCount = useFavouritesCount();
   const mySkills = useMySkills(user?.id);
+  const publicProfile = usePublicProfile(user?.id ?? "");
+  const locationLabel = formatLocation(publicProfile.data?.city);
+  const overallCount =
+    (publicProfile.data?.reviewCountAsPro ?? 0) + (publicProfile.data?.reviewCountAsClient ?? 0);
+  const overallRating =
+    overallCount > 0
+      ? ((publicProfile.data?.ratingAsPro ?? 0) * (publicProfile.data?.reviewCountAsPro ?? 0) +
+          (publicProfile.data?.ratingAsClient ?? 0) * (publicProfile.data?.reviewCountAsClient ?? 0)) /
+        overallCount
+      : null;
+
 
   const byStatus = useMemo(() => {
     const map: Record<TaskTabValue, typeof tasks> = {
