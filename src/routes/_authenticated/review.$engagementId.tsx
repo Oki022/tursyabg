@@ -97,16 +97,16 @@ function ReviewPage() {
   };
 
   return (
-    <div className="container mx-auto max-w-2xl px-4 py-8 md:py-12">
-      <BackLink className="mb-4" />
+    <div className="container mx-auto max-w-2xl px-3 py-4 sm:px-4 md:py-12">
+      <BackLink className="mb-3" />
 
-      <div className="min-w-0 rounded-2xl border border-border/60 bg-card p-5 shadow-sm md:p-7">
-        <h1 className="text-xl font-bold tracking-tight md:text-2xl">{REVIEW_HEADING[direction]}</h1>
-        <p className="mt-1 break-words text-sm text-muted-foreground">
+      <div className="min-w-0 rounded-2xl border border-border/60 bg-card p-4 shadow-sm md:p-7">
+        <h1 className="text-lg font-bold tracking-tight md:text-2xl">{REVIEW_HEADING[direction]}</h1>
+        <p className="mt-1 break-words text-xs text-muted-foreground md:text-sm">
           {counterpart ?? "Потребител"}, задача „{engagement.taskTitle}“
         </p>
 
-        <div className="mt-4 flex items-start gap-2 rounded-2xl bg-secondary/60 px-4 py-3 text-xs leading-relaxed text-muted-foreground">
+        <div className="mt-3 flex items-start gap-2 rounded-xl bg-secondary/60 px-3 py-2 text-[11px] leading-snug text-muted-foreground md:text-xs">
           <EyeOff className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
           <span>{DOUBLE_BLIND_NOTE}</span>
         </div>
@@ -118,21 +118,21 @@ function ReviewPage() {
           </div>
         ) : (
           <>
-            <div className="mt-6">
+            <div className="mt-4">
               <p className="text-sm font-semibold text-foreground">Оценка</p>
-              <div className="mt-2">
+              <div className="mt-1.5">
                 <StarSelector value={rating} onChange={setRating} />
               </div>
             </div>
 
-            <div className="mt-6 min-w-0">
+            <div className="mt-4 min-w-0">
               <p className="text-sm font-semibold text-foreground">Коментар</p>
               <Textarea
                 value={comment}
                 onChange={(e) => setComment(e.target.value.slice(0, MAX))}
                 placeholder={REVIEW_PLACEHOLDER[direction]}
-                rows={6}
-                className="mt-2 w-full min-w-0 resize-none"
+                rows={4}
+                className="mt-1.5 h-[26vh] max-h-56 min-h-28 w-full min-w-0 resize-none scroll-mb-40 text-base md:h-auto md:text-sm"
               />
               <div className="mt-1 flex flex-wrap items-center justify-between gap-2 text-[11px] text-muted-foreground">
                 <span>{tooShort ? "Минимум 10 символа" : "Готово"}</span>
@@ -144,13 +144,13 @@ function ReviewPage() {
 
             <Button
               size="lg"
-              className="mt-5 w-full"
+              className="mt-4 w-full"
               disabled={submit.isPending}
               onClick={() => void handleSubmit()}
             >
               Изпрати отзив
             </Button>
-            <p className="mt-3 flex items-start gap-1.5 text-[11px] text-muted-foreground">
+            <p className="mt-2.5 flex items-start gap-1.5 text-[11px] text-muted-foreground">
               <ShieldCheck className="mt-0.5 h-3.5 w-3.5 shrink-0 text-primary" />
               Отзивите са постоянни и не могат да се редактират. Остават{" "}
               {left === 1 ? "1 ден" : `${left} дни`} до края на срока.
@@ -160,4 +160,5 @@ function ReviewPage() {
       </div>
     </div>
   );
+
 }
