@@ -27,14 +27,15 @@ export const Route = createFileRoute("/_authenticated/messages/$conversationId")
 function ConversationPage() {
   const { conversationId } = Route.useParams();
   return (
-    <div className="mx-auto flex min-h-0 w-full max-w-3xl flex-1 flex-col px-0 sm:px-4 sm:py-6">
-      <div className="flex shrink-0 items-center gap-2 px-3 py-3 sm:px-0">
+    <div className="mx-auto flex min-h-0 w-full max-w-3xl flex-1 flex-col overflow-hidden overscroll-none px-0 sm:px-4 sm:py-6">
+      <div className="flex shrink-0 items-center gap-2 px-3 py-2 sm:px-0 sm:py-3">
         <BackLink />
         <span className="text-sm font-semibold">Съобщения</span>
       </div>
-      <div className="flex min-h-0 min-w-0 flex-1 overflow-hidden border-y border-border/60 bg-card sm:rounded-2xl sm:border sm:shadow-sm">
+      <div className="flex min-h-0 min-w-0 flex-1 overflow-hidden bg-background sm:rounded-2xl sm:border sm:border-border/60 sm:bg-card sm:shadow-sm">
         <ChatThread conversationId={conversationId} />
       </div>
     </div>
   );
 }
+

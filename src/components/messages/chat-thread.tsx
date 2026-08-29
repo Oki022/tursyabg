@@ -134,7 +134,7 @@ export function ChatThread({ conversationId }: { conversationId: string }) {
         </Link>
       )}
 
-      <div className="min-h-0 flex-1 overflow-y-auto px-4 py-4">
+      <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-4 py-4 [-ms-overflow-style:none] [scrollbar-width:none] md:[scrollbar-width:thin] [&::-webkit-scrollbar]:hidden md:[&::-webkit-scrollbar]:block">
         {thread.hasNextPage && (
           <div className="mb-4 flex justify-center">
             <Button
@@ -223,7 +223,7 @@ export function ChatThread({ conversationId }: { conversationId: string }) {
           e.preventDefault();
           void handleSend();
         }}
-        className="sticky bottom-0 z-10 flex shrink-0 items-center gap-2 border-t border-border/60 bg-background/95 px-3 py-3 backdrop-blur"
+        className="sticky bottom-0 z-10 flex shrink-0 items-center gap-2 border-t border-border/60 bg-background/95 px-3 py-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] backdrop-blur md:pb-3"
       >
         {user && (!user.phone || !isValidBgPhone(user.phone)) ? (
           <RequirePhoneNotice

@@ -11,10 +11,12 @@ import {
   ChevronRight,
   KeyRound,
   Eye,
+  MapPin,
   Rocket,
   RotateCcw,
   Trash2,
 } from "lucide-react";
+
 import { Button } from "@/components/ui/button";
 import { BackLink } from "@/components/back-link";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
@@ -32,7 +34,11 @@ import { DeleteTaskDialog } from "@/components/tasks/delete-task-dialog";
 import { CreditBalanceCard } from "@/components/credits/credit-balance-card";
 import { useFavouritesCount } from "@/lib/favourites-api";
 import { useMySkills } from "@/lib/skills-api";
+import { usePublicProfile } from "@/lib/reviews-api";
+import { RatingInline } from "@/components/reviews/stars";
+import { formatLocation } from "@/lib/locations";
 import { EngagementInbox } from "@/components/reviews/engagement-cards";
+
 import type { Task } from "@/lib/mock-data";
 import { toast } from "sonner";
 
@@ -81,6 +87,17 @@ function ProfilePage() {
   const [tab, setTab] = useState<TaskTabValue>("active");
   const favouritesCount = useFavouritesCount();
   const mySkills = useMySkills(user?.id);
+  const publicProfile = usePublicProfile(user?.id);
+  const locationLabel = formatLocation(publicProfile.data?.city);
+  const overallCount =
+    (publicProfile.data?.reviewCountAsPro ?? 0) + (publicProfile.data?.reviewCountAsClient ?? 0);
+  const overallRating =
+    overallCount > 0
+      ? ((publicProfile.data?.ratingAsPro ?? 0) * (publicProfile.data?.reviewCountAsPro ?? 0) +
+          (publicProfile.data?.ratingAsClient ?? 0) * (publicProfile.data?.reviewCountAsClient ?? 0)) /
+        overallCount
+      : null;
+
 
   const byStatus = useMemo(() => {
     const map: Record<TaskTabValue, typeof tasks> = {
@@ -129,6 +146,18 @@ function ProfilePage() {
                   {user.name}
                 </h1>
               </div>
+              <div className="mt-1 flex min-w-0 flex-wrap items-center gap-x-3 gap-y-1 text-xs text-muted-foreground">
+                {locationLabel && (
+                  <span className="inline-flex min-w-0 items-center gap-1">
+                    <MapPin className="h-3.5 w-3.5 shrink-0" />
+                    <span className="truncate">{locationLabel}</span>
+                  </span>
+                )}
+                <RatingInline
+                  rating={overallRating}
+                  count={overallCount}
+                />
+              </div>
               <p className="mt-1.5 text-sm text-muted-foreground">
                 Възлагай задачи и отключвай контакти без ограничения.
               </p>
@@ -152,7 +181,47 @@ function ProfilePage() {
             value={user.phone || "Не е въведен"}
           />
         </div>
+
+        {/* Моите умения, част от профила */}
+        <div className="mt-5 min-w-0 rounded-xl border border-border bg-background p-4">
+          <div className="flex min-w-0 items-center justify-between gap-3">
+            <h2 className="text-sm font-semibold text-foreground">Моите умения</h2>
+            <Link
+              to="/settings/security"
+              className="shrink-0 text-xs font-medium text-primary underline-offset-4 hover:underline"
+            >
+              Редактирай
+            </Link>
+          </div>
+          {mySkills.isLoading ? (
+            <div className="mt-3 h-7 animate-pulse rounded-lg bg-muted" />
+          ) : (mySkills.data?.categories.length ?? 0) + (mySkills.data?.tags.length ?? 0) === 0 ? (
+            <p className="mt-2 text-xs text-muted-foreground">
+              Все още нямаш умения. Добави категории или свои етикети, за да те намират по-лесно.
+            </p>
+          ) : (
+            <div className="mt-3 flex min-w-0 flex-wrap gap-1.5">
+              {(mySkills.data?.categories ?? []).map((id) => (
+                <span
+                  key={id}
+                  className="rounded-full bg-primary/10 px-3 py-1 text-xs font-medium text-primary"
+                >
+                  {categories.find((c) => c.id === id)?.name ?? id}
+                </span>
+              ))}
+              {(mySkills.data?.tags ?? []).map((t) => (
+                <span
+                  key={t}
+                  className="rounded-full border border-border bg-secondary/60 px-3 py-1 text-xs text-foreground"
+                >
+                  {t}
+                </span>
+              ))}
+            </div>
+          )}
+        </div>
       </div>
+
 
       {/* Кредити */}
       <CreditBalanceCard className="mt-4" />
@@ -248,48 +317,7 @@ function ProfilePage() {
           </div>
         </section>
 
-        <>
-          <section className="min-w-0 rounded-2xl border border-border/60 bg-card p-5 shadow-sm md:p-7">
-              <div className="flex items-start justify-between gap-3">
-                <div className="min-w-0">
-                  <h2 className="text-lg font-semibold text-foreground">Моите умения</h2>
-                  <p className="mt-1 text-sm text-muted-foreground">
-                    Видими са на публичния ти профил, под името и рейтинга.
-                  </p>
-                </div>
-                <Button asChild variant="outline" size="sm" className="shrink-0">
-                  <Link to="/settings/security">Редактирай</Link>
-                </Button>
-              </div>
-              {mySkills.isLoading ? (
-                <div className="mt-4 h-8 animate-pulse rounded-xl bg-muted" />
-              ) : (mySkills.data?.categories.length ?? 0) + (mySkills.data?.tags.length ?? 0) === 0 ? (
-                <p className="mt-4 text-sm text-muted-foreground">
-                  Все още нямаш добавени умения. Избери категории или добави свои етикети от настройките.
-                </p>
-              ) : (
-                <div className="mt-4 flex min-w-0 flex-wrap gap-1.5">
-                  {(mySkills.data?.categories ?? []).map((id) => (
-                    <span
-                      key={id}
-                      className="rounded-full bg-primary/10 px-3 py-1 text-xs font-medium text-primary"
-                    >
-                      {categories.find((c) => c.id === id)?.name ?? id}
-                    </span>
-                  ))}
-                  {(mySkills.data?.tags ?? []).map((t) => (
-                    <span
-                      key={t}
-                      className="rounded-full border border-border bg-secondary/60 px-3 py-1 text-xs text-foreground"
-                    >
-                      {t}
-                    </span>
-                  ))}
-                </div>
-              )}
-            </section>
 
-          </>
 
         <div className="pb-2 pt-2 text-center">
           <button
