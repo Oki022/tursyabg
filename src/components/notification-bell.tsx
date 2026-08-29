@@ -32,11 +32,24 @@ function BellButton({ unread }: { unread: number }) {
 
 function PanelHeader({ withCloseSpace }: { withCloseSpace: boolean }) {
   return (
-    <div className="flex min-h-11 shrink-0 items-center border-b border-border px-3 py-2.5">
-      <span className={`text-sm font-semibold ${withCloseSpace ? "pr-10" : ""}`}>Известия</span>
+    <div
+      className={`flex shrink-0 items-center border-b border-border ${
+        withCloseSpace ? "min-h-16 px-5 py-4" : "min-h-11 px-3 py-2.5"
+      }`}
+    >
+      <span
+        className={
+          withCloseSpace
+            ? "pr-12 text-xl font-bold tracking-tight text-foreground"
+            : "text-sm font-semibold"
+        }
+      >
+        Известия
+      </span>
     </div>
   );
 }
+
 
 function PanelFooter({ onNavigate }: { onNavigate: () => void }) {
   return (
