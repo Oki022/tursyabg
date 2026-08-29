@@ -765,6 +765,50 @@ export type Database = {
           },
         ]
       }
+      notification_preferences: {
+        Row: {
+          created_at: string
+          credits: boolean
+          messages: boolean
+          moderation: boolean
+          promotions: boolean
+          reviews: boolean
+          tasks: boolean
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          credits?: boolean
+          messages?: boolean
+          moderation?: boolean
+          promotions?: boolean
+          reviews?: boolean
+          tasks?: boolean
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          credits?: boolean
+          messages?: boolean
+          moderation?: boolean
+          promotions?: boolean
+          reviews?: boolean
+          tasks?: boolean
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "notification_preferences_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: true
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       notifications: {
         Row: {
           body: string
@@ -1914,6 +1958,10 @@ export type Database = {
         }[]
       }
       needs_prepublish_review: { Args: { _user_id: string }; Returns: boolean }
+      notification_group: {
+        Args: { _type: Database["public"]["Enums"]["notification_type"] }
+        Returns: string
+      }
       own_task_delete_preview: { Args: { _task_id: string }; Returns: Json }
       public_profile: { Args: { _user_id: string }; Returns: Json }
       public_profiles: {
