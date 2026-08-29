@@ -34,7 +34,11 @@ import { DeleteTaskDialog } from "@/components/tasks/delete-task-dialog";
 import { CreditBalanceCard } from "@/components/credits/credit-balance-card";
 import { useFavouritesCount } from "@/lib/favourites-api";
 import { useMySkills } from "@/lib/skills-api";
+import { usePublicProfile } from "@/lib/reviews-api";
+import { RatingInline } from "@/components/reviews/stars";
+import { formatLocation } from "@/lib/locations";
 import { EngagementInbox } from "@/components/reviews/engagement-cards";
+
 import type { Task } from "@/lib/mock-data";
 import { toast } from "sonner";
 
