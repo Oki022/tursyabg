@@ -300,48 +300,7 @@ function ProfilePage() {
           </div>
         </section>
 
-        <>
-          <section className="min-w-0 rounded-2xl border border-border/60 bg-card p-5 shadow-sm md:p-7">
-              <div className="flex items-start justify-between gap-3">
-                <div className="min-w-0">
-                  <h2 className="text-lg font-semibold text-foreground">Моите умения</h2>
-                  <p className="mt-1 text-sm text-muted-foreground">
-                    Видими са на публичния ти профил, под името и рейтинга.
-                  </p>
-                </div>
-                <Button asChild variant="outline" size="sm" className="shrink-0">
-                  <Link to="/settings/security">Редактирай</Link>
-                </Button>
-              </div>
-              {mySkills.isLoading ? (
-                <div className="mt-4 h-8 animate-pulse rounded-xl bg-muted" />
-              ) : (mySkills.data?.categories.length ?? 0) + (mySkills.data?.tags.length ?? 0) === 0 ? (
-                <p className="mt-4 text-sm text-muted-foreground">
-                  Все още нямаш добавени умения. Избери категории или добави свои етикети от настройките.
-                </p>
-              ) : (
-                <div className="mt-4 flex min-w-0 flex-wrap gap-1.5">
-                  {(mySkills.data?.categories ?? []).map((id) => (
-                    <span
-                      key={id}
-                      className="rounded-full bg-primary/10 px-3 py-1 text-xs font-medium text-primary"
-                    >
-                      {categories.find((c) => c.id === id)?.name ?? id}
-                    </span>
-                  ))}
-                  {(mySkills.data?.tags ?? []).map((t) => (
-                    <span
-                      key={t}
-                      className="rounded-full border border-border bg-secondary/60 px-3 py-1 text-xs text-foreground"
-                    >
-                      {t}
-                    </span>
-                  ))}
-                </div>
-              )}
-            </section>
 
-          </>
 
         <div className="pb-2 pt-2 text-center">
           <button
