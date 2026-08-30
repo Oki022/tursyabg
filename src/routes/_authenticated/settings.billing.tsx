@@ -11,6 +11,9 @@ import {
   Gift,
   RotateCcw,
   Coins,
+  Siren,
+  Crown,
+  ArrowUpCircle,
 } from "lucide-react";
 
 import { SettingsPageShell } from "@/components/settings-page-shell";
@@ -20,7 +23,7 @@ import { useCreditBalance, useCreditPackages, useCreditTransactions } from "@/li
 import { creditsLabel, formatEur } from "@/services/credits";
 import { getMyPayments, type Payment } from "@/services/payments";
 import { BuyCreditsDialog } from "@/components/credits/buy-credits-dialog";
-import { durationLabel, getPromoProductsByIds, type PromoProduct } from "@/services/promotions";
+import { durationLabel, getPromoProductsByIds, type PromoProduct, type PromoType } from "@/services/promotions";
 
 export const Route = createFileRoute("/_authenticated/settings/billing")({
   head: () => ({
@@ -147,7 +150,10 @@ function SettingsBillingPage() {
         </div>
         <div className="mt-4 divide-y divide-border/60">
           {(txQuery.data?.items ?? []).map((t) => {
-            const meta = TX_META[t.type] ?? { Icon: Coins, className: "text-muted-foreground" };
+            const meta =
+              t.type === "promo_spend"
+                ? { Icon: promoIconFromText(t.description), className: "text-primary" }
+                : (TX_META[t.type] ?? { Icon: Coins, className: "text-muted-foreground" });
             return (
             <div key={t.id} className="flex items-center justify-between gap-3 py-3">
               <div className="flex min-w-0 items-center gap-3">
@@ -212,11 +218,24 @@ function SettingsBillingPage() {
 /** Всеки тип движение има свой разпознаваем знак. */
 const TX_META: Record<string, { Icon: typeof Package; className: string }> = {
   purchase: { Icon: Package, className: "text-primary" },
-  promo_spend: { Icon: Rocket, className: "text-primary" },
   unlock: { Icon: KeyRound, className: "text-amber-600" },
   refund: { Icon: RotateCcw, className: "text-emerald-600" },
   bonus: { Icon: Gift, className: "text-emerald-600" },
 };
+
+/** Иконите са същите като в диалога за промотиране и етикетите по задачите. */
+const PROMO_ICONS: Record<PromoType, typeof Package> = {
+  bump: ArrowUpCircle,
+  urgent: Siren,
+  top: Crown,
+};
+
+function promoIconFromText(text: string): typeof Package {
+  if (/спешно/i.test(text)) return PROMO_ICONS.urgent;
+  if (/обнов/i.test(text)) return PROMO_ICONS.bump;
+  if (/топ/i.test(text)) return PROMO_ICONS.top;
+  return Rocket;
+}
 
 const statusLabels: Record<string, string> = {
 
@@ -230,6 +249,7 @@ const statusLabels: Record<string, string> = {
 function PaymentRow({ payment, promo }: { payment: Payment; promo?: PromoProduct }) {
   const isPromo = payment.kind === "promotion";
   const promoName = promo ? `${promo.name}, ${durationLabel(promo.durationDays)}` : "Промоция на задача";
+  const PromoIcon = promo ? PROMO_ICONS[promo.type] : promoIconFromText(promoName);
   const label = isPromo
     ? promoName
     : payment.credits > 0
@@ -240,7 +260,7 @@ function PaymentRow({ payment, promo }: { payment: Payment; promo?: PromoProduct
       <div className="min-w-0">
         <p className="flex items-center gap-1.5 truncate text-sm font-medium text-foreground">
           {isPromo ? (
-            <Rocket className="h-4 w-4 shrink-0 text-primary" />
+            <PromoIcon className="h-4 w-4 shrink-0 text-primary" />
           ) : (
             <Package className="h-4 w-4 shrink-0 text-muted-foreground" />
           )}
