@@ -112,7 +112,7 @@ export function ChatThread({ conversationId }: { conversationId: string }) {
         <Link
           to="/task/$id"
           params={{ id: conversation.taskId }}
-          className="flex shrink-0 items-center gap-3 border-b border-border/60 bg-card px-4 py-3 transition-colors hover:bg-accent/40"
+          className="flex shrink-0 items-center gap-3 border-b border-border/60 bg-background px-4 py-3 transition-colors hover:bg-accent/40 md:bg-card"
         >
           <TaskThumb
             src={conversation.taskImage}
