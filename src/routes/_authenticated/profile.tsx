@@ -36,7 +36,7 @@ import { useFavouritesCount } from "@/lib/favourites-api";
 import { useMySkills } from "@/lib/skills-api";
 import { usePublicProfile } from "@/lib/reviews-api";
 import { RatingInline } from "@/components/reviews/stars";
-import { formatLocation } from "@/lib/locations";
+import { buildLocation, formatLocation } from "@/lib/locations";
 import { EngagementInbox } from "@/components/reviews/engagement-cards";
 
 import type { Task } from "@/lib/mock-data";
@@ -88,7 +88,11 @@ function ProfilePage() {
   const favouritesCount = useFavouritesCount();
   const mySkills = useMySkills(user?.id);
   const publicProfile = usePublicProfile(user?.id);
-  const locationLabel = formatLocation(publicProfile.data?.city);
+  const profileCity = user?.city ?? publicProfile.data?.city ?? null;
+  const profileNeighborhood = user?.neighborhood ?? publicProfile.data?.neighborhood ?? null;
+  const locationLabel = profileCity
+    ? formatLocation(buildLocation(profileCity, profileNeighborhood))
+    : "";
   const overallCount =
     (publicProfile.data?.reviewCountAsPro ?? 0) + (publicProfile.data?.reviewCountAsClient ?? 0);
   const overallRating =
