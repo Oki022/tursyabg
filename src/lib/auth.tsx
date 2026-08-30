@@ -11,6 +11,8 @@ export type AuthUser = {
   phone?: string;
   credits?: number;
   avatarUrl?: string;
+  city?: string | null;
+  neighborhood?: string | null;
   skills?: string[];
   banned?: boolean;
   banReason?: string | null;
@@ -48,7 +50,7 @@ async function buildUser(session: Session): Promise<AuthUser> {
   const meta = (session.user.user_metadata ?? {}) as Record<string, unknown>;
   const { data: profile } = await supabase
     .from("profiles")
-    .select("id, full_name, avatar_url, credits, banned_at, ban_reason, deactivated_at")
+    .select("id, full_name, avatar_url, credits, banned_at, ban_reason, deactivated_at, city, neighborhood")
     .eq("id", session.user.id)
     .maybeSingle();
   const { data: deletion } = await supabase
@@ -80,6 +82,8 @@ async function buildUser(session: Session): Promise<AuthUser> {
     phone: contact?.phone ?? undefined,
     credits: profile?.credits ?? 0,
     avatarUrl: profile?.avatar_url ?? undefined,
+    city: profile?.city ?? null,
+    neighborhood: profile?.neighborhood ?? null,
     skills: Array.isArray(meta.skills) ? (meta.skills as string[]) : [],
     banned: Boolean(profile?.banned_at),
     banReason: profile?.ban_reason ?? null,
@@ -233,12 +237,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const next = { ...user, ...patch };
     setUser(next);
 
-    if (patch.name !== undefined || patch.avatarUrl !== undefined) {
+    if (
+      patch.name !== undefined ||
+      patch.avatarUrl !== undefined ||
+      patch.city !== undefined ||
+      patch.neighborhood !== undefined
+    ) {
       await supabase
         .from("profiles")
         .update({
           full_name: next.name,
           avatar_url: next.avatarUrl ?? null,
+          city: next.city ?? null,
+          neighborhood: next.neighborhood ?? null,
         })
         .eq("id", user.id);
     }

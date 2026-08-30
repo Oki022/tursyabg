@@ -27,6 +27,7 @@ export type PublicProfile = {
   id: string;
   fullName: string | null;
   city: string | null;
+  neighborhood: string | null;
   createdAt: string;
   completedJobs: number;
   ratingAsPro: number | null;
@@ -142,6 +143,7 @@ export async function getPublicProfile(userId: string): Promise<PublicProfile | 
     id: String(r["id"]),
     fullName: (r["full_name"] as string | null) ?? null,
     city: (r["city"] as string | null) ?? null,
+    neighborhood: (r["neighborhood"] as string | null) ?? null,
     createdAt: String(r["created_at"]),
     completedJobs: Number(r["completed_jobs"] ?? 0),
     ratingAsPro: r["rating_as_pro"] == null ? null : Number(r["rating_as_pro"]),

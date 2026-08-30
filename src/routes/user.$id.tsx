@@ -16,7 +16,7 @@ import { fetchProfileSeo } from "@/lib/seo-loaders";
 import { breadcrumbLd, clampDescription, jsonLd, seo } from "@/lib/seo";
 import { absoluteUrl, BRAND } from "@/lib/brand";
 import { formatRatingBg, reviewCountBg } from "@/lib/public-profiles";
-import { formatLocation } from "@/lib/locations";
+import { buildLocation, formatLocation } from "@/lib/locations";
 
 
 export const Route = createFileRoute("/user/$id")({
@@ -122,7 +122,9 @@ function PublicProfilePage() {
               {profile.city && (
                 <span className="inline-flex min-w-0 items-center gap-1">
                   <MapPin className="h-3.5 w-3.5 shrink-0" />
-                  <span className="truncate">{formatLocation(profile.city)}</span>
+                  <span className="truncate">
+                    {formatLocation(buildLocation(profile.city, profile.neighborhood))}
+                  </span>
                 </span>
               )}
 
