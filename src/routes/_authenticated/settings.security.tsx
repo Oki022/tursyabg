@@ -19,6 +19,8 @@ import {
 } from "@/components/ui/alert-dialog";
 import { useAuth } from "@/lib/auth";
 import { nameError } from "@/lib/auth-errors";
+import { LocationCombobox } from "@/components/location-combobox";
+import { buildLocation, splitLocation } from "@/lib/locations";
 import { normalizeBgPhone, phoneError } from "@/lib/phone";
 import { SkillsEditor } from "@/components/settings/skills-editor";
 import { useMySkills, useSaveSkills } from "@/lib/skills-api";
@@ -56,6 +58,7 @@ function SettingsSecurityPage() {
 
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
+  const [location, setLocation] = useState<string | undefined>(undefined);
   const [skillCategories, setSkillCategories] = useState<string[]>([]);
   const [skillTags, setSkillTags] = useState<string[]>([]);
   const [saving, setSaving] = useState(false);
@@ -78,6 +81,7 @@ function SettingsSecurityPage() {
     if (!user) return;
     setName(user.name ?? "");
     setPhone(user.phone ?? "");
+    setLocation(user.city ? buildLocation(user.city, user.neighborhood) : undefined);
   }, [user?.id]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
@@ -99,7 +103,13 @@ function SettingsSecurityPage() {
     if (!user) return;
     setSaving(true);
     try {
-      await updateUser({ name: name.trim(), phone: normalizeBgPhone(phone) });
+      const picked = splitLocation(location);
+      await updateUser({
+        name: name.trim(),
+        phone: normalizeBgPhone(phone),
+        city: picked.city ?? null,
+        neighborhood: picked.neighborhood ?? null,
+      });
       await saveSkills.mutateAsync({ userId: user.id, categories: skillCategories, tags: skillTags });
       toast.success("Профилът е обновен.");
     } catch (err) {
@@ -210,6 +220,20 @@ function SettingsSecurityPage() {
             className="h-11"
           />
           {nameMsg && <p className="text-xs text-destructive">{nameMsg}</p>}
+        </div>
+
+        <div className="grid gap-1.5">
+          <Label htmlFor="location">Местоположение</Label>
+          <LocationCombobox
+            id="location"
+            value={location}
+            onChange={setLocation}
+            allowClear
+            placeholder="Търси община или град..."
+          />
+          <p className="text-xs text-muted-foreground">
+            Показва се публично в профила ти. Можеш да го оставиш празно.
+          </p>
         </div>
 
         <div className="grid gap-1.5">
