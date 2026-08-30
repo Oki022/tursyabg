@@ -11,6 +11,7 @@ export type PublicIdentity = {
   fullName: string | null;
   avatarUrl: string | null;
   city: string | null;
+  neighborhood: string | null;
   ratingAsPro: number | null;
   reviewCountAsPro: number;
   ratingAsClient: number | null;
@@ -26,6 +27,7 @@ type Row = {
   full_name: string | null;
   avatar_url: string | null;
   city: string | null;
+  neighborhood: string | null;
   rating_as_pro: number | string | null;
   review_count_as_pro: number | null;
   rating_as_client: number | string | null;
@@ -40,6 +42,7 @@ function mapRow(r: Row): PublicIdentity {
     fullName: r.full_name ?? null,
     avatarUrl: r.avatar_url ?? null,
     city: r.city ?? null,
+    neighborhood: r.neighborhood ?? null,
     ratingAsPro: r.rating_as_pro == null ? null : Number(r.rating_as_pro),
     reviewCountAsPro: Number(r.review_count_as_pro ?? 0),
     ratingAsClient: r.rating_as_client == null ? null : Number(r.rating_as_client),
