@@ -108,9 +108,13 @@ export function ConversationList({ selectedId, onSelect, variant = "desktop" }: 
           </>
         );
 
-        const className = `flex w-full min-w-0 items-center gap-3 rounded-2xl px-3 py-3 text-left transition-colors ${
-          selectedId === c.id ? "bg-slate-100" : "hover:bg-slate-50"
-        }`;
+        const className =
+          variant === "mobile"
+            ? "flex w-full min-w-0 items-center gap-3 px-4 py-4 text-left transition-colors active:bg-slate-100"
+            : `flex w-full min-w-0 items-center gap-3 rounded-2xl px-3 py-3 text-left transition-colors ${
+                selectedId === c.id ? "bg-slate-100" : "hover:bg-slate-50"
+              }`;
+
 
         return variant === "mobile" ? (
           <Link key={c.id} to="/messages/$conversationId" params={{ conversationId: c.id }} className={className}>
