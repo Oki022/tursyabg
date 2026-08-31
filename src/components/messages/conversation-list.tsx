@@ -69,7 +69,8 @@ export function ConversationList({ selectedId, onSelect, variant = "desktop" }: 
   }
 
   return (
-    <div className="min-w-0 space-y-1 p-2">
+    <div className={variant === "mobile" ? "min-w-0 divide-y divide-border/60" : "min-w-0 space-y-1 p-2"}>
+
       {items.map((c) => {
         const content = (
           <>
