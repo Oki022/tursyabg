@@ -23,18 +23,17 @@ function MessagesInbox() {
   const [selectedId, setSelectedId] = useState<string | undefined>(undefined);
 
   return (
-    <div className="mx-auto flex min-h-0 w-full max-w-6xl flex-1 flex-col px-3 py-3 sm:px-4 md:block md:flex-none md:py-8">
-      <div className="mb-3 flex shrink-0 items-center gap-3 md:mb-4">
+    <div className="mx-auto flex h-[100dvh] min-h-0 w-full max-w-6xl flex-1 flex-col px-0 pb-[env(safe-area-inset-bottom)] sm:px-0 md:block md:h-auto md:flex-none md:px-4 md:py-8">
+      <div className="mb-0 flex shrink-0 items-center gap-3 px-3 py-3 md:mb-4 md:px-0 md:py-0">
         <BackLink />
-        <h1 className="text-2xl font-bold tracking-tight text-foreground">Съобщения</h1>
+        <h1 className="text-xl font-bold tracking-tight text-foreground md:text-2xl">Съобщения</h1>
       </div>
 
-      {/* Мобилно: само списък, запълва екрана без скрол на страницата */}
-      <div className="flex min-h-0 flex-1 flex-col overflow-hidden rounded-2xl border border-border/60 bg-card shadow-sm md:hidden">
-        <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain">
-          <ConversationList variant="mobile" />
-        </div>
+      {/* Мобилно: само списък, едно скролиращо поле без рамка и скролбар */}
+      <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden md:hidden">
+        <ConversationList variant="mobile" />
       </div>
+
 
       {/* Десктоп: две колони */}
       <div className="hidden gap-4 md:grid md:grid-cols-[minmax(0,340px)_minmax(0,1fr)]">
