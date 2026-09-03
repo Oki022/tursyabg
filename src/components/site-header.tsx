@@ -126,14 +126,16 @@ export function SiteHeader() {
               </DropdownMenu>
             </>
           )}
-          <Link
-            to="/post"
-            aria-label="Възложи задача"
-            className="ml-1 hidden h-9 items-center gap-1.5 rounded-full bg-gradient-to-r from-orange-500 to-rose-500 px-3.5 text-sm font-semibold text-white shadow-sm shadow-rose-500/20 transition hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 md:inline-flex"
-          >
-            <Plus className="h-4 w-4" strokeWidth={2.5} />
-            Възложи
-          </Link>
+          {user && (
+            <Link
+              to="/post"
+              aria-label="Възложи задача"
+              className="ml-1 hidden h-9 items-center gap-1.5 rounded-full bg-gradient-to-r from-orange-500 to-rose-500 px-3.5 text-sm font-semibold text-white shadow-sm shadow-rose-500/20 transition hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 md:inline-flex"
+            >
+              <Plus className="h-4 w-4" strokeWidth={2.5} />
+              Възложи
+            </Link>
+          )}
         </div>
       </div>
     </header>

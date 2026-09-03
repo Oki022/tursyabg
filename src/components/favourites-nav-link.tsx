@@ -26,8 +26,8 @@ export function FavouritesNavLink() {
     >
       <Link to="/favourites" aria-label="Любими задачи">
         <Heart
-          className={cn("h-6 w-6 transition-colors", hasFavourites && "fill-current")}
-          strokeWidth={2}
+          className={cn("h-8 w-8 transition-colors", hasFavourites && "fill-current")}
+          strokeWidth={1.6}
         />
       </Link>
     </Button>
