@@ -23,7 +23,9 @@ import { LocationCombobox } from "@/components/location-combobox";
 import { buildLocation, splitLocation } from "@/lib/locations";
 import { normalizeBgPhone, phoneError } from "@/lib/phone";
 import { SkillsEditor } from "@/components/settings/skills-editor";
+import { MAX_SKILL_TAGS } from "@/components/settings/skills-editor";
 import { useMySkills, useSaveSkills } from "@/lib/skills-api";
+import { normalizeSkillTag, skillTagError, skillTagKey } from "@/lib/skill-tags";
 import { toastError } from "@/lib/toast-error";
 import {
   downloadJson,
@@ -61,6 +63,7 @@ function SettingsSecurityPage() {
   const [location, setLocation] = useState<string | undefined>(undefined);
   const [skillCategories, setSkillCategories] = useState<string[]>([]);
   const [skillTags, setSkillTags] = useState<string[]>([]);
+  const [skillDraft, setSkillDraft] = useState("");
   const [saving, setSaving] = useState(false);
   const [touched, setTouched] = useState(false);
 
@@ -101,6 +104,18 @@ function SettingsSecurityPage() {
       return;
     }
     if (!user) return;
+    const pendingTag = normalizeSkillTag(skillDraft);
+    const pendingError = pendingTag ? skillTagError(pendingTag) : null;
+    if (pendingError) {
+      toast.error(pendingError);
+      return;
+    }
+    const hasPendingTag = pendingTag && !skillTags.some((tag) => skillTagKey(tag) === skillTagKey(pendingTag));
+    if (hasPendingTag && skillTags.length >= MAX_SKILL_TAGS) {
+      toast.error(`Може да добавиш най-много ${MAX_SKILL_TAGS} умения.`);
+      return;
+    }
+    const tagsToSave = hasPendingTag ? [...skillTags, pendingTag] : skillTags;
     setSaving(true);
     try {
       const picked = splitLocation(location);
@@ -113,9 +128,10 @@ function SettingsSecurityPage() {
       const skillsResult = await saveSkills.mutateAsync({
         userId: user.id,
         categories: skillCategories,
-        tags: skillTags,
+        tags: tagsToSave,
       });
       setSkillTags(skillsResult.tags);
+      setSkillDraft("");
       if (skillsResult.droppedTags.length > 0) {
         toast.warning("Част от уменията не бяха запазени", {
           description: `Премахнати са: ${skillsResult.droppedTags.join(", ")}. Умения с телефони, имейли, линкове или профили в месинджъри не се запазват.`,
@@ -277,6 +293,8 @@ function SettingsSecurityPage() {
           <SkillsEditor
             categories={skillCategories}
             tags={skillTags}
+            draft={skillDraft}
+            onDraftChange={setSkillDraft}
             onChange={(next) => {
               setSkillCategories(next.categories);
               setSkillTags(next.tags);
