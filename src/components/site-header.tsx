@@ -59,10 +59,10 @@ export function SiteHeader() {
           {user && <NotificationBell />}
           {!user ? (
             <>
-              <Button asChild variant="ghost" className="h-10 px-4 text-base font-medium">
+              <Button asChild variant="ghost" className="h-9 px-4 text-sm font-medium">
                 <Link to="/auth" search={{ mode: "login" }}>Вход</Link>
               </Button>
-              <Button asChild className="h-10 px-5 text-base font-semibold">
+              <Button asChild className="h-9 px-4 text-sm font-semibold">
                 <Link to="/auth" search={{ mode: "register" }}>Регистрация</Link>
               </Button>
             </>
@@ -71,10 +71,10 @@ export function SiteHeader() {
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <button
-                    className="ml-0.5 hidden h-10 w-10 items-center justify-center rounded-full text-foreground ring-offset-background transition hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 md:flex"
+                    className="ml-0.5 hidden h-9 w-9 items-center justify-center rounded-full text-foreground ring-offset-background transition hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 md:flex"
                     aria-label="Меню на профила"
                   >
-                    <CircleUserRound className="h-7 w-7" strokeWidth={1.6} />
+                    <CircleUserRound className="h-[22px] w-[22px]" strokeWidth={1.6} />
                   </button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-64">

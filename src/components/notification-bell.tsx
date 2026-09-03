@@ -19,7 +19,7 @@ import {
 
 function BellButton({ unread }: { unread: number }) {
   return (
-    <Button variant="ghost" size="icon" className="relative h-10 w-10 text-slate-700 [&_svg]:size-7" aria-label="Известия">
+    <Button variant="ghost" size="icon" className="relative h-9 w-9 text-slate-700 [&_svg]:size-[22px]" aria-label="Известия">
       <Bell strokeWidth={1.6} />
       {unread > 0 && (
         <span className="absolute -right-0.5 -top-0.5 grid h-[18px] min-w-[18px] place-items-center rounded-full bg-gradient-to-r from-orange-500 to-rose-500 px-1 text-[10px] font-bold leading-none text-white ring-2 ring-background">

@@ -18,7 +18,7 @@ export function FavouritesNavLink() {
       variant="ghost"
       size="icon"
       className={cn(
-        "relative h-10 w-10 [&_svg]:size-7",
+        "relative h-9 w-9 [&_svg]:size-[22px]",
         hasFavourites
           ? "text-rose-500 hover:text-rose-600"
           : "text-muted-foreground hover:text-foreground"
