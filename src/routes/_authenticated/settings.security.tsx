@@ -110,8 +110,19 @@ function SettingsSecurityPage() {
         city: picked.city ?? null,
         neighborhood: picked.neighborhood ?? null,
       });
-      await saveSkills.mutateAsync({ userId: user.id, categories: skillCategories, tags: skillTags });
-      toast.success("Профилът е обновен.");
+      const skillsResult = await saveSkills.mutateAsync({
+        userId: user.id,
+        categories: skillCategories,
+        tags: skillTags,
+      });
+      setSkillTags(skillsResult.tags);
+      if (skillsResult.droppedTags.length > 0) {
+        toast.warning("Част от уменията не бяха запазени", {
+          description: `Премахнати са: ${skillsResult.droppedTags.join(", ")}. Умения с телефони, имейли, линкове или профили в месинджъри не се запазват.`,
+        });
+      } else {
+        toast.success("Профилът е обновен.");
+      }
     } catch (err) {
       toastError(err, { title: "Промените не бяха запазени" });
     } finally {
