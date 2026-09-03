@@ -31,7 +31,7 @@ export function SiteHeader() {
   const { user, logout } = useAuth();
   const balance = useCreditBalance(user?.id);
   const credits = balance.data ?? user?.credits ?? 0;
-  const hidden = useHideOnScroll(10);
+  const hidden = useHideOnScroll();
   const isHome = useRouterState({ select: (s) => s.location.pathname }) === "/";
   return (
     <header

@@ -90,7 +90,7 @@ function TasksPage() {
 
   return (
     <div className="container mx-auto px-4 py-8 md:py-12">
-      <div className="mb-6 flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+      <div className="mb-6">
         <div>
           <h1 className="text-3xl font-bold tracking-tight text-foreground md:text-4xl">
             Борса за задачи
@@ -102,7 +102,7 @@ function TasksPage() {
 
         <form
           onSubmit={(e) => { e.preventDefault(); update({ q: query || undefined }); }}
-          className="flex w-full max-w-full items-center gap-2 rounded-full border border-border/60 bg-card p-1.5 pl-4 shadow-sm lg:w-[640px]"
+          className="mt-4 flex w-full max-w-[640px] items-center gap-2 rounded-full border border-border/60 bg-card p-1.5 pl-4 shadow-sm"
         >
           <Search className="h-4 w-4 shrink-0 text-muted-foreground" />
           <Input
