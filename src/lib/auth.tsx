@@ -148,10 +148,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const loginSocial: AuthContextValue["loginSocial"] = async () => {
-    const base = SITE_URL || window.location.origin;
+    const siteUrl = (import.meta.env['VITE_SITE_URL'] as string | undefined)?.replace(/\/$/, "");
+    const base = siteUrl || window.location.origin;
     const { error } = await supabase.auth.signInWithOAuth({
       provider: "google",
-      options: { redirectTo: `${base}/auth/callback` },
+      options: { redirectTo: `${base}/` },
     });
     if (error) {
       captureIssue({ area: "auth", action: "sign in with google", error });

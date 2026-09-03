@@ -22,10 +22,7 @@ export const getMonitoringConfig = createServerFn({ method: "GET" }).handler(
     const environment: "production" | "development" =
       explicit === "production" || explicit === "development"
         ? explicit
-        : host.includes("localhost") ||
-            host.includes("127.0.0.1") ||
-            host.includes("-dev.lovable.app") ||
-            host.includes("id-preview")
+        : host.includes("localhost") || host.includes("127.0.0.1")
           ? "development"
           : "production";
 

@@ -55,7 +55,7 @@ export function serverEnvironment(): "production" | "development" {
   } catch {
     host = "";
   }
-  if (host.includes("-dev.lovable.app") || host.includes("localhost")) return "development";
+  if (host.includes("localhost") || host.includes("127.0.0.1")) return "development";
   return process.env["NODE_ENV"] === "production" ? "production" : "development";
 }
 
