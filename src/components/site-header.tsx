@@ -19,10 +19,13 @@ import {
 } from "@/components/ui/dropdown-menu";
 
 const NAV_UNDERLINE =
-  "after:absolute after:inset-x-4 after:bottom-0.5 after:h-0.5 after:origin-left after:rounded-full after:bg-gradient-to-r after:from-orange-500 after:to-rose-500 after:transition-transform after:duration-200";
+  "after:absolute after:inset-x-5 after:bottom-1 after:h-[2px] after:origin-left after:rounded-full after:bg-gradient-to-r after:from-orange-500 after:to-rose-500 after:transition-transform after:duration-200 after:ease-out";
 
-const navLinkIdle = `relative rounded-full px-4 py-1.5 text-[15px] font-medium tracking-[0.01em] text-muted-foreground transition-colors duration-200 after:scale-x-0 hover:text-foreground hover:after:scale-x-100 ${NAV_UNDERLINE}`;
-const navLinkActive = `relative rounded-full bg-gradient-to-r from-orange-500 to-rose-500 bg-clip-text px-4 py-1.5 text-[15px] font-semibold tracking-[0.01em] text-transparent after:scale-x-100 ${NAV_UNDERLINE}`;
+const NAV_BASE =
+  "relative rounded-full px-5 py-2 text-base tracking-[0.015em] transition-all duration-200 ease-out motion-reduce:transition-none";
+
+const navLinkIdle = `${NAV_BASE} font-medium text-muted-foreground after:scale-x-0 hover:bg-gradient-to-r hover:from-orange-500/10 hover:to-rose-500/10 hover:text-foreground hover:after:scale-x-100 ${NAV_UNDERLINE}`;
+const navLinkActive = `${NAV_BASE} bg-gradient-to-r from-orange-500 to-rose-500 bg-clip-text font-semibold text-transparent after:scale-x-100 ${NAV_UNDERLINE}`;
 
 export function SiteHeader() {
   const { user, logout } = useAuth();
