@@ -1967,6 +1967,13 @@ export type Database = {
         Returns: string
       }
       own_task_delete_preview: { Args: { _task_id: string }; Returns: Json }
+      popular_skill_tags: {
+        Args: { p_categories?: string[]; p_limit?: number }
+        Returns: {
+          tag: string
+          uses: number
+        }[]
+      }
       public_profile: { Args: { _user_id: string }; Returns: Json }
       public_profiles: {
         Args: { _ids: string[] }

@@ -2,16 +2,14 @@ import { useEffect, useState } from "react";
 
 /**
  * Returns true when the header should be hidden (desktop scroll-down).
- * Compares the delta against the previous scroll position on every event:
- * any upward movement of `upThreshold` px reveals the header instantly,
- * downward movement needs `downThreshold` px to hide it (jitter guard).
+ * Deliberately simple: any upward movement reveals the header immediately,
+ * downward movement hides it after `downThreshold` px (jitter guard).
  */
-export function useHideOnScroll(downThreshold = 15, minWidth = 768, upThreshold = 5) {
+export function useHideOnScroll(downThreshold = 15, minWidth = 768) {
   const [hidden, setHidden] = useState(false);
 
   useEffect(() => {
     let lastY = window.scrollY;
-    let upwardDistance = 0;
     let downwardDistance = 0;
     let ticking = false;
 
@@ -22,7 +20,6 @@ export function useHideOnScroll(downThreshold = 15, minWidth = 768, upThreshold 
 
       if (!isDesktop || y <= downThreshold) {
         lastY = y;
-        upwardDistance = 0;
         downwardDistance = 0;
         setHidden(false);
         return;
@@ -32,12 +29,10 @@ export function useHideOnScroll(downThreshold = 15, minWidth = 768, upThreshold 
       lastY = y;
 
       if (delta < 0) {
-        upwardDistance += -delta;
         downwardDistance = 0;
-        if (upwardDistance >= upThreshold) setHidden(false);
+        setHidden(false);
       } else if (delta > 0) {
         downwardDistance += delta;
-        upwardDistance = 0;
         if (downwardDistance >= downThreshold) setHidden(true);
       }
     };
@@ -51,7 +46,7 @@ export function useHideOnScroll(downThreshold = 15, minWidth = 768, upThreshold 
 
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
-  }, [downThreshold, minWidth, upThreshold]);
+  }, [downThreshold, minWidth]);
 
   return hidden;
 }

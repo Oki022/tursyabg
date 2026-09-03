@@ -1,15 +1,19 @@
-import { useState, type KeyboardEvent } from "react";
+import { useMemo, useState, type KeyboardEvent } from "react";
 import { Plus, X } from "lucide-react";
 import { categories as ALL_CATEGORIES } from "@/lib/mock-data";
 import { cn } from "@/lib/utils";
+import { normalizeSkillTag, skillTagError, skillTagKey } from "@/lib/skill-tags";
+import { usePopularSkillTags } from "@/lib/skills-api";
 
 export const MAX_SKILL_CATEGORIES = 8;
 export const MAX_SKILL_TAGS = 10;
 
 /**
  * Controlled editor for profile skills: category multi-select (from the
- * existing category list) plus free-text tags. Free-text tags are masked and
- * moderated server-side by the profiles_moderate_skills trigger.
+ * existing category list) plus free-text tags. Tags are validated on the
+ * client (no phones, emails, links or messenger handles) before they are
+ * added, mirroring the server-side masking, and suggested from tags already
+ * used across the platform so they converge.
  */
 export function SkillsEditor({
   categories,
@@ -23,6 +27,38 @@ export function SkillsEditor({
   disabled?: boolean;
 }) {
   const [draft, setDraft] = useState("");
+  const [error, setError] = useState<string | null>(null);
+  const popular = usePopularSkillTags(categories, !disabled);
+
+  const taken = useMemo(() => new Set(tags.map(skillTagKey)), [tags]);
+  const query = skillTagKey(draft);
+
+  const suggestions = useMemo(() => {
+    const all = popular.data ?? [];
+    const pool = all.filter((s) => !taken.has(skillTagKey(s.tag)));
+    if (!query) return pool.slice(0, 8);
+    return pool.filter((s) => skillTagKey(s.tag).includes(query)).slice(0, 8);
+  }, [popular.data, taken, query]);
+
+  const addTag = (value: string) => {
+    const t = normalizeSkillTag(value);
+    const err = skillTagError(t);
+    if (err) {
+      setError(err);
+      return;
+    }
+    if (tags.length >= MAX_SKILL_TAGS) {
+      setError(`Може да добавиш най-много ${MAX_SKILL_TAGS} умения.`);
+      return;
+    }
+    if (taken.has(skillTagKey(t))) {
+      setError("Това умение вече е добавено.");
+      return;
+    }
+    setError(null);
+    setDraft("");
+    onChange({ categories, tags: [...tags, t] });
+  };
 
   const toggleCategory = (id: string) => {
     if (categories.includes(id)) {
@@ -32,15 +68,6 @@ export function SkillsEditor({
     }
   };
 
-  const addTag = () => {
-    const t = draft.trim().slice(0, 30);
-    setDraft("");
-    if (!t) return;
-    if (tags.length >= MAX_SKILL_TAGS) return;
-    if (tags.some((x) => x.toLowerCase() === t.toLowerCase())) return;
-    onChange({ categories, tags: [...tags, t] });
-  };
-
   const removeTag = (tag: string) => {
     onChange({ categories, tags: tags.filter((t) => t !== tag) });
   };
@@ -48,9 +75,11 @@ export function SkillsEditor({
   const onKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
       e.preventDefault();
-      addTag();
+      addTag(draft);
     }
   };
+
+  const draftError = draft.trim() ? skillTagError(draft) : null;
 
   return (
     <div className="grid gap-4">
@@ -92,23 +121,58 @@ export function SkillsEditor({
           <input
             type="text"
             value={draft}
-            onChange={(e) => setDraft(e.target.value)}
+            onChange={(e) => {
+              setDraft(e.target.value);
+              if (error) setError(null);
+            }}
             onKeyDown={onKeyDown}
             disabled={disabled || tags.length >= MAX_SKILL_TAGS}
             maxLength={30}
+            aria-invalid={Boolean(error || draftError)}
             placeholder="Добави умение…"
-            className="h-10 min-w-0 flex-1 rounded-md border border-input bg-background px-3 text-sm outline-none ring-offset-background placeholder:text-muted-foreground focus-visible:ring-2 focus-visible:ring-ring disabled:opacity-50"
+            className={cn(
+              "h-10 min-w-0 flex-1 rounded-md border bg-background px-3 text-sm outline-none ring-offset-background placeholder:text-muted-foreground focus-visible:ring-2 focus-visible:ring-ring disabled:opacity-50",
+              error || draftError ? "border-destructive" : "border-input",
+            )}
           />
           <button
             type="button"
-            onClick={addTag}
-            disabled={disabled || !draft.trim() || tags.length >= MAX_SKILL_TAGS}
+            onClick={() => addTag(draft)}
+            disabled={disabled || !draft.trim() || Boolean(draftError) || tags.length >= MAX_SKILL_TAGS}
             aria-label="Добави умение"
             className="grid h-10 w-10 shrink-0 place-items-center rounded-md border border-border bg-secondary text-foreground transition-colors hover:bg-secondary/70 disabled:opacity-50"
           >
             <Plus className="h-4 w-4" />
           </button>
         </div>
+
+        {(error || draftError) && (
+          <p className="text-xs font-medium text-destructive" role="alert">
+            {error ?? draftError}
+          </p>
+        )}
+
+        {suggestions.length > 0 && tags.length < MAX_SKILL_TAGS && (
+          <div className="mt-1 grid gap-1">
+            <p className="text-xs text-muted-foreground">
+              {query ? "Съвпадащи умения" : "Често използвани умения"}
+            </p>
+            <div className="flex flex-wrap gap-1.5">
+              {suggestions.map((s) => (
+                <button
+                  key={s.tag}
+                  type="button"
+                  disabled={disabled}
+                  onClick={() => addTag(s.tag)}
+                  className="rounded-full border border-dashed border-border px-2.5 py-1 text-xs text-muted-foreground transition-colors hover:border-primary/40 hover:text-foreground"
+                >
+                  {s.tag}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+
         {tags.length > 0 && (
           <div className="mt-1.5 flex flex-wrap gap-1.5">
             {tags.map((t) => (
