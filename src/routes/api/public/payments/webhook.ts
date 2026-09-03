@@ -83,18 +83,11 @@ export const Route = createFileRoute("/api/public/payments/webhook")({
     handlers: {
       POST: async ({ request }) => {
         const { reportServerIssue } = await import("@/lib/monitoring/sentry.server");
+        // Environment is a deployment concern now (STRIPE_ENVIRONMENT); the
+        // legacy ?env= query parameter is still honoured if present.
         const rawEnv = new URL(request.url).searchParams.get("env");
-        if (rawEnv !== "sandbox" && rawEnv !== "live") {
-          console.error("Webhook received with invalid env:", rawEnv);
-          reportServerIssue({
-            area: "payments.webhook",
-            action: "webhook received with invalid env",
-            error: new Error(`Invalid webhook env: ${String(rawEnv)}`),
-            route: "/api/public/payments/webhook",
-          });
-          return Response.json({ received: true, ignored: "invalid env" });
-        }
-        const env: StripeEnv = rawEnv;
+        const env: StripeEnv =
+          rawEnv === "sandbox" || rawEnv === "live" ? rawEnv : getStripeEnvironment();
         let eventType = "unknown";
         try {
           const event = await verifyWebhook(request, env);
