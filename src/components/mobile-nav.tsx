@@ -4,7 +4,7 @@ import { UnreadBadge } from "@/components/unread-badge";
 
 const items = [
   { to: "/", label: "Начало", icon: Home, exact: true },
-  { to: "/tasks", label: "Задачи", icon: Search, exact: false },
+  { to: "/tasks", label: "Работа", icon: Search, exact: false },
   { to: "/messages", label: "Съобщения", icon: MessageCircle, exact: false },
   { to: "/profile", label: "Профил", icon: CircleUserRound, exact: false },
 ] as const;
