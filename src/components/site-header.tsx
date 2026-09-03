@@ -1,5 +1,5 @@
 import { Link, useRouterState } from "@tanstack/react-router";
-import { CircleUserRound, LogOut, MessageCircle, Plus, Settings, Heart, Bell } from "lucide-react";
+import { CircleUserRound, LogOut, MessageCircle, Plus, Settings, Heart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { NotificationBell } from "@/components/notification-bell";
 import { FavouritesNavLink } from "@/components/favourites-nav-link";
