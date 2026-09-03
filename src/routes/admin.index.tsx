@@ -174,6 +174,11 @@ function AdminDashboard() {
           value={String(s?.violations_30d ?? 0)}
           hint="Автоматични и ръчни санкции"
         />
+        <Stat
+          label="Реклами на услуги 30 дни"
+          value={String(s?.service_ad_blocks_30d ?? 0)}
+          hint={`спрени · ${s?.service_ad_blocks_7d ?? 0} за 7 дни · ${s?.service_ad_flags_30d ?? 0} за преглед`}
+        />
       </div>
 
       <AdminCard className="p-4">
