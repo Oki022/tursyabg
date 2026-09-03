@@ -31,6 +31,12 @@ export function categoryBg(category?: string | null) {
 export function moderationErrorBg(raw: string): { title: string; description: string } | null {
   if (raw.includes("CONTENT_BLOCKED")) {
     const category = raw.split("CONTENT_BLOCKED:")[1]?.trim().split(/\s/)[0] ?? "other";
+    if (category === "service_ad") {
+      return {
+        title: "Това прилича на реклама на услуга",
+        description: SERVICE_AD_HELP,
+      };
+    }
     return {
       title: "Съдържанието не беше публикувано",
       description: `Текстът съдържа ${categoryBg(category)}. Преформулирай го без забранените изрази и опитай отново. Правилата са в Общите условия.`,
