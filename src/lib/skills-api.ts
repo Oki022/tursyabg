@@ -59,3 +59,25 @@ export function useSaveSkills() {
     },
   });
 }
+
+export type PopularSkillTag = { tag: string; uses: number };
+
+/** Existing tags used across the platform, optionally scoped to categories. */
+export function usePopularSkillTags(categories: string[], enabled = true) {
+  const key = [...categories].sort();
+  return useQuery({
+    queryKey: ["popular-skill-tags", key],
+    enabled,
+    staleTime: 5 * 60 * 1000,
+    queryFn: async (): Promise<PopularSkillTag[]> => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const { data, error } = await (supabase as any).rpc("popular_skill_tags", {
+        p_categories: key.length ? key : null,
+        p_limit: 24,
+      });
+      if (error) throw error;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      return ((data as any[]) ?? []).map((r) => ({ tag: String(r.tag), uses: Number(r.uses) }));
+    },
+  });
+}
