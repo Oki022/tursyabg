@@ -89,11 +89,8 @@ function Index() {
             </form>
 
             <div className="mt-6 flex flex-col items-center justify-center gap-3 sm:flex-row">
-              <Button asChild size="lg" className="w-full gap-2 sm:w-auto">
-                <Link to="/post"><Plus className="h-4 w-4" /> Възложи задача</Link>
-              </Button>
               <Button asChild size="lg" variant="outline" className="w-full gap-2 sm:w-auto">
-                <Link to="/tasks"><Briefcase className="h-4 w-4" /> Намери задачи</Link>
+                <Link to="/tasks"><Briefcase className="h-4 w-4" /> Намери работа</Link>
               </Button>
             </div>
           </div>
