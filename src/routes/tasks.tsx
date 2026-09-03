@@ -90,30 +90,33 @@ function TasksPage() {
 
   return (
     <div className="container mx-auto px-4 py-8 md:py-12">
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold tracking-tight text-foreground md:text-4xl">
-          Борса за задачи
-        </h1>
-        <p className="mt-2 text-muted-foreground">
-          {isLoading ? "Зареждане..." : `${filtered.length}${hasNextPage ? "+" : ""} ${filtered.length === 1 ? "активна задача" : "активни задачи"}`}
-        </p>
+      <div className="mb-6 flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight text-foreground md:text-4xl">
+            Борса за задачи
+          </h1>
+          <p className="mt-2 text-muted-foreground">
+            {isLoading ? "Зареждане..." : `${filtered.length}${hasNextPage ? "+" : ""} ${filtered.length === 1 ? "активна задача" : "активни задачи"}`}
+          </p>
+        </div>
+
+        <form
+          onSubmit={(e) => { e.preventDefault(); update({ q: query || undefined }); }}
+          className="flex w-full max-w-full items-center gap-2 rounded-full border border-border/60 bg-card p-1.5 pl-4 shadow-sm lg:w-[640px]"
+        >
+          <Search className="h-4 w-4 shrink-0 text-muted-foreground" />
+          <Input
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            placeholder="Търси по ключова дума..."
+            className="h-9 min-w-0 flex-1 border-0 bg-transparent px-0 shadow-none focus-visible:ring-0"
+          />
+          <Button type="submit" className="shrink-0 rounded-full px-5">Търси</Button>
+        </form>
       </div>
 
-      <form
-        onSubmit={(e) => { e.preventDefault(); update({ q: query || undefined }); }}
-        className="mb-6 flex items-center gap-2 rounded-xl border border-border bg-card p-2 shadow-sm"
-      >
-        <Search className="ml-2 h-4 w-4 text-muted-foreground" />
-        <Input
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          placeholder="Търси по ключова дума..."
-          className="border-0 bg-transparent px-0 shadow-none focus-visible:ring-0"
-        />
-        <Button type="submit" size="sm">Търси</Button>
-      </form>
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-[240px_1fr] lg:gap-5">
 
-      <div className="grid grid-cols-1 gap-6 lg:grid-cols-[260px_1fr]">
         {/* Sidebar */}
         <aside className="space-y-6 rounded-2xl border border-border bg-card p-5 lg:sticky lg:top-20 lg:self-start">
           <div className="flex items-center justify-between">
