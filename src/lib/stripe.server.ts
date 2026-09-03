@@ -32,12 +32,10 @@ export function getStripeErrorMessage(error: unknown): string {
   return 'Плащането не може да бъде обработено.';
 }
 
-export async function verifyWebhook(req: Request, env: StripeEnv): Promise<{ id: string; type: string; data: { object: any } }> {
+export async function verifyWebhook(req: Request, _env?: StripeEnv): Promise<{ id: string; type: string; data: { object: any } }> {
   const signature = req.headers.get('stripe-signature');
   const body = await req.text();
-  const secret = env === 'sandbox'
-    ? getEnv('PAYMENTS_SANDBOX_WEBHOOK_SECRET')
-    : getEnv('PAYMENTS_LIVE_WEBHOOK_SECRET');
+  const secret = getEnv('STRIPE_WEBHOOK_SECRET');
 
   if (!signature || !body) throw new Error('Missing signature or body');
 
