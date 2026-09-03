@@ -85,14 +85,11 @@ function Index() {
                   className="h-11 border-0 bg-transparent px-0 text-base shadow-none focus-visible:ring-0"
                 />
               </div>
-              <Button type="submit" size="lg">Търси</Button>
-            </form>
-
-            <div className="mt-6 flex flex-col items-center justify-center gap-3 sm:flex-row">
-              <Button asChild size="lg" variant="outline" className="w-full gap-2 sm:w-auto">
-                <Link to="/tasks"><Briefcase className="h-4 w-4" /> Намери работа</Link>
+              <Button type="submit" size="lg" className="w-full gap-2 sm:w-auto">
+                <Briefcase className="h-4 w-4" />
+                Намери работа
               </Button>
-            </div>
+            </form>
           </div>
         </div>
       </section>
