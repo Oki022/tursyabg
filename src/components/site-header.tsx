@@ -44,7 +44,7 @@ export function SiteHeader() {
       <div className="mx-auto flex h-16 w-full max-w-7xl items-center justify-between gap-2 px-4 md:grid md:grid-cols-[1fr_auto_1fr]">
         <Logo size="md" />
         {!isHome && (
-          <nav className="hidden items-center gap-1 justify-self-center md:flex">
+          <nav className="hidden items-center gap-2 justify-self-center md:flex">
             <Link to="/" className={navLinkIdle} activeOptions={{ exact: true }} activeProps={{ className: navLinkActive }}>
               Начало
             </Link>
@@ -74,7 +74,7 @@ export function SiteHeader() {
                     className="ml-0.5 hidden rounded-full p-0.5 text-foreground ring-offset-background transition hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 md:block"
                     aria-label="Меню на профила"
                   >
-                    <CircleUserRound className="h-7 w-7" strokeWidth={1.75} />
+                    <CircleUserRound className="h-8 w-8" strokeWidth={1.6} />
                   </button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-64">
