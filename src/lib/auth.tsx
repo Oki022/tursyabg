@@ -148,14 +148,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const loginSocial: AuthContextValue["loginSocial"] = async () => {
-    const { lovable } = await import("@/integrations/lovable/index");
-    const result = await lovable.auth.signInWithOAuth("google", {
-      redirect_uri: window.location.origin,
+    const base = SITE_URL || window.location.origin;
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: "google",
+      options: { redirectTo: `${base}/auth/callback` },
     });
-    if (result.error) {
-      const err = new Error(result.error.message ?? "Неуспешен вход с Google");
-      captureIssue({ area: "auth", action: "sign in with google", error: err });
-      throw err;
+    if (error) {
+      captureIssue({ area: "auth", action: "sign in with google", error });
+      throw error;
     }
   };
 
