@@ -46,10 +46,7 @@ export function SiteHeader() {
               Начало
             </Link>
             <Link to="/tasks" className={navLinkIdle} activeProps={{ className: navLinkActive }}>
-              Намери задачи
-            </Link>
-            <Link to="/post" className={navLinkIdle} activeProps={{ className: navLinkActive }}>
-              Възложи задача
+              Намери работа
             </Link>
           </nav>
         )}
