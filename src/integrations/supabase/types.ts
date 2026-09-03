@@ -664,6 +664,7 @@ export type Database = {
           pattern: string
           severity: string
           updated_at: string
+          weight: number
         }
         Insert: {
           category: string
@@ -675,6 +676,7 @@ export type Database = {
           pattern: string
           severity: string
           updated_at?: string
+          weight?: number
         }
         Update: {
           category?: string
@@ -686,6 +688,7 @@ export type Database = {
           pattern?: string
           severity?: string
           updated_at?: string
+          weight?: number
         }
         Relationships: []
       }
@@ -1851,6 +1854,7 @@ export type Database = {
         Args: { _reason: string; _task_id: string }
         Returns: Json
       }
+      detect_service_ad: { Args: { _text: string }; Returns: Json }
       enqueue_moderation: {
         Args: {
           _category: string
