@@ -11,6 +11,8 @@ export function useHideOnScroll(downThreshold = 15, minWidth = 768, upThreshold 
 
   useEffect(() => {
     let lastY = window.scrollY;
+    let upwardDistance = 0;
+    let downwardDistance = 0;
     let ticking = false;
 
     const update = () => {
@@ -20,6 +22,8 @@ export function useHideOnScroll(downThreshold = 15, minWidth = 768, upThreshold 
 
       if (!isDesktop || y <= downThreshold) {
         lastY = y;
+        upwardDistance = 0;
+        downwardDistance = 0;
         setHidden(false);
         return;
       }
@@ -27,10 +31,14 @@ export function useHideOnScroll(downThreshold = 15, minWidth = 768, upThreshold 
       const delta = y - lastY;
       lastY = y;
 
-      if (delta <= -upThreshold) {
-        setHidden(false);
-      } else if (delta >= downThreshold) {
-        setHidden(true);
+      if (delta < 0) {
+        upwardDistance += -delta;
+        downwardDistance = 0;
+        if (upwardDistance >= upThreshold) setHidden(false);
+      } else if (delta > 0) {
+        downwardDistance += delta;
+        upwardDistance = 0;
+        if (downwardDistance >= downThreshold) setHidden(true);
       }
     };
 
