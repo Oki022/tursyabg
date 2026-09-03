@@ -18,7 +18,7 @@ export function FavouritesNavLink() {
       variant="ghost"
       size="icon"
       className={cn(
-        "relative",
+        "relative h-10 w-10 [&_svg]:size-7",
         hasFavourites
           ? "text-rose-500 hover:text-rose-600"
           : "text-muted-foreground hover:text-foreground"
@@ -26,7 +26,7 @@ export function FavouritesNavLink() {
     >
       <Link to="/favourites" aria-label="Любими задачи">
         <Heart
-          className={cn("h-8 w-8 transition-colors", hasFavourites && "fill-current")}
+          className={cn("transition-colors", hasFavourites && "fill-current")}
           strokeWidth={1.6}
         />
       </Link>
