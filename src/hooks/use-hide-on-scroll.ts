@@ -31,6 +31,8 @@ export function useHideOnScroll(downThreshold = 15, minWidth = 768, upThreshold 
       const delta = y - lastY;
       lastY = y;
 
+      // TEMP DIAGNOSTIC
+      console.log("[hide]", JSON.stringify({ y, prev: y - delta, delta, up: upwardDistance, down: downwardDistance }));
       if (delta < 0) {
         upwardDistance += -delta;
         downwardDistance = 0;
