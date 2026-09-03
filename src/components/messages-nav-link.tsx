@@ -11,7 +11,7 @@ export function MessagesNavLink() {
   const count = data ?? 0;
   if (!user) return null;
   return (
-    <Button asChild variant="ghost" size="icon" className="relative hidden h-9 w-9 text-slate-700 [&_svg]:size-[22px] md:inline-flex">
+    <Button asChild variant="ghost" size="icon" className="relative hidden h-9! w-9! text-slate-700 [&_svg]:size-[22px] md:inline-flex">
       <Link to="/messages" aria-label="Съобщения">
         <MessageCircle strokeWidth={1.6} />
         {count > 0 && (
