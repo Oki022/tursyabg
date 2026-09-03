@@ -1,5 +1,5 @@
 import { useMemo, useState, type KeyboardEvent } from "react";
-import { Plus, X } from "lucide-react";
+import { X } from "lucide-react";
 import { categories as ALL_CATEGORIES } from "@/lib/mock-data";
 import { cn } from "@/lib/utils";
 import { normalizeSkillTag, skillTagError, skillTagKey } from "@/lib/skill-tags";
@@ -18,15 +18,18 @@ export const MAX_SKILL_TAGS = 10;
 export function SkillsEditor({
   categories,
   tags,
+  draft,
+  onDraftChange,
   onChange,
   disabled,
 }: {
   categories: string[];
   tags: string[];
+  draft: string;
+  onDraftChange: (value: string) => void;
   onChange: (next: { categories: string[]; tags: string[] }) => void;
   disabled?: boolean;
 }) {
-  const [draft, setDraft] = useState("");
   const [error, setError] = useState<string | null>(null);
   const popular = usePopularSkillTags(categories, !disabled);
 
@@ -56,7 +59,7 @@ export function SkillsEditor({
       return;
     }
     setError(null);
-    setDraft("");
+    onDraftChange("");
     onChange({ categories, tags: [...tags, t] });
   };
 
@@ -73,7 +76,7 @@ export function SkillsEditor({
   };
 
   const onKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Enter") {
+    if (e.key === "Enter" || e.key === ",") {
       e.preventDefault();
       addTag(draft);
     }
@@ -117,12 +120,12 @@ export function SkillsEditor({
         <p className="text-xs text-muted-foreground">
           До {MAX_SKILL_TAGS} кратки етикета, напр. „фризьор“, „монтаж на климатици“. Без телефони и имейли. Контактите се споделят само чрез платформата.
         </p>
-        <div className="mt-1 flex gap-2">
+        <div className="mt-1">
           <input
             type="text"
             value={draft}
             onChange={(e) => {
-              setDraft(e.target.value);
+              onDraftChange(e.target.value);
               if (error) setError(null);
             }}
             onKeyDown={onKeyDown}
@@ -135,15 +138,6 @@ export function SkillsEditor({
               error || draftError ? "border-destructive" : "border-input",
             )}
           />
-          <button
-            type="button"
-            onClick={() => addTag(draft)}
-            disabled={disabled || !draft.trim() || Boolean(draftError) || tags.length >= MAX_SKILL_TAGS}
-            aria-label="Добави умение"
-            className="grid h-10 w-10 shrink-0 place-items-center rounded-md border border-border bg-secondary text-foreground transition-colors hover:bg-secondary/70 disabled:opacity-50"
-          >
-            <Plus className="h-4 w-4" />
-          </button>
         </div>
 
         {(error || draftError) && (
@@ -178,7 +172,7 @@ export function SkillsEditor({
             {tags.map((t) => (
               <span
                 key={t}
-                className="inline-flex items-center gap-1 rounded-full bg-secondary px-2.5 py-1 text-xs font-medium text-foreground"
+                className="inline-flex items-center gap-1 rounded-full bg-gradient-to-r from-orange-500 to-rose-500 px-2.5 py-1 text-xs font-medium text-white shadow-sm"
               >
                 {t}
                 <button
@@ -186,7 +180,7 @@ export function SkillsEditor({
                   onClick={() => removeTag(t)}
                   disabled={disabled}
                   aria-label={`Премахни ${t}`}
-                  className="rounded-full p-0.5 text-muted-foreground transition-colors hover:text-destructive"
+                  className="rounded-full p-0.5 text-white/80 transition-colors hover:text-white"
                 >
                   <X className="h-3 w-3" />
                 </button>
