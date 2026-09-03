@@ -42,6 +42,10 @@ export type DashboardStats = {
   /** Share of automated content checks resolved without a human, last 7 days. */
   moderation_auto_rate_7d: number | null;
   violations_30d: number;
+  /** Listings blocked because they advertised a service instead of asking for one. */
+  service_ad_blocks_30d: number;
+  service_ad_blocks_7d: number;
+  service_ad_flags_30d: number;
   tasks_pending: number;
   tasks_pending_oldest: string | null;
   contact_new: number;
