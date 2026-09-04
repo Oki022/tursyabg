@@ -31,7 +31,7 @@ export function TaskCard({ task }: { task: Task }) {
           iconClassName="h-10 w-10"
           className="aspect-[4/3] w-full"
         />
-        <div className="pointer-events-none absolute inset-x-0 top-0 flex items-start justify-between gap-1.5 p-1.5">
+        <div className="pointer-events-none absolute left-0 top-0 p-1.5">
           <Badge
             variant="secondary"
             className="min-w-0 max-w-[60%] gap-1 rounded-full bg-background/90 px-1.5 py-0.5 text-[9px] font-medium leading-tight shadow-sm backdrop-blur sm:px-2 sm:text-[11px]"
@@ -39,13 +39,13 @@ export function TaskCard({ task }: { task: Task }) {
             <Icon className="hidden h-3 w-3 shrink-0 sm:block" />
             <span className="truncate">{cat.name}</span>
           </Badge>
-          {(task.isTop || task.isUrgent) && (
-            <div className="mt-9 flex min-w-0 max-w-[40%] flex-col items-end gap-1">
-              {task.isTop && <TopBadge />}
-              {task.isUrgent && <UrgentBadge />}
-            </div>
-          )}
         </div>
+        {(task.isTop || task.isUrgent) && (
+          <div className="pointer-events-none absolute bottom-0 right-0 flex min-w-0 max-w-[50%] flex-col items-end gap-1 p-1.5">
+            {task.isTop && <TopBadge />}
+            {task.isUrgent && <UrgentBadge />}
+          </div>
+        )}
       </div>
 
       <div className="flex min-w-0 flex-1 flex-col gap-1 p-2.5">
