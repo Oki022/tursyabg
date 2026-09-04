@@ -21,8 +21,11 @@ export function FavouriteButton({ taskId, ownerId, className, size = "sm" }: Fav
   if (user && ownerId && user.id === ownerId) return null;
 
   const saved = (ids.data ?? []).includes(taskId);
-  const icon = size === "md" ? "h-5 w-5" : "h-4 w-4";
-  const box = size === "md" ? "h-10 w-10" : "h-8 w-8";
+  const isMd = size === "md";
+  // The outer button is the touch target (min 36 px); the inner circle is the visible element.
+  const outer = isMd ? "h-10 w-10" : "h-9 w-9";
+  const inner = isMd ? "h-8 w-8" : "h-6 w-6 sm:h-7 sm:w-7";
+  const icon = isMd ? "h-4 w-4" : "h-3 w-3 sm:h-3.5 sm:w-3.5";
 
   return (
     <button
@@ -41,15 +44,22 @@ export function FavouriteButton({ taskId, ownerId, className, size = "sm" }: Fav
 
       }}
       className={cn(
-        "grid place-items-center rounded-full bg-background/90 shadow-sm backdrop-blur transition-transform active:scale-90",
-        box,
+        "grid place-items-center rounded-full transition-transform active:scale-90",
+        outer,
         className,
       )}
     >
-      <Heart
-        className={cn(icon, saved ? "fill-rose-500 text-rose-500" : "text-muted-foreground")}
-        strokeWidth={2}
-      />
+      <span
+        className={cn(
+          "grid place-items-center rounded-full bg-background/90 shadow-sm backdrop-blur",
+          inner,
+        )}
+      >
+        <Heart
+          className={cn(icon, saved ? "fill-rose-500 text-rose-500" : "text-muted-foreground")}
+          strokeWidth={2}
+        />
+      </span>
     </button>
   );
 }
