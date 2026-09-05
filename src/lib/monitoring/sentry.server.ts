@@ -9,6 +9,7 @@
  */
 import {
   errorMessageOf,
+  isExpectedUserError,
   isIgnoredError,
   priorityForArea,
   scrubText,
