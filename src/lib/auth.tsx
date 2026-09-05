@@ -23,6 +23,8 @@ export type AuthUser = {
 type AuthContextValue = {
   user: AuthUser | null;
   loading: boolean;
+  /** null = още не знаем (сървър/първо рисуване), true/false = има ли запазена сесия */
+  hasStoredSession: boolean | null;
   login: (email: string, password: string) => Promise<void>;
   loginSocial: (provider: "google") => Promise<void>;
   register: (data: { name: string; email: string; password: string; phone: string }) => Promise<{ needsConfirmation: boolean }>;
@@ -92,12 +94,39 @@ async function buildUser(session: Session): Promise<AuthUser> {
   };
 }
 
+/**
+ * Бърза проверка дали в браузъра има запазена сесия, преди Supabase да я
+ * потвърди. Използва се само за да покажем правилния навигационен вид още при
+ * първото рисуване (без мигане на бутоните за вход).
+ */
+function readStoredSessionHint(): boolean | null {
+  if (typeof window === "undefined") return null;
+  try {
+    for (let i = 0; i < window.localStorage.length; i += 1) {
+      const key = window.localStorage.key(i);
+      if (key && key.startsWith("sb-") && key.endsWith("-auth-token")) {
+        const raw = window.localStorage.getItem(key);
+        if (raw && raw !== "null") return true;
+      }
+    }
+    return false;
+  } catch {
+    return null;
+  }
+}
+
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<AuthUser | null>(null);
   const [loading, setLoading] = useState(true);
+  const [hasStoredSession, setHasStoredSession] = useState<boolean | null>(null);
+
+  useEffect(() => {
+    setHasStoredSession(readStoredSessionHint());
+  }, []);
 
   useEffect(() => {
     let active = true;
+
 
     const sync = async (session: Session | null) => {
       if (!session) {
@@ -268,7 +297,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   return (
     <AuthContext.Provider
-      value={{ user, loading, login, loginSocial, register, resetPassword, updatePassword, changePassword, refreshUser, logout, updateUser }}
+      value={{ user, loading, hasStoredSession, login, loginSocial, register, resetPassword, updatePassword, changePassword, refreshUser, logout, updateUser }}
     >
       {children}
     </AuthContext.Provider>
