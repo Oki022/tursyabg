@@ -101,6 +101,8 @@ export type ClientIssue = {
 export function captureIssue({ area, action, error, route, extra }: ClientIssue): void {
   const message = errorMessageOf(error);
   const priority = priorityForArea(area);
+  // Expected user mistakes are never reported, even on money/access paths.
+  if (isExpectedUserError(message)) return;
   if (priority !== "critical" && isIgnoredError(message)) return;
 
   if (!initialized) {
