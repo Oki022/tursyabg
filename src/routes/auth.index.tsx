@@ -14,7 +14,7 @@ import { seo } from "@/lib/seo";
 
 type AuthSearch = { mode?: "login" | "register"; redirect?: string };
 
-export const Route = createFileRoute("/auth")({
+export const Route = createFileRoute("/auth/")({
   validateSearch: (s: Record<string, unknown>): AuthSearch => ({
     mode: s.mode === "register" ? "register" : "login",
     redirect: typeof s.redirect === "string" && s.redirect.startsWith("/") ? s.redirect : undefined,
@@ -31,7 +31,7 @@ export const Route = createFileRoute("/auth")({
 });
 
 function AuthPage() {
-  const { mode, redirect } = useSearch({ from: "/auth" });
+  const { mode, redirect } = useSearch({ from: "/auth/" });
   const navigate = useNavigate();
   const { login, loginSocial, register, resetPassword, resendConfirmation } = useAuth();
   const [busy, setBusy] = useState(false);
