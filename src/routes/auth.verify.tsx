@@ -1,13 +1,10 @@
-import { createFileRoute, Link, useSearch } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate, useSearch } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { MailCheck, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/lib/auth";
 import { authErrorMessage } from "@/lib/auth-errors";
 import { toast } from "sonner";
-
-// PRE-LAUNCH TODO: тази страница се използва само когато потвърждението на имейл
-// е включено. В момента е изключено за разработка, виж бележката в src/lib/auth.tsx.
 
 type VerifySearch = { email?: string };
 
@@ -33,8 +30,15 @@ const COOLDOWN_SECONDS = 60;
 
 function VerifyPage() {
   const { email } = useSearch({ from: "/auth/verify" });
+  const navigate = useNavigate();
+  const { user, resendConfirmation } = useAuth();
   const [cooldown, setCooldown] = useState(COOLDOWN_SECONDS);
   const [sending, setSending] = useState(false);
+
+  // Ако профилът вече е потвърден и има активна сесия, няма какво да чака тук.
+  useEffect(() => {
+    if (user) void navigate({ to: "/", replace: true });
+  }, [user, navigate]);
 
   useEffect(() => {
     if (cooldown <= 0) return;
@@ -46,12 +50,7 @@ function VerifyPage() {
     if (!email || cooldown > 0 || sending) return;
     setSending(true);
     try {
-      const { error } = await supabase.auth.resend({
-        type: "signup",
-        email,
-        options: { emailRedirectTo: `${window.location.origin}/` },
-      });
-      if (error) throw error;
+      await resendConfirmation(email);
       toast.success("Изпратихме ти нов имейл.");
       setCooldown(COOLDOWN_SECONDS);
     } catch (err) {
@@ -74,8 +73,8 @@ function VerifyPage() {
 
         <p className="mt-3 text-base leading-relaxed text-muted-foreground">
           Изпратихме писмо на{" "}
-          <span className="font-semibold text-foreground">{email ?? "твоя имейл"}</span>. Отвори го и натисни
-          големия бутон вътре, така потвърждаваме, че имейлът е твой. Отнема по-малко от минута.
+          <span className="break-all font-semibold text-foreground">{email ?? "твоя имейл"}</span>. Отвори го и
+          натисни големия бутон вътре, така потвърждаваме, че имейлът е твой. Отнема по-малко от минута.
         </p>
 
         <div className="mt-6 rounded-xl border border-border/60 bg-background p-4 text-left text-sm text-muted-foreground">
