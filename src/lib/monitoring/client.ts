@@ -8,6 +8,7 @@
 import * as Sentry from "@sentry/react";
 import {
   errorMessageOf,
+  isExpectedUserError,
   isIgnoredError,
   priorityForArea,
   sampleRateFor,
@@ -31,6 +32,7 @@ function scrubEvent(event: Sentry.ErrorEvent): Sentry.ErrorEvent | null {
     .join(" ");
 
   const priority = priorityForArea(area);
+  if (isExpectedUserError(message)) return null;
   if (priority !== "critical") {
     if (isIgnoredError(message, stack)) return null;
     if (!shouldSend(area)) return null;
@@ -101,6 +103,8 @@ export type ClientIssue = {
 export function captureIssue({ area, action, error, route, extra }: ClientIssue): void {
   const message = errorMessageOf(error);
   const priority = priorityForArea(area);
+  // Expected user mistakes are never reported, even on money/access paths.
+  if (isExpectedUserError(message)) return;
   if (priority !== "critical" && isIgnoredError(message)) return;
 
   if (!initialized) {
