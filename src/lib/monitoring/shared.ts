@@ -139,8 +139,10 @@ const IGNORED_STACK_HINTS = ["chrome-extension://", "moz-extension://", "anonymo
 
 /** True when the error is noise we deliberately never alert on. */
 export function isIgnoredError(message: string | undefined, stack?: string): boolean {
-  const m = (message ?? "").toLowerCase();
-  if (!m) return false;
+  const raw = message ?? "";
+  if (!raw) return false;
+  if (APP_CODE_RE.test(raw)) return true;
+  const m = raw.toLowerCase();
   if (IGNORED_MESSAGES.some((n) => m.includes(n))) return true;
   const s = (stack ?? "").toLowerCase();
   return IGNORED_STACK_HINTS.some((n) => s.includes(n));
