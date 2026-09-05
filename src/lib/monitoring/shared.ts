@@ -137,11 +137,30 @@ const APP_CODE_RE = new RegExp(`\\b(${IGNORED_APP_CODES.join("|")})\\b`);
 
 const IGNORED_STACK_HINTS = ["chrome-extension://", "moz-extension://", "anonymous>", "gtag", "fbevents"];
 
+/**
+ * Expected, user-caused failure (a mapped app code or a normal auth mistake).
+ * Filtered even in critical areas: an insufficient-credits guard raised during
+ * a spend is user behaviour, not a system fault. Genuine system failures
+ * (DB/RLS errors, Stripe/webhook faults) carry no such code and stay critical.
+ */
+export function isExpectedUserError(message: string | undefined): boolean {
+  const raw = message ?? "";
+  if (!raw) return false;
+  if (APP_CODE_RE.test(raw)) return true;
+  const m = raw.toLowerCase();
+  return (
+    m.includes("email not confirmed") ||
+    m.includes("invalid login credentials") ||
+    m.includes("already been registered") ||
+    m.includes("user already registered")
+  );
+}
+
 /** True when the error is noise we deliberately never alert on. */
 export function isIgnoredError(message: string | undefined, stack?: string): boolean {
   const raw = message ?? "";
   if (!raw) return false;
-  if (APP_CODE_RE.test(raw)) return true;
+  if (isExpectedUserError(raw)) return true;
   const m = raw.toLowerCase();
   if (IGNORED_MESSAGES.some((n) => m.includes(n))) return true;
   const s = (stack ?? "").toLowerCase();
