@@ -22,10 +22,10 @@ import { Route as ManifestDotwebmanifestRouteImport } from './routes/manifest[.]
 import { Route as FaqRouteImport } from './routes/faq'
 import { Route as CookiesRouteImport } from './routes/cookies'
 import { Route as ContactRouteImport } from './routes/contact'
-import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AuthIndexRouteImport } from './routes/auth.index'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as UserIdRouteImport } from './routes/user.$id'
 import { Route as TaskIdRouteImport } from './routes/task.$id'
@@ -127,11 +127,6 @@ const ContactRoute = ContactRouteImport.update({
   path: '/contact',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AuthRoute = AuthRouteImport.update({
-  id: '/auth',
-  path: '/auth',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const AdminRoute = AdminRouteImport.update({
   id: '/admin',
   path: '/admin',
@@ -144,6 +139,11 @@ const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthIndexRoute = AuthIndexRouteImport.update({
+  id: '/auth/',
+  path: '/auth/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AdminIndexRoute = AdminIndexRouteImport.update({
@@ -335,7 +335,6 @@ const AuthenticatedTaskIdEditRoute = AuthenticatedTaskIdEditRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/admin': typeof AdminRouteWithChildren
-  '/auth': typeof AuthRouteWithChildren
   '/contact': typeof ContactRoute
   '/cookies': typeof CookiesRoute
   '/faq': typeof FaqRoute
@@ -371,6 +370,7 @@ export interface FileRoutesByFullPath {
   '/task/$id': typeof TaskIdRoute
   '/user/$id': typeof UserIdRoute
   '/admin/': typeof AdminIndexRoute
+  '/auth/': typeof AuthIndexRoute
   '/billing/success': typeof AuthenticatedBillingSuccessRoute
   '/messages/$conversationId': typeof AuthenticatedMessagesConversationIdRoute
   '/posted/$id': typeof AuthenticatedPostedIdRoute
@@ -387,7 +387,6 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/auth': typeof AuthRouteWithChildren
   '/contact': typeof ContactRoute
   '/cookies': typeof CookiesRoute
   '/faq': typeof FaqRoute
@@ -422,6 +421,7 @@ export interface FileRoutesByTo {
   '/task/$id': typeof TaskIdRoute
   '/user/$id': typeof UserIdRoute
   '/admin': typeof AdminIndexRoute
+  '/auth': typeof AuthIndexRoute
   '/billing/success': typeof AuthenticatedBillingSuccessRoute
   '/messages/$conversationId': typeof AuthenticatedMessagesConversationIdRoute
   '/posted/$id': typeof AuthenticatedPostedIdRoute
@@ -441,7 +441,6 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/admin': typeof AdminRouteWithChildren
-  '/auth': typeof AuthRouteWithChildren
   '/contact': typeof ContactRoute
   '/cookies': typeof CookiesRoute
   '/faq': typeof FaqRoute
@@ -477,6 +476,7 @@ export interface FileRoutesById {
   '/task/$id': typeof TaskIdRoute
   '/user/$id': typeof UserIdRoute
   '/admin/': typeof AdminIndexRoute
+  '/auth/': typeof AuthIndexRoute
   '/_authenticated/billing/success': typeof AuthenticatedBillingSuccessRoute
   '/_authenticated/messages/$conversationId': typeof AuthenticatedMessagesConversationIdRoute
   '/_authenticated/posted/$id': typeof AuthenticatedPostedIdRoute
@@ -496,7 +496,6 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/admin'
-    | '/auth'
     | '/contact'
     | '/cookies'
     | '/faq'
@@ -532,6 +531,7 @@ export interface FileRouteTypes {
     | '/task/$id'
     | '/user/$id'
     | '/admin/'
+    | '/auth/'
     | '/billing/success'
     | '/messages/$conversationId'
     | '/posted/$id'
@@ -548,7 +548,6 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
-    | '/auth'
     | '/contact'
     | '/cookies'
     | '/faq'
@@ -583,6 +582,7 @@ export interface FileRouteTypes {
     | '/task/$id'
     | '/user/$id'
     | '/admin'
+    | '/auth'
     | '/billing/success'
     | '/messages/$conversationId'
     | '/posted/$id'
@@ -601,7 +601,6 @@ export interface FileRouteTypes {
     | '/'
     | '/_authenticated'
     | '/admin'
-    | '/auth'
     | '/contact'
     | '/cookies'
     | '/faq'
@@ -637,6 +636,7 @@ export interface FileRouteTypes {
     | '/task/$id'
     | '/user/$id'
     | '/admin/'
+    | '/auth/'
     | '/_authenticated/billing/success'
     | '/_authenticated/messages/$conversationId'
     | '/_authenticated/posted/$id'
@@ -656,7 +656,6 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AdminRoute: typeof AdminRouteWithChildren
-  AuthRoute: typeof AuthRouteWithChildren
   ContactRoute: typeof ContactRoute
   CookiesRoute: typeof CookiesRoute
   FaqRoute: typeof FaqRoute
@@ -675,6 +674,7 @@ export interface RootRouteChildren {
   CityCityRoute: typeof CityCityRouteWithChildren
   TaskIdRoute: typeof TaskIdRoute
   UserIdRoute: typeof UserIdRoute
+  AuthIndexRoute: typeof AuthIndexRoute
   ApiPublicMonitoringCronCheckRoute: typeof ApiPublicMonitoringCronCheckRoute
   ApiPublicPaymentsWebhookRoute: typeof ApiPublicPaymentsWebhookRoute
 }
@@ -772,13 +772,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ContactRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/auth': {
-      id: '/auth'
-      path: '/auth'
-      fullPath: '/auth'
-      preLoaderRoute: typeof AuthRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/admin': {
       id: '/admin'
       path: '/admin'
@@ -798,6 +791,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth/': {
+      id: '/auth/'
+      path: '/auth'
+      fullPath: '/auth/'
+      preLoaderRoute: typeof AuthIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/admin/': {
@@ -1115,18 +1115,6 @@ const AdminRouteChildren: AdminRouteChildren = {
 
 const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
 
-interface AuthRouteChildren {
-  AuthCallbackRoute: typeof AuthCallbackRoute
-  AuthVerifyRoute: typeof AuthVerifyRoute
-}
-
-const AuthRouteChildren: AuthRouteChildren = {
-  AuthCallbackRoute: AuthCallbackRoute,
-  AuthVerifyRoute: AuthVerifyRoute,
-}
-
-const AuthRouteWithChildren = AuthRoute._addFileChildren(AuthRouteChildren)
-
 interface CityCityRouteChildren {
   CityCityCategoryRoute: typeof CityCityCategoryRoute
   CityCityIndexRoute: typeof CityCityIndexRoute
@@ -1145,7 +1133,6 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AdminRoute: AdminRouteWithChildren,
-  AuthRoute: AuthRouteWithChildren,
   ContactRoute: ContactRoute,
   CookiesRoute: CookiesRoute,
   FaqRoute: FaqRoute,
@@ -1164,6 +1151,7 @@ const rootRouteChildren: RootRouteChildren = {
   CityCityRoute: CityCityRouteWithChildren,
   TaskIdRoute: TaskIdRoute,
   UserIdRoute: UserIdRoute,
+  AuthIndexRoute: AuthIndexRoute,
   ApiPublicMonitoringCronCheckRoute: ApiPublicMonitoringCronCheckRoute,
   ApiPublicPaymentsWebhookRoute: ApiPublicPaymentsWebhookRoute,
 }
