@@ -79,6 +79,7 @@ export async function captureServerIssue(issue: ServerIssue): Promise<void> {
     const stack = stacktraceOf(issue.error);
     const priority = priorityForArea(issue.area);
 
+    if (isExpectedUserError(message)) return;
     if (priority !== "critical" && isIgnoredError(message, stack)) return;
     if (!shouldSend(issue.area)) return;
 
