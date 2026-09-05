@@ -90,7 +90,7 @@ export function SiteHeader() {
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-64">
                   <DropdownMenuLabel className="flex items-center gap-2">
-                    <span className="truncate">{user.name}</span>
+                    <span className="truncate">{user?.name}</span>
                   </DropdownMenuLabel>
                   <div className="mx-1 mb-1 flex items-center justify-between gap-2 rounded-lg bg-gradient-to-r from-primary/10 to-accent/10 px-2.5 py-2">
                     <span className="min-w-0 truncate text-sm font-bold text-primary">
