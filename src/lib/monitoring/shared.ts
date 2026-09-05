@@ -83,7 +83,57 @@ const IGNORED_MESSAGES = [
   "auth session missing",
   "invalid login credentials",
   "refresh token not found",
+  // Normal user auth mistakes — the UI explains them in Bulgarian already
+  "email not confirmed",
+  "user already registered",
+  "already been registered",
+  "invalid email",
+  "unable to validate email address",
+  "email rate limit exceeded",
+  "over email send rate limit",
+  "for security purposes, you can only request this after",
+  "token has expired or is invalid",
+  "otp expired",
+  "signup requires a valid password",
+  "password should be",
 ];
+
+/**
+ * Expected, user-caused app errors — codes mapped in src/lib/errors.ts.
+ * The UI shows a clear Bulgarian message for each; reporting them to Sentry
+ * would bury real incidents in noise. Never include money/access-path codes
+ * (payment, credit deduction/refund) here — those stay critical.
+ */
+const IGNORED_APP_CODES = [
+  // Validation / moderation the user can fix
+  "FREE_TASK_LIMIT_REACHED",
+  "INSUFFICIENT_CREDITS",
+  "UNLOCK_LIMIT_REACHED",
+  "ALREADY_UNLOCKED",
+  "SKILL_TAG_BLOCKED",
+  "CONTACT_RATE_LIMIT",
+  "RATE_LIMITED",
+  "INVALID_INPUT",
+  "DUPLICATE",
+  "SELF",
+  "NOT_CONFIRMED",
+  "WINDOW_CLOSED",
+  "COMMENT_TOO_SHORT",
+  "COMMENT_TOO_LONG",
+  "INVALID_RATING",
+  "ALREADY_CLAIMED",
+  "OWN_TASK",
+  "PHONE_REQUIRED",
+  "REASON_REQUIRED",
+  "NOTE_REQUIRED",
+  "ACCOUNT_DEACTIVATED",
+  // Content-quality / moderation rejections (messages contain these markers)
+  "MODERATION",
+  "CONTENT_QUALITY",
+];
+
+/** Matches a known user-caused app code anywhere in the message (word-boundary). */
+const APP_CODE_RE = new RegExp(`\\b(${IGNORED_APP_CODES.join("|")})\\b`);
 
 const IGNORED_STACK_HINTS = ["chrome-extension://", "moz-extension://", "anonymous>", "gtag", "fbevents"];
 
