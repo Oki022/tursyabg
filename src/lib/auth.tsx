@@ -92,12 +92,39 @@ async function buildUser(session: Session): Promise<AuthUser> {
   };
 }
 
+/**
+ * Бърза проверка дали в браузъра има запазена сесия, преди Supabase да я
+ * потвърди. Използва се само за да покажем правилния навигационен вид още при
+ * първото рисуване (без мигане на бутоните за вход).
+ */
+function readStoredSessionHint(): boolean | null {
+  if (typeof window === "undefined") return null;
+  try {
+    for (let i = 0; i < window.localStorage.length; i += 1) {
+      const key = window.localStorage.key(i);
+      if (key && key.startsWith("sb-") && key.endsWith("-auth-token")) {
+        const raw = window.localStorage.getItem(key);
+        if (raw && raw !== "null") return true;
+      }
+    }
+    return false;
+  } catch {
+    return null;
+  }
+}
+
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<AuthUser | null>(null);
   const [loading, setLoading] = useState(true);
+  const [hasStoredSession, setHasStoredSession] = useState<boolean | null>(null);
+
+  useEffect(() => {
+    setHasStoredSession(readStoredSessionHint());
+  }, []);
 
   useEffect(() => {
     let active = true;
+
 
     const sync = async (session: Session | null) => {
       if (!session) {
