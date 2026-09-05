@@ -28,7 +28,17 @@ const navLinkIdle = `${NAV_BASE} font-medium text-muted-foreground after:scale-x
 const navLinkActive = `${NAV_BASE} bg-gradient-to-r from-orange-500 to-rose-500 bg-clip-text font-semibold text-transparent after:scale-x-100 ${NAV_UNDERLINE}`;
 
 export function SiteHeader() {
-  const { user, logout } = useAuth();
+  const { user, loading, hasStoredSession, logout } = useAuth();
+  // Сесията се пази в браузъра, затова сървърът не я знае при първото рисуване.
+  // Докато не се изясни, показваме неутрални места със същите размери,
+  // вместо да предполагаме, че потребителят не е влязъл.
+  const authState: "in" | "out" | "pending" = user
+    ? "in"
+    : loading
+      ? hasStoredSession === false
+        ? "out"
+        : "pending"
+      : "out";
   const balance = useCreditBalance(user?.id);
   const credits = balance.data ?? user?.credits ?? 0;
   const hidden = useHideOnScroll();
@@ -54,10 +64,11 @@ export function SiteHeader() {
           </nav>
         )}
         <div className="flex items-center gap-2 justify-self-end md:col-start-3">
-          {user && <MessagesNavLink />}
-          {user && <FavouritesNavLink />}
-          {user && <NotificationBell />}
-          {!user ? (
+          {authState === "pending" && <AuthClusterPlaceholder />}
+          {authState === "in" && <MessagesNavLink />}
+          {authState === "in" && <FavouritesNavLink />}
+          {authState === "in" && <NotificationBell />}
+          {authState === "out" ? (
             <>
               <Button asChild variant="ghost" className="h-9 px-4 text-sm font-medium">
                 <Link to="/auth" search={{ mode: "login" }}>Вход</Link>
@@ -66,7 +77,7 @@ export function SiteHeader() {
                 <Link to="/auth" search={{ mode: "register" }}>Регистрация</Link>
               </Button>
             </>
-          ) : (
+          ) : authState === "in" ? (
             <>
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
@@ -125,8 +136,8 @@ export function SiteHeader() {
                 </DropdownMenuContent>
               </DropdownMenu>
             </>
-          )}
-          {user && (
+          ) : null}
+          {authState === "in" && (
             <Link
               to="/post"
               aria-label="Възложи задача"
@@ -139,5 +150,17 @@ export function SiteHeader() {
         </div>
       </div>
     </header>
+  );
+}
+
+function AuthClusterPlaceholder() {
+  return (
+    <div className="flex items-center gap-2" aria-hidden="true">
+      {[0, 1, 2].map((i) => (
+        <span key={i} className="h-9 w-9 animate-pulse rounded-full bg-muted/60" />
+      ))}
+      <span className="ml-0.5 hidden h-9 w-9 animate-pulse rounded-full bg-muted/60 md:block" />
+      <span className="ml-1 hidden h-9 w-[124px] animate-pulse rounded-full bg-muted/60 md:block" />
+    </div>
   );
 }
