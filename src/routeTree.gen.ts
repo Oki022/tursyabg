@@ -33,6 +33,7 @@ import { Route as CityCityRouteImport } from './routes/city.$city'
 import { Route as CategoriesCategoryRouteImport } from './routes/categories.$category'
 import { Route as BillingCancelRouteImport } from './routes/billing.cancel'
 import { Route as AuthVerifyRouteImport } from './routes/auth.verify'
+import { Route as AuthCallbackRouteImport } from './routes/auth.callback'
 import { Route as AdminUsersRouteImport } from './routes/admin.users'
 import { Route as AdminTasksRouteImport } from './routes/admin.tasks'
 import { Route as AdminReviewsRouteImport } from './routes/admin.reviews'
@@ -178,6 +179,11 @@ const BillingCancelRoute = BillingCancelRouteImport.update({
 const AuthVerifyRoute = AuthVerifyRouteImport.update({
   id: '/verify',
   path: '/verify',
+  getParentRoute: () => AuthRoute,
+} as any)
+const AuthCallbackRoute = AuthCallbackRouteImport.update({
+  id: '/callback',
+  path: '/callback',
   getParentRoute: () => AuthRoute,
 } as any)
 const AdminUsersRoute = AdminUsersRouteImport.update({
@@ -357,6 +363,7 @@ export interface FileRoutesByFullPath {
   '/admin/reviews': typeof AdminReviewsRoute
   '/admin/tasks': typeof AdminTasksRoute
   '/admin/users': typeof AdminUsersRoute
+  '/auth/callback': typeof AuthCallbackRoute
   '/auth/verify': typeof AuthVerifyRoute
   '/billing/cancel': typeof BillingCancelRoute
   '/categories/$category': typeof CategoriesCategoryRoute
@@ -408,6 +415,7 @@ export interface FileRoutesByTo {
   '/admin/reviews': typeof AdminReviewsRoute
   '/admin/tasks': typeof AdminTasksRoute
   '/admin/users': typeof AdminUsersRoute
+  '/auth/callback': typeof AuthCallbackRoute
   '/auth/verify': typeof AuthVerifyRoute
   '/billing/cancel': typeof BillingCancelRoute
   '/categories/$category': typeof CategoriesCategoryRoute
@@ -461,6 +469,7 @@ export interface FileRoutesById {
   '/admin/reviews': typeof AdminReviewsRoute
   '/admin/tasks': typeof AdminTasksRoute
   '/admin/users': typeof AdminUsersRoute
+  '/auth/callback': typeof AuthCallbackRoute
   '/auth/verify': typeof AuthVerifyRoute
   '/billing/cancel': typeof BillingCancelRoute
   '/categories/$category': typeof CategoriesCategoryRoute
@@ -515,6 +524,7 @@ export interface FileRouteTypes {
     | '/admin/reviews'
     | '/admin/tasks'
     | '/admin/users'
+    | '/auth/callback'
     | '/auth/verify'
     | '/billing/cancel'
     | '/categories/$category'
@@ -566,6 +576,7 @@ export interface FileRouteTypes {
     | '/admin/reviews'
     | '/admin/tasks'
     | '/admin/users'
+    | '/auth/callback'
     | '/auth/verify'
     | '/billing/cancel'
     | '/categories/$category'
@@ -618,6 +629,7 @@ export interface FileRouteTypes {
     | '/admin/reviews'
     | '/admin/tasks'
     | '/admin/users'
+    | '/auth/callback'
     | '/auth/verify'
     | '/billing/cancel'
     | '/categories/$category'
@@ -835,6 +847,13 @@ declare module '@tanstack/react-router' {
       path: '/verify'
       fullPath: '/auth/verify'
       preLoaderRoute: typeof AuthVerifyRouteImport
+      parentRoute: typeof AuthRoute
+    }
+    '/auth/callback': {
+      id: '/auth/callback'
+      path: '/callback'
+      fullPath: '/auth/callback'
+      preLoaderRoute: typeof AuthCallbackRouteImport
       parentRoute: typeof AuthRoute
     }
     '/admin/users': {
@@ -1097,10 +1116,12 @@ const AdminRouteChildren: AdminRouteChildren = {
 const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
 
 interface AuthRouteChildren {
+  AuthCallbackRoute: typeof AuthCallbackRoute
   AuthVerifyRoute: typeof AuthVerifyRoute
 }
 
 const AuthRouteChildren: AuthRouteChildren = {
+  AuthCallbackRoute: AuthCallbackRoute,
   AuthVerifyRoute: AuthVerifyRoute,
 }
 
