@@ -23,6 +23,8 @@ export type AuthUser = {
 type AuthContextValue = {
   user: AuthUser | null;
   loading: boolean;
+  /** null = още не знаем (сървър/първо рисуване), true/false = има ли запазена сесия */
+  hasStoredSession: boolean | null;
   login: (email: string, password: string) => Promise<void>;
   loginSocial: (provider: "google") => Promise<void>;
   register: (data: { name: string; email: string; password: string; phone: string }) => Promise<{ needsConfirmation: boolean }>;
@@ -295,7 +297,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   return (
     <AuthContext.Provider
-      value={{ user, loading, login, loginSocial, register, resetPassword, updatePassword, changePassword, refreshUser, logout, updateUser }}
+      value={{ user, loading, hasStoredSession, login, loginSocial, register, resetPassword, updatePassword, changePassword, refreshUser, logout, updateUser }}
     >
       {children}
     </AuthContext.Provider>
