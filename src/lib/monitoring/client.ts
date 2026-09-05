@@ -8,6 +8,7 @@
 import * as Sentry from "@sentry/react";
 import {
   errorMessageOf,
+  isExpectedUserError,
   isIgnoredError,
   priorityForArea,
   sampleRateFor,
@@ -31,6 +32,7 @@ function scrubEvent(event: Sentry.ErrorEvent): Sentry.ErrorEvent | null {
     .join(" ");
 
   const priority = priorityForArea(area);
+  if (isExpectedUserError(message)) return null;
   if (priority !== "critical") {
     if (isIgnoredError(message, stack)) return null;
     if (!shouldSend(area)) return null;
