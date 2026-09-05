@@ -14,7 +14,7 @@ import { seo } from "@/lib/seo";
 
 type AuthSearch = { mode?: "login" | "register"; redirect?: string };
 
-export const Route = createFileRoute("/auth")({
+export const Route = createFileRoute("/auth/")({
   validateSearch: (s: Record<string, unknown>): AuthSearch => ({
     mode: s.mode === "register" ? "register" : "login",
     redirect: typeof s.redirect === "string" && s.redirect.startsWith("/") ? s.redirect : undefined,
@@ -31,9 +31,9 @@ export const Route = createFileRoute("/auth")({
 });
 
 function AuthPage() {
-  const { mode, redirect } = useSearch({ from: "/auth" });
+  const { mode, redirect } = useSearch({ from: "/auth/" });
   const navigate = useNavigate();
-  const { login, loginSocial, register, resetPassword } = useAuth();
+  const { login, loginSocial, register, resetPassword, resendConfirmation } = useAuth();
   const [busy, setBusy] = useState(false);
   const isRegister = mode === "register";
 
@@ -72,9 +72,8 @@ function AuthPage() {
     setBusy(true);
     try {
       if (isRegister) {
-        // PRE-LAUNCH TODO: потвърждението на имейл е изключено за разработка.
-        // Когато се включи отново, needsConfirmation ще е true и трябва да пренасочим към
-        // /auth/verify?email=... (цялата страница е вече готова) вместо да влизаме директно.
+        // При включено потвърждение на имейл signUp не връща сесия, затова
+        // пращаме потребителя на /auth/verify вместо на формата за вход.
         const { needsConfirmation } = await register({
           name,
           email,
@@ -96,7 +95,28 @@ function AuthPage() {
       }
       navigate({ to: redirect ?? "/profile" });
     } catch (err) {
-      toast.error(authErrorMessage(err));
+      const raw = String((err as { message?: string })?.message ?? err).toLowerCase();
+      if (raw.includes("email not confirmed") || raw.includes("not confirmed")) {
+        toast.error("Имейлът ти още не е потвърден.", {
+          description: "Отвори писмото, което ти изпратихме, или поискай ново.",
+          action: {
+            label: "Изпрати отново потвърждението",
+            onClick: () => {
+              void (async () => {
+                try {
+                  await resendConfirmation(email);
+                  toast.success("Изпратихме ти нов имейл за потвърждение.");
+                  navigate({ to: "/auth/verify", search: { email } });
+                } catch (e) {
+                  toast.error(authErrorMessage(e));
+                }
+              })();
+            },
+          },
+        });
+      } else {
+        toast.error(authErrorMessage(err));
+      }
     } finally {
       setBusy(false);
     }

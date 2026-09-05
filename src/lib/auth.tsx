@@ -29,6 +29,7 @@ type AuthContextValue = {
   loginSocial: (provider: "google") => Promise<void>;
   register: (data: { name: string; email: string; password: string; phone: string }) => Promise<{ needsConfirmation: boolean }>;
   resetPassword: (email: string) => Promise<void>;
+  resendConfirmation: (email: string) => Promise<void>;
   updatePassword: (password: string) => Promise<void>;
   changePassword: (currentPassword: string, newPassword: string) => Promise<void>;
   refreshUser: () => Promise<void>;
@@ -37,6 +38,13 @@ type AuthContextValue = {
 };
 
 const AuthContext = createContext<AuthContextValue | null>(null);
+
+/** Базовият адрес, на който Supabase връща потребителя след имейл линк. */
+export function authRedirectBase(): string {
+  const siteUrl = (import.meta.env['VITE_SITE_URL'] as string | undefined)?.replace(/\/$/, "");
+  if (siteUrl) return siteUrl;
+  return typeof window === "undefined" ? "" : window.location.origin;
+}
 
 function initials(name: string) {
   return name
@@ -177,8 +185,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const loginSocial: AuthContextValue["loginSocial"] = async () => {
-    const siteUrl = (import.meta.env['VITE_SITE_URL'] as string | undefined)?.replace(/\/$/, "");
-    const base = siteUrl || window.location.origin;
+    const base = authRedirectBase();
     const { error } = await supabase.auth.signInWithOAuth({
       provider: "google",
       options: { redirectTo: `${base}/` },
@@ -200,7 +207,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       email,
       password,
       options: {
-        emailRedirectTo: `${window.location.origin}/`,
+        emailRedirectTo: `${authRedirectBase()}/auth/callback`,
         data: { full_name: name, phone },
       },
     });
@@ -216,6 +223,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         .upsert({ user_id: data.session.user.id, phone }, { onConflict: "user_id" });
     }
     return { needsConfirmation: !data.session };
+  };
+
+  const resendConfirmation: AuthContextValue["resendConfirmation"] = async (email) => {
+    const { error } = await supabase.auth.resend({
+      type: "signup",
+      email,
+      options: { emailRedirectTo: `${authRedirectBase()}/auth/callback` },
+    });
+    if (error) {
+      captureIssue({ area: "auth", action: "resend confirmation", error });
+      throw error;
+    }
   };
 
   const resetPassword: AuthContextValue["resetPassword"] = async (email) => {
@@ -297,7 +316,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   return (
     <AuthContext.Provider
-      value={{ user, loading, hasStoredSession, login, loginSocial, register, resetPassword, updatePassword, changePassword, refreshUser, logout, updateUser }}
+      value={{ user, loading, hasStoredSession, login, loginSocial, register, resetPassword, resendConfirmation, updatePassword, changePassword, refreshUser, logout, updateUser }}
     >
       {children}
     </AuthContext.Provider>

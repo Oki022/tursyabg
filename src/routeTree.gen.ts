@@ -22,10 +22,10 @@ import { Route as ManifestDotwebmanifestRouteImport } from './routes/manifest[.]
 import { Route as FaqRouteImport } from './routes/faq'
 import { Route as CookiesRouteImport } from './routes/cookies'
 import { Route as ContactRouteImport } from './routes/contact'
-import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AuthIndexRouteImport } from './routes/auth.index'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as UserIdRouteImport } from './routes/user.$id'
 import { Route as TaskIdRouteImport } from './routes/task.$id'
@@ -33,6 +33,7 @@ import { Route as CityCityRouteImport } from './routes/city.$city'
 import { Route as CategoriesCategoryRouteImport } from './routes/categories.$category'
 import { Route as BillingCancelRouteImport } from './routes/billing.cancel'
 import { Route as AuthVerifyRouteImport } from './routes/auth.verify'
+import { Route as AuthCallbackRouteImport } from './routes/auth.callback'
 import { Route as AdminUsersRouteImport } from './routes/admin.users'
 import { Route as AdminTasksRouteImport } from './routes/admin.tasks'
 import { Route as AdminReviewsRouteImport } from './routes/admin.reviews'
@@ -126,11 +127,6 @@ const ContactRoute = ContactRouteImport.update({
   path: '/contact',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AuthRoute = AuthRouteImport.update({
-  id: '/auth',
-  path: '/auth',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const AdminRoute = AdminRouteImport.update({
   id: '/admin',
   path: '/admin',
@@ -143,6 +139,11 @@ const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthIndexRoute = AuthIndexRouteImport.update({
+  id: '/auth/',
+  path: '/auth/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AdminIndexRoute = AdminIndexRouteImport.update({
@@ -176,9 +177,14 @@ const BillingCancelRoute = BillingCancelRouteImport.update({
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthVerifyRoute = AuthVerifyRouteImport.update({
-  id: '/verify',
-  path: '/verify',
-  getParentRoute: () => AuthRoute,
+  id: '/auth/verify',
+  path: '/auth/verify',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthCallbackRoute = AuthCallbackRouteImport.update({
+  id: '/auth/callback',
+  path: '/auth/callback',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const AdminUsersRoute = AdminUsersRouteImport.update({
   id: '/users',
@@ -329,7 +335,6 @@ const AuthenticatedTaskIdEditRoute = AuthenticatedTaskIdEditRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/admin': typeof AdminRouteWithChildren
-  '/auth': typeof AuthRouteWithChildren
   '/contact': typeof ContactRoute
   '/cookies': typeof CookiesRoute
   '/faq': typeof FaqRoute
@@ -357,6 +362,7 @@ export interface FileRoutesByFullPath {
   '/admin/reviews': typeof AdminReviewsRoute
   '/admin/tasks': typeof AdminTasksRoute
   '/admin/users': typeof AdminUsersRoute
+  '/auth/callback': typeof AuthCallbackRoute
   '/auth/verify': typeof AuthVerifyRoute
   '/billing/cancel': typeof BillingCancelRoute
   '/categories/$category': typeof CategoriesCategoryRoute
@@ -364,6 +370,7 @@ export interface FileRoutesByFullPath {
   '/task/$id': typeof TaskIdRoute
   '/user/$id': typeof UserIdRoute
   '/admin/': typeof AdminIndexRoute
+  '/auth/': typeof AuthIndexRoute
   '/billing/success': typeof AuthenticatedBillingSuccessRoute
   '/messages/$conversationId': typeof AuthenticatedMessagesConversationIdRoute
   '/posted/$id': typeof AuthenticatedPostedIdRoute
@@ -380,7 +387,6 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/auth': typeof AuthRouteWithChildren
   '/contact': typeof ContactRoute
   '/cookies': typeof CookiesRoute
   '/faq': typeof FaqRoute
@@ -408,12 +414,14 @@ export interface FileRoutesByTo {
   '/admin/reviews': typeof AdminReviewsRoute
   '/admin/tasks': typeof AdminTasksRoute
   '/admin/users': typeof AdminUsersRoute
+  '/auth/callback': typeof AuthCallbackRoute
   '/auth/verify': typeof AuthVerifyRoute
   '/billing/cancel': typeof BillingCancelRoute
   '/categories/$category': typeof CategoriesCategoryRoute
   '/task/$id': typeof TaskIdRoute
   '/user/$id': typeof UserIdRoute
   '/admin': typeof AdminIndexRoute
+  '/auth': typeof AuthIndexRoute
   '/billing/success': typeof AuthenticatedBillingSuccessRoute
   '/messages/$conversationId': typeof AuthenticatedMessagesConversationIdRoute
   '/posted/$id': typeof AuthenticatedPostedIdRoute
@@ -433,7 +441,6 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/admin': typeof AdminRouteWithChildren
-  '/auth': typeof AuthRouteWithChildren
   '/contact': typeof ContactRoute
   '/cookies': typeof CookiesRoute
   '/faq': typeof FaqRoute
@@ -461,6 +468,7 @@ export interface FileRoutesById {
   '/admin/reviews': typeof AdminReviewsRoute
   '/admin/tasks': typeof AdminTasksRoute
   '/admin/users': typeof AdminUsersRoute
+  '/auth/callback': typeof AuthCallbackRoute
   '/auth/verify': typeof AuthVerifyRoute
   '/billing/cancel': typeof BillingCancelRoute
   '/categories/$category': typeof CategoriesCategoryRoute
@@ -468,6 +476,7 @@ export interface FileRoutesById {
   '/task/$id': typeof TaskIdRoute
   '/user/$id': typeof UserIdRoute
   '/admin/': typeof AdminIndexRoute
+  '/auth/': typeof AuthIndexRoute
   '/_authenticated/billing/success': typeof AuthenticatedBillingSuccessRoute
   '/_authenticated/messages/$conversationId': typeof AuthenticatedMessagesConversationIdRoute
   '/_authenticated/posted/$id': typeof AuthenticatedPostedIdRoute
@@ -487,7 +496,6 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/admin'
-    | '/auth'
     | '/contact'
     | '/cookies'
     | '/faq'
@@ -515,6 +523,7 @@ export interface FileRouteTypes {
     | '/admin/reviews'
     | '/admin/tasks'
     | '/admin/users'
+    | '/auth/callback'
     | '/auth/verify'
     | '/billing/cancel'
     | '/categories/$category'
@@ -522,6 +531,7 @@ export interface FileRouteTypes {
     | '/task/$id'
     | '/user/$id'
     | '/admin/'
+    | '/auth/'
     | '/billing/success'
     | '/messages/$conversationId'
     | '/posted/$id'
@@ -538,7 +548,6 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
-    | '/auth'
     | '/contact'
     | '/cookies'
     | '/faq'
@@ -566,12 +575,14 @@ export interface FileRouteTypes {
     | '/admin/reviews'
     | '/admin/tasks'
     | '/admin/users'
+    | '/auth/callback'
     | '/auth/verify'
     | '/billing/cancel'
     | '/categories/$category'
     | '/task/$id'
     | '/user/$id'
     | '/admin'
+    | '/auth'
     | '/billing/success'
     | '/messages/$conversationId'
     | '/posted/$id'
@@ -590,7 +601,6 @@ export interface FileRouteTypes {
     | '/'
     | '/_authenticated'
     | '/admin'
-    | '/auth'
     | '/contact'
     | '/cookies'
     | '/faq'
@@ -618,6 +628,7 @@ export interface FileRouteTypes {
     | '/admin/reviews'
     | '/admin/tasks'
     | '/admin/users'
+    | '/auth/callback'
     | '/auth/verify'
     | '/billing/cancel'
     | '/categories/$category'
@@ -625,6 +636,7 @@ export interface FileRouteTypes {
     | '/task/$id'
     | '/user/$id'
     | '/admin/'
+    | '/auth/'
     | '/_authenticated/billing/success'
     | '/_authenticated/messages/$conversationId'
     | '/_authenticated/posted/$id'
@@ -644,7 +656,6 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AdminRoute: typeof AdminRouteWithChildren
-  AuthRoute: typeof AuthRouteWithChildren
   ContactRoute: typeof ContactRoute
   CookiesRoute: typeof CookiesRoute
   FaqRoute: typeof FaqRoute
@@ -658,11 +669,14 @@ export interface RootRouteChildren {
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   TasksRoute: typeof TasksRoute
   TermsRoute: typeof TermsRoute
+  AuthCallbackRoute: typeof AuthCallbackRoute
+  AuthVerifyRoute: typeof AuthVerifyRoute
   BillingCancelRoute: typeof BillingCancelRoute
   CategoriesCategoryRoute: typeof CategoriesCategoryRoute
   CityCityRoute: typeof CityCityRouteWithChildren
   TaskIdRoute: typeof TaskIdRoute
   UserIdRoute: typeof UserIdRoute
+  AuthIndexRoute: typeof AuthIndexRoute
   ApiPublicMonitoringCronCheckRoute: typeof ApiPublicMonitoringCronCheckRoute
   ApiPublicPaymentsWebhookRoute: typeof ApiPublicPaymentsWebhookRoute
 }
@@ -760,13 +774,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ContactRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/auth': {
-      id: '/auth'
-      path: '/auth'
-      fullPath: '/auth'
-      preLoaderRoute: typeof AuthRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/admin': {
       id: '/admin'
       path: '/admin'
@@ -786,6 +793,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth/': {
+      id: '/auth/'
+      path: '/auth'
+      fullPath: '/auth/'
+      preLoaderRoute: typeof AuthIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/admin/': {
@@ -832,10 +846,17 @@ declare module '@tanstack/react-router' {
     }
     '/auth/verify': {
       id: '/auth/verify'
-      path: '/verify'
+      path: '/auth/verify'
       fullPath: '/auth/verify'
       preLoaderRoute: typeof AuthVerifyRouteImport
-      parentRoute: typeof AuthRoute
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth/callback': {
+      id: '/auth/callback'
+      path: '/auth/callback'
+      fullPath: '/auth/callback'
+      preLoaderRoute: typeof AuthCallbackRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/admin/users': {
       id: '/admin/users'
@@ -1096,16 +1117,6 @@ const AdminRouteChildren: AdminRouteChildren = {
 
 const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
 
-interface AuthRouteChildren {
-  AuthVerifyRoute: typeof AuthVerifyRoute
-}
-
-const AuthRouteChildren: AuthRouteChildren = {
-  AuthVerifyRoute: AuthVerifyRoute,
-}
-
-const AuthRouteWithChildren = AuthRoute._addFileChildren(AuthRouteChildren)
-
 interface CityCityRouteChildren {
   CityCityCategoryRoute: typeof CityCityCategoryRoute
   CityCityIndexRoute: typeof CityCityIndexRoute
@@ -1124,7 +1135,6 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AdminRoute: AdminRouteWithChildren,
-  AuthRoute: AuthRouteWithChildren,
   ContactRoute: ContactRoute,
   CookiesRoute: CookiesRoute,
   FaqRoute: FaqRoute,
@@ -1138,11 +1148,14 @@ const rootRouteChildren: RootRouteChildren = {
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   TasksRoute: TasksRoute,
   TermsRoute: TermsRoute,
+  AuthCallbackRoute: AuthCallbackRoute,
+  AuthVerifyRoute: AuthVerifyRoute,
   BillingCancelRoute: BillingCancelRoute,
   CategoriesCategoryRoute: CategoriesCategoryRoute,
   CityCityRoute: CityCityRouteWithChildren,
   TaskIdRoute: TaskIdRoute,
   UserIdRoute: UserIdRoute,
+  AuthIndexRoute: AuthIndexRoute,
   ApiPublicMonitoringCronCheckRoute: ApiPublicMonitoringCronCheckRoute,
   ApiPublicPaymentsWebhookRoute: ApiPublicPaymentsWebhookRoute,
 }
