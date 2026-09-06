@@ -28,7 +28,7 @@ export function MobileNav() {
 
         <Link
           to="/post"
-          aria-label="Възложи задача"
+          aria-label="Възложи работа"
           className="relative -mt-4 flex min-w-0 flex-1 flex-col items-center justify-end gap-1 px-1 pb-2 text-[11px] font-medium text-slate-400 transition-all duration-150 active:scale-95"
           activeProps={{ className: "relative -mt-4 flex min-w-0 flex-1 flex-col items-center justify-end gap-1 px-1 pb-2 text-[11px] font-semibold text-primary transition-all duration-150 active:scale-95" }}
         >

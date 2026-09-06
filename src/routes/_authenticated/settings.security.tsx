@@ -26,6 +26,8 @@ import { SkillsEditor } from "@/components/settings/skills-editor";
 import { MAX_SKILL_TAGS } from "@/components/settings/skills-editor";
 import { useMySkills, useSaveSkills } from "@/lib/skills-api";
 import { normalizeSkillTag, skillTagError, skillTagKey } from "@/lib/skill-tags";
+import { CredentialsEditor } from "@/components/settings/credentials-editor";
+import { credentialError, type Credential } from "@/lib/credentials";
 import { toastError } from "@/lib/toast-error";
 import {
   downloadJson,
@@ -64,6 +66,7 @@ function SettingsSecurityPage() {
   const [skillCategories, setSkillCategories] = useState<string[]>([]);
   const [skillTags, setSkillTags] = useState<string[]>([]);
   const [skillDraft, setSkillDraft] = useState("");
+  const [credentials, setCredentials] = useState<Credential[]>([]);
   const [saving, setSaving] = useState(false);
   const [touched, setTouched] = useState(false);
 
@@ -91,6 +94,7 @@ function SettingsSecurityPage() {
     if (!skills.data) return;
     setSkillCategories(skills.data.categories);
     setSkillTags(skills.data.tags);
+    setCredentials(skills.data.credentials);
   }, [skills.data]);
 
   const phoneMsg = touched ? phoneError(phone) : null;
@@ -115,6 +119,13 @@ function SettingsSecurityPage() {
       toast.error(`Може да добавиш най-много ${MAX_SKILL_TAGS} умения.`);
       return;
     }
+    for (const entry of credentials) {
+      const credErr = credentialError(entry);
+      if (credErr) {
+        toast.error(credErr);
+        return;
+      }
+    }
     const tagsToSave = hasPendingTag ? [...skillTags, pendingTag] : skillTags;
     setSaving(true);
     try {
@@ -129,8 +140,10 @@ function SettingsSecurityPage() {
         userId: user.id,
         categories: skillCategories,
         tags: tagsToSave,
+        credentials,
       });
       setSkillTags(skillsResult.tags);
+      setCredentials(skillsResult.credentials);
       setSkillDraft("");
       if (skillsResult.droppedTags.length > 0) {
         toast.warning("Част от уменията не бяха запазени", {
@@ -299,6 +312,14 @@ function SettingsSecurityPage() {
               setSkillCategories(next.categories);
               setSkillTags(next.tags);
             }}
+            disabled={saving || skills.isLoading}
+          />
+        </div>
+
+        <div className="border-t border-border/60 pt-5">
+          <CredentialsEditor
+            entries={credentials}
+            onChange={setCredentials}
             disabled={saving || skills.isLoading}
           />
         </div>

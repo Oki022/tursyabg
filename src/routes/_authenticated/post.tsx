@@ -17,7 +17,7 @@ export const Route = createFileRoute("/_authenticated/post")({
       : {},
   head: () => ({
     meta: [
-      { title: "Възложи задача | ТърсяБГ" },
+      { title: "Възложи работа | ТърсяБГ" },
       { name: "description", content: "Опиши своята задача и я публикувай за минути. Получи предложения от подходящи изпълнители." },
     ],
   }),
@@ -69,7 +69,7 @@ function PostPage() {
     <div className="container mx-auto max-w-3xl px-4 py-8 md:py-12">
       <BackLink className="mb-4" />
       <div className="mb-8">
-        <h1 className="text-3xl font-bold tracking-tight md:text-4xl">Възложи задача</h1>
+        <h1 className="text-3xl font-bold tracking-tight md:text-4xl">Възложи работа</h1>
         <p className="mt-2 text-muted-foreground">
           Опиши какво ти трябва. Безплатно е и отнема по-малко от минута.
         </p>
@@ -97,7 +97,7 @@ function PostPage() {
         existingImages={repost ? carriedImages : []}
         submitting={createTask.isPending}
         disabled={!hasPhone}
-        submitLabel="Публикувай задачата"
+        submitLabel="Публикувай работата"
         onError={(m) => toast.error(m)}
         onSubmit={async ({ values, files, removedImageIds }) => {
           if (!hasPhone) {

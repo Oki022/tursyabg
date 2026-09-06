@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
-import { BadgeCheck, Briefcase, MapPin, Star } from "lucide-react";
+import { BadgeCheck, Briefcase, ExternalLink, Info, MapPin, Star } from "lucide-react";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
@@ -183,6 +183,41 @@ function PublicProfilePage() {
               </span>
             ))}
           </div>
+        )}
+
+        {profile.credentials.length > 0 && (
+          <div className="mt-4 min-w-0 space-y-2">
+            <p className="text-[11px] uppercase tracking-wide text-muted-foreground">
+              Публични регистри и идентификационни номера
+            </p>
+            <ul className="space-y-1.5">
+              {profile.credentials.map((c, i) => (
+                <li key={`${c.label}-${i}`} className="min-w-0 text-sm text-foreground">
+                  <span className="font-medium">{c.label}:</span>{" "}
+                  <span className="break-words">{c.value}</span>
+                  {c.url && (
+                    <a
+                      href={c.url}
+                      target="_blank"
+                      rel="nofollow noopener noreferrer"
+                      className="ml-1.5 inline-flex items-center gap-1 text-xs text-primary underline underline-offset-2"
+                    >
+                      провери <ExternalLink className="h-3 w-3" />
+                    </a>
+                  )}
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+
+        {(profile.credentials.length > 0 ||
+          profile.skillCategories.length > 0 ||
+          profile.skillTags.length > 0) && (
+          <p className="mt-3 flex items-start gap-1.5 text-xs text-muted-foreground">
+            <Info className="mt-0.5 h-3.5 w-3.5 shrink-0 text-primary" />
+            Информацията е посочена от потребителя и не е проверена от ТърсяБГ.
+          </p>
         )}
 
         <div className="mt-3 flex justify-end">

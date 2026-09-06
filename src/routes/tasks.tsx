@@ -29,11 +29,11 @@ export const Route = createFileRoute("/tasks")({
     const label = [cat, city ? `в ${municipalityLabel(city)}` : undefined].filter(Boolean).join(" ");
 
     return seo({
-      title: label ? `${label}, намери работа` : "Намери работа, активни задачи",
+      title: label ? `${label}, намери работа` : "Намери работа, активни обяви",
       description: clampDescription(
         label
           ? `Намери работа за ${label}. Свържи се директно със заявителя, договори цена в евро и виж реални отзиви преди да започнеш работа.`
-          : "Намери работа при хора от цяла България, ремонти, почистване, превоз, уроци и още. Разгледай актуалните задачи и се свържи директно.",
+          : "Намери работа при хора от цяла България, ремонти, почистване, превоз, уроци и още. Разгледай актуалните обяви и се свържи директно.",
       ),
       path: "/tasks",
     });
@@ -93,7 +93,7 @@ function TasksPage() {
       <div className="mb-6">
         <div>
           <h1 className="text-3xl font-bold tracking-tight text-foreground md:text-4xl">
-            Борса за задачи
+            Борса за работа
           </h1>
           <p className="mt-2 text-muted-foreground">
             {isLoading ? "Зареждане..." : `${filtered.length}${hasNextPage ? "+" : ""} ${filtered.length === 1 ? "активна задача" : "активни задачи"}`}
@@ -250,7 +250,7 @@ function TasksPage() {
                 </div>
               )}
               <Button asChild className="mt-6">
-                <Link to="/post">Възложи задача</Link>
+                <Link to="/post">Възложи работа</Link>
               </Button>
             </div>
           ) : (
