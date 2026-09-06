@@ -95,8 +95,8 @@ export function SkillsEditor({
             className="flex w-full items-center justify-between gap-3 rounded-xl px-1 py-1.5 text-left transition-colors hover:text-foreground"
           >
             <span className="text-sm font-semibold text-foreground">
-              Области, в които работиш
-              {categories.length > 0 ? ` (${categories.length})` : ""}
+              Умения и области
+              {categories.length + tags.length > 0 ? ` (${categories.length + tags.length})` : ""}
             </span>
             <ChevronDown
               className={cn(
