@@ -30,7 +30,7 @@ export const Route = createFileRoute("/city/$city/$category")({
     const catName = loaderData?.categoryName ?? "Задачи";
     const path = `/city/${params.city}/${params.category}`;
     const { meta, links } = seo({
-      title: `${catName} в ${cityName}, обяви за задачи`,
+      title: `${catName} в ${cityName}, задачи и работа`,
       description: clampDescription(
         `Търсиш майстор за ${catName.toLowerCase()} в община ${cityName}${region ? `, област ${region}` : ""}? Виж активните задачи, свържи се директно със заявителя и договори цена в евро.`,
       ),

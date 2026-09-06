@@ -128,7 +128,7 @@ function Index() {
               Последни задачи
             </h2>
             <p className="mt-1 text-sm text-muted-foreground">
-              Най-новите проекти, които чакат да бъдат изпълнени.
+              Най-новите задачи, които чакат изпълнител.
             </p>
           </div>
           <Button asChild variant="ghost" className="gap-1">
