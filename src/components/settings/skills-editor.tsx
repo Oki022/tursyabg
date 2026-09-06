@@ -1,9 +1,10 @@
 import { useMemo, useState, type KeyboardEvent } from "react";
-import { X } from "lucide-react";
+import { ChevronDown, X } from "lucide-react";
 import { categories as ALL_CATEGORIES } from "@/lib/mock-data";
 import { cn } from "@/lib/utils";
 import { normalizeSkillTag, skillTagError, skillTagKey } from "@/lib/skill-tags";
 import { usePopularSkillTags } from "@/lib/skills-api";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 
 export const MAX_SKILL_CATEGORIES = 8;
 export const MAX_SKILL_TAGS = 10;
@@ -31,6 +32,7 @@ export function SkillsEditor({
   disabled?: boolean;
 }) {
   const [error, setError] = useState<string | null>(null);
+  const [areasOpen, setAreasOpen] = useState(false);
   const popular = usePopularSkillTags(categories, !disabled);
 
   const taken = useMemo(() => new Set(tags.map(skillTagKey)), [tags]);
