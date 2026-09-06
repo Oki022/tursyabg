@@ -25,7 +25,7 @@ export function TopBadge({ className }: { className?: string }) {
       )}
     >
       <Crown className={icon} />
-      <span className="whitespace-nowrap">Топ обява</span>
+      <span className="whitespace-nowrap">Топ</span>
     </span>
   );
 }
