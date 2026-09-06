@@ -86,34 +86,55 @@ export function SkillsEditor({
 
   return (
     <div className="grid gap-4">
-      <div className="grid gap-1.5">
-        <p className="text-sm font-medium text-foreground">Области, в които работиш</p>
-        <p className="text-xs text-muted-foreground">
-          Избери до {MAX_SKILL_CATEGORIES} категории. Показват се на публичния ти профил.
-        </p>
-        <div className="mt-1 flex flex-wrap gap-1.5">
-          {ALL_CATEGORIES.map((c) => {
-            const active = categories.includes(c.id);
-            return (
-              <button
-                key={c.id}
-                type="button"
-                disabled={disabled}
-                onClick={() => toggleCategory(c.id)}
-                aria-pressed={active}
-                className={cn(
-                  "rounded-full border px-3 py-1.5 text-xs font-medium transition-all",
-                  active
-                    ? "border-transparent bg-gradient-to-r from-orange-500 to-rose-500 text-white shadow-sm"
-                    : "border-border bg-background text-muted-foreground hover:border-primary/40 hover:text-foreground",
-                )}
-              >
-                {c.name}
-              </button>
-            );
-          })}
-        </div>
-      </div>
+      <Collapsible open={areasOpen} onOpenChange={setAreasOpen}>
+        <CollapsibleTrigger asChild>
+          <button
+            type="button"
+            className="flex w-full items-center justify-between gap-3 rounded-xl px-1 py-1.5 text-left transition-colors hover:text-foreground"
+          >
+            <span className="text-sm font-semibold text-foreground">
+              Области, в които работиш
+              {categories.length > 0 ? ` (${categories.length})` : ""}
+            </span>
+            <ChevronDown
+              className={cn(
+                "h-4 w-4 shrink-0 text-muted-foreground transition-transform duration-200 motion-reduce:transition-none",
+                areasOpen && "rotate-180",
+              )}
+            />
+          </button>
+        </CollapsibleTrigger>
+        <CollapsibleContent className="collapsible-content">
+          <div className="grid gap-1.5 pt-3">
+            <p className="text-xs text-muted-foreground">
+              Избери до {MAX_SKILL_CATEGORIES} категории. Показват се на публичния ти профил.
+            </p>
+            <div className="mt-1 flex flex-wrap gap-1.5">
+              {ALL_CATEGORIES.map((c) => {
+                const active = categories.includes(c.id);
+                return (
+                  <button
+                    key={c.id}
+                    type="button"
+                    disabled={disabled}
+                    onClick={() => toggleCategory(c.id)}
+                    aria-pressed={active}
+                    className={cn(
+                      "rounded-full border px-3 py-1.5 text-xs font-medium transition-all",
+                      active
+                        ? "border-transparent bg-gradient-to-r from-orange-500 to-rose-500 text-white shadow-sm"
+                        : "border-border bg-background text-muted-foreground hover:border-primary/40 hover:text-foreground",
+                    )}
+                  >
+                    {c.name}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        </CollapsibleContent>
+      </Collapsible>
+
 
       <div className="grid gap-1.5">
         <p className="text-sm font-medium text-foreground">Свои умения (по желание)</p>
