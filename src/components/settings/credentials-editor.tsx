@@ -1,5 +1,7 @@
-import { Info, Plus, X } from "lucide-react";
+import { ChevronDown, Info, Plus, X } from "lucide-react";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
@@ -18,6 +20,8 @@ type Props = {
 
 export function CredentialsEditor({ entries, onChange, disabled }: Props) {
   const rows = entries.length > 0 ? entries : [{ label: "", value: "", url: "" }];
+  const filledCount = entries.filter((e) => e.label.trim() || e.value.trim()).length;
+  const [open, setOpen] = useState(false);
 
   const update = (index: number, patch: Partial<Credential>) => {
     const next = rows.map((r, i) => (i === index ? { ...r, ...patch } : r));
@@ -29,19 +33,30 @@ export function CredentialsEditor({ entries, onChange, disabled }: Props) {
   };
 
   return (
-    <div className="space-y-3">
-      <div>
-        <h3 className="text-sm font-semibold text-foreground">
-          Публични регистри и идентификационни номера
-        </h3>
-        <p className="mt-1 text-xs text-muted-foreground">
-          Полето е предвидено най-вече за експерти и консултанти, адвокати, счетоводители и други
-          лицензирани професионалисти. Посочи вписване в публичен регистър или лиценз, за да могат
-          клиентите сами да го проверят.
-        </p>
-      </div>
+    <Collapsible open={open} onOpenChange={setOpen}>
+      <CollapsibleTrigger asChild>
+        <button
+          type="button"
+          className="flex w-full items-center justify-between gap-3 rounded-xl px-1 py-1.5 text-left transition-colors hover:text-foreground"
+        >
+          <span className="text-sm font-semibold text-foreground">
+            Публични регистри и идентификационни номера
+            {filledCount > 0 ? ` (${filledCount})` : ""}
+          </span>
+          <ChevronDown
+            className={`h-4 w-4 shrink-0 text-muted-foreground transition-transform duration-200 motion-reduce:transition-none ${open ? "rotate-180" : ""}`}
+          />
+        </button>
+      </CollapsibleTrigger>
 
-      <div className="space-y-3">
+      <CollapsibleContent className="collapsible-content">
+        <div className="space-y-3 pt-3">
+          <p className="text-xs text-muted-foreground">
+            Полето е предвидено най-вече за експерти и консултанти, адвокати, счетоводители и други
+            лицензирани професионалисти. Посочи вписване в публичен регистър или лиценз, за да могат
+            клиентите сами да го проверят.
+          </p>
+
         {rows.map((row, i) => {
           const err = credentialError(row);
           return (
