@@ -184,7 +184,7 @@ export async function getMyUnlockedTasks(): Promise<UnlockedTask[]> {
     expiresAt: r.expires_at,
     title: r.tasks?.title ?? "Задача",
     budget: Number(r.tasks?.budget ?? 0),
-    category: r.tasks?.category ?? "drugi",
+    category: r.tasks?.category ?? "",
     ownerName: (r.tasks?.user_id ? ownerNames[r.tasks.user_id] : null) ?? FALLBACK_NAME,
     phone: r.tasks?.user_id ? (phones[r.tasks.user_id] ?? null) : null,
     taskStatus: r.tasks?.status ?? "active",

@@ -95,8 +95,8 @@ export function SkillsEditor({
             className="flex w-full items-center justify-between gap-3 rounded-xl px-1 py-1.5 text-left transition-colors hover:text-foreground"
           >
             <span className="text-sm font-semibold text-foreground">
-              Области, в които работиш
-              {categories.length > 0 ? ` (${categories.length})` : ""}
+              Умения и области
+              {categories.length + tags.length > 0 ? ` (${categories.length + tags.length})` : ""}
             </span>
             <ChevronDown
               className={cn(
@@ -134,11 +134,8 @@ export function SkillsEditor({
               })}
             </div>
           </div>
-        </CollapsibleContent>
-      </Collapsible>
 
-
-      <div className="grid gap-1.5">
+      <div className="grid gap-1.5 pt-4">
         <p className="text-sm font-medium text-foreground">Свои умения (по желание)</p>
         <p className="text-xs text-muted-foreground">
           До {MAX_SKILL_TAGS} кратки етикета, напр. „фризьор“, „монтаж на климатици“. Без телефони и имейли. Контактите се споделят само чрез платформата.
@@ -212,6 +209,8 @@ export function SkillsEditor({
           </div>
         )}
       </div>
+      </CollapsibleContent>
+      </Collapsible>
     </div>
   );
 }

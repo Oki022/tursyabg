@@ -12,6 +12,7 @@ import {
   KeyRound,
   Eye,
   MapPin,
+  Pencil,
   Rocket,
   RotateCcw,
   Trash2,
@@ -169,7 +170,12 @@ function ProfilePage() {
           </div>
         </div>
 
-        <div className="mt-4">
+        <div className="mt-4 flex flex-wrap items-center gap-2">
+          <Button asChild size="sm" className="gap-1.5">
+            <Link to="/settings/security">
+              <Pencil className="h-4 w-4" /> Редактирай профила
+            </Link>
+          </Button>
           <Button asChild variant="ghost" size="sm" className="gap-1.5 px-2">
             <Link to="/user/$id" params={{ id: user.id }}>
               <Eye className="h-4 w-4" /> Виж публичния ми профил и отзиви
@@ -190,12 +196,6 @@ function ProfilePage() {
         <div className="mt-5 min-w-0 rounded-xl border border-border bg-background p-4">
           <div className="flex min-w-0 items-center justify-between gap-3">
             <h2 className="text-sm font-semibold text-foreground">Моите умения</h2>
-            <Link
-              to="/settings/security"
-              className="shrink-0 text-xs font-medium text-primary underline-offset-4 hover:underline"
-            >
-              Редактирай
-            </Link>
           </div>
           {mySkills.isLoading ? (
             <div className="mt-3 h-7 animate-pulse rounded-lg bg-muted" />
