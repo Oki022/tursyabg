@@ -6,12 +6,13 @@ import { attachSupabaseAuth } from "@/integrations/supabase/auth-attacher";
 /**
  * CSRF protection for server functions, following the pattern TanStack Start
  * documents for createCsrfMiddleware (not yet shipped in our installed
- * version): only server-function requests (serverFnMeta present) are checked,
- * and a request must prove it is same-origin via Sec-Fetch-Site, Origin, or
- * Referer. Server routes such as /api/public/payments/webhook are unaffected.
+ * version): only server-function requests (marked by the client with the
+ * x-tsr-serverFn header) are checked, and a request must prove it is
+ * same-origin via Sec-Fetch-Site, Origin, or Referer. Server routes such as
+ * /api/public/payments/webhook are unaffected.
  */
-const csrfMiddleware = createMiddleware().server(async ({ next, request, serverFnMeta }) => {
-  if (!serverFnMeta) return next();
+const csrfMiddleware = createMiddleware().server(async ({ next, request }) => {
+  if (request.headers.get("x-tsr-serverFn") !== "true") return next();
 
   const requestOrigin = new URL(request.url).origin;
 
