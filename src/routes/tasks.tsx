@@ -93,7 +93,7 @@ function TasksPage() {
       <div className="mb-6">
         <div>
           <h1 className="text-3xl font-bold tracking-tight text-foreground md:text-4xl">
-            Борса за задачи
+            Борса за работа
           </h1>
           <p className="mt-2 text-muted-foreground">
             {isLoading ? "Зареждане..." : `${filtered.length}${hasNextPage ? "+" : ""} ${filtered.length === 1 ? "активна задача" : "активни задачи"}`}
@@ -250,7 +250,7 @@ function TasksPage() {
                 </div>
               )}
               <Button asChild className="mt-6">
-                <Link to="/post">Възложи задача</Link>
+                <Link to="/post">Възложи работа</Link>
               </Button>
             </div>
           ) : (

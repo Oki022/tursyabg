@@ -7,7 +7,7 @@ export const BRAND_DOMAIN = "tursya.bg";
 export const BRAND = BRAND_DISPLAY;
 /** Latin-script name where required technically (equals the domain). */
 export const BRAND_LATIN = BRAND_DOMAIN;
-export const BRAND_TAGLINE = "Борса за задачи и услуги в България";
+export const BRAND_TAGLINE = "Борса за работа и услуги в България";
 
 const DEFAULT_SITE_URL = `https://${BRAND_DOMAIN}`;
 
