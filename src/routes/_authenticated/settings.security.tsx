@@ -27,7 +27,7 @@ import { MAX_SKILL_TAGS } from "@/components/settings/skills-editor";
 import { useMySkills, useSaveSkills } from "@/lib/skills-api";
 import { normalizeSkillTag, skillTagError, skillTagKey } from "@/lib/skill-tags";
 import { CredentialsEditor } from "@/components/settings/credentials-editor";
-import { cleanCredentials, credentialError, type Credential } from "@/lib/credentials";
+import { credentialError, type Credential } from "@/lib/credentials";
 import { toastError } from "@/lib/toast-error";
 import {
   downloadJson,
