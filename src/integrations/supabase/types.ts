@@ -1129,6 +1129,27 @@ export type Database = {
         }
         Relationships: []
       }
+      rate_limit_hits: {
+        Row: {
+          bucket: string
+          created_at: string
+          id: number
+          subject: string
+        }
+        Insert: {
+          bucket: string
+          created_at?: string
+          id?: never
+          subject: string
+        }
+        Update: {
+          bucket?: string
+          created_at?: string
+          id?: never
+          subject?: string
+        }
+        Relationships: []
+      }
       regions: {
         Row: {
           created_at: string
@@ -1858,6 +1879,15 @@ export type Database = {
         Returns: Json
       }
       detect_service_ad: { Args: { _text: string }; Returns: Json }
+      enforce_rate_limit: {
+        Args: {
+          _bucket: string
+          _limit: number
+          _subject: string
+          _window: string
+        }
+        Returns: undefined
+      }
       enqueue_moderation: {
         Args: {
           _category: string
@@ -1919,6 +1949,10 @@ export type Database = {
       }
       flag_low_quality_tasks: { Args: never; Returns: number }
       get_unlock_cost: { Args: { task_budget: number }; Returns: number }
+      guard_auth_attempt: {
+        Args: { _action: string; _email: string; _ip: string }
+        Returns: undefined
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
