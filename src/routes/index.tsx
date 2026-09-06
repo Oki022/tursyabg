@@ -99,7 +99,7 @@ function Index() {
         <h2 className="mb-6 text-sm font-semibold uppercase tracking-wider text-muted-foreground">
           Популярни категории
         </h2>
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-10">
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-5 lg:grid-cols-10">
           {categories.map((c) => {
             const Icon = c.icon;
             return (

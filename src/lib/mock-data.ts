@@ -1,4 +1,4 @@
-import { Wrench, Sparkles, Truck, Laptop, GraduationCap, Trees, PawPrint, Camera, Package, HeartPulse, Briefcase } from "lucide-react";
+import { Wrench, Sparkles, Truck, Laptop, GraduationCap, Trees, PawPrint, Camera, HelpCircle, HeartPulse, Briefcase } from "lucide-react";
 
 export type Category = {
   id: string;
@@ -18,7 +18,6 @@ export const categories: Category[] = [
   { id: "krasota-zdrave", name: "Красота и здраве", icon: HeartPulse, keywords: ["коса", "фризьор", "маникюр", "грим", "масаж", "козметик", "красота", "здраве"] },
   { id: "domashni", name: "Домашни любимци", icon: PawPrint, keywords: ["куче", "котка", "разходка", "питомец", "любимец"] },
   { id: "foto", name: "Фото и видео", icon: Camera, keywords: ["снимки", "фото", "видео", "сватба", "заснемане"] },
-  { id: "drugi", name: "Други", icon: Package, keywords: [] },
 ];
 
 
@@ -63,6 +62,13 @@ export type Task = {
   statusChangedAtIso?: string;
 };
 
+export const UNKNOWN_CATEGORY: Category = {
+  id: "",
+  name: "Без категория",
+  icon: HelpCircle,
+  keywords: [],
+};
+
 export function getCategory(id: string) {
-  return categories.find((c) => c.id === id) ?? categories[categories.length - 1];
+  return categories.find((c) => c.id === id) ?? UNKNOWN_CATEGORY;
 }

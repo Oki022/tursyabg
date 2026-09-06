@@ -200,7 +200,7 @@ const EXAMPLES: Record<string, Example> = {
     description:
       "Напр. Свободна практика с около 40 фактури за годината. Трябва ми подготовка и подаване на декларацията, работим онлайн.",
   },
-  drugi: {
+  default: {
     title: "Напр. Помощ с монтаж на мебели от ИКЕА",
     description:
       "Напр. Гардероб и две нощни шкафчета за сглобяване. Инструментите ги осигурявам аз. Търся човек за уикенда.",
@@ -208,5 +208,5 @@ const EXAMPLES: Record<string, Example> = {
 };
 
 export function examplesFor(category?: string): Example {
-  return EXAMPLES[category ?? ""] ?? EXAMPLES["drugi"]!;
+  return EXAMPLES[category ?? ""] ?? EXAMPLES["default"]!;
 }
