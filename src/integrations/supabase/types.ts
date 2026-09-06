@@ -1019,6 +1019,7 @@ export type Database = {
           city: string | null
           completed_jobs: number
           created_at: string
+          credentials: Json
           credits: number
           deactivated_at: string | null
           free_tasks_reset_at: string
@@ -1044,6 +1045,7 @@ export type Database = {
           city?: string | null
           completed_jobs?: number
           created_at?: string
+          credentials?: Json
           credits?: number
           deactivated_at?: string | null
           free_tasks_reset_at?: string
@@ -1069,6 +1071,7 @@ export type Database = {
           city?: string | null
           completed_jobs?: number
           created_at?: string
+          credentials?: Json
           credits?: number
           deactivated_at?: string | null
           free_tasks_reset_at?: string
