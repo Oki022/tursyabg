@@ -2,6 +2,7 @@ import { createContext, useContext, useEffect, useState, type ReactNode } from "
 import type { Session } from "@supabase/supabase-js";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
+import { guardAuthAttempt, type AuthGuardAction } from "@/lib/auth-guard.functions";
 import { captureIssue } from "@/lib/monitoring/client";
 
 export type AuthUser = {
@@ -54,6 +55,19 @@ function initials(name: string) {
     .slice(0, 2)
     .join("")
     .toUpperCase();
+}
+
+/**
+ * Сървърна проверка срещу твърде много опити за вход, регистрация или имейли
+ * за потвърждение (по имейл адрес и по IP). При проблем с проверката не
+ * блокираме потребителя.
+ */
+async function throttleAuth(action: AuthGuardAction, email: string) {
+  try {
+    await guardAuthAttempt({ data: { action, email } });
+  } catch (error) {
+    if (error instanceof Error && error.message.includes("RATE_LIMITED")) throw error;
+  }
 }
 
 async function buildUser(session: Session): Promise<AuthUser> {
@@ -205,6 +219,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     // (Resend/Postmark), публичен маркетплейс се нуждае от верифицирани имейли срещу спам профили.
     // Когато го включиш, register ще върне needsConfirmation: true и потребителят
     // трябва да се насочи към /auth/verify?email=... (страницата вече е готова).
+    await throttleAuth("signup", email);
     const { data, error } = await supabase.auth.signUp({
       email,
       password,
@@ -228,6 +243,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const resendConfirmation: AuthContextValue["resendConfirmation"] = async (email) => {
+    await throttleAuth("resend", email);
     const { error } = await supabase.auth.resend({
       type: "signup",
       email,
@@ -240,6 +256,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const resetPassword: AuthContextValue["resetPassword"] = async (email) => {
+    await throttleAuth("reset", email);
     const { error } = await supabase.auth.resetPasswordForEmail(email, {
       redirectTo: `${window.location.origin}/reset-password`,
     });
