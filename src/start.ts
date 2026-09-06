@@ -67,21 +67,25 @@ const CSP = [
   "frame-src 'self' https://js.stripe.com https://hooks.stripe.com https://*.stripe.com",
 ].join("; ");
 
-const securityHeadersMiddleware = createMiddleware().server(async ({ next }) => {
-  const response = await next();
-  const headers = (response as unknown as { headers?: Headers }).headers;
-  if (!headers || typeof headers.set !== "function") return response;
-
-  headers.set("Content-Security-Policy", CSP);
-  headers.set("X-Frame-Options", "SAMEORIGIN");
-  headers.set("X-Content-Type-Options", "nosniff");
-  headers.set("Referrer-Policy", "strict-origin-when-cross-origin");
-  headers.set(
-    "Permissions-Policy",
+const SECURITY_HEADERS: Record<string, string> = {
+  "Content-Security-Policy": CSP,
+  "X-Frame-Options": "SAMEORIGIN",
+  "X-Content-Type-Options": "nosniff",
+  "Referrer-Policy": "strict-origin-when-cross-origin",
+  "Permissions-Policy":
     "camera=(), microphone=(), geolocation=(self), payment=(self), usb=(), interest-cohort=()",
-  );
-  return response;
+};
+
+const securityHeadersMiddleware = createMiddleware().server(async ({ next }) => {
+  const result = await next();
+  const candidate = result as unknown as { headers?: Headers; response?: { headers?: Headers } };
+  const headers = candidate.response?.headers ?? candidate.headers;
+  if (headers && typeof headers.set === "function") {
+    for (const [key, value] of Object.entries(SECURITY_HEADERS)) headers.set(key, value);
+  }
+  return result;
 });
+
 
 
 const errorMiddleware = createMiddleware().server(async ({ next }) => {
