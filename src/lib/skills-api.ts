@@ -59,7 +59,7 @@ export function useSaveSkills() {
       const stored = ((data?.skill_tags as string[] | null) ?? []).map((t) => t);
       const storedKeys = new Set(stored.map(skillTagKey));
       const droppedTags = input.tags.filter((t) => !storedKeys.has(skillTagKey(t)));
-      return { tags: stored, droppedTags };
+      return { tags: stored, droppedTags, credentials: parseCredentials(data?.credentials) };
     },
     onSuccess: (_data, input) => {
       void qc.invalidateQueries({ queryKey: ["my-skills", input.userId] });
