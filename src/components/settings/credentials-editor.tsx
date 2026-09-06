@@ -120,26 +120,28 @@ export function CredentialsEditor({ entries, onChange, disabled }: Props) {
             </div>
           );
         })}
-      </div>
 
-      {rows.length < MAX_CREDENTIALS && (
-        <Button
-          type="button"
-          variant="outline"
-          size="sm"
-          className="gap-1.5"
-          disabled={disabled}
-          onClick={() => onChange([...rows, { label: "", value: "", url: "" }])}
-        >
-          <Plus className="h-4 w-4" /> Добави още едно вписване
-        </Button>
-      )}
+          {rows.length < MAX_CREDENTIALS && (
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              className="gap-1.5"
+              disabled={disabled}
+              onClick={() => onChange([...rows, { label: "", value: "", url: "" }])}
+            >
+              <Plus className="h-4 w-4" /> Добави още едно вписване
+            </Button>
+          )}
 
-      <p className="flex items-start gap-1.5 text-xs text-muted-foreground">
-        <Info className="mt-0.5 h-3.5 w-3.5 shrink-0 text-primary" />
-        Информацията се показва публично и не се проверява от нас. Телефони и имейли се премахват
-        автоматично.
-      </p>
-    </div>
+          <p className="flex items-start gap-1.5 text-xs text-muted-foreground">
+            <Info className="mt-0.5 h-3.5 w-3.5 shrink-0 text-primary" />
+            Информацията се показва публично и не се проверява от нас. Телефони и имейли се
+            премахват автоматично.
+          </p>
+        </div>
+      </CollapsibleContent>
+    </Collapsible>
   );
 }
+
