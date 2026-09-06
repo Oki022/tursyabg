@@ -134,8 +134,6 @@ export function SkillsEditor({
               })}
             </div>
           </div>
-        </CollapsibleContent>
-      </Collapsible>
 
 
       <div className="grid gap-1.5">
@@ -212,6 +210,8 @@ export function SkillsEditor({
           </div>
         )}
       </div>
+      </CollapsibleContent>
+      </Collapsible>
     </div>
   );
 }
