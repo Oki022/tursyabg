@@ -102,7 +102,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       {
         name: "description",
         content:
-          "Възложи работа или намери работа. Платформата, която свързва хора с майстори и изпълнители в България.",
+          "Възложи работа или намери клиенти. Платформата, която свързва хора с майстори и изпълнители в България.",
       },
       { property: "og:type", content: "website" },
       { property: "og:site_name", content: BRAND },
