@@ -135,8 +135,7 @@ export function SkillsEditor({
             </div>
           </div>
 
-
-      <div className="grid gap-1.5">
+      <div className="grid gap-1.5 pt-4">
         <p className="text-sm font-medium text-foreground">Свои умения (по желание)</p>
         <p className="text-xs text-muted-foreground">
           До {MAX_SKILL_TAGS} кратки етикета, напр. „фризьор“, „монтаж на климатици“. Без телефони и имейли. Контактите се споделят само чрез платформата.
