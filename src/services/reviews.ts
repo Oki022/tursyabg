@@ -1,3 +1,4 @@
+import { parseCredentials, type Credential } from "@/lib/credentials";
 import { errorMessageBg } from "@/lib/errors";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -36,6 +37,7 @@ export type PublicProfile = {
   reviewCountAsClient: number;
   skillCategories: string[];
   skillTags: string[];
+  credentials: Credential[];
 };
 
 export type PublicReview = {
@@ -152,6 +154,7 @@ export async function getPublicProfile(userId: string): Promise<PublicProfile | 
     reviewCountAsClient: Number(r["review_count_as_client"] ?? 0),
     skillCategories: (r["skill_categories"] as string[] | null) ?? [],
     skillTags: (r["skill_tags"] as string[] | null) ?? [],
+    credentials: parseCredentials(r["credentials"]),
   };
 }
 
