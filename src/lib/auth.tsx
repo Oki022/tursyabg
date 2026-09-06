@@ -177,7 +177,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const login: AuthContextValue["login"] = async (email, password) => {
+    await throttleAuth("login", email);
     const { error } = await supabase.auth.signInWithPassword({ email, password });
+
     if (error) {
       captureIssue({ area: "auth", action: "sign in with password", error });
       throw error;
