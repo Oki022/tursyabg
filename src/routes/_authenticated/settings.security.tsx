@@ -278,7 +278,48 @@ function SettingsSecurityPage() {
           <h2 className="text-lg font-semibold text-foreground">Профил</h2>
         </div>
 
-        {/* Качването на профилна снимка е временно спряно (виж feature-flags.ts). */}
+        {/* Голямата профилна икона е премахната. Качването е временно спряно
+            (виж feature-flags.ts); бутоните остават за бъдещо включване. */}
+        {AVATAR_UPLOADS_ENABLED ? (
+          <div className="space-y-1.5">
+            <UserAvatar
+              userId={user?.id}
+              name={name || user?.name}
+              src={user?.avatarUrl}
+              className="h-14 w-14"
+            />
+            <input
+              ref={fileRef}
+              type="file"
+              accept="image/*"
+              className="hidden"
+              onChange={(e) => {
+                const file = e.target.files?.[0];
+                e.target.value = "";
+                if (file) void onPickAvatar(file);
+              }}
+            />
+            <div className="flex flex-wrap gap-2">
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                className="gap-1.5"
+                disabled={uploadingAvatar}
+                onClick={() => fileRef.current?.click()}
+              >
+                {uploadingAvatar ? <Loader2 className="h-4 w-4 animate-spin" /> : <Camera className="h-4 w-4" />}
+                {user?.avatarUrl ? "Смени снимката" : "Качи снимка"}
+              </Button>
+              {user?.avatarUrl && (
+                <Button type="button" variant="ghost" size="sm" disabled={uploadingAvatar} onClick={() => void onRemoveAvatar()}>
+                  Премахни
+                </Button>
+              )}
+            </div>
+          </div>
+        ) : null}
+
 
 
 
