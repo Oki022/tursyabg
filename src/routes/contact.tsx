@@ -11,6 +11,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useAuth } from "@/lib/auth";
 import { sendContactMessage } from "@/services/contact";
+import { notifyContactMessage } from "@/lib/contact.functions";
 import { seo } from "@/lib/seo";
 import { BRAND_NAME } from "@/components/Logo";
 
@@ -49,7 +50,9 @@ function ContactPage() {
 
   const send = useMutation({
     mutationFn: sendContactMessage,
-    onSuccess: () => {
+    onSuccess: (id: string) => {
+      // Известието към поддръжката не бива да блокира потвърждението към потребителя.
+      void notifyContactMessage({ data: { id } }).catch(() => undefined);
       setSent(true);
       setBody("");
       toast.success("Съобщението е изпратено.");
