@@ -109,25 +109,37 @@ export function ChatThread({ conversationId }: { conversationId: string }) {
   return (
     <div className="flex min-h-0 min-w-0 flex-1 flex-col">
       {conversation && (
-        <Link
-          to="/task/$id"
-          params={{ id: conversation.taskId }}
-          className="flex shrink-0 items-center gap-3 border-b border-border/60 bg-background px-4 py-3 transition-colors hover:bg-accent/40 md:bg-card"
-        >
-          <TaskThumb
-            src={conversation.taskImage}
-            category={conversation.taskCategory}
-            title={conversation.taskTitle}
-            deleted={conversation.taskDeleted}
-            iconClassName="h-5 w-5"
-            className="h-11 w-11 shrink-0 rounded-xl"
-          />
-          <div className="min-w-0 flex-1">
-            <p className="truncate text-sm font-semibold text-foreground">{conversation.taskTitle}</p>
-            <p className="text-xs text-muted-foreground">{conversation.taskBudget} €</p>
-          </div>
-          <UserAvatar userId={conversation.otherUserId} name={conversation.otherUserName} className="h-8 w-8" textClassName="text-[11px]" />
-        </Link>
+        <div className="flex shrink-0 items-center gap-3 border-b border-border/60 bg-background px-4 py-3 md:bg-card">
+          <Link
+            to="/task/$id"
+            params={{ id: conversation.taskId }}
+            className="flex min-w-0 flex-1 items-center gap-3 rounded-xl transition-colors hover:bg-accent/40"
+          >
+            <TaskThumb
+              src={conversation.taskImage}
+              category={conversation.taskCategory}
+              title={conversation.taskTitle}
+              deleted={conversation.taskDeleted}
+              iconClassName="h-5 w-5"
+              className="h-11 w-11 shrink-0 rounded-xl"
+            />
+            <div className="min-w-0 flex-1">
+              <p className="truncate text-sm font-semibold text-foreground">{conversation.taskTitle}</p>
+              <p className="text-xs text-muted-foreground">{conversation.taskBudget} €</p>
+            </div>
+          </Link>
+          <Link
+            to="/user/$id"
+            params={{ id: conversation.otherUserId }}
+            aria-label={`Виж профила на ${conversation.otherUserName}`}
+            className="flex shrink-0 items-center gap-2 rounded-xl px-1 py-1 transition-colors hover:bg-accent/40"
+          >
+            <UserAvatar userId={conversation.otherUserId} name={conversation.otherUserName} className="h-8 w-8" textClassName="text-[11px]" />
+            <span className="hidden max-w-[9rem] truncate text-xs font-medium text-foreground sm:inline">
+              {conversation.otherUserName}
+            </span>
+          </Link>
+        </div>
       )}
 
       <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-4 py-4 [-ms-overflow-style:none] [scrollbar-width:none] md:[scrollbar-width:thin] [&::-webkit-scrollbar]:hidden md:[&::-webkit-scrollbar]:block">
