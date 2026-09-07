@@ -23,7 +23,7 @@ import { BackLink } from "@/components/back-link";
 import { UserAvatar } from "@/components/user-avatar";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { TaskCard } from "@/components/task-card";
-import { useAuth, getInitials } from "@/lib/auth";
+import { useAuth } from "@/lib/auth";
 import { categories, type TaskStatus } from "@/lib/mock-data";
 import { useMyTasks } from "@/lib/tasks-api";
 import { useOwnerPromotions } from "@/lib/promotions-api";

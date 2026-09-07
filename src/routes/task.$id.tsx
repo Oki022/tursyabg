@@ -24,7 +24,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
-import { getInitials, useAuth } from "@/lib/auth";
+import { useAuth } from "@/lib/auth";
 import { findOrCreateConversation, useSendMessage, useThread } from "@/lib/messages-api";
 import { getCategory } from "@/lib/mock-data";
 import { formatLocation } from "@/lib/locations";

@@ -2,7 +2,6 @@ import { Link } from "@tanstack/react-router";
 import { Inbox, Loader2 } from "lucide-react";
 import { UserAvatar } from "@/components/user-avatar";
 import { Button } from "@/components/ui/button";
-import { getInitials } from "@/lib/auth";
 import { TaskThumb } from "@/components/task-thumb";
 import { useConversations } from "@/lib/messages-api";
 import type { ConversationSummary } from "@/services/messages";

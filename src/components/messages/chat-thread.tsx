@@ -4,7 +4,7 @@ import { Send, ShieldAlert, Loader2, Flag } from "lucide-react";
 import { UserAvatar } from "@/components/user-avatar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { getInitials, useAuth } from "@/lib/auth";
+import { useAuth } from "@/lib/auth";
 import { useConversation, useMarkAsRead, useSendMessage, useThread } from "@/lib/messages-api";
 import type { ChatMessage } from "@/services/messages";
 import { CONTACT_MASK_WARNING, containsContactInfo, isValidBgPhone } from "@/lib/phone";

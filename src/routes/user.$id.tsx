@@ -4,7 +4,6 @@ import { BadgeCheck, Briefcase, ExternalLink, Info, MapPin, Star } from "lucide-
 import { UserAvatar } from "@/components/user-avatar";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
-import { getInitials } from "@/lib/auth";
 import { BackLink } from "@/components/back-link";
 import { categories } from "@/lib/mock-data";
 import { usePublicProfile, usePublicReviews } from "@/lib/reviews-api";

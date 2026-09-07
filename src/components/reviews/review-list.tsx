@@ -1,7 +1,6 @@
 import { UserAvatar } from "@/components/user-avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { getInitials } from "@/lib/auth";
 import { getCategory } from "@/lib/mock-data";
 import { formatReviewDate, REVIEWS_PAGE_SIZE, type PublicReview } from "@/services/reviews";
 import { ReportReviewDialog } from "@/components/reviews/report-review-dialog";
