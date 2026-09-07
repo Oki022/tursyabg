@@ -45,9 +45,11 @@ export function UserAvatar({ userId: _userId, name, src, className }: Props) {
   return (
     <Avatar className={cn("shrink-0 ring-1 ring-black/5", className)}>
       {resolved ? <AvatarImage src={resolved} alt={name ?? "Профилна снимка"} /> : null}
-      <AvatarFallback className="select-none bg-slate-200 text-slate-500">
-        <span className="block h-full w-full translate-y-[12%] scale-110 overflow-hidden">
-          <PersonSilhouette />
+      <AvatarFallback className="select-none bg-slate-100 text-slate-400">
+        <span className="flex h-full w-full items-center justify-center">
+          {/* Пропорциите се запазват на всяка големина: иконата е спрямо
+              контейнера, а дебелината на линията е спрямо viewBox-а ѝ. */}
+          <CircleUserRound aria-hidden className="h-[56%] w-[56%]" strokeWidth={1.6} />
         </span>
       </AvatarFallback>
     </Avatar>
