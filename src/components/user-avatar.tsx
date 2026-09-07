@@ -1,4 +1,6 @@
+import { useQuery } from "@tanstack/react-query";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { resolveAvatarUrl } from "@/services/avatars";
 import { cn } from "@/lib/utils";
 
 /**
@@ -51,6 +53,7 @@ type Props = {
   userId?: string | null;
   name?: string | null;
   src?: string | null;
+  /** Път в хранилището или готов адрес към снимката. */
   /** Tailwind класове за размера, например "h-16 w-16". */
   className?: string;
   /** Размер на текста, например "text-lg". */
@@ -59,6 +62,12 @@ type Props = {
 
 export function UserAvatar({ userId, name, src, className, textClassName }: Props) {
   const seed = userId || name || "anon";
+  const { data: resolved } = useQuery({
+    queryKey: ["avatar-url", src],
+    queryFn: () => resolveAvatarUrl(src),
+    enabled: Boolean(src),
+    staleTime: 60 * 60 * 1000,
+  });
   return (
     <Avatar
       className={cn(
@@ -66,7 +75,7 @@ export function UserAvatar({ userId, name, src, className, textClassName }: Prop
         className,
       )}
     >
-      {src ? <AvatarImage src={src} alt={name ?? "Профилна снимка"} /> : null}
+      {resolved ? <AvatarImage src={resolved} alt={name ?? "Профилна снимка"} /> : null}
       <AvatarFallback
         className={cn(
           "select-none font-semibold uppercase tracking-[0.06em] text-white",
