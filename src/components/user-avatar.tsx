@@ -1,26 +1,15 @@
 import { useQuery } from "@tanstack/react-query";
+import { CircleUserRound } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { resolveAvatarUrl } from "@/services/avatars";
 import { cn } from "@/lib/utils";
 
 /**
- * Аватар на потребител: снимка, ако има качена, иначе неутрален силует.
- * Силуетът е един и същ за всички — спокоен сив кръг със светла фигура,
- * който се чете като стандартна профилна снимка, а не като украса.
+ * Аватар на потребител: снимка, ако има качена, иначе неутрална икона.
+ * Плейсхолдерът е същата контурна икона на човек в кръг като бутона в
+ * навигацията (CircleUserRound), върху мек неутрален фон — без инициали
+ * и без градиенти, за да се чете като профилна снимка на сайта.
  */
-
-/** Плътен силует (глава и рамене), който запълва кръга. */
-function PersonSilhouette({ className }: { className?: string }) {
-  return (
-    <svg viewBox="0 0 48 48" aria-hidden className={cn("h-full w-full", className)}>
-      <circle cx="24" cy="18" r="8.4" fill="currentColor" />
-      <path
-        d="M8.6 43.2c1.4-8.3 8-13.4 15.4-13.4s14 5.1 15.4 13.4c.2 1.1-.6 2-1.6 2H10.2c-1 0-1.8-.9-1.6-1.8z"
-        fill="currentColor"
-      />
-    </svg>
-  );
-}
 
 export function avatarInitials(name?: string | null): string {
   const parts = (name ?? "")
