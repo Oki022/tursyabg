@@ -2129,6 +2129,10 @@ export type Database = {
         }
         Returns: Json
       }
+      submit_contact_message: {
+        Args: { _body: string; _email: string; _name: string; _subject: string }
+        Returns: string
+      }
       submit_review: {
         Args: { _comment: string; _engagement_id: string; _rating: number }
         Returns: Json
