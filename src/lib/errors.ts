@@ -70,7 +70,21 @@ export function errorCode(e: unknown): string {
 
 /** Кодове на приложението → обяснение на български. */
 export const APP_ERROR_BG: Record<string, { title: string; description: string }> = {
+  CREDENTIAL_CONTACT: {
+    title: "Тук не се посочват контакти",
+    description:
+      "В публичните регистри се въвеждат само номера от регистър или лиценз, без телефони, имейли и профили в месинджъри.",
+  },
+  IMAGE_UNSUPPORTED: {
+    title: "Файлът не може да се обработи",
+    description: "Избери снимка в JPG, PNG или WebP формат.",
+  },
+  IMAGE_TOO_LARGE: {
+    title: "Снимката е твърде голяма",
+    description: "Избери снимка до 12 MB.",
+  },
   // Публикуване на задачи
+
   FREE_TASK_LIMIT_REACHED: {
     title: "Достигна лимита от 5 безплатни задачи този месец",
     description: "Можеш да публикуваш нова задача в началото на следващия месец.",
