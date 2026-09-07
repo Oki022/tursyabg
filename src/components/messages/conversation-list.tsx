@@ -1,4 +1,4 @@
-import { Link } from "@tanstack/react-router";
+import { Link, useNavigate } from "@tanstack/react-router";
 import { Inbox, Loader2 } from "lucide-react";
 import { UserAvatar } from "@/components/user-avatar";
 import { Button } from "@/components/ui/button";
@@ -26,6 +26,7 @@ type Props = {
 };
 
 export function ConversationList({ selectedId, onSelect, variant = "desktop" }: Props) {
+  const navigate = useNavigate();
   const query = useConversations(true);
   const items = (query.data?.pages ?? []).flatMap((p) => p.items);
 
