@@ -282,6 +282,7 @@ function SettingsSecurityPage() {
             userId={user?.id}
             name={name || user?.name}
             src={user?.avatarUrl}
+            withPersonIcon
             className="h-20 w-20"
             textClassName="text-xl"
           />

@@ -10,7 +10,15 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { formatDateBg } from "@/services/admin";
-import { listContactMessages, setContactStatus, type ContactStatus } from "@/services/contact";
+import {
+  fetchContactSender,
+  listContactMessages,
+  setContactStatus,
+  type ContactMessage,
+  type ContactStatus,
+} from "@/services/contact";
+import { Link } from "@tanstack/react-router";
+import { formatRatingBg } from "@/lib/public-profiles";
 
 export const Route = createFileRoute("/admin/contact")({
   head: () => ({
@@ -89,11 +97,8 @@ function AdminContact() {
             <TableBody>
               {rows.map((m) => (
                 <TableRow key={m.id} id={`msg-${m.id}`} className="align-top scroll-mt-24">
-                  <TableCell className="max-w-[180px]">
-                    <div className="font-medium text-slate-900">{m.name}</div>
-                    <a href={`mailto:${m.email}`} className="break-all text-xs text-primary hover:underline">
-                      {m.email}
-                    </a>
+                  <TableCell className="max-w-[220px]">
+                    <SenderCell message={m} />
                   </TableCell>
                   <TableCell className="max-w-[420px]">
                     <div className="text-sm font-medium text-slate-900">{m.subject}</div>
@@ -144,5 +149,60 @@ function AdminContact() {
         )}
       </AdminCard>
     </AdminPage>
+  );
+}
+
+/** Подател: линк към профила и ключови данни, ако е регистриран. */
+function SenderCell({ message }: { message: ContactMessage }) {
+  const sender = useQuery({
+    queryKey: ["admin", "contact-sender", message.userId, message.email],
+    queryFn: () => fetchContactSender({ userId: message.userId, email: message.email }),
+    staleTime: 5 * 60 * 1000,
+  });
+  const s = sender.data;
+
+  const rating =
+    s && (s.reviewCountAsPro ?? 0) + (s.reviewCountAsClient ?? 0) > 0
+      ? ((s.ratingAsPro ?? 0) * (s.reviewCountAsPro ?? 0) +
+          (s.ratingAsClient ?? 0) * (s.reviewCountAsClient ?? 0)) /
+        ((s.reviewCountAsPro ?? 0) + (s.reviewCountAsClient ?? 0))
+      : null;
+
+  return (
+    <div className="space-y-1">
+      {s?.found && s.id ? (
+        <Link
+          to="/user/$id"
+          params={{ id: s.id }}
+          className="font-medium text-primary hover:underline"
+        >
+          {s.fullName || message.name}
+        </Link>
+      ) : (
+        <div className="font-medium text-slate-900">{message.name}</div>
+      )}
+      <a href={`mailto:${message.email}`} className="block break-all text-xs text-primary hover:underline">
+        {message.email}
+      </a>
+      {sender.isLoading ? (
+        <div className="h-3 w-24 animate-pulse rounded bg-slate-100" />
+      ) : s?.found ? (
+        <ul className="space-y-0.5 text-[11px] leading-tight text-slate-600">
+          <li>Регистриран: {s.createdAt ? formatDateBg(s.createdAt) : "—"}</li>
+          <li>Задачи: {s.taskCount ?? 0}</li>
+          <li>
+            Оценка: {rating == null ? "няма отзиви" : formatRatingBg(rating)}
+            {rating == null ? "" : ` (${(s.reviewCountAsPro ?? 0) + (s.reviewCountAsClient ?? 0)})`}
+          </li>
+          <li>Кредити: {s.credits ?? 0}</li>
+          <li>
+            Нарушения: {s.violationCount ?? 0}
+            {s.bannedAt ? " · блокиран" : s.suspendedUntil ? " · спрян" : ""}
+          </li>
+        </ul>
+      ) : (
+        <p className="text-[11px] text-slate-500">Нерегистриран потребител</p>
+      )}
+    </div>
   );
 }

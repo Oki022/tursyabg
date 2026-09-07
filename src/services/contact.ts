@@ -65,3 +65,51 @@ export async function setContactStatus(input: { id: string; status: ContactStatu
   const r = (data ?? {}) as Record<string, unknown>;
   if (!r["ok"]) throw new Error(String(r["error"] ?? "UNKNOWN"));
 }
+
+export type ContactSender = {
+  found: boolean;
+  id?: string;
+  fullName?: string | null;
+  createdAt?: string | null;
+  credits?: number;
+  ratingAsPro?: number | null;
+  reviewCountAsPro?: number;
+  ratingAsClient?: number | null;
+  reviewCountAsClient?: number;
+  completedJobs?: number;
+  taskCount?: number;
+  violationCount?: number;
+  bannedAt?: string | null;
+  suspendedUntil?: string | null;
+};
+
+/** Данни за подателя (само за екипа): по номер на профил или по имейл. */
+export async function fetchContactSender(input: {
+  userId: string | null;
+  email: string;
+}): Promise<ContactSender> {
+  const { data, error } = await supabase.rpc("admin_contact_sender" as never, {
+    _user_id: input.userId,
+    _email: input.email,
+  } as never);
+  if (error) throw error;
+  const r = (data ?? {}) as Record<string, unknown>;
+  if (!r["found"]) return { found: false };
+  const num = (v: unknown) => (v == null ? null : Number(v));
+  return {
+    found: true,
+    id: String(r["id"]),
+    fullName: (r["full_name"] as string | null) ?? null,
+    createdAt: (r["created_at"] as string | null) ?? null,
+    credits: Number(r["credits"] ?? 0),
+    ratingAsPro: num(r["rating_as_pro"]),
+    reviewCountAsPro: Number(r["review_count_as_pro"] ?? 0),
+    ratingAsClient: num(r["rating_as_client"]),
+    reviewCountAsClient: Number(r["review_count_as_client"] ?? 0),
+    completedJobs: Number(r["completed_jobs"] ?? 0),
+    taskCount: Number(r["task_count"] ?? 0),
+    violationCount: Number(r["violation_count"] ?? 0),
+    bannedAt: (r["banned_at"] as string | null) ?? null,
+    suspendedUntil: (r["suspended_until"] as string | null) ?? null,
+  };
+}
