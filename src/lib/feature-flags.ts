@@ -6,4 +6,4 @@
  * по същия начин както при снимките към задачите. Без нея неподходяща снимка
  * би се показала в картите със задачи, съобщенията и отзивите.
  */
-export const AVATAR_UPLOADS_ENABLED = false;
+export const AVATAR_UPLOADS_ENABLED: boolean = false;

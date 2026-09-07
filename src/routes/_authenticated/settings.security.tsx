@@ -5,6 +5,7 @@ import { toast } from "sonner";
 import { SettingsPageShell } from "@/components/settings-page-shell";
 import { UserAvatar } from "@/components/user-avatar";
 import { uploadAvatar } from "@/services/avatars";
+import { AVATAR_UPLOADS_ENABLED } from "@/lib/feature-flags";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
