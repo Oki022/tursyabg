@@ -72,9 +72,25 @@ export function ConversationList({ selectedId, onSelect, variant = "desktop" }: 
     <div className={variant === "mobile" ? "min-w-0 divide-y divide-border/60" : "min-w-0 space-y-1 p-2"}>
 
       {items.map((c) => {
+        // Профилът се отваря и от аватара, и от името, без да пречи на
+        // отварянето на разговора (редът е линк/бутон, затова не влагаме <a>).
+        const openProfile = (e: React.MouseEvent | React.KeyboardEvent) => {
+          e.preventDefault();
+          e.stopPropagation();
+          void navigate({ to: "/user/$id", params: { id: c.otherUserId } });
+        };
+        const profileProps = {
+          role: "link" as const,
+          tabIndex: 0,
+          "aria-label": `Виж профила на ${c.otherUserName}`,
+          onClick: openProfile,
+          onKeyDown: (e: React.KeyboardEvent) => {
+            if (e.key === "Enter" || e.key === " ") openProfile(e);
+          },
+        };
         const content = (
           <>
-            <span className="relative shrink-0">
+            <span {...profileProps} className="relative shrink-0 cursor-pointer">
               <UserAvatar userId={c.otherUserId} name={c.otherUserName} src={c.otherUserAvatar} className="h-12 w-12" textClassName="text-sm" />
               <TaskThumb
                 src={c.taskImage}
@@ -87,7 +103,12 @@ export function ConversationList({ selectedId, onSelect, variant = "desktop" }: 
             </span>
             <div className="min-w-0 flex-1">
               <div className="flex min-w-0 items-center gap-2">
-                <p className="truncate text-sm font-semibold text-foreground">{c.otherUserName}</p>
+                <span
+                  {...profileProps}
+                  className="truncate text-sm font-semibold text-foreground hover:underline"
+                >
+                  {c.otherUserName}
+                </span>
                 <span className="ml-auto shrink-0 text-[11px] text-muted-foreground">
                   {relativeTimeBg(c.lastMessageAt)}
                 </span>
