@@ -296,8 +296,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const logout = async () => {
-    await supabase.auth.signOut();
+    try {
+      await supabase.auth.signOut();
+    } catch {
+      // Дори при мрежов проблем изчистваме състоянието локално.
+    }
     setUser(null);
+    setLoading(false);
+    // Без това навигацията остава в състояние „още не знаем“ и защитените
+    // страници висят на „Зареждане...“ след излизане.
+    setHasStoredSession(false);
+    if (typeof window !== "undefined") {
+      window.location.assign("/");
+    }
   };
 
   const updateUser: AuthContextValue["updateUser"] = async (patch) => {
