@@ -1665,6 +1665,10 @@ export type Database = {
         Args: { _amount: number; _reason: string; _user_id: string }
         Returns: Json
       }
+      admin_contact_sender: {
+        Args: { _email: string; _user_id: string }
+        Returns: Json
+      }
       admin_correct_task_category: {
         Args: { _category: string; _task_id: string }
         Returns: Json
