@@ -1,3 +1,4 @@
+import type * as React from "react";
 import { Link, useNavigate } from "@tanstack/react-router";
 import { Inbox, Loader2 } from "lucide-react";
 import { UserAvatar } from "@/components/user-avatar";
