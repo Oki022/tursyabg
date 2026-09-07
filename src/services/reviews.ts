@@ -27,6 +27,7 @@ export type Engagement = {
 export type PublicProfile = {
   id: string;
   fullName: string | null;
+  avatarUrl: string | null;
   city: string | null;
   neighborhood: string | null;
   createdAt: string;
@@ -144,6 +145,7 @@ export async function getPublicProfile(userId: string): Promise<PublicProfile | 
   return {
     id: String(r["id"]),
     fullName: (r["full_name"] as string | null) ?? null,
+    avatarUrl: (r["avatar_url"] as string | null) ?? null,
     city: (r["city"] as string | null) ?? null,
     neighborhood: (r["neighborhood"] as string | null) ?? null,
     createdAt: String(r["created_at"]),

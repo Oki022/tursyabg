@@ -1,8 +1,10 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useEffect, useState, type FormEvent } from "react";
-import { ShieldCheck, KeyRound, AlertTriangle, Loader2, PhoneCall, UserCog, Download, Mail } from "lucide-react";
+import { useEffect, useRef, useState, type FormEvent } from "react";
+import { ShieldCheck, KeyRound, AlertTriangle, Loader2, PhoneCall, UserCog, Download, Mail, Camera } from "lucide-react";
 import { toast } from "sonner";
 import { SettingsPageShell } from "@/components/settings-page-shell";
+import { UserAvatar } from "@/components/user-avatar";
+import { uploadAvatar } from "@/services/avatars";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -68,6 +70,8 @@ function SettingsSecurityPage() {
   const [skillDraft, setSkillDraft] = useState("");
   const [credentials, setCredentials] = useState<Credential[]>([]);
   const [saving, setSaving] = useState(false);
+  const [uploadingAvatar, setUploadingAvatar] = useState(false);
+  const fileRef = useRef<HTMLInputElement>(null);
   const [touched, setTouched] = useState(false);
 
   const [passwordOpen, setPasswordOpen] = useState(false);
@@ -76,6 +80,32 @@ function SettingsSecurityPage() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [changingPassword, setChangingPassword] = useState(false);
   const [busy, setBusy] = useState(false);
+
+  const onPickAvatar = async (file: File) => {
+    if (!user) return;
+    setUploadingAvatar(true);
+    try {
+      const path = await uploadAvatar(user.id, file);
+      await updateUser({ avatarUrl: path });
+      toast.success("Профилната снимка е обновена.");
+    } catch (err) {
+      toastError(err, { title: "Снимката не беше качена" });
+    } finally {
+      setUploadingAvatar(false);
+    }
+  };
+
+  const onRemoveAvatar = async () => {
+    setUploadingAvatar(true);
+    try {
+      await updateUser({ avatarUrl: null });
+      toast.success("Профилната снимка е премахната.");
+    } catch (err) {
+      toastError(err, { title: "Снимката не беше премахната" });
+    } finally {
+      setUploadingAvatar(false);
+    }
+  };
 
   const skills = useMySkills(user?.id);
   const saveSkills = useSaveSkills();
@@ -246,6 +276,62 @@ function SettingsSecurityPage() {
           <UserCog className="h-4 w-4 text-primary" />
           <h2 className="text-lg font-semibold text-foreground">Профил</h2>
         </div>
+
+        <div className="flex items-center gap-4">
+          <UserAvatar
+            userId={user?.id}
+            name={name || user?.name}
+            src={user?.avatarUrl}
+            className="h-20 w-20"
+            textClassName="text-xl"
+          />
+          <div className="space-y-1.5">
+            <input
+              ref={fileRef}
+              type="file"
+              accept="image/*"
+              className="hidden"
+              onChange={(e) => {
+                const file = e.target.files?.[0];
+                e.target.value = "";
+                if (file) void onPickAvatar(file);
+              }}
+            />
+            <div className="flex flex-wrap gap-2">
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                className="gap-1.5"
+                disabled={uploadingAvatar}
+                onClick={() => fileRef.current?.click()}
+              >
+                {uploadingAvatar ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : (
+                  <Camera className="h-4 w-4" />
+                )}
+                {user?.avatarUrl ? "Смени снимката" : "Качи снимка"}
+              </Button>
+              {user?.avatarUrl && (
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  disabled={uploadingAvatar}
+                  onClick={() => void onRemoveAvatar()}
+                >
+                  Премахни
+                </Button>
+              )}
+            </div>
+            <p className="text-xs text-muted-foreground">
+              Квадратна снимка до 12 MB. Ако нямаш снимка, показваме инициалите ти.
+            </p>
+          </div>
+        </div>
+
+
 
         <div className="grid gap-1.5">
           <Label htmlFor="name">Име</Label>

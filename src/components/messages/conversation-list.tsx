@@ -1,8 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { Inbox, Loader2 } from "lucide-react";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { UserAvatar } from "@/components/user-avatar";
 import { Button } from "@/components/ui/button";
-import { getInitials } from "@/lib/auth";
 import { TaskThumb } from "@/components/task-thumb";
 import { useConversations } from "@/lib/messages-api";
 import type { ConversationSummary } from "@/services/messages";
@@ -75,14 +74,7 @@ export function ConversationList({ selectedId, onSelect, variant = "desktop" }: 
         const content = (
           <>
             <span className="relative shrink-0">
-              <Avatar className="h-12 w-12 border border-border">
-                {c.otherUserAvatar ? (
-                  <AvatarImage src={c.otherUserAvatar} alt={c.otherUserName} />
-                ) : null}
-                <AvatarFallback className="bg-muted text-xs font-semibold">
-                  {getInitials(c.otherUserName)}
-                </AvatarFallback>
-              </Avatar>
+              <UserAvatar userId={c.otherUserId} name={c.otherUserName} src={c.otherUserAvatar} className="h-12 w-12" textClassName="text-sm" />
               <TaskThumb
                 src={c.taskImage}
                 category={c.taskCategory}

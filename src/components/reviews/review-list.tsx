@@ -1,7 +1,6 @@
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { UserAvatar } from "@/components/user-avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { getInitials } from "@/lib/auth";
 import { getCategory } from "@/lib/mock-data";
 import { formatReviewDate, REVIEWS_PAGE_SIZE, type PublicReview } from "@/services/reviews";
 import { ReportReviewDialog } from "@/components/reviews/report-review-dialog";
@@ -40,11 +39,7 @@ export function ReviewList({
             className="min-w-0 rounded-2xl border border-border/60 bg-card p-4 shadow-sm"
           >
             <div className="flex min-w-0 items-start gap-3">
-              <Avatar className="h-9 w-9 shrink-0 border border-border">
-                <AvatarFallback className="bg-primary/10 text-xs font-semibold text-primary">
-                  {getInitials(r.reviewerName ?? "Потребител")}
-                </AvatarFallback>
-              </Avatar>
+              <UserAvatar userId={r.reviewerId} name={r.reviewerName} className="h-9 w-9" textClassName="text-xs" />
               <div className="min-w-0 flex-1">
                 <div className="flex min-w-0 flex-wrap items-center gap-x-2 gap-y-1">
                   <ProfileLink

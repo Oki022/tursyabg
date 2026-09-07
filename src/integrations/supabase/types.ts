@@ -94,6 +94,7 @@ export type Database = {
           handled_by: string | null
           id: string
           name: string
+          notified_at: string | null
           status: string
           subject: string
           updated_at: string
@@ -107,6 +108,7 @@ export type Database = {
           handled_by?: string | null
           id?: string
           name: string
+          notified_at?: string | null
           status?: string
           subject: string
           updated_at?: string
@@ -120,6 +122,7 @@ export type Database = {
           handled_by?: string | null
           id?: string
           name?: string
+          notified_at?: string | null
           status?: string
           subject?: string
           updated_at?: string
