@@ -1,8 +1,10 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useEffect, useState, type FormEvent } from "react";
-import { ShieldCheck, KeyRound, AlertTriangle, Loader2, PhoneCall, UserCog, Download, Mail } from "lucide-react";
+import { useEffect, useRef, useState, type FormEvent } from "react";
+import { ShieldCheck, KeyRound, AlertTriangle, Loader2, PhoneCall, UserCog, Download, Mail, Camera } from "lucide-react";
 import { toast } from "sonner";
 import { SettingsPageShell } from "@/components/settings-page-shell";
+import { UserAvatar } from "@/components/user-avatar";
+import { uploadAvatar } from "@/services/avatars";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -68,6 +70,8 @@ function SettingsSecurityPage() {
   const [skillDraft, setSkillDraft] = useState("");
   const [credentials, setCredentials] = useState<Credential[]>([]);
   const [saving, setSaving] = useState(false);
+  const [uploadingAvatar, setUploadingAvatar] = useState(false);
+  const fileRef = useRef<HTMLInputElement>(null);
   const [touched, setTouched] = useState(false);
 
   const [passwordOpen, setPasswordOpen] = useState(false);
@@ -76,6 +80,32 @@ function SettingsSecurityPage() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [changingPassword, setChangingPassword] = useState(false);
   const [busy, setBusy] = useState(false);
+
+  const onPickAvatar = async (file: File) => {
+    if (!user) return;
+    setUploadingAvatar(true);
+    try {
+      const path = await uploadAvatar(user.id, file);
+      await updateUser({ avatarUrl: path });
+      toast.success("Профилната снимка е обновена.");
+    } catch (err) {
+      toastError(err, { title: "Снимката не беше качена" });
+    } finally {
+      setUploadingAvatar(false);
+    }
+  };
+
+  const onRemoveAvatar = async () => {
+    setUploadingAvatar(true);
+    try {
+      await updateUser({ avatarUrl: undefined });
+      toast.success("Профилната снимка е премахната.");
+    } catch (err) {
+      toastError(err, { title: "Снимката не беше премахната" });
+    } finally {
+      setUploadingAvatar(false);
+    }
+  };
 
   const skills = useMySkills(user?.id);
   const saveSkills = useSaveSkills();
