@@ -186,6 +186,8 @@ function SenderCell({ message }: { message: ContactMessage }) {
       </a>
       {sender.isLoading ? (
         <div className="h-3 w-24 animate-pulse rounded bg-slate-100" />
+      ) : sender.isError ? (
+        <p className="text-[11px] text-amber-700">Данните за подателя не се заредиха.</p>
       ) : s?.found ? (
         <ul className="space-y-0.5 text-[11px] leading-tight text-slate-600">
           <li>Регистриран: {s.createdAt ? formatDateBg(s.createdAt) : "—"}</li>
