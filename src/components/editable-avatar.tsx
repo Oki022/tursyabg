@@ -28,6 +28,19 @@ export function EditableAvatar({
 
   if (!user) return null;
 
+  // Качването е временно спряно до включването на модерация на снимките.
+  if (!AVATAR_UPLOADS_ENABLED) {
+    return (
+      <UserAvatar
+        userId={user.id}
+        name={user.name}
+        src={user.avatarUrl}
+        className={cn("shrink-0", className)}
+        textClassName={textClassName}
+      />
+    );
+  }
+
   const pick = async (file: File) => {
     setBusy(true);
     try {
