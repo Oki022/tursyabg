@@ -461,7 +461,7 @@ function TaskDetails() {
                 Потребител
               </div>
               <div className="mt-3 flex items-center gap-3">
-                <UserAvatar userId={task.userId} name={task.userName} className="h-12 w-12" textClassName="text-sm" />
+                <UserAvatar userId={task.userId} name={task.author} className="h-12 w-12" textClassName="text-sm" />
                 <div className="min-w-0">
                   {task.userId ? (
                     <Link
