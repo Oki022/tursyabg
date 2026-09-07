@@ -88,7 +88,7 @@ function AdminContact() {
             </TableHeader>
             <TableBody>
               {rows.map((m) => (
-                <TableRow key={m.id} id={`msg-${m.id}`} className="align-top scroll-mt-24 target:bg-primary/5">
+                <TableRow key={m.id} id={`msg-${m.id}`} className="align-top scroll-mt-24">
                   <TableCell className="max-w-[180px]">
                     <div className="font-medium text-slate-900">{m.name}</div>
                     <a href={`mailto:${m.email}`} className="break-all text-xs text-primary hover:underline">
