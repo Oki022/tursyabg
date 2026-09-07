@@ -333,12 +333,7 @@ function SettingsSecurityPage() {
                 Квадратна снимка до 12 MB.
               </p>
             </div>
-          ) : (
-            <p className="text-xs text-muted-foreground">
-              Качването на профилна снимка е временно спряно. Показваме еднаква
-              профилна икона за всички.
-            </p>
-          )}
+          ) : null}
         </div>
 
 

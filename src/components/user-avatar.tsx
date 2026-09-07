@@ -1,26 +1,15 @@
 import { useQuery } from "@tanstack/react-query";
+import { CircleUserRound } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { resolveAvatarUrl } from "@/services/avatars";
 import { cn } from "@/lib/utils";
 
 /**
- * Аватар на потребител: снимка, ако има качена, иначе неутрален силует.
- * Силуетът е един и същ за всички — спокоен сив кръг със светла фигура,
- * който се чете като стандартна профилна снимка, а не като украса.
+ * Аватар на потребител: снимка, ако има качена, иначе неутрална икона.
+ * Плейсхолдерът е същата контурна икона на човек в кръг като бутона в
+ * навигацията (CircleUserRound), върху мек неутрален фон — без инициали
+ * и без градиенти, за да се чете като профилна снимка на сайта.
  */
-
-/** Плътен силует (глава и рамене), който запълва кръга. */
-function PersonSilhouette({ className }: { className?: string }) {
-  return (
-    <svg viewBox="0 0 48 48" aria-hidden className={cn("h-full w-full", className)}>
-      <circle cx="24" cy="18" r="8.4" fill="currentColor" />
-      <path
-        d="M8.6 43.2c1.4-8.3 8-13.4 15.4-13.4s14 5.1 15.4 13.4c.2 1.1-.6 2-1.6 2H10.2c-1 0-1.8-.9-1.6-1.8z"
-        fill="currentColor"
-      />
-    </svg>
-  );
-}
 
 export function avatarInitials(name?: string | null): string {
   const parts = (name ?? "")
@@ -56,9 +45,11 @@ export function UserAvatar({ userId: _userId, name, src, className }: Props) {
   return (
     <Avatar className={cn("shrink-0 ring-1 ring-black/5", className)}>
       {resolved ? <AvatarImage src={resolved} alt={name ?? "Профилна снимка"} /> : null}
-      <AvatarFallback className="select-none bg-slate-200 text-slate-500">
-        <span className="block h-full w-full translate-y-[12%] scale-110 overflow-hidden">
-          <PersonSilhouette />
+      <AvatarFallback className="select-none bg-slate-100 text-slate-400">
+        <span className="flex h-full w-full items-center justify-center">
+          {/* Пропорциите се запазват на всяка големина: иконата е спрямо
+              контейнера, а дебелината на линията е спрямо viewBox-а ѝ. */}
+          <CircleUserRound aria-hidden className="h-[56%] w-[56%]" strokeWidth={1.6} />
         </span>
       </AvatarFallback>
     </Avatar>
