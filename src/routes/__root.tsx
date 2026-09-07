@@ -23,6 +23,7 @@ import { captureIssue } from "@/lib/monitoring/client";
 import { CookieConsentProvider } from "@/lib/cookie-consent";
 import { CookieConsent } from "@/components/cookie-consent";
 import { AccountStatusGate } from "@/components/account/account-status-gate";
+import { allowIndexing } from "@/lib/indexing";
 
 const SUPABASE_ORIGIN =
   (import.meta as any).env?.VITE_SUPABASE_URL ?? "https://xrltdrxhtennbscgbyxb.supabase.co";
@@ -111,6 +112,8 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "theme-color", content: "#14532d" },
       { name: "apple-mobile-web-app-title", content: BRAND },
       { name: "application-name", content: BRAND },
+      // Втори слой към robots.txt, докато сайтът е в тестов режим.
+      ...(allowIndexing() ? [] : [{ name: "robots", content: "noindex, nofollow" }]),
     ],
     links: [
       { rel: "stylesheet", href: appCss },
