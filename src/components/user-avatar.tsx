@@ -58,9 +58,18 @@ type Props = {
   className?: string;
   /** Размер на текста, например "text-lg". */
   textClassName?: string;
+  /** Добавя дискретна иконка на човек, за да се чете като профилна снимка. */
+  withPersonIcon?: boolean;
 };
 
-export function UserAvatar({ userId, name, src, className, textClassName }: Props) {
+export function UserAvatar({
+  userId,
+  name,
+  src,
+  className,
+  textClassName,
+  withPersonIcon,
+}: Props) {
   const seed = userId || name || "anon";
   const { data: resolved } = useQuery({
     queryKey: ["avatar-url", src],
