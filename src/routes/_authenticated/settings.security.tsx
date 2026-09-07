@@ -98,7 +98,7 @@ function SettingsSecurityPage() {
   const onRemoveAvatar = async () => {
     setUploadingAvatar(true);
     try {
-      await updateUser({ avatarUrl: undefined });
+      await updateUser({ avatarUrl: null });
       toast.success("Профилната снимка е премахната.");
     } catch (err) {
       toastError(err, { title: "Снимката не беше премахната" });

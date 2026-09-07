@@ -11,7 +11,7 @@ export type AuthUser = {
   email: string;
   phone?: string;
   credits?: number;
-  avatarUrl?: string;
+  avatarUrl?: string | null;
   city?: string | null;
   neighborhood?: string | null;
   skills?: string[];
