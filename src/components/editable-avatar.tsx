@@ -67,7 +67,7 @@ export function EditableAvatar({
         aria-label="Качи профилна снимка"
         disabled={busy}
         onClick={() => fileRef.current?.click()}
-        className="absolute inset-0 grid place-items-center rounded-full bg-slate-900/55 text-white opacity-0 transition-opacity focus-visible:opacity-100 group-hover:opacity-100 active:opacity-100 md:opacity-0"
+        className="absolute inset-0 grid place-items-center rounded-full bg-slate-900/55 text-white opacity-0 transition-opacity focus-visible:opacity-100 group-hover:opacity-100 active:opacity-100"
       >
         <span className="flex flex-col items-center gap-0.5">
           {busy ? (
@@ -78,6 +78,12 @@ export function EditableAvatar({
           <span className="text-[10px] font-semibold leading-none">{label}</span>
         </span>
       </button>
+      <span
+        aria-hidden
+        className="pointer-events-none absolute -bottom-0.5 -right-0.5 grid h-6 w-6 place-items-center rounded-full border-2 border-card bg-primary text-primary-foreground shadow-sm md:hidden"
+      >
+        <Camera className="h-3 w-3" />
+      </span>
     </div>
   );
 }
