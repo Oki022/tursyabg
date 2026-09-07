@@ -43,14 +43,12 @@ export function UserAvatar({ userId: _userId, name, src, className }: Props) {
     staleTime: 60 * 60 * 1000,
   });
   return (
-    <Avatar className={cn("shrink-0 ring-1 ring-black/5", className)}>
+    <Avatar className={cn("shrink-0", className)}>
       {resolved ? <AvatarImage src={resolved} alt={name ?? "Профилна снимка"} /> : null}
-      <AvatarFallback className="select-none bg-slate-100 text-slate-400">
-        <span className="flex h-full w-full items-center justify-center">
-          {/* Пропорциите се запазват на всяка големина: иконата е спрямо
-              контейнера, а дебелината на линията е спрямо viewBox-а ѝ. */}
-          <CircleUserRound aria-hidden className="h-[56%] w-[56%]" strokeWidth={1.6} />
-        </span>
+      <AvatarFallback className="select-none bg-background text-foreground">
+        {/* Точно същата икона като бутона за профил в навигацията, само
+            увеличена: контурът запълва кръга почти изцяло. */}
+        <CircleUserRound aria-hidden className="h-full w-full" strokeWidth={1.6} />
       </AvatarFallback>
     </Avatar>
   );
