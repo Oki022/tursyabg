@@ -10,6 +10,7 @@
 
 import { contentQualityErrorBg } from "@/lib/content-quality";
 import { moderationErrorBg } from "@/lib/moderation-messages";
+import { looksTechnical, supabaseAuthErrorBg } from "@/lib/supabase-auth-errors";
 
 export type AppError = {
   /** Пълен текст (message + details + hint), използван за търсене на кодове. */
@@ -214,6 +215,9 @@ export function errorBg(
   const moderation = moderationErrorBg(raw);
   if (moderation) return moderation;
 
+  const auth = supabaseAuthErrorBg(raw);
+  if (auth) return auth;
+
   const appCode = errorCode(e);
   if (appCode && APP_ERROR_BG[appCode]) return APP_ERROR_BG[appCode]!;
 
@@ -230,10 +234,11 @@ export function errorBg(
     return { title: "Сесията е изтекла", description: "Влез отново в профила си и опитай пак." };
   }
 
+  // Никога не показваме английски текст или машинен код на потребителя.
+  const safeRaw = raw && !looksTechnical(raw) ? raw : "";
   return {
     title: fallback?.title ?? GENERIC.title,
-    // Суровият текст остава като последна следа, за да не изглежда нищо неслучило се.
-    description: fallback?.description ?? (raw || GENERIC.description),
+    description: fallback?.description ?? (safeRaw || GENERIC.description),
   };
 }
 
