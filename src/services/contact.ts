@@ -19,16 +19,17 @@ export async function sendContactMessage(input: {
   email: string;
   subject: string;
   body: string;
-}): Promise<void> {
+}): Promise<string> {
   const { data: auth } = await supabase.auth.getUser();
-  const { error } = await supabase.from("contact_messages").insert({
+  const { data, error } = await supabase.from("contact_messages").insert({
     name: input.name.trim(),
     email: input.email.trim(),
     subject: input.subject.trim(),
     body: input.body.trim(),
     user_id: auth.user?.id ?? null,
-  });
+  }).select("id").single();
   if (error) throw new Error(error.message);
+  return data.id as string;
 }
 
 export async function listContactMessages(status?: ContactStatus): Promise<ContactMessage[]> {

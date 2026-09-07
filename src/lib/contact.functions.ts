@@ -70,13 +70,14 @@ export const notifyContactMessage = createServerFn({ method: "POST" })
       if (!res.ok) {
         const text = await res.text();
         reportServerIssue({
-          area: "server",
+          area: "server-fn",
+          action: "notify support about contact message",
           error: new Error(`Resend failed [${res.status}]: ${text}`),
         });
         return { ok: false as const };
       }
     } catch (e) {
-      reportServerIssue({ area: "server", error: e });
+      reportServerIssue({ area: "server-fn", action: "notify support about contact message", error: e });
       return { ok: false as const };
     }
 
