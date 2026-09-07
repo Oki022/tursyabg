@@ -1,42 +1,25 @@
 import { useQuery } from "@tanstack/react-query";
-import { User } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { resolveAvatarUrl } from "@/services/avatars";
 import { cn } from "@/lib/utils";
 
 /**
- * Аватар на потребител: снимка, ако има качена, иначе генериран градиент с
- * инициали. Градиентът се извежда от идентификатора, така че един и същ
- * човек винаги изглежда еднакво навсякъде в сайта.
+ * Аватар на потребител: снимка, ако има качена, иначе неутрален силует.
+ * Силуетът е един и същ за всички — спокоен сив кръг със светла фигура,
+ * който се чете като стандартна профилна снимка, а не като украса.
  */
 
-/** Топли, приглушени двойки в тона на марката (оранжево → розово). */
-const PALETTE: [string, string][] = [
-  ["#f97316", "#e11d48"],
-  ["#fb923c", "#db2777"],
-  ["#f59e0b", "#ea580c"],
-  ["#ef4444", "#9f1239"],
-  ["#f472b6", "#b45309"],
-  ["#fb7185", "#c2410c"],
-  ["#d97706", "#be123c"],
-  ["#f87171", "#7c2d12"],
-  ["#fbbf24", "#b91c1c"],
-  ["#e879f9", "#c026d3"],
-];
-
-function hashOf(seed: string): number {
-  let h = 2166136261;
-  for (let i = 0; i < seed.length; i += 1) {
-    h ^= seed.charCodeAt(i);
-    h = Math.imul(h, 16777619);
-  }
-  return Math.abs(h);
-}
-
-export function avatarGradient(seed: string): string {
-  const pair = PALETTE[hashOf(seed || "anon") % PALETTE.length]!;
-  const angle = 120 + (hashOf(`${seed}-a`) % 5) * 30;
-  return `linear-gradient(${angle}deg, ${pair[0]} 0%, ${pair[1]} 100%)`;
+/** Плътен силует (глава и рамене), който запълва кръга. */
+function PersonSilhouette({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 48 48" aria-hidden className={cn("h-full w-full", className)}>
+      <circle cx="24" cy="18" r="8.4" fill="currentColor" />
+      <path
+        d="M8.6 43.2c1.4-8.3 8-13.4 15.4-13.4s14 5.1 15.4 13.4c.2 1.1-.6 2-1.6 2H10.2c-1 0-1.8-.9-1.6-1.8z"
+        fill="currentColor"
+      />
+    </svg>
+  );
 }
 
 export function avatarInitials(name?: string | null): string {
@@ -50,28 +33,20 @@ export function avatarInitials(name?: string | null): string {
 }
 
 type Props = {
-  /** Идентификатор на потребителя — определя градиента. */
+  /** Идентификатор на потребителя (запазен за съвместимост). */
   userId?: string | null;
   name?: string | null;
-  src?: string | null;
   /** Път в хранилището или готов адрес към снимката. */
+  src?: string | null;
   /** Tailwind класове за размера, например "h-16 w-16". */
   className?: string;
-  /** Размер на текста, например "text-lg". */
+  /** Запазено за съвместимост — вече не се използва. */
   textClassName?: string;
-  /** Добавя дискретна иконка на човек, за да се чете като профилна снимка. */
+  /** Запазено за съвместимост — силуетът се показва винаги. */
   withPersonIcon?: boolean;
 };
 
-export function UserAvatar({
-  userId,
-  name,
-  src,
-  className,
-  textClassName,
-  withPersonIcon,
-}: Props) {
-  const seed = userId || name || "anon";
+export function UserAvatar({ userId: _userId, name, src, className }: Props) {
   const { data: resolved } = useQuery({
     queryKey: ["avatar-url", src],
     queryFn: () => resolveAvatarUrl(src),
@@ -79,30 +54,12 @@ export function UserAvatar({
     staleTime: 60 * 60 * 1000,
   });
   return (
-    <Avatar
-      className={cn(
-        "shrink-0 shadow-[inset_0_1px_2px_rgba(255,255,255,0.35),0_1px_3px_rgba(15,23,42,0.18)] ring-1 ring-black/5",
-        className,
-      )}
-    >
+    <Avatar className={cn("shrink-0 ring-1 ring-black/5", className)}>
       {resolved ? <AvatarImage src={resolved} alt={name ?? "Профилна снимка"} /> : null}
-      <AvatarFallback
-        className={cn(
-          "select-none font-semibold uppercase tracking-[0.06em] text-white",
-          textClassName,
-        )}
-        style={{ backgroundImage: avatarGradient(seed) }}
-      >
-        {withPersonIcon ? (
-          <span className="flex flex-col items-center leading-none">
-            <User className="h-[0.9em] w-[0.9em] opacity-80" strokeWidth={2.2} />
-            <span className="-mr-[0.06em] mt-[0.15em] text-[0.62em] leading-none">
-              {avatarInitials(name)}
-            </span>
-          </span>
-        ) : (
-          <span className="-mr-[0.06em] leading-none">{avatarInitials(name)}</span>
-        )}
+      <AvatarFallback className="select-none bg-slate-200 text-slate-500">
+        <span className="block h-[86%] w-[86%] translate-y-[7%] overflow-hidden">
+          <PersonSilhouette />
+        </span>
       </AvatarFallback>
     </Avatar>
   );
