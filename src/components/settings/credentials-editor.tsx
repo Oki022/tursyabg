@@ -136,9 +136,10 @@ export function CredentialsEditor({ entries, onChange, disabled }: Props) {
 
           <p className="flex items-start gap-1.5 text-xs text-muted-foreground">
             <Info className="mt-0.5 h-3.5 w-3.5 shrink-0 text-primary" />
-            Информацията се показва публично и не се проверява от нас. Телефони и имейли се
-            премахват автоматично.
+            Номерата се показват публично точно както си ги въвел и не се проверяват от нас. Телефони
+            и имейли не се приемат тук.
           </p>
+
         </div>
       </CollapsibleContent>
     </Collapsible>
