@@ -20,17 +20,18 @@ export async function sendContactMessage(input: {
   subject: string;
   body: string;
 }): Promise<string> {
-  const { data: auth } = await supabase.auth.getUser();
-  const { data, error } = await supabase.from("contact_messages").insert({
-    name: input.name.trim(),
-    email: input.email.trim(),
-    subject: input.subject.trim(),
-    body: input.body.trim(),
-    user_id: auth.user?.id ?? null,
-  }).select("id").single();
+  // Записва се през защитена функция: анонимните посетители нямат право да
+  // четат таблицата, затова insert + select би върнал грешка за права.
+  const { data, error } = await supabase.rpc("submit_contact_message", {
+    _name: input.name.trim(),
+    _email: input.email.trim(),
+    _subject: input.subject.trim(),
+    _body: input.body.trim(),
+  });
   if (error) throw new Error(error.message);
-  return data.id as string;
+  return data as string;
 }
+
 
 export async function listContactMessages(status?: ContactStatus): Promise<ContactMessage[]> {
   let query = supabase

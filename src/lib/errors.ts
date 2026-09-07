@@ -83,6 +83,22 @@ export const APP_ERROR_BG: Record<string, { title: string; description: string }
     title: "Снимката е твърде голяма",
     description: "Избери снимка до 12 MB.",
   },
+  CONTACT_INVALID_NAME: {
+    title: "Провери името",
+    description: "Въведи име между 2 и 120 знака.",
+  },
+  CONTACT_INVALID_EMAIL: {
+    title: "Провери имейла",
+    description: "Въведи валиден имейл адрес, на който да ти отговорим.",
+  },
+  CONTACT_INVALID_SUBJECT: {
+    title: "Избери тема",
+    description: "Избери една от темите в списъка.",
+  },
+  CONTACT_INVALID_BODY: {
+    title: "Съобщението е твърде кратко",
+    description: "Опиши случая с поне 10 знака.",
+  },
   // Публикуване на задачи
 
   FREE_TASK_LIMIT_REACHED: {
