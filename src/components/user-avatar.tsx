@@ -1,4 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
+import { User } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { resolveAvatarUrl } from "@/services/avatars";
 import { cn } from "@/lib/utils";
@@ -92,7 +93,16 @@ export function UserAvatar({
         )}
         style={{ backgroundImage: avatarGradient(seed) }}
       >
-        <span className="-mr-[0.06em] leading-none">{avatarInitials(name)}</span>
+        {withPersonIcon ? (
+          <span className="flex flex-col items-center leading-none">
+            <User className="h-[0.9em] w-[0.9em] opacity-80" strokeWidth={2.2} />
+            <span className="-mr-[0.06em] mt-[0.15em] text-[0.62em] leading-none">
+              {avatarInitials(name)}
+            </span>
+          </span>
+        ) : (
+          <span className="-mr-[0.06em] leading-none">{avatarInitials(name)}</span>
+        )}
       </AvatarFallback>
     </Avatar>
   );

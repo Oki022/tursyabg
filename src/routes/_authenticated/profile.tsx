@@ -20,7 +20,7 @@ import {
 
 import { Button } from "@/components/ui/button";
 import { BackLink } from "@/components/back-link";
-import { UserAvatar } from "@/components/user-avatar";
+import { EditableAvatar } from "@/components/editable-avatar";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { TaskCard } from "@/components/task-card";
 import { useAuth } from "@/lib/auth";
@@ -140,7 +140,7 @@ function ProfilePage() {
       <div className="rounded-2xl border border-border/60 bg-card p-5 shadow-sm md:p-7">
         <div className="flex flex-col gap-5 md:flex-row md:items-center md:justify-between">
           <div className="flex items-center gap-4">
-            <UserAvatar userId={user.id} name={user.name} src={user.avatarUrl} className="h-16 w-16 md:h-20 md:w-20" textClassName="text-lg" />
+            <EditableAvatar className="h-16 w-16 md:h-20 md:w-20" textClassName="text-lg" />
             <div className="min-w-0">
               <div className="flex flex-wrap items-center gap-2">
                 <h1 className="text-xl font-bold tracking-tight text-foreground md:text-2xl">
@@ -159,9 +159,6 @@ function ProfilePage() {
                   count={overallCount}
                 />
               </div>
-              <p className="mt-1.5 text-sm text-muted-foreground">
-                Възлагай задачи и отключвай контакти без ограничения.
-              </p>
             </div>
           </div>
         </div>
