@@ -57,7 +57,7 @@ export function UserAvatar({ userId: _userId, name, src, className }: Props) {
     <Avatar className={cn("shrink-0 ring-1 ring-black/5", className)}>
       {resolved ? <AvatarImage src={resolved} alt={name ?? "Профилна снимка"} /> : null}
       <AvatarFallback className="select-none bg-slate-200 text-slate-500">
-        <span className="block h-[86%] w-[86%] translate-y-[7%] overflow-hidden">
+        <span className="block h-full w-full translate-y-[12%] scale-110 overflow-hidden">
           <PersonSilhouette />
         </span>
       </AvatarFallback>
