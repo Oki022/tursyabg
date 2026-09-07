@@ -3,6 +3,7 @@ import { Camera, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 
 import { UserAvatar } from "@/components/user-avatar";
+import { AVATAR_UPLOADS_ENABLED } from "@/lib/feature-flags";
 import { useAuth } from "@/lib/auth";
 import { uploadAvatar } from "@/services/avatars";
 import { toastError } from "@/lib/toast-error";

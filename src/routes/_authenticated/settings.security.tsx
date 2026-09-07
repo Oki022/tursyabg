@@ -286,50 +286,58 @@ function SettingsSecurityPage() {
             className="h-20 w-20"
             textClassName="text-xl"
           />
-          <div className="space-y-1.5">
-            <input
-              ref={fileRef}
-              type="file"
-              accept="image/*"
-              className="hidden"
-              onChange={(e) => {
-                const file = e.target.files?.[0];
-                e.target.value = "";
-                if (file) void onPickAvatar(file);
-              }}
-            />
-            <div className="flex flex-wrap gap-2">
-              <Button
-                type="button"
-                variant="outline"
-                size="sm"
-                className="gap-1.5"
-                disabled={uploadingAvatar}
-                onClick={() => fileRef.current?.click()}
-              >
-                {uploadingAvatar ? (
-                  <Loader2 className="h-4 w-4 animate-spin" />
-                ) : (
-                  <Camera className="h-4 w-4" />
-                )}
-                {user?.avatarUrl ? "Смени снимката" : "Качи снимка"}
-              </Button>
-              {user?.avatarUrl && (
+          {/* Качването на профилна снимка е временно спряно (виж feature-flags.ts). */}
+          {AVATAR_UPLOADS_ENABLED ? (
+            <div className="space-y-1.5">
+              <input
+                ref={fileRef}
+                type="file"
+                accept="image/*"
+                className="hidden"
+                onChange={(e) => {
+                  const file = e.target.files?.[0];
+                  e.target.value = "";
+                  if (file) void onPickAvatar(file);
+                }}
+              />
+              <div className="flex flex-wrap gap-2">
                 <Button
                   type="button"
-                  variant="ghost"
+                  variant="outline"
                   size="sm"
+                  className="gap-1.5"
                   disabled={uploadingAvatar}
-                  onClick={() => void onRemoveAvatar()}
+                  onClick={() => fileRef.current?.click()}
                 >
-                  Премахни
+                  {uploadingAvatar ? (
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                  ) : (
+                    <Camera className="h-4 w-4" />
+                  )}
+                  {user?.avatarUrl ? "Смени снимката" : "Качи снимка"}
                 </Button>
-              )}
+                {user?.avatarUrl && (
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    disabled={uploadingAvatar}
+                    onClick={() => void onRemoveAvatar()}
+                  >
+                    Премахни
+                  </Button>
+                )}
+              </div>
+              <p className="text-xs text-muted-foreground">
+                Квадратна снимка до 12 MB.
+              </p>
             </div>
+          ) : (
             <p className="text-xs text-muted-foreground">
-              Квадратна снимка до 12 MB. Ако нямаш снимка, показваме инициалите ти.
+              Качването на профилна снимка е временно спряно. Показваме еднаква
+              профилна икона за всички.
             </p>
-          </div>
+          )}
         </div>
 
 
