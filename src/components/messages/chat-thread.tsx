@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { Send, ShieldAlert, Loader2, Flag } from "lucide-react";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { UserAvatar } from "@/components/user-avatar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { getInitials, useAuth } from "@/lib/auth";
@@ -126,11 +126,7 @@ export function ChatThread({ conversationId }: { conversationId: string }) {
             <p className="truncate text-sm font-semibold text-foreground">{conversation.taskTitle}</p>
             <p className="text-xs text-muted-foreground">{conversation.taskBudget} €</p>
           </div>
-          <Avatar className="h-8 w-8 shrink-0 border border-border">
-            <AvatarFallback className="bg-muted text-[11px] font-semibold">
-              {getInitials(conversation.otherUserName)}
-            </AvatarFallback>
-          </Avatar>
+          <UserAvatar userId={conversation.otherUserId} name={conversation.otherUserName} className="h-8 w-8" textClassName="text-[11px]" />
         </Link>
       )}
 

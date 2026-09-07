@@ -20,7 +20,7 @@ import {
 
 import { Button } from "@/components/ui/button";
 import { BackLink } from "@/components/back-link";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { UserAvatar } from "@/components/user-avatar";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { TaskCard } from "@/components/task-card";
 import { useAuth, getInitials } from "@/lib/auth";
@@ -140,11 +140,7 @@ function ProfilePage() {
       <div className="rounded-2xl border border-border/60 bg-card p-5 shadow-sm md:p-7">
         <div className="flex flex-col gap-5 md:flex-row md:items-center md:justify-between">
           <div className="flex items-center gap-4">
-            <Avatar className="h-16 w-16 border border-border md:h-20 md:w-20">
-              <AvatarFallback className="bg-primary/10 text-lg font-semibold text-primary">
-                {getInitials(user.name)}
-              </AvatarFallback>
-            </Avatar>
+            <UserAvatar userId={user.id} name={user.name} src={user.avatarUrl} className="h-16 w-16 md:h-20 md:w-20" textClassName="text-lg" />
             <div className="min-w-0">
               <div className="flex flex-wrap items-center gap-2">
                 <h1 className="text-xl font-bold tracking-tight text-foreground md:text-2xl">

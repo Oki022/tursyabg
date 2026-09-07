@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { BadgeCheck, Briefcase, ExternalLink, Info, MapPin, Star } from "lucide-react";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { UserAvatar } from "@/components/user-avatar";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { getInitials } from "@/lib/auth";
@@ -109,11 +109,7 @@ function PublicProfilePage() {
       <BackLink />
       <section className="mt-4 min-w-0 rounded-2xl border border-border/60 bg-card p-5 shadow-sm md:p-7">
         <div className="flex min-w-0 items-center gap-4">
-          <Avatar className="h-16 w-16 shrink-0 border border-border">
-            <AvatarFallback className="bg-primary/10 text-lg font-semibold text-primary">
-              {getInitials(profile.fullName ?? "Потребител")}
-            </AvatarFallback>
-          </Avatar>
+          <UserAvatar userId={profile.id} name={profile.fullName} src={profile.avatarUrl} className="h-16 w-16" textClassName="text-lg" />
           <div className="min-w-0">
             <h1 className="truncate text-xl font-bold tracking-tight md:text-2xl">
               {profile.fullName ?? "Потребител"}

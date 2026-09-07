@@ -12,7 +12,7 @@ import {
   ShieldAlert,
   Maximize2,
 } from "lucide-react";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { UserAvatar } from "@/components/user-avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -461,11 +461,7 @@ function TaskDetails() {
                 Потребител
               </div>
               <div className="mt-3 flex items-center gap-3">
-                <Avatar className="h-12 w-12 border border-border">
-                  <AvatarFallback className="bg-primary-soft text-sm font-semibold text-primary">
-                    {getInitials(task.author)}
-                  </AvatarFallback>
-                </Avatar>
+                <UserAvatar userId={task.userId} name={task.userName} className="h-12 w-12" textClassName="text-sm" />
                 <div className="min-w-0">
                   {task.userId ? (
                     <Link
