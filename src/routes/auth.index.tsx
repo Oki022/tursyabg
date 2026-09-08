@@ -37,6 +37,7 @@ function AuthPage() {
   const { login, loginSocial, register, resetPassword, resendConfirmation } = useAuth();
   const [busy, setBusy] = useState(false);
   const isRegister = mode === "register";
+  const welcomeBonus = useWelcomeBonus().data ?? 0;
 
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
