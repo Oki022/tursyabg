@@ -117,7 +117,7 @@ export function NotificationList({
   return (
     <ul className="divide-y divide-border/60">
       {items.map((n) => {
-        const Icon = ICONS[n.type] ?? MessageSquare;
+        const Icon = ICONS[n.type] ?? FALLBACK_ICON;
         const unread = unreadIds ? unreadIds.has(n.id) : !n.readAt;
         return (
           <li key={n.id}>
