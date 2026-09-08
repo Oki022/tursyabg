@@ -161,6 +161,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         }
         return;
       }
+      setLoading(true);
       try {
         const next = await buildUser(session);
         if (!active || version !== syncVersion) return;
