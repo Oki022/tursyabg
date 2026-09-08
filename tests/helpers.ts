@@ -25,7 +25,6 @@ export async function dismissCookieBanner(page: Page) {
         }),
       ),
       url: origin,
-      path: "/",
     },
   ]);
 
