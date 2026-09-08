@@ -2,7 +2,7 @@ import { Link } from "@tanstack/react-router";
 import { Coins, AlertTriangle, History } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/lib/auth";
-import { useCreditBalance } from "@/lib/credits-api";
+import { useCreditBalance, useHasSpentCredits } from "@/lib/credits-api";
 import { useWelcomeBonus } from "@/lib/settings-api";
 
 /** Cheapest unlock in the pricing ladder. Below this nothing can be unlocked. */
