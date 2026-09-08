@@ -18,6 +18,7 @@ import { SiteFooter } from "@/components/site-footer";
 import { Toaster } from "@/components/ui/sonner";
 import { AuthProvider } from "@/lib/auth";
 import { BRAND, pageTitle } from "@/lib/brand";
+import { PasswordRecoveryRedirect } from "@/components/password-recovery-redirect";
 import { MonitoringBoot } from "@/components/monitoring-boot";
 import { captureIssue } from "@/lib/monitoring/client";
 import { CookieConsentProvider } from "@/lib/cookie-consent";
@@ -154,6 +155,7 @@ function RootComponent() {
       <AuthProvider>
         <CookieConsentProvider>
           <MonitoringBoot />
+          <ClientOnly fallback={null}><PasswordRecoveryRedirect /></ClientOnly>
           <div
             className={
               isMessages
