@@ -1969,6 +1969,7 @@ export type Database = {
       }
       is_gibberish: { Args: { _text: string }; Returns: boolean }
       is_last_admin: { Args: { _user_id: string }; Returns: boolean }
+      is_phone_available: { Args: { _phone: string }; Returns: boolean }
       is_refund_flagged: { Args: { _user_id: string }; Returns: boolean }
       is_staff: { Args: { _user_id: string }; Returns: boolean }
       is_valid_bg_phone: { Args: { _phone: string }; Returns: boolean }
@@ -2123,6 +2124,7 @@ export type Database = {
         Returns: number
       }
       run_cron_job: { Args: { _job_name: string }; Returns: undefined }
+      set_my_phone: { Args: { _phone: string }; Returns: Json }
       settle_refund: {
         Args: {
           _approve: boolean
