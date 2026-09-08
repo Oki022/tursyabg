@@ -30,6 +30,7 @@ import { MAX_SKILL_TAGS } from "@/components/settings/skills-editor";
 import { useMySkills, useSaveSkills } from "@/lib/skills-api";
 import { normalizeSkillTag, skillTagError, skillTagKey } from "@/lib/skill-tags";
 import { CredentialsEditor } from "@/components/settings/credentials-editor";
+import { PhoneVerificationCard } from "@/components/settings/phone-verification-card";
 import { credentialError, type Credential } from "@/lib/credentials";
 import { toastError } from "@/lib/toast-error";
 import {
@@ -379,6 +380,8 @@ function SettingsSecurityPage() {
             </p>
           )}
         </div>
+
+        <PhoneVerificationCard />
 
         <div className="border-t border-border/60 pt-5">
           <SkillsEditor

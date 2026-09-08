@@ -85,6 +85,27 @@ export type Database = {
         }
         Relationships: []
       }
+      app_settings: {
+        Row: {
+          description: string
+          key: string
+          updated_at: string
+          value: Json
+        }
+        Insert: {
+          description?: string
+          key: string
+          updated_at?: string
+          value: Json
+        }
+        Update: {
+          description?: string
+          key?: string
+          updated_at?: string
+          value?: Json
+        }
+        Relationships: []
+      }
       contact_messages: {
         Row: {
           admin_note: string
@@ -983,6 +1004,68 @@ export type Database = {
           },
         ]
       }
+      phone_verification_codes: {
+        Row: {
+          attempts: number
+          code_hash: string
+          consumed_at: string | null
+          created_at: string
+          expires_at: string
+          id: string
+          phone: string
+          user_id: string
+        }
+        Insert: {
+          attempts?: number
+          code_hash: string
+          consumed_at?: string | null
+          created_at?: string
+          expires_at: string
+          id?: string
+          phone: string
+          user_id: string
+        }
+        Update: {
+          attempts?: number
+          code_hash?: string
+          consumed_at?: string | null
+          created_at?: string
+          expires_at?: string
+          id?: string
+          phone?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "phone_verification_codes_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      phone_verification_locks: {
+        Row: {
+          failed_attempts: number
+          locked_until: string | null
+          phone: string
+          updated_at: string
+        }
+        Insert: {
+          failed_attempts?: number
+          locked_until?: string | null
+          phone: string
+          updated_at?: string
+        }
+        Update: {
+          failed_attempts?: number
+          locked_until?: string | null
+          phone?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       profile_contacts: {
         Row: {
           created_at: string
@@ -1030,6 +1113,7 @@ export type Database = {
           full_name: string | null
           id: string
           neighborhood: string | null
+          phone_verified_at: string | null
           rating_as_client: number | null
           rating_as_pro: number | null
           review_count_as_client: number
@@ -1038,6 +1122,7 @@ export type Database = {
           skill_tags: string[]
           suspended_until: string | null
           trust_level: number
+          welcome_bonus_granted_at: string | null
         }
         Insert: {
           anonymized_at?: string | null
@@ -1056,6 +1141,7 @@ export type Database = {
           full_name?: string | null
           id: string
           neighborhood?: string | null
+          phone_verified_at?: string | null
           rating_as_client?: number | null
           rating_as_pro?: number | null
           review_count_as_client?: number
@@ -1064,6 +1150,7 @@ export type Database = {
           skill_tags?: string[]
           suspended_until?: string | null
           trust_level?: number
+          welcome_bonus_granted_at?: string | null
         }
         Update: {
           anonymized_at?: string | null
@@ -1082,6 +1169,7 @@ export type Database = {
           full_name?: string | null
           id?: string
           neighborhood?: string | null
+          phone_verified_at?: string | null
           rating_as_client?: number | null
           rating_as_pro?: number | null
           review_count_as_client?: number
@@ -1090,6 +1178,7 @@ export type Database = {
           skill_tags?: string[]
           suspended_until?: string | null
           trust_level?: number
+          welcome_bonus_granted_at?: string | null
         }
         Relationships: []
       }
@@ -1635,6 +1724,39 @@ export type Database = {
           },
         ]
       }
+      unconfirmed_account_notices: {
+        Row: {
+          created_at: string
+          day25_sent_at: string | null
+          day7_sent_at: string | null
+          deleted_at: string | null
+          email: string
+          flag_reason: string
+          flagged_at: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          day25_sent_at?: string | null
+          day7_sent_at?: string | null
+          deleted_at?: string | null
+          email?: string
+          flag_reason?: string
+          flagged_at?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          day25_sent_at?: string | null
+          day7_sent_at?: string | null
+          deleted_at?: string | null
+          email?: string
+          flag_reason?: string
+          flagged_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           created_at: string
@@ -1839,6 +1961,14 @@ export type Database = {
       }
       admin_task_delete_preview: { Args: { _task_id: string }; Returns: Json }
       anonymize_account: { Args: { _uid: string }; Returns: undefined }
+      app_setting_bool: {
+        Args: { _default: boolean; _key: string }
+        Returns: boolean
+      }
+      app_setting_int: {
+        Args: { _default: number; _key: string }
+        Returns: number
+      }
       assign_engagement: {
         Args: { _professional_id: string; _task_id: string }
         Returns: Json
@@ -1869,6 +1999,10 @@ export type Database = {
           _receipt_url: string
           _session_id: string
         }
+        Returns: Json
+      }
+      confirm_phone_verification: {
+        Args: { _code_hash: string; _user_id: string }
         Returns: Json
       }
       confirm_task_active: { Args: { _task_id: string }; Returns: Json }
@@ -1956,6 +2090,7 @@ export type Database = {
       }
       flag_low_quality_tasks: { Args: never; Returns: number }
       get_unlock_cost: { Args: { task_budget: number }; Returns: number }
+      grant_welcome_bonus: { Args: { _user_id: string }; Returns: number }
       guard_auth_attempt: {
         Args: { _action: string; _email: string; _ip: string }
         Returns: undefined
@@ -1980,6 +2115,10 @@ export type Database = {
           _target_id: string
           _target_type: string
         }
+        Returns: undefined
+      }
+      mark_unconfirmed_reminder: {
+        Args: { _email: string; _stage: number; _user_id: string }
         Returns: undefined
       }
       mask_contacts: { Args: { input: string }; Returns: string }
@@ -2135,6 +2274,10 @@ export type Database = {
         }
         Returns: Json
       }
+      start_phone_verification: {
+        Args: { _code_hash: string; _phone: string; _user_id: string }
+        Returns: Json
+      }
       submit_contact_message: {
         Args: { _body: string; _email: string; _name: string; _subject: string }
         Returns: string
@@ -2151,6 +2294,7 @@ export type Database = {
       sweep_autopublish: { Args: { _limit?: number }; Returns: number }
       sweep_engagements: { Args: { _batch?: number }; Returns: number }
       sweep_expiry_notifications: { Args: { _batch?: number }; Returns: number }
+      sweep_unconfirmed_accounts: { Args: { _limit?: number }; Returns: number }
       task_content_issue: {
         Args: { _budget: number; _description: string; _title: string }
         Returns: string
@@ -2175,6 +2319,14 @@ export type Database = {
           _text: string
         }
         Returns: string
+      }
+      unconfirmed_reminder_batch: {
+        Args: { _limit?: number }
+        Returns: {
+          email: string
+          stage: number
+          user_id: string
+        }[]
       }
       unlock_task_contact: { Args: { _task_id: string }; Returns: Json }
       update_own_task: {
