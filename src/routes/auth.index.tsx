@@ -12,6 +12,7 @@ import { toast } from "sonner";
 import { Logo } from "@/components/Logo";
 import { Checkbox } from "@/components/ui/checkbox";
 import { seo } from "@/lib/seo";
+import { useWelcomeBonus } from "@/lib/settings-api";
 
 type AuthSearch = { mode?: "login" | "register"; redirect?: string };
 
