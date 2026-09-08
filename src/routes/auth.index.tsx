@@ -96,7 +96,10 @@ function AuthPage() {
           return;
         }
         toast.success(`Добре дошъл, ${name.split(" ")[0]}!`, {
-          description: "Профилът ти е готов. Публикуването на задачи е безплатно.",
+          description:
+            welcomeBonus > 0
+              ? `Профилът ти е готов и получи ${welcomeBonus} безплатни кредита. Публикуването на задачи е безплатно.`
+              : "Профилът ти е готов. Публикуването на задачи е безплатно.",
         });
         navigate({ to: redirect ?? "/" });
         return;
