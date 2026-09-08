@@ -148,9 +148,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     let active = true;
-
+    let syncVersion = 0;
 
     const sync = async (session: Session | null) => {
+      if (!active) return;
+      const version = ++syncVersion;
+      setHasStoredSession(Boolean(session));
       if (!session) {
         if (active) {
           setUser(null);
@@ -158,30 +161,51 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         }
         return;
       }
-      const next = await buildUser(session);
-      if (next.banned) {
-        toast.error(
-          next.banReason
-            ? `Профилът ти е блокиран: ${next.banReason}`
-            : "Профилът ти е блокиран. Свържи се с поддръжката.",
-        );
-        await supabase.auth.signOut();
-        if (active) {
+      setLoading(true);
+      try {
+        const next = await buildUser(session);
+        if (!active || version !== syncVersion) return;
+        if (next.banned) {
+          toast.error(
+            next.banReason
+              ? `Профилът ти е блокиран: ${next.banReason}`
+              : "Профилът ти е блокиран. Свържи се с поддръжката.",
+          );
+          setUser(null);
+          setLoading(false);
+          setHasStoredSession(false);
+          // Run sign-out after this auth-state task returns. Calling another
+          // auth method from inside an onAuthStateChange callback can deadlock.
+          window.setTimeout(() => void supabase.auth.signOut(), 0);
+          return;
+        }
+        setUser(next);
+        setLoading(false);
+      } catch (error) {
+        if (active && version === syncVersion) {
+          captureIssue({ area: "auth", action: "load signed-in user", error });
           setUser(null);
           setLoading(false);
         }
-        return;
-      }
-      if (active) {
-        setUser(next);
-        setLoading(false);
       }
     };
 
-    supabase.auth.getSession().then(({ data }) => sync(data.session));
+    void supabase.auth
+      .getSession()
+      .then(({ data }) => sync(data.session))
+      .catch((error) => {
+        if (!active) return;
+        captureIssue({ area: "auth", action: "restore session", error });
+        setUser(null);
+        setLoading(false);
+        setHasStoredSession(false);
+      });
 
     const { data: sub } = supabase.auth.onAuthStateChange((_event, session) => {
-      void sync(session);
+      // Supabase awaits auth callbacks while holding its auth lock. Profile
+      // reads also need that lock for their bearer token, so starting them in
+      // this callback stalls sign-in/sign-out forever. Defer all async work.
+      window.setTimeout(() => void sync(session), 0);
     });
 
     return () => {
