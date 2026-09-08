@@ -93,7 +93,7 @@ function AuthPage() {
         await login(email, password);
         toast.success("Добре дошли отново!");
       }
-      navigate({ to: redirect ?? "/profile" });
+      navigate({ to: redirect ?? "/" });
     } catch (err) {
       const raw = String((err as { message?: string })?.message ?? err).toLowerCase();
       if (raw.includes("email not confirmed") || raw.includes("not confirmed")) {

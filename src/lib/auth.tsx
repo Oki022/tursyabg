@@ -151,6 +151,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     let syncVersion = 0;
 
     const sync = async (session: Session | null) => {
+      if (!active) return;
       const version = ++syncVersion;
       setHasStoredSession(Boolean(session));
       if (!session) {
