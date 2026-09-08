@@ -1,3 +1,4 @@
+import { AdminUserLink } from "@/components/admin/user-link";
 import { useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { AdminCard, AdminPage, EmptyState } from "@/components/admin/admin-page";
@@ -68,7 +69,7 @@ function AdminDeletions() {
             <TableBody>
               {rows.map((r) => (
                 <TableRow key={r.id}>
-                  <TableCell className="font-medium">{r.full_name || "Без име"}</TableCell>
+                  <TableCell className="font-medium"><AdminUserLink id={r.user_id} name={r.full_name} fallback="Без име" /></TableCell>
                   <TableCell>{formatDateBg(r.requested_at)}</TableCell>
                   <TableCell>{formatDateBg(r.scheduled_for)}</TableCell>
                   <TableCell>

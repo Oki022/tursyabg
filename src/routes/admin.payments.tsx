@@ -1,3 +1,4 @@
+import { AdminUserLink } from "@/components/admin/user-link";
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { ExternalLink } from "lucide-react";
@@ -58,7 +59,7 @@ function AdminPayments() {
                 {rows.map((p) => (
                   <TableRow key={p.id}>
                     <TableCell className="whitespace-nowrap text-xs text-slate-500">{formatDateBg(p.createdAt)}</TableCell>
-                    <TableCell className="font-medium text-slate-900">{p.userName}</TableCell>
+                    <TableCell className="font-medium text-slate-900"><AdminUserLink id={p.userId} name={p.userName} /></TableCell>
                     <TableCell className="text-right tabular-nums">{p.credits}</TableCell>
                     <TableCell className="text-right tabular-nums">{formatEur(p.amountEur)}</TableCell>
                     <TableCell className="text-xs uppercase text-slate-500">{p.provider}</TableCell>

@@ -4,6 +4,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { toastError } from "@/lib/toast-error";
 import { AdminCard, AdminPage, EmptyState } from "@/components/admin/admin-page";
+import { AdminUserLink } from "@/components/admin/user-link";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -110,7 +111,7 @@ function AdminUsers() {
                   <TableRow key={u.id}>
                     <TableCell>
                       <div className="flex flex-wrap items-center gap-2">
-                        <span className="font-medium text-slate-900">{u.fullName ?? "Без име"}</span>
+                        <AdminUserLink id={u.id} name={u.fullName} fallback="Без име" className="font-medium text-slate-900" />
                         {u.isAdmin && <Badge className="rounded bg-slate-900">админ</Badge>}
                         {u.isModerator && <Badge variant="secondary" className="rounded">модератор</Badge>}
                         {u.bannedAt && <Badge className="rounded bg-rose-600">блокиран</Badge>}
