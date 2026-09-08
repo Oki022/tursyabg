@@ -1,4 +1,3 @@
-import { Link } from "@tanstack/react-router";
 import { Coins, AlertTriangle, History } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/lib/auth";
