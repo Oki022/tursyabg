@@ -27,7 +27,8 @@ export async function dismissCookieBanner(page: Page) {
           version: 1,
         }),
       ),
-      url: origin,
+      domain: hostname,
+      path: "/",
     },
   ]);
 
