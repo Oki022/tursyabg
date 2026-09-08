@@ -1,6 +1,6 @@
 import { createFileRoute, Link, useNavigate, useSearch } from "@tanstack/react-router";
 import { useMemo, useState, type FormEvent } from "react";
-import { Mail, Lock, User as UserIcon, Eye, EyeOff, Loader2, PhoneCall } from "lucide-react";
+import { Mail, Lock, User as UserIcon, Eye, EyeOff, Loader2, PhoneCall, Gift } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
