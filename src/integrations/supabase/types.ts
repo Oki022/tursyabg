@@ -2227,6 +2227,11 @@ export type Database = {
         | "contact_message"
         | "account_deletion_scheduled"
         | "account_deletion_cancelled"
+        | "credits_adjusted"
+        | "account_restored"
+        | "task_removed"
+        | "task_category_changed"
+        | "review_removed"
       promo_type: "bump" | "urgent" | "top"
       refund_reason:
         | "fake_task"
@@ -2416,6 +2421,11 @@ export const Constants = {
         "contact_message",
         "account_deletion_scheduled",
         "account_deletion_cancelled",
+        "credits_adjusted",
+        "account_restored",
+        "task_removed",
+        "task_category_changed",
+        "review_removed",
       ],
       promo_type: ["bump", "urgent", "top"],
       refund_reason: [
