@@ -39,10 +39,25 @@ export async function dismissCookieBanner(page: Page) {
   }
 }
 
+/**
+ * The pages are server-rendered, so the markup exists before React hydrates.
+ * Clicking too early submits the plain HTML form and reloads the page, which
+ * silently drops the sign-in. Wait until the client app is live.
+ */
+export async function waitForHydration(page: Page) {
+  await page.waitForLoadState("networkidle");
+  await page.waitForFunction(
+    () => !!document.querySelector("#root, body")?.hasChildNodes() && !!(window as any).__TSR_ROUTER__,
+    undefined,
+    { timeout: 30_000 },
+  ).catch(() => undefined);
+}
+
 /** Navigate and make sure nothing is covering the page. */
 export async function gotoApp(page: Page, path: string) {
   await page.goto(path, { waitUntil: "domcontentloaded" });
   await dismissCookieBanner(page);
+  await waitForHydration(page);
 }
 
 /** Sign in through the real form on /auth?mode=login. */
