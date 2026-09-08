@@ -73,7 +73,7 @@ export function ConversationList({ selectedId, onSelect, variant = "desktop" }: 
     <div className={variant === "mobile" ? "min-w-0 divide-y divide-border/60" : "min-w-0 space-y-1 p-2"}>
 
       {items.map((c) => {
-        // Профилът се отваря и от аватара, и от името, без да пречи на
+        // Профилът се отваря от малкия аватар и името, без да пречи на
         // отварянето на разговора (редът е линк/бутон, затова не влагаме <a>).
         const openProfile = (e: React.MouseEvent | React.KeyboardEvent) => {
           e.preventDefault();
@@ -91,16 +91,24 @@ export function ConversationList({ selectedId, onSelect, variant = "desktop" }: 
         };
         const content = (
           <>
-            <span {...profileProps} className="relative shrink-0 cursor-pointer">
-              <UserAvatar userId={c.otherUserId} name={c.otherUserName} src={c.otherUserAvatar} className="h-12 w-12" textClassName="text-sm" />
+            <span className="relative shrink-0">
               <TaskThumb
                 src={c.taskImage}
                 category={c.taskCategory}
                 title={c.taskTitle}
                 deleted={c.taskDeleted}
-                iconClassName="h-3 w-3"
-                className="absolute -bottom-1 -right-1 h-5 w-5 rounded-md border border-background shadow-sm"
+                iconClassName="h-6 w-6"
+                className="h-12 w-12 rounded-xl"
               />
+              <span {...profileProps} className="absolute -bottom-1 -right-1 cursor-pointer rounded-full">
+                <UserAvatar
+                  userId={c.otherUserId}
+                  name={c.otherUserName}
+                  src={c.otherUserAvatar}
+                  className="h-6 w-6 border-2 border-background shadow-sm"
+                  iconStrokeWidth={1.45}
+                />
+              </span>
             </span>
             <div className="min-w-0 flex-1">
               <div className="flex min-w-0 items-center gap-2">

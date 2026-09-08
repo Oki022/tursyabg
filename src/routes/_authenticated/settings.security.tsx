@@ -287,6 +287,7 @@ function SettingsSecurityPage() {
               name={name || user?.name}
               src={user?.avatarUrl}
               className="h-14 w-14"
+              iconStrokeWidth={0.65}
             />
             <input
               ref={fileRef}

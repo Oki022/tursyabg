@@ -134,7 +134,7 @@ export function ChatThread({ conversationId }: { conversationId: string }) {
             aria-label={`Виж профила на ${conversation.otherUserName}`}
             className="flex shrink-0 items-center gap-2 rounded-xl px-1 py-1 transition-colors hover:bg-accent/40"
           >
-            <UserAvatar userId={conversation.otherUserId} name={conversation.otherUserName} className="h-8 w-8" textClassName="text-[11px]" />
+            <UserAvatar userId={conversation.otherUserId} name={conversation.otherUserName} className="h-8 w-8" iconStrokeWidth={1.1} />
             <span className="hidden max-w-[9rem] truncate text-xs font-medium text-foreground sm:inline">
               {conversation.otherUserName}
             </span>
