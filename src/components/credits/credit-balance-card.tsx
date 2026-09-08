@@ -3,6 +3,7 @@ import { Coins, AlertTriangle, History } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/lib/auth";
 import { useCreditBalance } from "@/lib/credits-api";
+import { useWelcomeBonus } from "@/lib/settings-api";
 
 /** Cheapest unlock in the pricing ladder. Below this nothing can be unlocked. */
 export const MIN_UNLOCK_COST = 5;
@@ -10,6 +11,7 @@ export const MIN_UNLOCK_COST = 5;
 export function CreditBalanceCard({ className }: { className?: string }) {
   const { user } = useAuth();
   const { data, isLoading } = useCreditBalance(user?.id);
+  const bonus = useWelcomeBonus().data ?? 0;
   const credits = data ?? user?.credits ?? 0;
   const low = !isLoading && credits < MIN_UNLOCK_COST;
 
@@ -48,10 +50,16 @@ export function CreditBalanceCard({ className }: { className?: string }) {
           </Link>
         </div>
       </div>
-      {low && (
+      {low ? (
         <p className="mt-3 flex items-start gap-1.5 rounded-lg bg-amber-500/10 px-2.5 py-2 text-xs font-medium text-amber-700">
           <AlertTriangle className="mt-0.5 h-3.5 w-3.5 shrink-0" />
           Балансът ти е под цената на най-евтиното отключване. Зареди кредити, за да продължиш.
+        </p>
+      ) : (
+        <p className="mt-3 text-xs text-muted-foreground">
+          С кредити отключваш телефона на възложителя по задача, която те интересува. Едно отключване струва
+          между 5 и 80 кредита според бюджета на задачата.
+          {bonus ? ` Първите ${bonus} кредита са подарък при регистрация.` : ""}
         </p>
       )}
     </div>

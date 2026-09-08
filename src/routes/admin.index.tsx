@@ -135,6 +135,17 @@ function AdminDashboard() {
         <Stat label="Задачи" value={String(s?.total_tasks ?? "няма")} hint={`${s?.active_tasks ?? 0} активни`} />
         <Stat label="Нови задачи" value={String(s?.tasks_7d ?? "няма")} hint={`за 7 дни · ${s?.tasks_30d ?? 0} за 30 дни`} />
         <Stat label="Отключвания" value={String(s?.unlocks_total ?? "няма")} />
+        <Stat
+          label="Бонус кредити"
+          value={String(s?.welcome_bonus_total ?? "няма")}
+          hint={`${s?.welcome_bonus_7d ?? 0} за 7 дни · ${s?.welcome_bonus_users_7d ?? 0} нови профила · по ${s?.welcome_bonus_amount ?? 0} на регистрация`}
+        />
+        <Stat
+          label="Изтрити непотвърдени"
+          value={String(s?.unconfirmed_deleted_30d ?? "няма")}
+          hint={`за 30 дни · ${s?.unconfirmed_flagged ?? 0} за ръчен преглед`}
+        />
+        <Stat label="Потвърдени телефони" value={String(s?.phone_verified_users ?? "няма")} />
         <Stat label="Продадени кредити" value={String(s?.credits_sold ?? "няма")} />
         <Stat label="Приходи (общо)" value={s ? formatEur(Number(s.revenue_total)) : "няма"} />
         <Stat label="Приходи 7 дни" value={s ? formatEur(Number(s.revenue_7d)) : "няма"} />

@@ -1,6 +1,6 @@
 import { createFileRoute, Link, useNavigate, useSearch } from "@tanstack/react-router";
 import { useMemo, useState, type FormEvent } from "react";
-import { Mail, Lock, User as UserIcon, Eye, EyeOff, Loader2, PhoneCall } from "lucide-react";
+import { Mail, Lock, User as UserIcon, Eye, EyeOff, Loader2, PhoneCall, Gift } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -12,6 +12,7 @@ import { toast } from "sonner";
 import { Logo } from "@/components/Logo";
 import { Checkbox } from "@/components/ui/checkbox";
 import { seo } from "@/lib/seo";
+import { useWelcomeBonus } from "@/lib/settings-api";
 
 type AuthSearch = { mode?: "login" | "register"; redirect?: string };
 
@@ -37,6 +38,7 @@ function AuthPage() {
   const { login, loginSocial, register, resetPassword, resendConfirmation } = useAuth();
   const [busy, setBusy] = useState(false);
   const isRegister = mode === "register";
+  const welcomeBonus = useWelcomeBonus().data ?? 0;
 
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -94,7 +96,10 @@ function AuthPage() {
           return;
         }
         toast.success(`Добре дошъл, ${name.split(" ")[0]}!`, {
-          description: "Профилът ти е готов. Публикуването на задачи е безплатно.",
+          description:
+            welcomeBonus > 0
+              ? `Профилът ти е готов и получи ${welcomeBonus} безплатни кредита. Публикуването на задачи е безплатно.`
+              : "Профилът ти е готов. Публикуването на задачи е безплатно.",
         });
         navigate({ to: redirect ?? "/" });
         return;
@@ -184,6 +189,13 @@ function AuthPage() {
           <span className="text-[11px] font-semibold tracking-widest text-muted-foreground">ИЛИ</span>
           <span className="h-px flex-1 bg-border" />
         </div>
+
+        {isRegister && welcomeBonus > 0 && (
+          <p className="mb-4 flex items-start gap-2 rounded-xl border border-emerald-300/60 bg-emerald-50 px-3 py-2.5 text-sm font-medium text-emerald-900">
+            <Gift className="mt-0.5 h-4 w-4 shrink-0" />
+            Получи {welcomeBonus} безплатни кредита при регистрация и отключи първите контакти, без да плащаш.
+          </p>
+        )}
 
         <form onSubmit={handleSubmit} className="grid gap-4">
           {isRegister && (

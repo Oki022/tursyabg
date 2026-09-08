@@ -51,6 +51,14 @@ export type DashboardStats = {
   contact_new: number;
   credit_mismatches: number;
   rule_engine_errors_7d: number;
+  /** Настроен размер на бонуса при регистрация (0 = изключен). */
+  welcome_bonus_amount: number;
+  welcome_bonus_total: number;
+  welcome_bonus_7d: number;
+  welcome_bonus_users_7d: number;
+  unconfirmed_deleted_30d: number;
+  unconfirmed_flagged: number;
+  phone_verified_users: number;
 };
 
 export type CreditMismatch = { userId: string; userName: string; credits: number; ledger: number; diff: number };

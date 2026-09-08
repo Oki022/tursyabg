@@ -48,6 +48,13 @@ export function moderationErrorBg(raw: string): { title: string; description: st
       description: "Профилът ти е с 7-дневно ограничение заради повторно нарушение на правилата за съдържание.",
     };
   }
+  if (raw.includes("PHONE_NOT_VERIFIED")) {
+    return {
+      title: "Потвърди телефона си",
+      description:
+        "За да публикуваш задача или да отключиш контакт, трябва да потвърдиш телефонния си номер с код по SMS. Отвори „Влизане и сигурност“ в настройките и натисни „Изпрати код по SMS“.",
+    };
+  }
   if (raw.includes("ACCOUNT_BANNED")) {
     return {
       title: "Профилът ти е блокиран",
