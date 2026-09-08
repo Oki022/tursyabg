@@ -60,6 +60,7 @@ import { Route as AuthenticatedMessagesConversationIdRouteImport } from './route
 import { Route as AuthenticatedBillingSuccessRouteImport } from './routes/_authenticated/billing.success'
 import { Route as ApiPublicPaymentsWebhookRouteImport } from './routes/api/public/payments/webhook'
 import { Route as ApiPublicMonitoringCronCheckRouteImport } from './routes/api/public/monitoring/cron-check'
+import { Route as ApiPublicCronUnconfirmedRemindersRouteImport } from './routes/api/public/cron/unconfirmed-reminders'
 import { Route as AuthenticatedTaskIdEditRouteImport } from './routes/_authenticated/task.$id.edit'
 
 const TermsRoute = TermsRouteImport.update({
@@ -326,6 +327,12 @@ const ApiPublicMonitoringCronCheckRoute =
     path: '/api/public/monitoring/cron-check',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiPublicCronUnconfirmedRemindersRoute =
+  ApiPublicCronUnconfirmedRemindersRouteImport.update({
+    id: '/api/public/cron/unconfirmed-reminders',
+    path: '/api/public/cron/unconfirmed-reminders',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const AuthenticatedTaskIdEditRoute = AuthenticatedTaskIdEditRouteImport.update({
   id: '/task/$id/edit',
   path: '/task/$id/edit',
@@ -382,6 +389,7 @@ export interface FileRoutesByFullPath {
   '/messages/': typeof AuthenticatedMessagesIndexRoute
   '/city/$city/': typeof CityCityIndexRoute
   '/task/$id/edit': typeof AuthenticatedTaskIdEditRoute
+  '/api/public/cron/unconfirmed-reminders': typeof ApiPublicCronUnconfirmedRemindersRoute
   '/api/public/monitoring/cron-check': typeof ApiPublicMonitoringCronCheckRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
 }
@@ -433,6 +441,7 @@ export interface FileRoutesByTo {
   '/messages': typeof AuthenticatedMessagesIndexRoute
   '/city/$city': typeof CityCityIndexRoute
   '/task/$id/edit': typeof AuthenticatedTaskIdEditRoute
+  '/api/public/cron/unconfirmed-reminders': typeof ApiPublicCronUnconfirmedRemindersRoute
   '/api/public/monitoring/cron-check': typeof ApiPublicMonitoringCronCheckRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
 }
@@ -488,6 +497,7 @@ export interface FileRoutesById {
   '/_authenticated/messages/': typeof AuthenticatedMessagesIndexRoute
   '/city/$city/': typeof CityCityIndexRoute
   '/_authenticated/task/$id/edit': typeof AuthenticatedTaskIdEditRoute
+  '/api/public/cron/unconfirmed-reminders': typeof ApiPublicCronUnconfirmedRemindersRoute
   '/api/public/monitoring/cron-check': typeof ApiPublicMonitoringCronCheckRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
 }
@@ -543,6 +553,7 @@ export interface FileRouteTypes {
     | '/messages/'
     | '/city/$city/'
     | '/task/$id/edit'
+    | '/api/public/cron/unconfirmed-reminders'
     | '/api/public/monitoring/cron-check'
     | '/api/public/payments/webhook'
   fileRoutesByTo: FileRoutesByTo
@@ -594,6 +605,7 @@ export interface FileRouteTypes {
     | '/messages'
     | '/city/$city'
     | '/task/$id/edit'
+    | '/api/public/cron/unconfirmed-reminders'
     | '/api/public/monitoring/cron-check'
     | '/api/public/payments/webhook'
   id:
@@ -648,6 +660,7 @@ export interface FileRouteTypes {
     | '/_authenticated/messages/'
     | '/city/$city/'
     | '/_authenticated/task/$id/edit'
+    | '/api/public/cron/unconfirmed-reminders'
     | '/api/public/monitoring/cron-check'
     | '/api/public/payments/webhook'
   fileRoutesById: FileRoutesById
@@ -677,6 +690,7 @@ export interface RootRouteChildren {
   TaskIdRoute: typeof TaskIdRoute
   UserIdRoute: typeof UserIdRoute
   AuthIndexRoute: typeof AuthIndexRoute
+  ApiPublicCronUnconfirmedRemindersRoute: typeof ApiPublicCronUnconfirmedRemindersRoute
   ApiPublicMonitoringCronCheckRoute: typeof ApiPublicMonitoringCronCheckRoute
   ApiPublicPaymentsWebhookRoute: typeof ApiPublicPaymentsWebhookRoute
 }
@@ -1040,6 +1054,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicMonitoringCronCheckRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/cron/unconfirmed-reminders': {
+      id: '/api/public/cron/unconfirmed-reminders'
+      path: '/api/public/cron/unconfirmed-reminders'
+      fullPath: '/api/public/cron/unconfirmed-reminders'
+      preLoaderRoute: typeof ApiPublicCronUnconfirmedRemindersRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_authenticated/task/$id/edit': {
       id: '/_authenticated/task/$id/edit'
       path: '/task/$id/edit'
@@ -1156,6 +1177,8 @@ const rootRouteChildren: RootRouteChildren = {
   TaskIdRoute: TaskIdRoute,
   UserIdRoute: UserIdRoute,
   AuthIndexRoute: AuthIndexRoute,
+  ApiPublicCronUnconfirmedRemindersRoute:
+    ApiPublicCronUnconfirmedRemindersRoute,
   ApiPublicMonitoringCronCheckRoute: ApiPublicMonitoringCronCheckRoute,
   ApiPublicPaymentsWebhookRoute: ApiPublicPaymentsWebhookRoute,
 }

@@ -433,6 +433,24 @@ export type Database = {
         }
         Relationships: []
       }
+      cron_secrets: {
+        Row: {
+          created_at: string
+          name: string
+          token: string
+        }
+        Insert: {
+          created_at?: string
+          name: string
+          token?: string
+        }
+        Update: {
+          created_at?: string
+          name?: string
+          token?: string
+        }
+        Relationships: []
+      }
       engagements: {
         Row: {
           claimed_at: string
@@ -1978,6 +1996,7 @@ export type Database = {
         Returns: Json
       }
       bg_slug: { Args: { _input: string }; Returns: string }
+      call_unconfirmed_reminders: { Args: never; Returns: undefined }
       can_bump_task: { Args: { _task_id: string }; Returns: boolean }
       cancel_account_deletion: { Args: never; Returns: undefined }
       claim_engagement: { Args: { _task_id: string }; Returns: Json }
