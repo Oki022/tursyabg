@@ -33,9 +33,11 @@ type Props = {
   textClassName?: string;
   /** Запазено за съвместимост — силуетът се показва винаги. */
   withPersonIcon?: boolean;
+  /** Дебелина на контура според визуалния размер на аватара. */
+  iconStrokeWidth?: number;
 };
 
-export function UserAvatar({ userId: _userId, name, src, className }: Props) {
+export function UserAvatar({ userId: _userId, name, src, className, iconStrokeWidth = 1.1 }: Props) {
   const { data: resolved } = useQuery({
     queryKey: ["avatar-url", src],
     queryFn: () => resolveAvatarUrl(src),
@@ -48,7 +50,7 @@ export function UserAvatar({ userId: _userId, name, src, className }: Props) {
       <AvatarFallback className="select-none bg-background text-foreground">
         {/* Точно същата икона като бутона за профил в навигацията, само
             увеличена: контурът запълва кръга почти изцяло. */}
-        <CircleUserRound aria-hidden className="h-full w-full" strokeWidth={1.6} />
+        <CircleUserRound aria-hidden className="h-full w-full" strokeWidth={iconStrokeWidth} />
       </AvatarFallback>
     </Avatar>
   );

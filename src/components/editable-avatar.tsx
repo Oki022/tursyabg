@@ -18,10 +18,12 @@ export function EditableAvatar({
   className,
   textClassName,
   label = "Смени",
+  iconStrokeWidth,
 }: {
   className?: string;
   textClassName?: string;
   label?: string;
+  iconStrokeWidth?: number;
 }) {
   const { user, updateUser } = useAuth();
   const fileRef = useRef<HTMLInputElement>(null);
@@ -38,6 +40,7 @@ export function EditableAvatar({
         src={user.avatarUrl}
         className={cn("shrink-0", className)}
         textClassName={textClassName}
+        iconStrokeWidth={iconStrokeWidth}
       />
     );
   }
@@ -64,6 +67,7 @@ export function EditableAvatar({
         withPersonIcon
         className="h-full w-full"
         textClassName={textClassName}
+        iconStrokeWidth={iconStrokeWidth}
       />
       <input
         ref={fileRef}

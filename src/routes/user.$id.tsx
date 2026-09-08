@@ -108,7 +108,7 @@ function PublicProfilePage() {
       <BackLink />
       <section className="mt-4 min-w-0 rounded-2xl border border-border/60 bg-card p-5 shadow-sm md:p-7">
         <div className="flex min-w-0 items-center gap-4">
-          <UserAvatar userId={profile.id} name={profile.fullName} src={profile.avatarUrl} className="h-16 w-16" textClassName="text-lg" />
+          <UserAvatar userId={profile.id} name={profile.fullName} src={profile.avatarUrl} className="h-16 w-16" iconStrokeWidth={0.55} />
           <div className="min-w-0">
             <h1 className="truncate text-xl font-bold tracking-tight md:text-2xl">
               {profile.fullName ?? "Потребител"}
