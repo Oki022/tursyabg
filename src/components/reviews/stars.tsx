@@ -17,21 +17,26 @@ export function Stars({ value, size = 14 }: { value: number; size?: number }) {
 }
 
 /**
- * Compact rating next to a name. Users without reviews read as "Нов потребител"
- * instead of an empty zero-star row.
+ * Compact rating next to a name. Only genuinely new users (no tasks, unlocks or
+ * reviews) read as "Нов потребител"; someone with activity but no reviews yet
+ * simply shows nothing.
  */
 export function RatingInline({
   rating,
   count,
+  hasActivity = false,
   className = "",
   size = 12,
 }: {
   rating?: number | null;
   count?: number | null;
+  /** True once the user has posted a task, unlocked a contact or been reviewed. */
+  hasActivity?: boolean;
   className?: string;
   size?: number;
 }) {
   if (!rating || !count) {
+    if (hasActivity) return null;
     return (
       <span className={`inline-flex items-center text-[11px] text-muted-foreground ${className}`}>
         Нов потребител
