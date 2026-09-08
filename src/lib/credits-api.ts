@@ -5,6 +5,7 @@ import {
   getMyUnlock,
   getMyUnlockedTasks,
   getTransactions,
+  hasSpentCredits,
   unlockTaskContact,
 } from "@/services/credits";
 import { captureIssue } from "@/lib/monitoring/client";
@@ -18,6 +19,16 @@ export function useCreditBalance(userId?: string) {
     queryKey: ["credits", "balance", userId],
     enabled: Boolean(userId),
     queryFn: () => getCreditBalance(userId!),
+  });
+}
+
+/** Дали потребителят вече е похарчил кредити (за показване на съответния текст). */
+export function useHasSpentCredits(userId?: string) {
+  return useQuery({
+    queryKey: ["credits", "hasSpent", userId],
+    enabled: Boolean(userId),
+    queryFn: () => hasSpentCredits(userId!),
+    staleTime: 5 * 60 * 1000,
   });
 }
 

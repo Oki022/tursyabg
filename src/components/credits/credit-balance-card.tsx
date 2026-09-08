@@ -2,7 +2,7 @@ import { Link } from "@tanstack/react-router";
 import { Coins, AlertTriangle, History } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/lib/auth";
-import { useCreditBalance } from "@/lib/credits-api";
+import { useCreditBalance, useHasSpentCredits } from "@/lib/credits-api";
 import { useWelcomeBonus } from "@/lib/settings-api";
 
 /** Cheapest unlock in the pricing ladder. Below this nothing can be unlocked. */
@@ -11,6 +11,7 @@ export const MIN_UNLOCK_COST = 5;
 export function CreditBalanceCard({ className }: { className?: string }) {
   const { user } = useAuth();
   const { data, isLoading } = useCreditBalance(user?.id);
+  const spent = useHasSpentCredits(user?.id).data ?? false;
   const bonus = useWelcomeBonus().data ?? 0;
   const credits = data ?? user?.credits ?? 0;
   const low = !isLoading && credits < MIN_UNLOCK_COST;
@@ -54,6 +55,16 @@ export function CreditBalanceCard({ className }: { className?: string }) {
         <p className="mt-3 flex items-start gap-1.5 rounded-lg bg-amber-500/10 px-2.5 py-2 text-xs font-medium text-amber-700">
           <AlertTriangle className="mt-0.5 h-3.5 w-3.5 shrink-0" />
           Балансът ти е под цената на най-евтиното отключване. Зареди кредити, за да продължиш.
+        </p>
+      ) : spent ? (
+        <p className="mt-3 text-xs text-muted-foreground">
+          С кредити отключваш телефона на възложителя.{" "}
+          <Link
+            to="/faq"
+            className="font-medium text-primary underline-offset-2 hover:underline"
+          >
+            Как работят кредитите
+          </Link>
         </p>
       ) : (
         <p className="mt-3 text-xs text-muted-foreground">

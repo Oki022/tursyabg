@@ -80,6 +80,17 @@ export async function getCreditBalance(userId: string): Promise<number> {
   return data?.credits ?? 0;
 }
 
+/** Вярно, когато потребителът вече е похарчил поне веднъж кредити. */
+export async function hasSpentCredits(userId: string): Promise<boolean> {
+  const { data } = await supabase
+    .from("credit_transactions")
+    .select("id")
+    .eq("user_id", userId)
+    .in("type", ["unlock", "promo_spend"])
+    .limit(1);
+  return (data?.length ?? 0) > 0;
+}
+
 export async function getTransactions(page: number): Promise<{ items: CreditTransaction[]; hasMore: boolean }> {
   const from = page * TRANSACTIONS_PAGE_SIZE;
   const { data, error } = await supabase
