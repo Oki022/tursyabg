@@ -1,3 +1,4 @@
+import { AdminUserLink } from "@/components/admin/user-link";
 import { useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -126,13 +127,7 @@ function QueueRow({ item, onResolve }: { item: ModerationItem; onResolve: (appro
         <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-slate-500">
           <span>
             Подател:{" "}
-            {item.userId ? (
-              <Link to="/user/$id" params={{ id: item.userId }} className="underline">
-                {item.userName ?? "Потребител"}
-              </Link>
-            ) : (
-              "няма"
-            )}
+            {item.userId ? <AdminUserLink id={item.userId} name={item.userName} /> : "няма"}
           </span>
           <span>Профил на {item.accountAgeDays} дни</span>
           <span>Доверие: {item.trustLevel}</span>

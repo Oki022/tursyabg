@@ -1969,6 +1969,7 @@ export type Database = {
       }
       is_gibberish: { Args: { _text: string }; Returns: boolean }
       is_last_admin: { Args: { _user_id: string }; Returns: boolean }
+      is_phone_available: { Args: { _phone: string }; Returns: boolean }
       is_refund_flagged: { Args: { _user_id: string }; Returns: boolean }
       is_staff: { Args: { _user_id: string }; Returns: boolean }
       is_valid_bg_phone: { Args: { _phone: string }; Returns: boolean }
@@ -2123,6 +2124,7 @@ export type Database = {
         Returns: number
       }
       run_cron_job: { Args: { _job_name: string }; Returns: undefined }
+      set_my_phone: { Args: { _phone: string }; Returns: Json }
       settle_refund: {
         Args: {
           _approve: boolean
@@ -2227,6 +2229,11 @@ export type Database = {
         | "contact_message"
         | "account_deletion_scheduled"
         | "account_deletion_cancelled"
+        | "credits_adjusted"
+        | "account_restored"
+        | "task_removed"
+        | "task_category_changed"
+        | "review_removed"
       promo_type: "bump" | "urgent" | "top"
       refund_reason:
         | "fake_task"
@@ -2416,6 +2423,11 @@ export const Constants = {
         "contact_message",
         "account_deletion_scheduled",
         "account_deletion_cancelled",
+        "credits_adjusted",
+        "account_restored",
+        "task_removed",
+        "task_category_changed",
+        "review_removed",
       ],
       promo_type: ["bump", "urgent", "top"],
       refund_reason: [

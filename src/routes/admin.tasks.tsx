@@ -1,3 +1,4 @@
+import { AdminUserLink } from "@/components/admin/user-link";
 import { useMemo, useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -248,7 +249,7 @@ function AdminTasks() {
                     )}
                   </div>
                   <div className="mt-1 text-xs text-slate-500">
-                    {t.authorName} · {t.budget} € · {[t.city, t.neighborhood].filter(Boolean).join(", ") || "няма"} · {formatDateBg(t.createdAt)}
+                    <AdminUserLink id={t.userId} name={t.authorName} /> · {t.budget} € · {[t.city, t.neighborhood].filter(Boolean).join(", ") || "няма"} · {formatDateBg(t.createdAt)}
                   </div>
                   <p className="mt-2 whitespace-pre-line text-sm text-slate-700">{t.description}</p>
                   {t.images.length > 1 && (

@@ -1,3 +1,4 @@
+import { AdminUserLink } from "@/components/admin/user-link";
 import { useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -123,7 +124,8 @@ function AdminReviewsPage() {
                 <div className="flex min-w-0 flex-wrap items-center gap-2">
                   <Stars value={r.rating} />
                   <span className="truncate text-sm font-medium">
-                    {r.reviewerName ?? "Потребител"} → {r.revieweeName ?? "Потребител"}
+                    <AdminUserLink id={r.reviewerId} name={r.reviewerName} /> →{" "}
+                    <AdminUserLink id={r.revieweeId} name={r.revieweeName} />
                   </span>
                   <span className="text-[11px] text-muted-foreground">{formatReviewDate(r.createdAt)}</span>
                   {r.reportCount > 0 && (

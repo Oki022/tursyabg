@@ -47,6 +47,28 @@ export function authRedirectBase(): string {
   return typeof window === "undefined" ? "" : window.location.origin;
 }
 
+/** Превежда кодовете от set_my_phone на български. */
+export function phoneRpcMessage(code: string): string {
+  switch (code) {
+    case "PHONE_TAKEN":
+      return "Този телефонен номер вече се използва от друг профил. Един номер може да е свързан само с един профил.";
+    case "PHONE_INVALID":
+      return "Въведи валиден български мобилен номер, например 0888123456 или +359888123456.";
+    case "PHONE_REQUIRED":
+      return "Телефонният номер е задължителен.";
+    default:
+      return "Телефонният номер не беше запазен. Опитай пак.";
+  }
+}
+
+/** Записва телефона през защитената функция, която пази номера уникален. */
+async function saveMyPhone(phone: string): Promise<void> {
+  const { data, error } = await supabase.rpc("set_my_phone", { _phone: phone });
+  if (error) throw error;
+  const res = (data ?? {}) as { ok?: boolean; error?: string };
+  if (!res.ok) throw new Error(phoneRpcMessage(res.error ?? ""));
+}
+
 function initials(name: string) {
   return name
     .split(" ")
@@ -99,11 +121,24 @@ async function buildUser(session: Session): Promise<AuthUser> {
     await supabase.from("profiles").insert({ id: session.user.id, full_name: name });
   }
 
+  // Телефонът, въведен при регистрацията, се пази в метаданните на профила,
+  // защото при включено потвърждение по имейл още няма сесия, с която да го
+  // запишем. Пренасяме го при първото влизане.
+  let phone = contact?.phone ?? undefined;
+  if (!phone && typeof meta.phone === "string" && meta.phone.trim()) {
+    try {
+      await saveMyPhone(meta.phone.trim());
+      phone = meta.phone.trim();
+    } catch {
+      // Заетият или невалиден номер не бива да блокира влизането.
+    }
+  }
+
   return {
     id: session.user.id,
     name,
     email: session.user.email ?? "",
-    phone: contact?.phone ?? undefined,
+    phone,
     credits: profile?.credits ?? 0,
     avatarUrl: profile?.avatar_url ?? undefined,
     city: profile?.city ?? null,
@@ -259,9 +294,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     // Телефонът е задължителен контакт, записва се в профила веднага след регистрация.
     if (data.session?.user?.id) {
       await supabase.from("profiles").upsert({ id: data.session.user.id, full_name: name }, { onConflict: "id" });
-      await supabase
-        .from("profile_contacts")
-        .upsert({ user_id: data.session.user.id, phone }, { onConflict: "user_id" });
+      try {
+        await saveMyPhone(phone);
+      } catch (phoneError) {
+        captureIssue({ area: "auth", action: "save phone after signup", error: phoneError });
+      }
     }
     return { needsConfirmation: !data.session };
   };
@@ -282,7 +319,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const resetPassword: AuthContextValue["resetPassword"] = async (email) => {
     await throttleAuth("reset", email);
     const { error } = await supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: `${window.location.origin}/reset-password`,
+      redirectTo: `${authRedirectBase()}/reset-password`,
     });
     if (error) {
       captureIssue({ area: "auth", action: "request password reset", error });
@@ -356,10 +393,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         })
         .eq("id", user.id);
     }
-    if (patch.phone !== undefined) {
-      await supabase
-        .from("profile_contacts")
-        .upsert({ user_id: user.id, phone: next.phone ?? null }, { onConflict: "user_id" });
+    if (patch.phone !== undefined && next.phone) {
+      try {
+        await saveMyPhone(next.phone);
+      } catch (error) {
+        setUser(user); // връщаме предишното състояние, номерът не е запазен
+        throw error;
+      }
     }
     if (patch.skills !== undefined || patch.name !== undefined) {
       await supabase.auth.updateUser({

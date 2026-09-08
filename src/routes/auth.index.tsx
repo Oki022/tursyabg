@@ -7,6 +7,7 @@ import { Label } from "@/components/ui/label";
 import { useAuth } from "@/lib/auth";
 import { authErrorMessage, emailError, nameError, passwordError } from "@/lib/auth-errors";
 import { normalizeBgPhone, phoneError } from "@/lib/phone";
+import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { Logo } from "@/components/Logo";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -74,11 +75,19 @@ function AuthPage() {
       if (isRegister) {
         // При включено потвърждение на имейл signUp не връща сесия, затова
         // пращаме потребителя на /auth/verify вместо на формата за вход.
+        const normalizedPhone = normalizeBgPhone(phone);
+        const { data: available } = await supabase.rpc("is_phone_available", { _phone: normalizedPhone });
+        if (available === false) {
+          toast.error("Този телефонен номер вече се използва от друг профил.", {
+            description: "Един номер може да е свързан само с един профил.",
+          });
+          return;
+        }
         const { needsConfirmation } = await register({
           name,
           email,
           password,
-          phone: normalizeBgPhone(phone),
+          phone: normalizedPhone,
         });
         if (needsConfirmation) {
           navigate({ to: "/auth/verify", search: { email } });

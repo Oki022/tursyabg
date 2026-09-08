@@ -1,3 +1,4 @@
+import { AdminUserLink } from "@/components/admin/user-link";
 import { useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -155,7 +156,7 @@ function AdminRefunds() {
               <TableBody>
                 {rows.map((r) => (
                   <TableRow key={r.id} className="align-top">
-                    <TableCell className="font-medium text-slate-900">{r.userName}</TableCell>
+                    <TableCell className="font-medium text-slate-900"><AdminUserLink id={r.userId} name={r.userName} /></TableCell>
                     <TableCell className="max-w-[220px]">
                       {r.taskId ? (
                         <Link to="/task/$id" params={{ id: r.taskId }} className="text-slate-900 underline-offset-2 hover:underline">
