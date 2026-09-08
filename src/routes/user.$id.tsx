@@ -244,6 +244,7 @@ function PublicProfilePage() {
               label="Рейтинг като изпълнител"
               rating={asPro ? profile.ratingAsPro : null}
               count={profile.reviewCountAsPro}
+              hasActivity={profile.hasActivity}
             />
             <ReviewList
               reviews={reviews.data ?? []}
