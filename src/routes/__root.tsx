@@ -25,6 +25,7 @@ import { CookieConsentProvider } from "@/lib/cookie-consent";
 import { CookieConsent } from "@/components/cookie-consent";
 import { AccountStatusGate } from "@/components/account/account-status-gate";
 import { allowIndexing } from "@/lib/indexing";
+import { bootAppUpdates, isStaleChunkError, reloadForNewVersion } from "@/lib/app-updates";
 
 const SUPABASE_ORIGIN =
   (import.meta as any).env?.VITE_SUPABASE_URL ?? "https://xrltdrxhtennbscgbyxb.supabase.co";
@@ -56,6 +57,11 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
   const router = useRouter();
 
   useEffect(() => {
+    // A chunk that vanished with the previous deploy: recover silently.
+    if (isStaleChunkError(error?.message ?? "")) {
+      reloadForNewVersion();
+      return;
+    }
     captureIssue({
       area: "ui",
       action: "route render failed",
@@ -145,6 +151,7 @@ function RootShell({ children }: { children: React.ReactNode }) {
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
+  useEffect(() => bootAppUpdates(), []);
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   // Messages screens behave like a native app view: fixed viewport height,
   // no footer / cookie banner, and no page-level scroll on mobile.

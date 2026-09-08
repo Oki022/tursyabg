@@ -2177,6 +2177,7 @@ export type Database = {
           uses: number
         }[]
       }
+      profile_has_activity: { Args: { _user_id: string }; Returns: boolean }
       public_profile: { Args: { _user_id: string }; Returns: Json }
       public_profiles: {
         Args: { _ids: string[] }
@@ -2186,6 +2187,7 @@ export type Database = {
           completed_jobs: number
           created_at: string
           full_name: string
+          has_activity: boolean
           id: string
           neighborhood: string
           rating_as_client: number

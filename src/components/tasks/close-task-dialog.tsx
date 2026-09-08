@@ -178,7 +178,7 @@ export function CloseTaskDialog({
                       <span className="block truncate text-sm font-medium text-foreground">
                         {u.fullName ?? "Изпълнител"}
                       </span>
-                      <RatingInline rating={u.ratingAsPro} count={u.reviewCountAsPro} />
+                      <RatingInline rating={u.ratingAsPro} count={u.reviewCountAsPro} hasActivity />
                       <span className="mt-0.5 block text-[11px] text-muted-foreground">
                         Отключи на {formatReviewDate(u.unlockedAt)}
                       </span>

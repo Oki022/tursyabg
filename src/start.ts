@@ -82,6 +82,13 @@ const securityHeadersMiddleware = createMiddleware().server(async ({ next }) => 
   const headers = candidate.response?.headers ?? candidate.headers;
   if (headers && typeof headers.set === "function") {
     for (const [key, value] of Object.entries(SECURITY_HEADERS)) headers.set(key, value);
+    // The app shell must never be served stale: a cached HTML document points
+    // at hashed chunks that a newer deploy has already removed. Hashed assets
+    // under /_build and /assets keep their long-lived immutable caching.
+    const contentType = headers.get("content-type") ?? "";
+    if (contentType.includes("text/html")) {
+      headers.set("Cache-Control", "no-cache, must-revalidate, max-age=0");
+    }
   }
   return result;
 });

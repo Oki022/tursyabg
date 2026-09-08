@@ -157,6 +157,7 @@ function ProfilePage() {
                 <RatingInline
                   rating={overallRating}
                   count={overallCount}
+                  hasActivity={publicProfile.data?.hasActivity ?? false}
                 />
               </div>
             </div>
