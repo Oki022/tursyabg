@@ -185,6 +185,13 @@ function AuthPage() {
           <span className="h-px flex-1 bg-border" />
         </div>
 
+        {isRegister && welcomeBonus > 0 && (
+          <p className="mb-4 flex items-start gap-2 rounded-xl border border-emerald-300/60 bg-emerald-50 px-3 py-2.5 text-sm font-medium text-emerald-900">
+            <Gift className="mt-0.5 h-4 w-4 shrink-0" />
+            Получи {welcomeBonus} безплатни кредита при регистрация и отключи първите контакти, без да плащаш.
+          </p>
+        )}
+
         <form onSubmit={handleSubmit} className="grid gap-4">
           {isRegister && (
             <div className="grid gap-1.5">
