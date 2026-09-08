@@ -61,7 +61,6 @@ export function CreditBalanceCard({ className }: { className?: string }) {
           С кредити отключваш телефона на възложителя.{" "}
           <Link
             to="/faq"
-            hash="krediti"
             className="font-medium text-primary underline-offset-2 hover:underline"
           >
             Как работят кредитите
