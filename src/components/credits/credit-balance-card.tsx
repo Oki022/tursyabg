@@ -56,22 +56,14 @@ export function CreditBalanceCard({ className }: { className?: string }) {
           <AlertTriangle className="mt-0.5 h-3.5 w-3.5 shrink-0" />
           Балансът ти е под цената на най-евтиното отключване. Зареди кредити, за да продължиш.
         </p>
-      ) : spent ? (
-        <p className="mt-3 text-xs text-muted-foreground">
-          С кредити отключваш телефона на възложителя.{" "}
-          <Link
-            to="/faq"
-            className="font-medium text-primary underline-offset-2 hover:underline"
-          >
-            Как работят кредитите
-          </Link>
-        </p>
       ) : (
-        <p className="mt-3 text-xs text-muted-foreground">
-          С кредити отключваш телефона на възложителя по задача, която те интересува. Едно отключване струва
-          между 5 и 80 кредита според бюджета на задачата.
-          {bonus ? ` Първите ${bonus} кредита са подарък при регистрация.` : ""}
-        </p>
+        spent || (
+          <p className="mt-3 text-xs text-muted-foreground">
+            С кредити отключваш телефона на възложителя по задача, която те интересува. Едно отключване струва
+            между 5 и 80 кредита според бюджета на задачата.
+            {bonus ? ` Първите ${bonus} кредита са подарък при регистрация.` : ""}
+          </p>
+        )
       )}
     </div>
   );
