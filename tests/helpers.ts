@@ -11,7 +11,10 @@ export const TEST_PASSWORD = process.env.E2E_PASSWORD ?? "";
  * already on screen.
  */
 export async function dismissCookieBanner(page: Page) {
-  const origin = new URL(page.url() === "about:blank" ? "http://localhost:8080" : page.url()).origin;
+  const base = page.url().startsWith("http")
+    ? page.url()
+    : process.env.PLAYWRIGHT_BASE_URL ?? "http://localhost:8080";
+  const { hostname } = new URL(base);
   await page.context().addCookies([
     {
       name: "tursya_consent",
