@@ -12,7 +12,28 @@ export type NotificationType =
   | "task_reported"
   | "task_still_open"
   | "task_freshness"
-  | "refund_auto_approved";
+  | "refund_auto_approved"
+  | "credits_adjusted"
+  | "account_restored"
+  | "task_removed"
+  | "task_category_changed"
+  | "review_removed"
+  | "engagement_claimed"
+  | "engagement_confirmed"
+  | "engagement_rejected"
+  | "engagement_reminder"
+  | "review_requested"
+  | "review_reminder"
+  | "review_published"
+  | "content_rejected"
+  | "content_held"
+  | "content_approved"
+  | "moderation_warning"
+  | "account_suspended"
+  | "account_banned"
+  | "contact_message"
+  | "account_deletion_scheduled"
+  | "account_deletion_cancelled";
 
 export type AppNotification = {
   id: string;

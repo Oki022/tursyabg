@@ -13,12 +13,27 @@ import {
   HelpCircle,
   RefreshCw,
   BadgeCheck,
+  Coins as CoinsIcon,
+  ShieldCheck,
+  Trash2,
+  Tags,
+  MessageSquareOff,
+  ShieldAlert,
+  ShieldX,
+  Bell,
+  UserX,
+  Mail,
+  CalendarClock,
+  Handshake,
+  Star,
 } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { relativeTimeBg, type AppNotification, type NotificationType } from "@/services/notifications";
 import { useMarkNotificationRead } from "@/lib/notifications-api";
 
-const ICONS: Record<NotificationType, React.ComponentType<{ className?: string }>> = {
+const FALLBACK_ICON = Bell;
+
+const ICONS: Partial<Record<NotificationType, React.ComponentType<{ className?: string }>>> = {
   new_message: MessageSquare,
   contact_unlocked: Unlock,
   task_expiring: Clock,
@@ -31,6 +46,27 @@ const ICONS: Record<NotificationType, React.ComponentType<{ className?: string }
   task_still_open: HelpCircle,
   task_freshness: RefreshCw,
   refund_auto_approved: BadgeCheck,
+  credits_adjusted: CoinsIcon,
+  account_restored: ShieldCheck,
+  task_removed: Trash2,
+  task_category_changed: Tags,
+  review_removed: MessageSquareOff,
+  content_rejected: ShieldX,
+  content_held: ShieldAlert,
+  content_approved: CheckCircle2,
+  moderation_warning: ShieldAlert,
+  account_suspended: ShieldAlert,
+  account_banned: UserX,
+  contact_message: Mail,
+  account_deletion_scheduled: CalendarClock,
+  account_deletion_cancelled: RefreshCw,
+  engagement_claimed: Handshake,
+  engagement_confirmed: Handshake,
+  engagement_rejected: XCircle,
+  engagement_reminder: Clock,
+  review_requested: Star,
+  review_reminder: Star,
+  review_published: Star,
 };
 
 export function NotificationList({
