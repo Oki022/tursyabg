@@ -17,7 +17,7 @@ const RELOAD_FLAG = "app:chunk-reloaded-at";
 /** Do not auto-reload more than once per minute, so we can never loop. */
 const RELOAD_WINDOW_MS = 60_000;
 
-function looksLikeStaleChunkError(message: string): boolean {
+export function isStaleChunkError(message: string): boolean {
   const m = message.toLowerCase();
   return (
     m.includes("failed to fetch dynamically imported module") ||
@@ -28,7 +28,8 @@ function looksLikeStaleChunkError(message: string): boolean {
   );
 }
 
-function reloadOnce(): void {
+export function reloadForNewVersion(): void {
+  if (typeof window === "undefined") return;
   try {
     const last = Number(sessionStorage.getItem(RELOAD_FLAG) ?? 0);
     if (Date.now() - last < RELOAD_WINDOW_MS) return;
@@ -51,7 +52,7 @@ async function removeServiceWorkers(): Promise<void> {
     }
     // The current page is still controlled by the worker we just removed, so
     // its HTML/JS may already be the stale pair — reload into a clean load.
-    if (navigator.serviceWorker.controller) reloadOnce();
+    if (navigator.serviceWorker.controller) reloadForNewVersion();
   } catch {
     // Nothing to do: worker cleanup is best effort.
   }
@@ -62,12 +63,12 @@ export function bootAppUpdates(): () => void {
   void removeServiceWorkers();
 
   const onError = (event: ErrorEvent) => {
-    if (looksLikeStaleChunkError(String(event.message ?? ""))) reloadOnce();
+    if (isStaleChunkError(String(event.message ?? ""))) reloadForNewVersion();
   };
   const onRejection = (event: PromiseRejectionEvent) => {
     const reason = event.reason as { message?: string } | string | undefined;
     const message = typeof reason === "string" ? reason : (reason?.message ?? "");
-    if (looksLikeStaleChunkError(message)) reloadOnce();
+    if (isStaleChunkError(message)) reloadForNewVersion();
   };
 
   window.addEventListener("error", onError);
