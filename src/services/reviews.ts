@@ -39,6 +39,8 @@ export type PublicProfile = {
   skillCategories: string[];
   skillTags: string[];
   credentials: Credential[];
+  /** Posted a task, unlocked a contact, or received a review. */
+  hasActivity: boolean;
 };
 
 export type PublicReview = {
@@ -157,6 +159,7 @@ export async function getPublicProfile(userId: string): Promise<PublicProfile | 
     skillCategories: (r["skill_categories"] as string[] | null) ?? [],
     skillTags: (r["skill_tags"] as string[] | null) ?? [],
     credentials: parseCredentials(r["credentials"]),
+    hasActivity: Boolean(r["has_activity"]),
   };
 }
 

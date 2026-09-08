@@ -18,6 +18,8 @@ export type PublicIdentity = {
   reviewCountAsClient: number;
   completedJobs: number;
   memberSince: string | null;
+  /** Posted a task, unlocked a contact, or received a review. */
+  hasActivity: boolean;
 };
 
 export const FALLBACK_NAME = "Потребител";
@@ -34,6 +36,7 @@ type Row = {
   review_count_as_client: number | null;
   completed_jobs: number | null;
   created_at: string | null;
+  has_activity?: boolean | null;
 };
 
 function mapRow(r: Row): PublicIdentity {
@@ -49,6 +52,7 @@ function mapRow(r: Row): PublicIdentity {
     reviewCountAsClient: Number(r.review_count_as_client ?? 0),
     completedJobs: Number(r.completed_jobs ?? 0),
     memberSince: r.created_at ?? null,
+    hasActivity: Boolean(r.has_activity),
   };
 }
 

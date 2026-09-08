@@ -26,7 +26,7 @@ export const Route = createFileRoute("/user/$id")({
       return seo({ title: "Профилът не е намерен", description: "Този профил не съществува.", path, noindex: true });
     }
     const p = loaderData;
-    const ratingText = p.rating ? `Рейтинг ${p.rating}/5 от ${p.reviewCount} отзива` : "Нов потребител без отзиви";
+    const ratingText = p.rating ? `Рейтинг ${p.rating}/5 от ${p.reviewCount} отзива` : "Все още няма отзиви";
     const { meta, links } = seo({
       title: clampDescription(`${p.name}, отзиви и рейтинг`, 58),
       description: clampDescription(
@@ -150,7 +150,8 @@ function PublicProfilePage() {
             </div>
           ) : (
             <span className="inline-flex items-center gap-2 text-sm text-muted-foreground">
-              <BadgeCheck className="h-4 w-4 text-primary" /> Нов потребител, още няма отзиви
+              <BadgeCheck className="h-4 w-4 text-primary" />{" "}
+              {profile.hasActivity ? "Още няма отзиви" : "Нов потребител, още няма отзиви"}
             </span>
           )}
         </div>
@@ -257,6 +258,7 @@ function PublicProfilePage() {
               label="Рейтинг като клиент"
               rating={asClient ? profile.ratingAsClient : null}
               count={profile.reviewCountAsClient}
+              hasActivity={profile.hasActivity}
             />
             <ReviewList
               reviews={reviews.data ?? []}
@@ -276,10 +278,12 @@ function RatingSummary({
   label,
   rating,
   count,
+  hasActivity = false,
 }: {
   label: string;
   rating: number | null | undefined;
   count: number;
+  hasActivity?: boolean;
 }) {
   return (
     <div className="mb-3 flex min-w-0 flex-wrap items-center gap-2 text-sm">
@@ -294,7 +298,9 @@ function RatingSummary({
           <span className="text-xs text-muted-foreground">{reviewCountBg(count)}</span>
         </>
       ) : (
-        <span className="text-muted-foreground">Нов потребител</span>
+        <span className="text-muted-foreground">
+          {hasActivity ? "Още няма отзиви" : "Нов потребител"}
+        </span>
       )}
     </div>
   );
