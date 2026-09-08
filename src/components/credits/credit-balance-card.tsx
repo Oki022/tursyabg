@@ -11,6 +11,7 @@ export const MIN_UNLOCK_COST = 5;
 export function CreditBalanceCard({ className }: { className?: string }) {
   const { user } = useAuth();
   const { data, isLoading } = useCreditBalance(user?.id);
+  const spent = useHasSpentCredits(user?.id).data ?? false;
   const bonus = useWelcomeBonus().data ?? 0;
   const credits = data ?? user?.credits ?? 0;
   const low = !isLoading && credits < MIN_UNLOCK_COST;
