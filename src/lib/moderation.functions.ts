@@ -70,7 +70,7 @@ export const uploadModeratedTaskImage = createServerFn({ method: "POST" })
         await r2Upload(key, binary, "image/jpeg");
         // Verify the object is readable now, so a broken R2 setup fails here
         // (visible, recoverable) instead of silently producing blank thumbnails.
-        await r2SignedUrl(key);
+        await r2VerifyReadable(key);
         path = `${R2_PREFIX}${key}`;
       } catch (error) {
         console.error("R2 upload failed, falling back to Supabase Storage", error);
