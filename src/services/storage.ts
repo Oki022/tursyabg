@@ -1,6 +1,7 @@
 import { supabase } from "@/integrations/supabase/client";
 import { signR2Urls, deleteR2Object } from "@/lib/storage.functions";
 import { uploadModeratedTaskImage } from "@/lib/moderation.functions";
+import { captureIssue } from "@/lib/monitoring/client";
 
 const BUCKET = "task-images";
 const TTL_SECONDS = 60 * 60 * 24;
@@ -55,10 +56,16 @@ export async function resolveImageUrls(paths: string[]): Promise<Record<string, 
     (async () => {
       if (r2Keys.length === 0) return;
       try {
-        const signed = await signR2Urls({ data: { keys: r2Keys } });
-        for (const [key, url] of Object.entries(signed)) map[`${R2_PREFIX}${key}`] = url;
-      } catch {
-        /* ignore: images simply fall back to the placeholder */
+        const { urls, failed } = await signR2Urls({ data: { keys: r2Keys } });
+        for (const [key, url] of Object.entries(urls)) map[`${R2_PREFIX}${key}`] = url;
+        if (failed.length > 0) {
+          const error = new Error(`R2 signing failed for ${failed.length} image(s)`);
+          console.error(error, failed);
+          captureIssue({ area: "api", action: "resolve r2 image urls", error, extra: { failed } });
+        }
+      } catch (error) {
+        console.error("R2 signing request failed", error);
+        captureIssue({ area: "api", action: "resolve r2 image urls", error });
       }
     })(),
   ]);
