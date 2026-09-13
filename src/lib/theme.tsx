@@ -1,13 +1,15 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
 
 export type Theme = "light" | "dark";
+export type ThemeMode = "system" | Theme;
 
 const STORAGE_KEY = "tursya-theme";
 const TRANSITION_MS = 300;
 
 type ThemeContextValue = {
+  mode: ThemeMode;
   theme: Theme;
-  toggleTheme: () => void;
+  cycleTheme: () => void;
 };
 
 const ThemeContext = createContext<ThemeContextValue | null>(null);
@@ -38,12 +40,16 @@ function applyTheme(theme: Theme, animate: boolean) {
 }
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
+  const [mode, setMode] = useState<ThemeMode>("system");
   const [theme, setTheme] = useState<Theme>("light");
 
   useEffect(() => {
-    const initial = storedTheme() ?? systemTheme();
-    setTheme(initial);
-    applyTheme(initial, false);
+    const stored = storedTheme();
+    const initialMode: ThemeMode = stored ?? "system";
+    const initialTheme = stored ?? systemTheme();
+    setMode(initialMode);
+    setTheme(initialTheme);
+    applyTheme(initialTheme, false);
     const media = window.matchMedia("(prefers-color-scheme: dark)");
     const onSystemChange = (event: MediaQueryListEvent) => {
       if (storedTheme()) return;
@@ -55,16 +61,22 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     return () => media.removeEventListener("change", onSystemChange);
   }, []);
 
-  const toggleTheme = useCallback(() => {
-    setTheme((current) => {
-      const next = current === "dark" ? "light" : "dark";
-      window.localStorage.setItem(STORAGE_KEY, next);
-      applyTheme(next, true);
-      return next;
+  const cycleTheme = useCallback(() => {
+    setMode((currentMode) => {
+      const nextMode: ThemeMode = currentMode === "system" ? "light" : currentMode === "light" ? "dark" : "system";
+      if (nextMode === "system") {
+        window.localStorage.removeItem(STORAGE_KEY);
+      } else {
+        window.localStorage.setItem(STORAGE_KEY, nextMode);
+      }
+      const nextTheme = nextMode === "system" ? systemTheme() : nextMode;
+      setTheme(nextTheme);
+      applyTheme(nextTheme, true);
+      return nextMode;
     });
   }, []);
 
-  const value = useMemo(() => ({ theme, toggleTheme }), [theme, toggleTheme]);
+  const value = useMemo(() => ({ mode, theme, cycleTheme }), [mode, theme, cycleTheme]);
   return <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>;
 }
 
