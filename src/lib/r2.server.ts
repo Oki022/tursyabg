@@ -34,7 +34,7 @@ export async function r2Upload(key: string, body: Uint8Array, contentType: strin
   const { client, base } = config();
   const res = await client.fetch(`${base}/${key}`, {
     method: "PUT",
-    body,
+    body: body as unknown as BodyInit,
     headers: { "Content-Type": contentType },
   });
   if (!res.ok) throw new Error(`R2_UPLOAD_FAILED ${res.status}: ${await res.text()}`);
