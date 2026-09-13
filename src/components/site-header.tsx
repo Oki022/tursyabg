@@ -65,7 +65,6 @@ export function SiteHeader() {
           </nav>
         )}
         <div className="flex items-center gap-2 justify-self-end md:col-start-3">
-          <ThemeToggle className="hidden md:inline-flex" />
           {authState === "pending" && <AuthClusterPlaceholder />}
           {authState === "in" && <MessagesNavLink />}
           {authState === "in" && <FavouritesNavLink />}
@@ -81,6 +80,7 @@ export function SiteHeader() {
             </>
           ) : authState === "in" ? (
             <>
+              <ThemeToggle className="hidden md:inline-flex" />
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <button
@@ -139,6 +139,7 @@ export function SiteHeader() {
               </DropdownMenu>
             </>
           ) : null}
+          {authState === "out" && <ThemeToggle className="hidden md:inline-flex" />}
           {authState === "in" && (
             <Link
               to="/post"
