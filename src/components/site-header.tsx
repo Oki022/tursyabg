@@ -80,7 +80,6 @@ export function SiteHeader() {
             </>
           ) : authState === "in" ? (
             <>
-              <ThemeToggle className="hidden md:inline-flex" />
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <button
@@ -137,6 +136,7 @@ export function SiteHeader() {
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
+              <ThemeToggle className="hidden md:inline-flex" />
             </>
           ) : null}
           {authState === "out" && <ThemeToggle className="hidden md:inline-flex" />}
