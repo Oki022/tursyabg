@@ -353,7 +353,7 @@ function AdminTasks() {
             rows={3}
             placeholder="Вътрешна бележка (по желание)"
           />
-          <div className="rounded-md border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-700">
+          <div className="rounded-md border border-border bg-muted/60 px-3 py-2 text-sm text-foreground">
             Контактът е отключен от <strong>{preview.data?.unlockers ?? 0}</strong> потребители
             {" "}(общо <strong>{preview.data?.credits ?? 0}</strong> кредита).
           </div>
@@ -363,7 +363,7 @@ function AdminTasks() {
               автоматично на {preview.data?.unlockers ?? 0} потребители и те ще получат известие.
             </div>
           ) : (
-            <div className="rounded-md border border-slate-200 px-3 py-2 text-xs text-slate-600">
+            <div className="rounded-md border border-border px-3 py-2 text-xs text-muted-foreground">
               При тази причина кредити не се връщат. Ако задачата е измамна, избери „Измамна задача“.
             </div>
           )}

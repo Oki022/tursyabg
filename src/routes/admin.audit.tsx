@@ -47,14 +47,14 @@ function AdminAudit() {
       actions={
         <div className="flex gap-2">
           <Select value={admin} onValueChange={setAdmin}>
-            <SelectTrigger className="h-9 w-44 rounded-md bg-white"><SelectValue placeholder="Админ" /></SelectTrigger>
+            <SelectTrigger className="h-9 w-44 rounded-md bg-background"><SelectValue placeholder="Админ" /></SelectTrigger>
             <SelectContent>
               <SelectItem value="all">Всички админи</SelectItem>
               {admins.map(([id, name]) => <SelectItem key={id} value={id}>{name}</SelectItem>)}
             </SelectContent>
           </Select>
           <Select value={actionType} onValueChange={setActionType}>
-            <SelectTrigger className="h-9 w-52 rounded-md bg-white"><SelectValue placeholder="Действие" /></SelectTrigger>
+            <SelectTrigger className="h-9 w-52 rounded-md bg-background"><SelectValue placeholder="Действие" /></SelectTrigger>
             <SelectContent>
               <SelectItem value="all">Всички действия</SelectItem>
               {actionTypes.map((t) => <SelectItem key={t} value={t}>{ACTION_TYPE_BG[t] ?? t}</SelectItem>)}
@@ -83,14 +83,14 @@ function AdminAudit() {
               <TableBody>
                 {rows.map((e) => (
                   <TableRow key={e.id}>
-                    <TableCell className="whitespace-nowrap text-xs text-slate-500">{formatDateBg(e.createdAt)}</TableCell>
-                    <TableCell className="font-medium text-slate-900">{e.adminName}</TableCell>
+                    <TableCell className="whitespace-nowrap text-xs text-muted-foreground">{formatDateBg(e.createdAt)}</TableCell>
+                    <TableCell className="font-medium text-foreground">{e.adminName}</TableCell>
                     <TableCell>{ACTION_TYPE_BG[e.actionType] ?? e.actionType}</TableCell>
-                    <TableCell className="text-xs text-slate-500">
+                    <TableCell className="text-xs text-muted-foreground">
                       {e.targetType}
                       <div className="font-mono text-[11px] text-slate-400">{e.targetId?.slice(0, 8) ?? "няма"}</div>
                     </TableCell>
-                    <TableCell className="max-w-[360px] break-words font-mono text-[11px] text-slate-600">
+                    <TableCell className="max-w-[360px] break-words font-mono text-[11px] text-muted-foreground">
                       {JSON.stringify(e.details)}
                     </TableCell>
                   </TableRow>

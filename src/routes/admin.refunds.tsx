@@ -52,7 +52,7 @@ function EvidenceCell({ requestId }: { requestId: string }) {
   });
   if (!data?.found) return <span className="text-xs text-slate-400">няма</span>;
   return (
-    <div className="space-y-0.5 text-xs text-slate-600">
+    <div className="space-y-0.5 text-xs text-muted-foreground">
       <div>Статус на задачата: {data.task_status ?? "няма"}</div>
       <div>
         Съобщения: {data.messages_sent ?? 0} · Отговори: {data.owner_replies ?? 0}
@@ -103,24 +103,24 @@ function AdminRefunds() {
       description="Ясните случаи се одобряват автоматично от системата. Тук преглеждаш само тези за ръчна проверка."
       actions={
         <div className="flex items-center gap-2">
-          <div className="flex rounded-md border border-slate-200 bg-white p-0.5">
+          <div className="flex rounded-md border border-border bg-background p-0.5">
             <button
               type="button"
               onClick={() => setView("manual")}
-              className={`rounded px-2.5 py-1 text-xs font-medium ${view === "manual" ? "bg-slate-900 text-white" : "text-slate-600"}`}
+              className={`rounded px-2.5 py-1 text-xs font-medium ${view === "manual" ? "bg-foreground text-background" : "text-muted-foreground"}`}
             >
               За проверка
             </button>
             <button
               type="button"
               onClick={() => setView("auto")}
-              className={`rounded px-2.5 py-1 text-xs font-medium ${view === "auto" ? "bg-slate-900 text-white" : "text-slate-600"}`}
+              className={`rounded px-2.5 py-1 text-xs font-medium ${view === "auto" ? "bg-foreground text-background" : "text-muted-foreground"}`}
             >
               Автоматични ({autoCount})
             </button>
           </div>
         <Select value={status} onValueChange={(v) => setStatus(v as RefundStatus | "all")}>
-          <SelectTrigger className="h-9 w-44 rounded-md bg-white">
+          <SelectTrigger className="h-9 w-44 rounded-md bg-background">
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
@@ -156,7 +156,7 @@ function AdminRefunds() {
               <TableBody>
                 {rows.map((r) => (
                   <TableRow key={r.id} className="align-top">
-                    <TableCell className="font-medium text-slate-900"><AdminUserLink id={r.userId} name={r.userName} /></TableCell>
+                    <TableCell className="font-medium text-foreground"><AdminUserLink id={r.userId} name={r.userName} /></TableCell>
                     <TableCell className="max-w-[220px]">
                       {r.taskId ? (
                         <Link to="/task/$id" params={{ id: r.taskId }} className="text-slate-900 underline-offset-2 hover:underline">

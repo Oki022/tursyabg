@@ -58,11 +58,11 @@ function AdminPayments() {
               <TableBody>
                 {rows.map((p) => (
                   <TableRow key={p.id}>
-                    <TableCell className="whitespace-nowrap text-xs text-slate-500">{formatDateBg(p.createdAt)}</TableCell>
-                    <TableCell className="font-medium text-slate-900"><AdminUserLink id={p.userId} name={p.userName} /></TableCell>
+                    <TableCell className="whitespace-nowrap text-xs text-muted-foreground">{formatDateBg(p.createdAt)}</TableCell>
+                    <TableCell className="font-medium text-foreground"><AdminUserLink id={p.userId} name={p.userName} /></TableCell>
                     <TableCell className="text-right tabular-nums">{p.credits}</TableCell>
                     <TableCell className="text-right tabular-nums">{formatEur(p.amountEur)}</TableCell>
-                    <TableCell className="text-xs uppercase text-slate-500">{p.provider}</TableCell>
+                    <TableCell className="text-xs uppercase text-muted-foreground">{p.provider}</TableCell>
                     <TableCell>
                       <Badge variant={p.status === "completed" ? "default" : "secondary"} className="rounded">
                         {STATUS_BG[p.status] ?? p.status}
@@ -74,7 +74,7 @@ function AdminPayments() {
                           href={`https://dashboard.stripe.com/test/payments/${p.paymentIntentId}`}
                           target="_blank"
                           rel="noreferrer"
-                          className="inline-flex items-center gap-1 text-xs text-slate-600 hover:underline"
+                          className="inline-flex items-center gap-1 text-xs text-muted-foreground hover:underline"
                         >
                           Виж <ExternalLink className="h-3 w-3" />
                         </a>
