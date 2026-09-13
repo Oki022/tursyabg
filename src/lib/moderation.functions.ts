@@ -63,7 +63,7 @@ export const uploadModeratedTaskImage = createServerFn({ method: "POST" })
 
     // New uploads go to Cloudflare R2 when configured; otherwise Supabase Storage
     // (local development without R2 credentials). Existing images are untouched.
-    const { isR2Configured, r2Upload, r2SignedUrl, R2_PREFIX } = await import("@/lib/r2.server");
+    const { isR2Configured, r2Upload, r2VerifyReadable, R2_PREFIX } = await import("@/lib/r2.server");
     let path: string;
     if (isR2Configured()) {
       try {
