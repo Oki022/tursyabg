@@ -13,20 +13,37 @@ export const signR2Urls = createServerFn({ method: "POST" })
     const keys = (input?.keys ?? []).filter((k) => typeof k === "string" && KEY_RE.test(k)).slice(0, 100);
     return { keys };
   })
-  .handler(async ({ data }): Promise<Record<string, string>> => {
-    if (data.keys.length === 0) return {};
-    const { r2SignedUrl } = await import("@/lib/r2.server");
-    const out: Record<string, string> = {};
+  .handler(async ({ data }): Promise<{ urls: Record<string, string>; failed: string[] }> => {
+    if (data.keys.length === 0) return { urls: {}, failed: [] };
+    const { r2SignedUrl, isR2Configured } = await import("@/lib/r2.server");
+    const { reportServerIssue } = await import("@/lib/monitoring/sentry.server");
+
+    if (!isR2Configured()) {
+      const error = new Error("R2_NOT_CONFIGURED: cannot sign stored task images");
+      console.error(error);
+      reportServerIssue({ area: "api", action: "sign r2 task images", error });
+      return { urls: {}, failed: data.keys };
+    }
+
+    const urls: Record<string, string> = {};
+    const failed: string[] = [];
     await Promise.all(
       data.keys.map(async (key) => {
         try {
-          out[key] = await r2SignedUrl(key);
-        } catch {
-          /* missing credentials or object: skip */
+          urls[key] = await r2SignedUrl(key);
+        } catch (error) {
+          failed.push(key);
+          console.error("R2 sign failed", key, error);
+          reportServerIssue({
+            area: "api",
+            action: "sign r2 task image",
+            error,
+            extra: { key },
+          });
         }
       }),
     );
-    return out;
+    return { urls, failed };
   });
 
 /** Deletes one of the caller's own R2 objects (keys are prefixed with the user id). */
