@@ -31,9 +31,9 @@ export const Route = createFileRoute("/admin/")({
 function Stat({ label, value, hint }: { label: string; value: string; hint?: string }) {
   return (
     <AdminCard className="p-4">
-      <div className="text-xs font-medium uppercase tracking-wide text-slate-500">{label}</div>
-      <div className="mt-1 text-2xl font-semibold tabular-nums text-slate-900">{value}</div>
-      {hint ? <div className="mt-0.5 text-xs text-slate-500">{hint}</div> : null}
+      <div className="text-xs font-medium uppercase tracking-wide text-muted-foreground">{label}</div>
+      <div className="mt-1 text-2xl font-semibold tabular-nums text-foreground">{value}</div>
+      {hint ? <div className="mt-0.5 text-xs text-muted-foreground">{hint}</div> : null}
     </AdminCard>
   );
 }
@@ -193,40 +193,40 @@ function AdminDashboard() {
       </div>
 
       <AdminCard className="p-4">
-        <div className="text-sm font-semibold text-slate-900">Регистрации и задачи (30 дни)</div>
+        <div className="text-sm font-semibold text-foreground">Регистрации и задачи (30 дни)</div>
         <div className="mt-4 h-64">
           <ResponsiveContainer width="100%" height="100%">
             <LineChart data={series.data ?? []} margin={{ left: -20, right: 8, top: 8 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
+              <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
               <XAxis
                 dataKey="day"
-                tick={{ fontSize: 11, fill: "#64748b" }}
+                tick={{ fontSize: 11, fill: "var(--muted-foreground)" }}
                 tickFormatter={(v: string) => v.slice(5)}
               />
-              <YAxis allowDecimals={false} tick={{ fontSize: 11, fill: "#64748b" }} />
+              <YAxis allowDecimals={false} tick={{ fontSize: 11, fill: "var(--muted-foreground)" }} />
               <Tooltip labelFormatter={(v) => String(v)} />
-              <Line type="monotone" dataKey="signups" name="Регистрации" stroke="#0f172a" strokeWidth={2} dot={false} />
-              <Line type="monotone" dataKey="tasks" name="Задачи" stroke="#f97316" strokeWidth={2} dot={false} />
+              <Line type="monotone" dataKey="signups" name="Регистрации" stroke="var(--foreground)" strokeWidth={2} dot={false} />
+              <Line type="monotone" dataKey="tasks" name="Задачи" stroke="var(--primary)" strokeWidth={2} dot={false} />
             </LineChart>
           </ResponsiveContainer>
         </div>
       </AdminCard>
 
       <AdminCard>
-        <div className="border-b border-slate-200 px-4 py-3 text-sm font-semibold text-slate-900">
+        <div className="border-b border-border px-4 py-3 text-sm font-semibold text-foreground">
           Планировчик (фонови задачи)
         </div>
-        <ul className="divide-y divide-slate-200">
+        <ul className="divide-y divide-border">
           {(cron.data ?? []).map((j) => (
             <li key={j.job_name} className="flex flex-wrap items-center gap-2 px-4 py-3 text-sm">
-              <span className="font-medium text-slate-900">{CRON_JOB_BG[j.job_name] ?? j.job_name}</span>
+              <span className="font-medium text-foreground">{CRON_JOB_BG[j.job_name] ?? j.job_name}</span>
               {j.stale ? (
                 <Badge className="rounded bg-rose-100 text-rose-900 hover:bg-rose-100">Не е изпълнявана &gt; 2 ч.</Badge>
               ) : (
                 <Badge className="rounded bg-emerald-100 text-emerald-900 hover:bg-emerald-100">Нормално</Badge>
               )}
               {j.last_error ? <span className="text-xs text-rose-700">Грешка: {j.last_error}</span> : null}
-              <span className="ml-auto text-xs text-slate-500">
+              <span className="ml-auto text-xs text-muted-foreground">
                 {j.last_success
                   ? `Последно успешно: ${formatDateBg(j.last_success)} · ${j.rows_processed ?? 0} обработени`
                   : "Няма успешно изпълнение"}
@@ -234,26 +234,26 @@ function AdminDashboard() {
             </li>
           ))}
           {(cron.data ?? []).length === 0 && (
-            <li className="px-4 py-8 text-center text-sm text-slate-500">Няма данни за фонови задачи.</li>
+            <li className="px-4 py-8 text-center text-sm text-muted-foreground">Няма данни за фонови задачи.</li>
           )}
         </ul>
       </AdminCard>
 
       <AdminCard>
-        <div className="border-b border-slate-200 px-4 py-3 text-sm font-semibold text-slate-900">
+        <div className="border-b border-border px-4 py-3 text-sm font-semibold text-foreground">
           Последни доклади
         </div>
         {(reports.data ?? []).length === 0 ? (
-          <div className="px-4 py-8 text-center text-sm text-slate-500">Няма чакащи доклади.</div>
+          <div className="px-4 py-8 text-center text-sm text-muted-foreground">Няма чакащи доклади.</div>
         ) : (
-          <ul className="divide-y divide-slate-200">
+          <ul className="divide-y divide-border">
             {(reports.data ?? []).slice(0, 6).map((r) => (
               <li key={r.id} className="flex flex-wrap items-center gap-2 px-4 py-3 text-sm">
                 <Badge variant="secondary" className="rounded">{REPORT_REASON_BG[r.reason] ?? r.reason}</Badge>
-                <Link to="/task/$id" params={{ id: r.taskId }} className="font-medium text-slate-900 underline-offset-2 hover:underline">
+                <Link to="/task/$id" params={{ id: r.taskId }} className="font-medium text-foreground underline-offset-2 hover:underline">
                   {r.taskTitle}
                 </Link>
-                <span className="text-slate-500">от {r.reporterName}</span>
+                <span className="text-muted-foreground">от {r.reporterName}</span>
                 <span className="ml-auto text-xs text-slate-400">{formatDateBg(r.createdAt)}</span>
               </li>
             ))}

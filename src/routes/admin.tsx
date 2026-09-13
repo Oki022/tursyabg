@@ -51,11 +51,11 @@ function AdminLayout() {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
 
   return (
-    <div className="min-h-screen bg-slate-100">
+    <div className="min-h-screen bg-background">
       <div className="mx-auto flex max-w-[1500px] gap-0 lg:gap-6 lg:px-6 lg:py-6">
         <aside className="hidden w-56 shrink-0 lg:block">
-          <div className="sticky top-6 rounded-lg border border-slate-200 bg-white p-3">
-            <div className="px-2 pb-3 text-xs font-semibold uppercase tracking-wider text-slate-500">
+          <div className="sticky top-6 rounded-lg border border-border bg-card p-3">
+            <div className="px-2 pb-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
               Администрация
             </div>
             <nav className="space-y-0.5">
@@ -66,7 +66,7 @@ function AdminLayout() {
                     key={item.to}
                     to={item.to}
                     className={`flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium transition ${
-                      active ? "bg-slate-900 text-white" : "text-slate-700 hover:bg-slate-100"
+                      active ? "bg-foreground text-background" : "text-foreground hover:bg-muted"
                     }`}
                   >
                     <item.icon className="h-4 w-4" />
@@ -75,10 +75,10 @@ function AdminLayout() {
                 );
               })}
             </nav>
-            <div className="mt-3 border-t border-slate-200 pt-3">
+            <div className="mt-3 border-t border-border pt-3">
               <Link
                 to="/"
-                className="flex items-center gap-2 rounded-md px-3 py-2 text-sm text-slate-500 hover:bg-slate-100"
+                className="flex items-center gap-2 rounded-md px-3 py-2 text-sm text-muted-foreground hover:bg-muted"
               >
                 <ArrowLeft className="h-4 w-4" /> Към сайта
               </Link>
@@ -87,7 +87,7 @@ function AdminLayout() {
         </aside>
 
         <div className="min-w-0 flex-1">
-          <div className="sticky top-0 z-20 border-b border-slate-200 bg-white lg:hidden">
+          <div className="sticky top-0 z-20 border-b border-border bg-background/95 backdrop-blur lg:hidden">
             <div className="flex items-center gap-1 px-3 py-2">
               <BackLink className="shrink-0" />
               <div className="flex gap-1 overflow-x-auto">
@@ -98,7 +98,7 @@ function AdminLayout() {
                     key={item.to}
                     to={item.to}
                     className={`whitespace-nowrap rounded-md px-3 py-1.5 text-sm font-medium ${
-                      active ? "bg-slate-900 text-white" : "text-slate-600"
+                      active ? "bg-foreground text-background" : "text-muted-foreground"
                     }`}
                   >
                     {item.label}

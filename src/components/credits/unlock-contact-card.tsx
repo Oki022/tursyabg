@@ -84,7 +84,7 @@ export function UnlockContactCard({
         <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-primary">
           <Phone className="h-3.5 w-3.5" /> Контакт
         </div>
-        <div className="mt-2 text-lg font-bold tracking-tight text-slate-900">
+        <div className="mt-2 text-lg font-bold tracking-tight text-foreground">
           {contactQuery.isLoading && !phone ? "Зареждане..." : (phone ?? "Няма посочен телефон")}
         </div>
         {phone && (

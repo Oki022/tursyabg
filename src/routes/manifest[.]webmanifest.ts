@@ -13,8 +13,8 @@ export const Route = createFileRoute("/manifest.webmanifest")({
           lang: "bg",
           start_url: "/",
           display: "standalone",
-          background_color: "#ffffff",
-          theme_color: "#14532d",
+          background_color: "#0f172a",
+          theme_color: "#0f172a",
         };
         return new Response(JSON.stringify(manifest, null, 2), {
           headers: {

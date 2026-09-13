@@ -160,8 +160,8 @@ export function ChatThread({ conversationId }: { conversationId: string }) {
           </div>
         )}
 
-        <div className="mb-4 flex items-start gap-2 rounded-2xl border border-amber-200 bg-amber-50 px-3 py-2 text-xs text-amber-900">
-          <ShieldAlert className="mt-0.5 h-4 w-4 shrink-0 text-amber-600" />
+        <div className="mb-4 flex items-start gap-2 rounded-2xl border border-warning/40 bg-warning/10 px-3 py-2 text-xs text-foreground">
+          <ShieldAlert className="mt-0.5 h-4 w-4 shrink-0 text-warning" />
           <span>За твоята сигурност общувай и плащай само през платформата.</span>
         </div>
 
@@ -190,7 +190,7 @@ export function ChatThread({ conversationId }: { conversationId: string }) {
                       className={`whitespace-pre-wrap break-words rounded-2xl px-4 py-2.5 text-sm ${
                         mine
                           ? "bg-gradient-to-r from-orange-500 to-rose-500 text-white"
-                          : "bg-slate-100 text-slate-900"
+                          : "bg-muted text-foreground"
                       }`}
                     >
                       {m.content}

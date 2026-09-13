@@ -52,7 +52,7 @@ function EvidenceCell({ requestId }: { requestId: string }) {
   });
   if (!data?.found) return <span className="text-xs text-slate-400">няма</span>;
   return (
-    <div className="space-y-0.5 text-xs text-slate-600">
+    <div className="space-y-0.5 text-xs text-muted-foreground">
       <div>Статус на задачата: {data.task_status ?? "няма"}</div>
       <div>
         Съобщения: {data.messages_sent ?? 0} · Отговори: {data.owner_replies ?? 0}
@@ -103,24 +103,24 @@ function AdminRefunds() {
       description="Ясните случаи се одобряват автоматично от системата. Тук преглеждаш само тези за ръчна проверка."
       actions={
         <div className="flex items-center gap-2">
-          <div className="flex rounded-md border border-slate-200 bg-white p-0.5">
+          <div className="flex rounded-md border border-border bg-background p-0.5">
             <button
               type="button"
               onClick={() => setView("manual")}
-              className={`rounded px-2.5 py-1 text-xs font-medium ${view === "manual" ? "bg-slate-900 text-white" : "text-slate-600"}`}
+              className={`rounded px-2.5 py-1 text-xs font-medium ${view === "manual" ? "bg-foreground text-background" : "text-muted-foreground"}`}
             >
               За проверка
             </button>
             <button
               type="button"
               onClick={() => setView("auto")}
-              className={`rounded px-2.5 py-1 text-xs font-medium ${view === "auto" ? "bg-slate-900 text-white" : "text-slate-600"}`}
+              className={`rounded px-2.5 py-1 text-xs font-medium ${view === "auto" ? "bg-foreground text-background" : "text-muted-foreground"}`}
             >
               Автоматични ({autoCount})
             </button>
           </div>
         <Select value={status} onValueChange={(v) => setStatus(v as RefundStatus | "all")}>
-          <SelectTrigger className="h-9 w-44 rounded-md bg-white">
+          <SelectTrigger className="h-9 w-44 rounded-md bg-background">
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
@@ -156,10 +156,10 @@ function AdminRefunds() {
               <TableBody>
                 {rows.map((r) => (
                   <TableRow key={r.id} className="align-top">
-                    <TableCell className="font-medium text-slate-900"><AdminUserLink id={r.userId} name={r.userName} /></TableCell>
+                    <TableCell className="font-medium text-foreground"><AdminUserLink id={r.userId} name={r.userName} /></TableCell>
                     <TableCell className="max-w-[220px]">
                       {r.taskId ? (
-                        <Link to="/task/$id" params={{ id: r.taskId }} className="text-slate-900 underline-offset-2 hover:underline">
+                        <Link to="/task/$id" params={{ id: r.taskId }} className="text-foreground underline-offset-2 hover:underline">
                           {r.taskTitle}
                         </Link>
                       ) : (
@@ -167,9 +167,9 @@ function AdminRefunds() {
                       )}
                     </TableCell>
                     <TableCell className="max-w-[280px]">
-                      <div className="font-medium text-slate-800">{REFUND_REASON_BG[r.reason] ?? r.reason}</div>
-                      {r.details ? <div className="mt-0.5 text-xs text-slate-500">{r.details}</div> : null}
-                      {r.adminNote ? <div className="mt-1 text-xs italic text-slate-500">Бележка: {r.adminNote}</div> : null}
+                      <div className="font-medium text-foreground">{REFUND_REASON_BG[r.reason] ?? r.reason}</div>
+                      {r.details ? <div className="mt-0.5 text-xs text-muted-foreground">{r.details}</div> : null}
+                      {r.adminNote ? <div className="mt-1 text-xs italic text-muted-foreground">Бележка: {r.adminNote}</div> : null}
                       {r.autoRule ? (
                         <div className="mt-1 text-xs font-medium text-emerald-700">
                           Авто правило: {AUTO_RULE_BG[r.autoRule] ?? r.autoRule}
@@ -180,7 +180,7 @@ function AdminRefunds() {
                       <EvidenceCell requestId={r.id} />
                     </TableCell>
                     <TableCell className="text-right tabular-nums">{r.credits}</TableCell>
-                    <TableCell className="whitespace-nowrap text-xs text-slate-500">{formatDateBg(r.createdAt)}</TableCell>
+                    <TableCell className="whitespace-nowrap text-xs text-muted-foreground">{formatDateBg(r.createdAt)}</TableCell>
                     <TableCell>
                       <Badge
                         variant={r.status === "pending" ? "secondary" : r.status === "approved" ? "default" : "outline"}

@@ -64,7 +64,7 @@ const CONTENT_BG: Record<string, string> = {
 const SEVERITY_BG: Record<string, { label: string; className: string }> = {
   high: { label: "Висок риск", className: "bg-red-100 text-red-700" },
   medium: { label: "Среден риск", className: "bg-amber-100 text-amber-700" },
-  low: { label: "Нисък риск", className: "bg-slate-100 text-slate-600" },
+  low: { label: "Нисък риск", className: "bg-muted text-muted-foreground" },
 };
 
 function ageBg(iso: string) {
@@ -79,16 +79,16 @@ function QueueRow({ item, onResolve }: { item: ModerationItem; onResolve: (appro
   const Icon = item.kind === "image" ? ImageIcon : item.kind === "report" ? Flag : MessageSquareWarning;
 
   return (
-    <div className="flex flex-col gap-3 border-b border-slate-100 p-4 last:border-0 sm:flex-row">
+    <div className="flex flex-col gap-3 border-b border-border p-4 last:border-0 sm:flex-row">
       {item.imageUrl ? (
         <img
           src={item.imageUrl}
           alt="Задържана снимка"
-          className="h-28 w-28 shrink-0 rounded-md border border-slate-200 object-cover"
+          className="h-28 w-28 shrink-0 rounded-md border border-border object-cover"
         />
       ) : (
-        <div className="flex h-28 w-28 shrink-0 items-center justify-center rounded-md border border-dashed border-slate-200 bg-slate-50">
-          <Icon className="h-6 w-6 text-slate-400" />
+        <div className="flex h-28 w-28 shrink-0 items-center justify-center rounded-md border border-dashed border-border bg-muted/60">
+          <Icon className="h-6 w-6 text-muted-foreground" />
         </div>
       )}
 
@@ -98,13 +98,13 @@ function QueueRow({ item, onResolve }: { item: ModerationItem; onResolve: (appro
           <Badge variant="outline">{KIND_BG[item.kind] ?? item.kind}</Badge>
           <Badge variant="outline">{CONTENT_BG[item.contentType] ?? item.contentType}</Badge>
           {item.category ? <Badge variant="outline">{categoryBg(item.category)}</Badge> : null}
-          <span className="text-xs text-slate-500">преди {ageBg(item.createdAt)}</span>
+          <span className="text-xs text-muted-foreground">преди {ageBg(item.createdAt)}</span>
         </div>
 
-        <p className="text-sm font-medium text-slate-900">{item.reason}</p>
+        <p className="text-sm font-medium text-foreground">{item.reason}</p>
 
         {item.excerpt ? (
-          <p className="rounded-md bg-slate-50 p-2 text-sm text-slate-700">
+          <p className="rounded-md bg-muted/60 p-2 text-sm text-foreground">
             {item.matchedPattern ? (
               <span className="mr-1 rounded bg-amber-200/70 px-1 font-mono text-[11px] text-amber-900">
                 {item.matchedPattern.slice(0, 60)}
@@ -115,7 +115,7 @@ function QueueRow({ item, onResolve }: { item: ModerationItem; onResolve: (appro
         ) : null}
 
         {item.kind === "image" && item.score !== null ? (
-          <p className="text-xs text-slate-500">
+          <p className="text-xs text-muted-foreground">
             Оценка: {(item.score * 100).toFixed(0)}%{" "}
             {Object.entries(item.labels)
               .filter(([, v]) => typeof v === "number" && v > 0.05)
@@ -124,7 +124,7 @@ function QueueRow({ item, onResolve }: { item: ModerationItem; onResolve: (appro
           </p>
         ) : null}
 
-        <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-slate-500">
+        <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-muted-foreground">
           <span>
             Подател:{" "}
             {item.userId ? <AdminUserLink id={item.userId} name={item.userName} /> : "няма"}
@@ -193,7 +193,7 @@ function AdminModerationPage() {
       description="Всичко задържано или маркирано на едно място, снимки, текст и доклади от потребители."
       actions={
         <Select value={status} onValueChange={(v) => setStatus(v as ModerationStatus | "all")}>
-          <SelectTrigger className="w-40 bg-white">
+          <SelectTrigger className="w-40 bg-background">
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
@@ -207,7 +207,7 @@ function AdminModerationPage() {
       }
     >
       {status === "pending" && pending > 0 ? (
-        <AdminCard className="flex items-center gap-2 p-3 text-sm text-slate-700">
+        <AdminCard className="flex items-center gap-2 p-3 text-sm text-foreground">
           <ShieldAlert className="h-4 w-4 text-amber-600" />
           {pending} чакащи за преглед · най-старото преди{" "}
           {ageBg(items[items.length - 1]?.createdAt ?? new Date().toISOString())}

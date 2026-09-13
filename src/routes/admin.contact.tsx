@@ -101,13 +101,13 @@ function AdminContact() {
                     <SenderCell message={m} />
                   </TableCell>
                   <TableCell className="max-w-[420px]">
-                    <div className="text-sm font-medium text-slate-900">{m.subject}</div>
-                    <p className="mt-1 whitespace-pre-wrap text-xs text-slate-600">{m.body}</p>
+                    <div className="text-sm font-medium text-foreground">{m.subject}</div>
+                    <p className="mt-1 whitespace-pre-wrap text-xs text-muted-foreground">{m.body}</p>
                     {m.adminNote && (
-                      <p className="mt-1 text-xs italic text-slate-500">Бележка: {m.adminNote}</p>
+                      <p className="mt-1 text-xs italic text-muted-foreground">Бележка: {m.adminNote}</p>
                     )}
                   </TableCell>
-                  <TableCell className="whitespace-nowrap text-xs text-slate-600">
+                  <TableCell className="whitespace-nowrap text-xs text-muted-foreground">
                     {formatDateBg(m.createdAt)}
                   </TableCell>
                   <TableCell>
@@ -179,17 +179,17 @@ function SenderCell({ message }: { message: ContactMessage }) {
           {s.fullName || message.name}
         </Link>
       ) : (
-        <div className="font-medium text-slate-900">{message.name}</div>
+        <div className="font-medium text-foreground">{message.name}</div>
       )}
       <a href={`mailto:${message.email}`} className="block break-all text-xs text-primary hover:underline">
         {message.email}
       </a>
       {sender.isLoading ? (
-        <div className="h-3 w-24 animate-pulse rounded bg-slate-100" />
+        <div className="h-3 w-24 animate-pulse rounded bg-muted" />
       ) : sender.isError ? (
         <p className="text-[11px] text-amber-700">Данните за подателя не се заредиха.</p>
       ) : s?.found ? (
-        <ul className="space-y-0.5 text-[11px] leading-tight text-slate-600">
+        <ul className="space-y-0.5 text-[11px] leading-tight text-muted-foreground">
           <li>Регистриран: {s.createdAt ? formatDateBg(s.createdAt) : "—"}</li>
           <li>Задачи: {s.taskCount ?? 0}</li>
           <li>
@@ -203,7 +203,7 @@ function SenderCell({ message }: { message: ContactMessage }) {
           </li>
         </ul>
       ) : (
-        <p className="text-[11px] text-slate-500">Нерегистриран потребител</p>
+        <p className="text-[11px] text-muted-foreground">Нерегистриран потребител</p>
       )}
     </div>
   );

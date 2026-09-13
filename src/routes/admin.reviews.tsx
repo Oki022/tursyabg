@@ -68,7 +68,7 @@ function AdminReviewsPage() {
   return (
     <AdminPage title="Отзиви" description="Модерация на двустранните отзиви.">
       <AdminCard className="p-4">
-        <h2 className="mb-3 text-sm font-semibold text-slate-900">Сигнали за злоупотреба</h2>
+        <h2 className="mb-3 text-sm font-semibold text-foreground">Сигнали за злоупотреба</h2>
         {flags.isLoading || !f ? (
           <div className="h-16 animate-pulse rounded-xl bg-muted" />
         ) : (
@@ -99,7 +99,7 @@ function AdminReviewsPage() {
 
       <AdminCard className="p-4">
         <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
-          <h2 className="text-sm font-semibold text-slate-900">Отзиви</h2>
+          <h2 className="text-sm font-semibold text-foreground">Отзиви</h2>
           <Select value={filter} onValueChange={setFilter}>
             <SelectTrigger className="w-40">
               <SelectValue />

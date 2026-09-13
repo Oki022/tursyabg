@@ -9,6 +9,7 @@ import { Logo } from "@/components/Logo";
 import { useHideOnScroll } from "@/hooks/use-hide-on-scroll";
 import { cn } from "@/lib/utils";
 import { useCreditBalance } from "@/lib/credits-api";
+import { ThemeToggle } from "@/components/theme-toggle";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -79,6 +80,7 @@ export function SiteHeader() {
             </>
           ) : authState === "in" ? (
             <>
+              <ThemeToggle className="hidden md:inline-flex" />
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <button
@@ -137,6 +139,7 @@ export function SiteHeader() {
               </DropdownMenu>
             </>
           ) : null}
+          {authState === "out" && <ThemeToggle className="hidden md:inline-flex" />}
           {authState === "in" && (
             <Link
               to="/post"

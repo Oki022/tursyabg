@@ -82,7 +82,7 @@ function AdminUsers() {
           className="flex gap-2"
           onSubmit={(e) => { e.preventDefault(); setQuery(search); }}
         >
-          <Input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="име или имейл" className="h-9 w-56 rounded-md bg-white" />
+          <Input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="име или имейл" className="h-9 w-56 rounded-md bg-background" />
           <Button type="submit" size="sm" className="h-9 rounded-md">Търси</Button>
         </form>
       }
@@ -111,7 +111,7 @@ function AdminUsers() {
                   <TableRow key={u.id}>
                     <TableCell>
                       <div className="flex flex-wrap items-center gap-2">
-                        <AdminUserLink id={u.id} name={u.fullName} fallback="Без име" className="font-medium text-slate-900" />
+                        <AdminUserLink id={u.id} name={u.fullName} fallback="Без име" className="font-medium text-foreground" />
                         {u.isAdmin && <Badge className="rounded bg-slate-900">админ</Badge>}
                         {u.isModerator && <Badge variant="secondary" className="rounded">модератор</Badge>}
                         {u.bannedAt && <Badge className="rounded bg-rose-600">блокиран</Badge>}
@@ -125,14 +125,14 @@ function AdminUsers() {
                           </Badge>
                         )}
                       </div>
-                      <div className="text-xs text-slate-500">{u.email ?? "няма"}</div>
+                      <div className="text-xs text-muted-foreground">{u.email ?? "няма"}</div>
                       {u.banReason ? <div className="text-xs text-rose-600">{u.banReason}</div> : null}
                     </TableCell>
-                    <TableCell className="whitespace-nowrap text-xs text-slate-500">{formatDateBg(u.createdAt)}</TableCell>
+                    <TableCell className="whitespace-nowrap text-xs text-muted-foreground">{formatDateBg(u.createdAt)}</TableCell>
                     <TableCell className="text-right tabular-nums">{u.taskCount}</TableCell>
                     <TableCell className="text-right tabular-nums font-medium">{u.credits}</TableCell>
                     <TableCell className="text-right tabular-nums">{u.unlockCount}</TableCell>
-                    <TableCell className="whitespace-nowrap text-right text-xs tabular-nums text-slate-600">
+                    <TableCell className="whitespace-nowrap text-right text-xs tabular-nums text-muted-foreground">
                       {u.totalSpentCredits} кр. / {formatEur(u.totalPaidEur)}
                     </TableCell>
                     <TableCell className="text-right">

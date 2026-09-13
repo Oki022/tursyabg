@@ -14,7 +14,7 @@ function IconBubble({
   const tones = {
     success: "bg-emerald-500/15 text-emerald-600",
     error: "bg-rose-500/15 text-rose-600",
-    info: "bg-slate-500/15 text-slate-600",
+    info: "bg-muted text-muted-foreground",
     warning: "bg-amber-500/15 text-amber-600",
   } as const;
   return (

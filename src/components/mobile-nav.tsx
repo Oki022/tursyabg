@@ -10,7 +10,7 @@ const items = [
 ] as const;
 
 const base =
-  "group flex min-w-0 flex-1 flex-col items-center justify-center gap-1 rounded-lg px-1 py-2 text-[11px] font-medium text-slate-400 transition-all duration-150 active:scale-95 active:opacity-70";
+  "group flex min-w-0 flex-1 flex-col items-center justify-center gap-1 rounded-lg px-1 py-2 text-[11px] font-medium text-muted-foreground transition-all duration-150 active:scale-95 active:opacity-70";
 const active =
   "group flex min-w-0 flex-1 flex-col items-center justify-center gap-1 rounded-lg px-1 py-2 text-[11px] font-semibold text-primary transition-all duration-150 active:scale-95";
 
@@ -29,7 +29,7 @@ export function MobileNav() {
         <Link
           to="/post"
           aria-label="Възложи работа"
-          className="relative -mt-4 flex min-w-0 flex-1 flex-col items-center justify-end gap-1 px-1 pb-2 text-[11px] font-medium text-slate-400 transition-all duration-150 active:scale-95"
+          className="relative -mt-4 flex min-w-0 flex-1 flex-col items-center justify-end gap-1 px-1 pb-2 text-[11px] font-medium text-muted-foreground transition-all duration-150 active:scale-95"
           activeProps={{ className: "relative -mt-4 flex min-w-0 flex-1 flex-col items-center justify-end gap-1 px-1 pb-2 text-[11px] font-semibold text-primary transition-all duration-150 active:scale-95" }}
         >
           <span className="grid h-10 w-10 place-items-center rounded-full bg-gradient-to-br from-orange-500 to-rose-500 text-white shadow-md shadow-rose-500/20 ring-2 ring-background transition-transform duration-150 active:scale-95">
