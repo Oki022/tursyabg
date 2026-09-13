@@ -40,21 +40,51 @@ export const uploadModeratedTaskImage = createServerFn({ method: "POST" })
     }
 
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { reportServerIssue } = await import("@/lib/monitoring/sentry.server");
     const key = `${userId}/${data.taskId}/${Date.now()}-${data.index}.jpg`;
 
-    // New uploads go to Cloudflare R2 when configured; otherwise Supabase Storage
-    // (local development without R2 credentials). Existing images are untouched.
-    const { isR2Configured, r2Upload, R2_PREFIX } = await import("@/lib/r2.server");
-    let path: string;
-    if (isR2Configured()) {
-      await r2Upload(key, binary, "image/jpeg");
-      path = `${R2_PREFIX}${key}`;
-    } else {
+    const uploadToSupabase = async () => {
       const { error: upErr } = await supabaseAdmin.storage
         .from("task-images")
         .upload(key, binary, { contentType: "image/jpeg", upsert: false });
-      if (upErr) throw new Error("UPLOAD_FAILED");
-      path = key;
+      if (upErr) {
+        console.error("Supabase storage upload failed", upErr);
+        reportServerIssue({
+          area: "api",
+          action: "upload task image to supabase storage",
+          error: upErr,
+          userId,
+          extra: { taskId: data.taskId, key },
+        });
+        throw new Error("UPLOAD_FAILED");
+      }
+      return key;
+    };
+
+    // New uploads go to Cloudflare R2 when configured; otherwise Supabase Storage
+    // (local development without R2 credentials). Existing images are untouched.
+    const { isR2Configured, r2Upload, r2SignedUrl, R2_PREFIX } = await import("@/lib/r2.server");
+    let path: string;
+    if (isR2Configured()) {
+      try {
+        await r2Upload(key, binary, "image/jpeg");
+        // Verify the object is readable now, so a broken R2 setup fails here
+        // (visible, recoverable) instead of silently producing blank thumbnails.
+        await r2SignedUrl(key);
+        path = `${R2_PREFIX}${key}`;
+      } catch (error) {
+        console.error("R2 upload failed, falling back to Supabase Storage", error);
+        reportServerIssue({
+          area: "api",
+          action: "upload task image to R2",
+          error,
+          userId,
+          extra: { taskId: data.taskId, key },
+        });
+        path = await uploadToSupabase();
+      }
+    } else {
+      path = await uploadToSupabase();
     }
 
     const { data: row, error: insErr } = await supabaseAdmin

@@ -1,6 +1,7 @@
 import { supabase } from "@/integrations/supabase/client";
 import { signR2Urls, deleteR2Object } from "@/lib/storage.functions";
 import { uploadModeratedTaskImage } from "@/lib/moderation.functions";
+import { captureIssue } from "@/lib/monitoring/client";
 
 const BUCKET = "task-images";
 const TTL_SECONDS = 60 * 60 * 24;
