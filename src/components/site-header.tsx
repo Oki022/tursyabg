@@ -9,6 +9,7 @@ import { Logo } from "@/components/Logo";
 import { useHideOnScroll } from "@/hooks/use-hide-on-scroll";
 import { cn } from "@/lib/utils";
 import { useCreditBalance } from "@/lib/credits-api";
+import { ThemeToggle } from "@/components/theme-toggle";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -64,6 +65,7 @@ export function SiteHeader() {
           </nav>
         )}
         <div className="flex items-center gap-2 justify-self-end md:col-start-3">
+          <ThemeToggle className="hidden md:inline-flex" />
           {authState === "pending" && <AuthClusterPlaceholder />}
           {authState === "in" && <MessagesNavLink />}
           {authState === "in" && <FavouritesNavLink />}

@@ -26,6 +26,9 @@ import { CookieConsent } from "@/components/cookie-consent";
 import { AccountStatusGate } from "@/components/account/account-status-gate";
 import { allowIndexing } from "@/lib/indexing";
 import { bootAppUpdates, isStaleChunkError, reloadForNewVersion } from "@/lib/app-updates";
+import { ThemeProvider } from "@/lib/theme";
+
+const THEME_BOOT_SCRIPT = `(function(){try{var k='tursya-theme';var s=localStorage.getItem(k);var d=s==='dark'||(s!=='light'&&matchMedia('(prefers-color-scheme: dark)').matches);document.documentElement.classList.toggle('dark',d);document.documentElement.style.colorScheme=d?'dark':'light'}catch(e){}})()`;
 
 const SUPABASE_ORIGIN =
   (import.meta as any).env?.VITE_SUPABASE_URL ?? "https://xrltdrxhtennbscgbyxb.supabase.co";
@@ -137,8 +140,9 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
 
 function RootShell({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="bg">
+    <html lang="bg" suppressHydrationWarning>
       <head>
+        <script dangerouslySetInnerHTML={{ __html: THEME_BOOT_SCRIPT }} />
         <HeadContent />
       </head>
       <body>
@@ -158,8 +162,9 @@ function RootComponent() {
   const isMessages = pathname.startsWith("/messages");
 
   return (
-    <QueryClientProvider client={queryClient}>
-      <AuthProvider>
+    <ThemeProvider>
+      <QueryClientProvider client={queryClient}>
+        <AuthProvider>
         <CookieConsentProvider>
           <MonitoringBoot />
           <ClientOnly fallback={null}><PasswordRecoveryRedirect /></ClientOnly>
@@ -187,7 +192,8 @@ function RootComponent() {
         </CookieConsentProvider>
         <ClientOnly fallback={null}><AccountStatusGate /></ClientOnly>
         <ClientOnly fallback={null}><Toaster /></ClientOnly>
-      </AuthProvider>
-    </QueryClientProvider>
+        </AuthProvider>
+      </QueryClientProvider>
+    </ThemeProvider>
   );
 }

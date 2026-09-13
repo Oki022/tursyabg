@@ -39,6 +39,7 @@ import { usePublicProfile } from "@/lib/reviews-api";
 import { RatingInline } from "@/components/reviews/stars";
 import { buildLocation, formatLocation } from "@/lib/locations";
 import { EngagementInbox } from "@/components/reviews/engagement-cards";
+import { ThemeToggle } from "@/components/theme-toggle";
 
 import type { Task } from "@/lib/mock-data";
 import { toast } from "sonner";
@@ -312,6 +313,7 @@ function ProfilePage() {
                 </Link>
               );
             })}
+            <ThemeToggle showLabel className="sm:hidden" />
           </div>
         </section>
 
