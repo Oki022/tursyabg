@@ -55,6 +55,18 @@ export async function r2SignedUrl(key: string, expiresIn = 3600): Promise<string
   return signed.url;
 }
 
+/**
+ * Verifies that a just-uploaded object is actually readable through the URL we
+ * will hand to browsers. Throws with a descriptive message when it is not, so
+ * misconfiguration surfaces at upload time instead of as an empty thumbnail.
+ */
+export async function r2VerifyReadable(key: string): Promise<string> {
+  const url = await r2SignedUrl(key);
+  const res = await fetch(url, { method: "HEAD" });
+  if (!res.ok) throw new Error(`R2_NOT_READABLE ${res.status} for ${key}`);
+  return url;
+}
+
 export async function r2Delete(key: string): Promise<void> {
   const { client, base } = config();
   const res = await client.fetch(`${base}/${key}`, { method: "DELETE" });
