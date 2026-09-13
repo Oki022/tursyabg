@@ -161,10 +161,10 @@ function AdminTasks() {
             {(reports.data ?? []).map((r) => (
               <li key={r.id} className="flex flex-wrap items-center gap-2 px-4 py-2.5 text-sm">
                 <Badge variant="secondary" className="rounded">{REPORT_REASON_BG[r.reason] ?? r.reason}</Badge>
-                <Link to="/task/$id" params={{ id: r.taskId }} className="font-medium text-slate-900 hover:underline">
+                <Link to="/task/$id" params={{ id: r.taskId }} className="font-medium text-foreground hover:underline">
                   {r.taskTitle}
                 </Link>
-                {r.details ? <span className="text-slate-500"> {r.details}</span> : null}
+                {r.details ? <span className="text-muted-foreground"> {r.details}</span> : null}
                 <span className="text-xs text-slate-400">от {r.reporterName} · {formatDateBg(r.createdAt)}</span>
                 <div className="ml-auto flex gap-2">
                   <Button size="sm" variant="outline" className="rounded-md" onClick={() => mReport.mutate({ id: r.id, status: "reviewed" })}>
@@ -241,17 +241,17 @@ function AdminTasks() {
                 ) : null}
                 <div className="min-w-0 flex-1">
                   <div className="flex flex-wrap items-center gap-2">
-                    <span className="font-semibold text-slate-900">{t.title}</span>
+                    <span className="font-semibold text-foreground">{t.title}</span>
                     <Badge variant="outline" className="rounded">{STATUS_BG[t.status] ?? t.status}</Badge>
                     <Badge variant="secondary" className="rounded">{getCategory(t.category).name}</Badge>
                     {t.reportCount > 0 && (
                       <Badge className="rounded bg-rose-600">{t.reportCount} доклада</Badge>
                     )}
                   </div>
-                  <div className="mt-1 text-xs text-slate-500">
+                  <div className="mt-1 text-xs text-muted-foreground">
                     <AdminUserLink id={t.userId} name={t.authorName} /> · {t.budget} € · {[t.city, t.neighborhood].filter(Boolean).join(", ") || "няма"} · {formatDateBg(t.createdAt)}
                   </div>
-                  <p className="mt-2 whitespace-pre-line text-sm text-slate-700">{t.description}</p>
+                  <p className="mt-2 whitespace-pre-line text-sm text-foreground/90">{t.description}</p>
                   {t.images.length > 1 && (
                     <div className="mt-2 flex gap-2 overflow-x-auto">
                       {t.images.slice(1).map((src) => (
@@ -289,7 +289,7 @@ function AdminTasks() {
             </AdminCard>
           ))}
 
-          <div className="flex items-center justify-between text-sm text-slate-600">
+          <div className="flex items-center justify-between text-sm text-muted-foreground">
             <span>{filtered.length} задачи</span>
             <div className="flex items-center gap-2">
               <Button size="sm" variant="outline" className="rounded-md" disabled={page === 0} onClick={() => setPage((p) => p - 1)}>

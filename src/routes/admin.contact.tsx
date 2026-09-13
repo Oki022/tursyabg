@@ -101,13 +101,13 @@ function AdminContact() {
                     <SenderCell message={m} />
                   </TableCell>
                   <TableCell className="max-w-[420px]">
-                    <div className="text-sm font-medium text-slate-900">{m.subject}</div>
-                    <p className="mt-1 whitespace-pre-wrap text-xs text-slate-600">{m.body}</p>
+                    <div className="text-sm font-medium text-foreground">{m.subject}</div>
+                    <p className="mt-1 whitespace-pre-wrap text-xs text-muted-foreground">{m.body}</p>
                     {m.adminNote && (
-                      <p className="mt-1 text-xs italic text-slate-500">Бележка: {m.adminNote}</p>
+                      <p className="mt-1 text-xs italic text-muted-foreground">Бележка: {m.adminNote}</p>
                     )}
                   </TableCell>
-                  <TableCell className="whitespace-nowrap text-xs text-slate-600">
+                  <TableCell className="whitespace-nowrap text-xs text-muted-foreground">
                     {formatDateBg(m.createdAt)}
                   </TableCell>
                   <TableCell>

@@ -159,7 +159,7 @@ function AdminRefunds() {
                     <TableCell className="font-medium text-foreground"><AdminUserLink id={r.userId} name={r.userName} /></TableCell>
                     <TableCell className="max-w-[220px]">
                       {r.taskId ? (
-                        <Link to="/task/$id" params={{ id: r.taskId }} className="text-slate-900 underline-offset-2 hover:underline">
+                        <Link to="/task/$id" params={{ id: r.taskId }} className="text-foreground underline-offset-2 hover:underline">
                           {r.taskTitle}
                         </Link>
                       ) : (
@@ -167,9 +167,9 @@ function AdminRefunds() {
                       )}
                     </TableCell>
                     <TableCell className="max-w-[280px]">
-                      <div className="font-medium text-slate-800">{REFUND_REASON_BG[r.reason] ?? r.reason}</div>
-                      {r.details ? <div className="mt-0.5 text-xs text-slate-500">{r.details}</div> : null}
-                      {r.adminNote ? <div className="mt-1 text-xs italic text-slate-500">Бележка: {r.adminNote}</div> : null}
+                      <div className="font-medium text-foreground">{REFUND_REASON_BG[r.reason] ?? r.reason}</div>
+                      {r.details ? <div className="mt-0.5 text-xs text-muted-foreground">{r.details}</div> : null}
+                      {r.adminNote ? <div className="mt-1 text-xs italic text-muted-foreground">Бележка: {r.adminNote}</div> : null}
                       {r.autoRule ? (
                         <div className="mt-1 text-xs font-medium text-emerald-700">
                           Авто правило: {AUTO_RULE_BG[r.autoRule] ?? r.autoRule}
@@ -180,7 +180,7 @@ function AdminRefunds() {
                       <EvidenceCell requestId={r.id} />
                     </TableCell>
                     <TableCell className="text-right tabular-nums">{r.credits}</TableCell>
-                    <TableCell className="whitespace-nowrap text-xs text-slate-500">{formatDateBg(r.createdAt)}</TableCell>
+                    <TableCell className="whitespace-nowrap text-xs text-muted-foreground">{formatDateBg(r.createdAt)}</TableCell>
                     <TableCell>
                       <Badge
                         variant={r.status === "pending" ? "secondary" : r.status === "approved" ? "default" : "outline"}
