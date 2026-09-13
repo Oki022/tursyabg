@@ -12,13 +12,19 @@ export function ThemeToggle({ className, showLabel = false }: { className?: stri
 
   if (showLabel) {
     return (
-      <Button
-        type="button"
-        variant="ghost"
+      <div
+        role="button"
+        tabIndex={0}
         onClick={cycleTheme}
+        onKeyDown={(event) => {
+          if (event.key === "Enter" || event.key === " ") {
+            event.preventDefault();
+            cycleTheme();
+          }
+        }}
         aria-label={nextLabel}
         className={cn(
-          "h-auto w-full justify-start gap-3 rounded-xl border border-border bg-background px-3 py-3 hover:bg-accent/40",
+          "flex h-auto w-full cursor-pointer items-center justify-start gap-3 rounded-xl border border-border bg-background px-3 py-3 transition-colors hover:bg-accent/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
           className,
         )}
       >
@@ -31,12 +37,11 @@ export function ThemeToggle({ className, showLabel = false }: { className?: stri
         </span>
         <Switch
           checked={theme === "dark"}
-          onClick={(event) => event.preventDefault()}
-          aria-hidden="true"
-          tabIndex={-1}
-          className="pointer-events-none"
+          onCheckedChange={cycleTheme}
+          onClick={(event) => event.stopPropagation()}
+          aria-label={nextLabel}
         />
-      </Button>
+      </div>
     );
   }
 
