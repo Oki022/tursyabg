@@ -111,7 +111,7 @@ export const Route = createFileRoute("/task/$id")({
   component: TaskDetails,
   notFoundComponent: () => (
     <div className="container mx-auto px-4 py-24 text-center">
-      <h1 className="text-2xl font-semibold text-slate-900">Задачата не е намерена</h1>
+      <h1 className="text-2xl font-semibold text-foreground">Задачата не е намерена</h1>
       <Button asChild className="mt-4">
         <Link to="/tasks">Назад</Link>
       </Button>
@@ -183,14 +183,14 @@ function TaskDetails() {
             className="aspect-[3/2] w-full rounded-3xl object-cover"
           />
         )}
-        <h1 className="mt-6 break-words text-3xl font-bold tracking-tight text-slate-900 md:text-4xl">
+        <h1 className="mt-6 break-words text-3xl font-bold tracking-tight text-foreground md:text-4xl">
           {seoTask.title}
         </h1>
         <p className="mt-2 text-sm text-muted-foreground">
           {getCategory(seoTask.category).name}
           {seoLocation ? ` · ${seoLocation}` : ""} · {seoTask.budget} €
         </p>
-        <h2 className="mt-8 text-lg font-semibold text-slate-900">Описание</h2>
+        <h2 className="mt-8 text-lg font-semibold text-foreground">Описание</h2>
         <p className="mt-3 whitespace-pre-line break-words text-[15px] leading-relaxed text-foreground/90">
           {seoTask.description}
         </p>
@@ -201,7 +201,7 @@ function TaskDetails() {
   if (!task) {
     return (
       <div className="container mx-auto px-4 py-24 text-center">
-        <h1 className="text-2xl font-semibold text-slate-900">Задачата не е намерена</h1>
+        <h1 className="text-2xl font-semibold text-foreground">Задачата не е намерена</h1>
         <Button asChild className="mt-4">
           <Link to="/tasks">Назад</Link>
         </Button>
@@ -266,7 +266,7 @@ function TaskDetails() {
 
       <div className="grid gap-8 lg:grid-cols-[minmax(0,1.75fr)_minmax(320px,0.8fr)]">
         <div className="min-w-0">
-          <div className="group relative overflow-hidden rounded-3xl bg-slate-100 shadow-xl shadow-primary/10 ring-1 ring-border/60">
+          <div className="group relative overflow-hidden rounded-3xl bg-muted shadow-xl shadow-primary/10 ring-1 ring-border/60">
             <div className="relative h-[320px] w-full sm:h-[420px] lg:h-[520px]">
               {images.length === 0 && (
                 <TaskThumb
@@ -308,7 +308,7 @@ function TaskDetails() {
                   <button
                     type="button"
                     onClick={prev}
-                    className="absolute left-4 top-1/2 grid h-11 w-11 -translate-y-1/2 place-items-center rounded-full bg-white/95 text-slate-900 shadow-lg backdrop-blur transition hover:scale-105"
+                    className="absolute left-4 top-1/2 grid h-11 w-11 -translate-y-1/2 place-items-center rounded-full bg-background/95 text-foreground shadow-lg backdrop-blur transition hover:scale-105"
                     aria-label="Предишна снимка"
                   >
                     <ChevronLeft className="h-5 w-5" />
@@ -316,7 +316,7 @@ function TaskDetails() {
                   <button
                     type="button"
                     onClick={next}
-                    className="absolute right-4 top-1/2 grid h-11 w-11 -translate-y-1/2 place-items-center rounded-full bg-white/95 text-slate-900 shadow-lg backdrop-blur transition hover:scale-105"
+                    className="absolute right-4 top-1/2 grid h-11 w-11 -translate-y-1/2 place-items-center rounded-full bg-background/95 text-foreground shadow-lg backdrop-blur transition hover:scale-105"
                     aria-label="Следваща снимка"
                   >
                     <ChevronRight className="h-5 w-5" />
@@ -357,7 +357,7 @@ function TaskDetails() {
           )}
 
           <div className="mt-4 flex items-start justify-between gap-3">
-            <h1 className="break-words text-3xl font-bold tracking-tight text-slate-900 md:text-4xl">
+            <h1 className="break-words text-3xl font-bold tracking-tight text-foreground md:text-4xl">
               {task.title}
             </h1>
             <div className="mt-1 flex shrink-0 items-center gap-2">
@@ -372,7 +372,7 @@ function TaskDetails() {
           </div>
 
           <section className="mt-8 rounded-3xl border border-border/60 bg-card p-6 shadow-sm md:p-7">
-            <h2 className="text-lg font-semibold text-slate-900">Описание</h2>
+            <h2 className="text-lg font-semibold text-foreground">Описание</h2>
             <p className="mt-3 whitespace-pre-line break-words text-[15px] leading-relaxed text-foreground/90">
               {task.description}
             </p>
@@ -380,12 +380,12 @@ function TaskDetails() {
         </div>
 
         <aside className="lg:sticky lg:top-24 lg:self-start">
-          <div className="rounded-3xl bg-white p-6 shadow-2xl shadow-primary/15 ring-1 ring-border/60">
+          <div className="rounded-3xl bg-card p-6 shadow-2xl shadow-primary/15 ring-1 ring-border/60">
             <div className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
               Бюджет
             </div>
             <div className="mt-2 flex items-end justify-between gap-3">
-              <div className="text-4xl font-bold text-slate-900">{task.budget} €</div>
+              <div className="text-4xl font-bold text-foreground">{task.budget} €</div>
               <span className="rounded-full bg-primary-soft px-3 py-1 text-xs font-semibold text-primary">
                 Фиксиран
               </span>
@@ -467,12 +467,12 @@ function TaskDetails() {
                     <Link
                       to="/user/$id"
                       params={{ id: task.userId }}
-                      className="block truncate text-sm font-semibold text-slate-900 hover:underline"
+                      className="block truncate text-sm font-semibold text-foreground hover:underline"
                     >
                       {task.author}
                     </Link>
                   ) : (
-                    <div className="truncate text-sm font-semibold text-slate-900">{task.author}</div>
+                    <div className="truncate text-sm font-semibold text-foreground">{task.author}</div>
                   )}
                   <div className="mt-0.5 flex items-center gap-1 text-xs text-muted-foreground">
                     <CalendarDays className="h-3.5 w-3.5" /> Член от 2026 г.
@@ -485,10 +485,10 @@ function TaskDetails() {
               <div className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                 Локация
               </div>
-              <div className="relative mt-3 h-32 overflow-hidden rounded-2xl bg-slate-100 ring-1 ring-border/60">
+              <div className="relative mt-3 h-32 overflow-hidden rounded-2xl bg-muted ring-1 ring-border/60">
                 <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(15,23,42,0.06)_1px,transparent_1px),linear-gradient(0deg,rgba(15,23,42,0.06)_1px,transparent_1px)] bg-[size:24px_24px]" />
                 <div className="absolute inset-0 grid place-items-center">
-                  <div className="flex items-center gap-2 rounded-full bg-white/95 px-3 py-1.5 text-sm font-medium text-slate-900 shadow-md ring-1 ring-border/60">
+                  <div className="flex items-center gap-2 rounded-full bg-background/95 px-3 py-1.5 text-sm font-medium text-foreground shadow-md ring-1 ring-border/60 backdrop-blur">
                     <span className="grid h-6 w-6 place-items-center rounded-full bg-primary text-primary-foreground">
                       <MapPin className="h-3.5 w-3.5" />
                     </span>
@@ -512,7 +512,7 @@ function TaskDetails() {
             </DialogDescription>
           </DialogHeader>
 
-          <div className="flex items-center gap-3 rounded-xl bg-slate-100 px-4 py-3 ring-1 ring-border/60">
+          <div className="flex items-center gap-3 rounded-xl bg-muted px-4 py-3 ring-1 ring-border/60">
             <TaskThumb
               src={task.gallery?.[0]}
               category={task.category}
@@ -524,21 +524,21 @@ function TaskDetails() {
               <div className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                 Задача
               </div>
-              <div className="mt-1 line-clamp-2 text-sm font-semibold text-slate-900">
+              <div className="mt-1 line-clamp-2 text-sm font-semibold text-foreground">
                 {task.title}
               </div>
             </div>
           </div>
 
           {previousMessages.length > 0 && (
-            <div className="max-h-48 space-y-2 overflow-y-auto rounded-xl bg-slate-50 p-3 ring-1 ring-border/60">
+            <div className="max-h-48 space-y-2 overflow-y-auto rounded-xl bg-muted/60 p-3 ring-1 ring-border/60">
               {previousMessages.map((m) => (
                 <div key={m.id} className={`flex ${m.senderId === user?.id ? "justify-end" : "justify-start"}`}>
                   <div
                     className={`max-w-[80%] whitespace-pre-wrap break-words rounded-2xl px-3 py-2 text-sm ${
                       m.senderId === user?.id
                         ? "bg-gradient-to-r from-orange-500 to-rose-500 text-white"
-                        : "bg-white text-slate-900 ring-1 ring-border/60"
+                        : "bg-card text-foreground ring-1 ring-border/60"
                     }`}
                   >
                     {m.content}

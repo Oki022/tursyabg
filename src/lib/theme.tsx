@@ -38,10 +38,12 @@ function applyTheme(theme: Theme, animate: boolean) {
 }
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
-  const [theme, setTheme] = useState<Theme>(() => storedTheme() ?? systemTheme());
+  const [theme, setTheme] = useState<Theme>("light");
 
   useEffect(() => {
-    applyTheme(theme, false);
+    const initial = storedTheme() ?? systemTheme();
+    setTheme(initial);
+    applyTheme(initial, false);
     const media = window.matchMedia("(prefers-color-scheme: dark)");
     const onSystemChange = (event: MediaQueryListEvent) => {
       if (storedTheme()) return;
