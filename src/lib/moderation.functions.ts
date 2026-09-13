@@ -40,11 +40,22 @@ export const uploadModeratedTaskImage = createServerFn({ method: "POST" })
     }
 
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const path = `${userId}/${data.taskId}/${Date.now()}-${data.index}.jpg`;
-    const { error: upErr } = await supabaseAdmin.storage
-      .from("task-images")
-      .upload(path, binary, { contentType: "image/jpeg", upsert: false });
-    if (upErr) throw new Error("UPLOAD_FAILED");
+    const key = `${userId}/${data.taskId}/${Date.now()}-${data.index}.jpg`;
+
+    // New uploads go to Cloudflare R2 when configured; otherwise Supabase Storage
+    // (local development without R2 credentials). Existing images are untouched.
+    const { isR2Configured, r2Upload, R2_PREFIX } = await import("@/lib/r2.server");
+    let path: string;
+    if (isR2Configured()) {
+      await r2Upload(key, binary, "image/jpeg");
+      path = `${R2_PREFIX}${key}`;
+    } else {
+      const { error: upErr } = await supabaseAdmin.storage
+        .from("task-images")
+        .upload(key, binary, { contentType: "image/jpeg", upsert: false });
+      if (upErr) throw new Error("UPLOAD_FAILED");
+      path = key;
+    }
 
     const { data: row, error: insErr } = await supabaseAdmin
       .from("task_images")

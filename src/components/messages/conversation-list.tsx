@@ -91,7 +91,7 @@ export function ConversationList({ selectedId, onSelect, variant = "desktop" }: 
         };
         const content = (
           <>
-            <span className="relative shrink-0">
+            <span className="shrink-0">
               <TaskThumb
                 src={c.taskImage}
                 category={c.taskCategory}
@@ -100,15 +100,6 @@ export function ConversationList({ selectedId, onSelect, variant = "desktop" }: 
                 iconClassName="h-6 w-6"
                 className="h-12 w-12 rounded-xl"
               />
-              <span {...profileProps} className="absolute -bottom-1 -right-1 cursor-pointer rounded-full">
-                <UserAvatar
-                  userId={c.otherUserId}
-                  name={c.otherUserName}
-                  src={c.otherUserAvatar}
-                  className="h-6 w-6 border-2 border-background shadow-sm"
-                  iconStrokeWidth={1.45}
-                />
-              </span>
             </span>
             <div className="min-w-0 flex-1">
               <div className="flex min-w-0 items-center gap-2">
