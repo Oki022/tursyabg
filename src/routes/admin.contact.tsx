@@ -179,17 +179,17 @@ function SenderCell({ message }: { message: ContactMessage }) {
           {s.fullName || message.name}
         </Link>
       ) : (
-        <div className="font-medium text-slate-900">{message.name}</div>
+        <div className="font-medium text-foreground">{message.name}</div>
       )}
       <a href={`mailto:${message.email}`} className="block break-all text-xs text-primary hover:underline">
         {message.email}
       </a>
       {sender.isLoading ? (
-        <div className="h-3 w-24 animate-pulse rounded bg-slate-100" />
+        <div className="h-3 w-24 animate-pulse rounded bg-muted" />
       ) : sender.isError ? (
         <p className="text-[11px] text-amber-700">Данните за подателя не се заредиха.</p>
       ) : s?.found ? (
-        <ul className="space-y-0.5 text-[11px] leading-tight text-slate-600">
+        <ul className="space-y-0.5 text-[11px] leading-tight text-muted-foreground">
           <li>Регистриран: {s.createdAt ? formatDateBg(s.createdAt) : "—"}</li>
           <li>Задачи: {s.taskCount ?? 0}</li>
           <li>
@@ -203,7 +203,7 @@ function SenderCell({ message }: { message: ContactMessage }) {
           </li>
         </ul>
       ) : (
-        <p className="text-[11px] text-slate-500">Нерегистриран потребител</p>
+        <p className="text-[11px] text-muted-foreground">Нерегистриран потребител</p>
       )}
     </div>
   );
