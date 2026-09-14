@@ -19,7 +19,7 @@ import {
 } from "@/components/ui/select";
 import { clampDescription, seo } from "@/lib/seo";
 
-type Search = { q?: string; category?: string; location?: string; region?: string };
+type Search = { q?: string; category?: string; location?: string; region?: string; from?: "home" };
 
 export const Route = createFileRoute("/tasks")({
   head: ({ match }) => {
@@ -43,6 +43,7 @@ export const Route = createFileRoute("/tasks")({
     category: typeof s.category === "string" ? s.category : undefined,
     location: typeof s.location === "string" ? s.location : undefined,
     region: typeof s.region === "string" ? s.region : undefined,
+    from: s.from === "home" ? "home" : undefined,
   }),
   component: TasksPage,
 });
@@ -59,6 +60,19 @@ function TasksPage() {
   });
   const filtered = data?.pages.flatMap((p) => p.items) ?? [];
   const sentinelRef = useRef<HTMLDivElement | null>(null);
+  const resultsRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    if (search.from !== "home" || !resultsRef.current || typeof window === "undefined") return;
+
+    const mobile = window.matchMedia("(max-width: 767px)").matches;
+    resultsRef.current.scrollIntoView({ behavior: mobile ? "smooth" : "auto", block: "start" });
+    void navigate({
+      replace: true,
+      resetScroll: false,
+      search: (previous: Search) => ({ ...previous, from: undefined }),
+    });
+  }, [navigate, search.from]);
 
   useEffect(() => {
     const el = sentinelRef.current;
@@ -91,7 +105,7 @@ function TasksPage() {
   return (
     <div className="container mx-auto px-4 py-8 md:py-12">
       <div className="mb-6">
-        <div>
+        <div ref={resultsRef} className="scroll-mt-20">
           <h1 className="text-3xl font-bold tracking-tight text-foreground md:text-4xl">
             Борса за работа
           </h1>

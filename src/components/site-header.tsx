@@ -77,9 +77,11 @@ export function SiteHeader() {
               <Button asChild className="h-9 px-4 text-sm font-semibold">
                 <Link to="/auth" search={{ mode: "register" }}>Регистрация</Link>
               </Button>
+              <ThemeToggle />
             </>
           ) : authState === "in" ? (
             <>
+              <ThemeToggle />
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <button
@@ -136,10 +138,8 @@ export function SiteHeader() {
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
-              <ThemeToggle className="hidden md:inline-flex" />
             </>
           ) : null}
-          {authState === "out" && <ThemeToggle className="hidden md:inline-flex" />}
           {authState === "in" && (
             <Link
               to="/post"
