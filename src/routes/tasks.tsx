@@ -19,7 +19,7 @@ import {
 } from "@/components/ui/select";
 import { clampDescription, seo } from "@/lib/seo";
 
-type Search = { q?: string; category?: string; location?: string; region?: string };
+type Search = { q?: string; category?: string; location?: string; region?: string; from?: "home" };
 
 export const Route = createFileRoute("/tasks")({
   head: ({ match }) => {
@@ -43,6 +43,7 @@ export const Route = createFileRoute("/tasks")({
     category: typeof s.category === "string" ? s.category : undefined,
     location: typeof s.location === "string" ? s.location : undefined,
     region: typeof s.region === "string" ? s.region : undefined,
+    from: s.from === "home" ? "home" : undefined,
   }),
   component: TasksPage,
 });
@@ -59,6 +60,18 @@ function TasksPage() {
   });
   const filtered = data?.pages.flatMap((p) => p.items) ?? [];
   const sentinelRef = useRef<HTMLDivElement | null>(null);
+  const resultsRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    if (search.from !== "home" || !resultsRef.current || typeof window === "undefined") return;
+
+    const mobile = window.matchMedia("(max-width: 767px)").matches;
+    if (!mobile) return;
+    const timer = window.setTimeout(() => {
+      resultsRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+    }, 150);
+    return () => window.clearTimeout(timer);
+  }, [search.from]);
 
   useEffect(() => {
     const el = sentinelRef.current;
@@ -190,7 +203,7 @@ function TasksPage() {
         </aside>
 
         {/* Results */}
-        <div>
+        <div ref={resultsRef} data-results-anchor className="scroll-mt-20">
           {activeFilters > 0 && (
             <div className="mb-4 flex flex-wrap gap-2">
               {search.category && (
