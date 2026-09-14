@@ -52,7 +52,7 @@ export function SiteHeader() {
       )}
       style={{ paddingTop: "env(safe-area-inset-top)" }}
     >
-      <div className="mx-auto flex h-16 w-full max-w-7xl items-center justify-between gap-2 px-4 md:grid md:grid-cols-[1fr_auto_1fr]">
+      <div className="mx-auto flex h-16 w-full max-w-7xl items-center justify-between gap-1 px-2 sm:gap-2 sm:px-4 md:grid md:grid-cols-[1fr_auto_1fr]">
         <Logo size="md" />
         {!isHome && (
           <nav className="hidden items-center gap-2 justify-self-center md:flex">
@@ -71,10 +71,10 @@ export function SiteHeader() {
           {authState === "in" && <NotificationBell />}
           {authState === "out" ? (
             <>
-              <Button asChild variant="ghost" className="h-9 px-4 text-sm font-medium">
+              <Button asChild variant="ghost" className="h-9 px-2 text-xs font-medium sm:px-4 sm:text-sm">
                 <Link to="/auth" search={{ mode: "login" }}>Вход</Link>
               </Button>
-              <Button asChild className="h-9 px-4 text-sm font-semibold">
+              <Button asChild className="h-9 px-2 text-xs font-semibold sm:px-4 sm:text-sm">
                 <Link to="/auth" search={{ mode: "register" }}>Регистрация</Link>
               </Button>
               <ThemeToggle />
