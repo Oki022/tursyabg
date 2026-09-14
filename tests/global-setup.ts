@@ -25,7 +25,7 @@ export async function saveSession(browser: any, email: string, password: string,
 }
 
 export default async function globalSetup() {
-  const browser = await chromium.launch({ headless: false });
+  const browser = await chromium.launch({ headless: !!process.env.CI });
   
   // .auth klasörünü oluştur
   const fs = await import("fs");
