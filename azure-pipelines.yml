@@ -1,8 +1,8 @@
 trigger: none
 
 schedules:
-  - cron: "0 6 * * *"
-    displayName: Ежедневни E2E тестове
+  - cron: "0 6 * * 1"
+    displayName: Седмични E2E тестове
     branches:
       include:
         - main
