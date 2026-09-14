@@ -1,0 +1,43 @@
+trigger: none
+
+schedules:
+  - cron: "0 6 * * *"
+    displayName: Ежедневни E2E тестове
+    branches:
+      include:
+        - main
+    always: true
+
+pool:
+  vmImage: ubuntu-latest
+
+steps:
+  - task: NodeTool@0
+    inputs:
+      versionSpec: '20.x'
+    displayName: 'Инсталирай Node.js'
+
+  - script: npm ci
+    displayName: 'Инсталирай зависимости'
+
+  - script: npx playwright install --with-deps chromium
+    displayName: 'Инсталирай Playwright браузъри'
+
+  - script: npx playwright test --project=chromium --reporter=list
+    displayName: 'Пусни E2E тестовете'
+    env:
+      VITE_SUPABASE_URL: $(VITE_SUPABASE_URL)
+      VITE_SUPABASE_PUBLISHABLE_KEY: $(VITE_SUPABASE_PUBLISHABLE_KEY)
+      SUPABASE_SERVICE_ROLE_KEY: $(SUPABASE_SERVICE_ROLE_KEY)
+      E2E_PASSWORD: $(E2E_PASSWORD)
+      E2E_ADMIN_PASSWORD: $(E2E_ADMIN_PASSWORD)
+      VITE_STRIPE_PUBLISHABLE_KEY: $(VITE_STRIPE_PUBLISHABLE_KEY)
+      VITE_SITE_URL: 'http://localhost:8080'
+
+  - task: PublishTestResults@2
+    condition: always()
+    inputs:
+      testResultsFormat: 'JUnit'
+      testResultsFiles: 'test-results/**/*.xml'
+      testRunTitle: 'Playwright E2E'
+    displayName: 'Публикувай резултатите'
