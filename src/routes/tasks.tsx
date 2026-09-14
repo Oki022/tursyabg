@@ -104,7 +104,7 @@ function TasksPage() {
   return (
     <div className="container mx-auto px-4 py-8 md:py-12">
       <div className="mb-6">
-        <div ref={resultsRef} data-results-anchor className="scroll-mt-20">
+        <div>
           <h1 className="text-3xl font-bold tracking-tight text-foreground md:text-4xl">
             Борса за работа
           </h1>
@@ -203,7 +203,7 @@ function TasksPage() {
         </aside>
 
         {/* Results */}
-        <div>
+        <div ref={resultsRef} data-results-anchor className="scroll-mt-20">
           {activeFilters > 0 && (
             <div className="mb-4 flex flex-wrap gap-2">
               {search.category && (
