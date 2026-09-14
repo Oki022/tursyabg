@@ -61,9 +61,20 @@ function TasksPage() {
   const filtered = data?.pages.flatMap((p) => p.items) ?? [];
   const sentinelRef = useRef<HTMLDivElement | null>(null);
   const resultsRef = useRef<HTMLDivElement | null>(null);
+  // Filters the user landed on the page with; scrolling happens only after
+  // these change (i.e. the user actively applied a filter), not on first load.
+  const initialFiltersRef = useRef({ q: search.q, category: search.category, location: search.location, region: search.region });
 
   useEffect(() => {
-    if (search.from !== "home" || !resultsRef.current || typeof window === "undefined") return;
+    if (typeof window === "undefined") return;
+    const init = initialFiltersRef.current;
+    const fromHome = search.from === "home";
+    const changed =
+      search.q !== init.q ||
+      search.category !== init.category ||
+      search.location !== init.location ||
+      search.region !== init.region;
+    if (!fromHome && !changed) return;
 
     const mobile = window.matchMedia("(max-width: 767px)").matches;
     if (!mobile) return;
@@ -71,7 +82,7 @@ function TasksPage() {
       resultsRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
     }, 150);
     return () => window.clearTimeout(timer);
-  }, [search.from]);
+  }, [search.from, search.q, search.category, search.location, search.region]);
 
   useEffect(() => {
     const el = sentinelRef.current;
