@@ -66,9 +66,8 @@ function TasksPage() {
     if (search.from !== "home" || !resultsRef.current || typeof window === "undefined") return;
 
     const mobile = window.matchMedia("(max-width: 767px)").matches;
-    if (!mobile) return;
     const timer = window.setTimeout(() => {
-      resultsRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+      resultsRef.current?.scrollIntoView({ behavior: mobile ? "smooth" : "auto", block: "start" });
     }, 150);
     return () => window.clearTimeout(timer);
   }, [search.from]);
