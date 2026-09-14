@@ -2,6 +2,9 @@ import { expect, type Page } from "@playwright/test";
 
 export const TEST_EMAIL = process.env.E2E_EMAIL ?? "asimov599+e2e1@gmail.com";
 export const TEST_PASSWORD = process.env.E2E_PASSWORD ?? "";
+export const USER_AUTH = "tests/.auth/user.json";
+export const PRO_AUTH = "tests/.auth/pro.json";
+export const ADMIN_AUTH = "tests/.auth/admin.json";
 
 /**
  * The cookie banner (src/components/cookie-consent.tsx) is fixed to the bottom
@@ -70,7 +73,7 @@ export async function login(page: Page, email = TEST_EMAIL, password = TEST_PASS
   await page.getByRole("button", { name: "Вход", exact: true }).click();
 
   // Successful sign-in lands on the homepage with the signed-in header.
-  await expect(page.getByRole("link", { name: "Възложи работа" })).toBeVisible({ timeout: 30_000 });
+  await expect(page.getByRole("button", { name: "Меню на профила" })).toBeVisible({ timeout: 30_000 });
 }
 
 /** Sign out through the header profile menu. */

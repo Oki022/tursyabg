@@ -39,3 +39,4 @@ package-lock.json
 # Playwright
 test-results/
 playwright-report/
+tests/.auth/
