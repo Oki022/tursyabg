@@ -67,12 +67,7 @@ function TasksPage() {
 
     const mobile = window.matchMedia("(max-width: 767px)").matches;
     resultsRef.current.scrollIntoView({ behavior: mobile ? "smooth" : "auto", block: "start" });
-    void navigate({
-      replace: true,
-      resetScroll: false,
-      search: (previous: Search) => ({ ...previous, from: undefined }),
-    });
-  }, [navigate, search.from]);
+  }, [search.from]);
 
   useEffect(() => {
     const el = sentinelRef.current;
