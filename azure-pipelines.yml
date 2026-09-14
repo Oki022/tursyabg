@@ -20,6 +20,9 @@ steps:
   - script: npm install
     displayName: 'Инсталирай зависимости'
 
+  - script: npm run test:unit
+    displayName: 'Пусни unit тестовете'
+
   - script: npx playwright install --with-deps chromium
     displayName: 'Инсталирай Playwright браузъри'
 
