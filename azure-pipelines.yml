@@ -17,7 +17,7 @@ steps:
       versionSpec: '20.x'
     displayName: 'Инсталирай Node.js'
 
-  - script: npm ci
+  - script: npm install
     displayName: 'Инсталирай зависимости'
 
   - script: npx playwright install --with-deps chromium
