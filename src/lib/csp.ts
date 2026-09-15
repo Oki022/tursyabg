@@ -43,7 +43,7 @@ const LEGACY_SCRIPT_SRC =
  * older ones fall back to them, so Stripe keeps working there too.
  */
 function strictScriptSrc(nonce: string): string {
-  return `script-src 'nonce-${nonce}' 'strict-dynamic' 'unsafe-eval' https: 'self'`;
+  return `script-src 'nonce-${nonce}' 'strict-dynamic' https://js.stripe.com`;
 }
 
 export function buildCsp(opts: { strict: boolean; nonce?: string }): string {
