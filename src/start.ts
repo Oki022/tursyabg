@@ -1,6 +1,7 @@
 import { createStart, createMiddleware } from "@tanstack/react-start";
 
 import { renderErrorPage } from "./lib/error-page";
+import { buildCsp, isStrictCspEnabled } from "./lib/csp";
 import { attachSupabaseAuth } from "@/integrations/supabase/auth-attacher";
 
 /**
@@ -44,31 +45,10 @@ const csrfMiddleware = createMiddleware().server(async ({ next, request }) => {
  * Security headers for every response. The CSP explicitly allows Stripe
  * (embedded checkout + its iframes), Supabase (REST/auth over https and
  * realtime over wss) and Sentry ingest, so payments, live messaging and
- * signed image URLs keep working.
+ * signed image URLs keep working. script-src is nonce based — see
+ * ./lib/csp.ts.
  */
-const CSP = [
-  "default-src 'self'",
-  "base-uri 'self'",
-  "object-src 'none'",
-  "frame-ancestors 'self'",
-  "form-action 'self'",
-  "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://js.stripe.com https://*.stripe.com",
-  "style-src 'self' 'unsafe-inline'",
-  "img-src 'self' data: blob: https:",
-  "font-src 'self' data:",
-  "media-src 'self' data: blob: https:",
-  "worker-src 'self' blob:",
-  [
-    "connect-src 'self' blob: data:",
-    "https://*.supabase.co wss://*.supabase.co https://*.supabase.in wss://*.supabase.in",
-    "https://api.stripe.com https://*.stripe.com",
-    "https://*.sentry.io https://*.ingest.sentry.io https://*.ingest.de.sentry.io",
-  ].join(" "),
-  "frame-src 'self' https://js.stripe.com https://hooks.stripe.com https://*.stripe.com",
-].join("; ");
-
 const SECURITY_HEADERS: Record<string, string> = {
-  "Content-Security-Policy": CSP,
   "X-Frame-Options": "SAMEORIGIN",
   "X-Content-Type-Options": "nosniff",
   "Referrer-Policy": "strict-origin-when-cross-origin",
@@ -76,17 +56,28 @@ const SECURITY_HEADERS: Record<string, string> = {
     "camera=(), microphone=(), geolocation=(self), payment=(self), usb=(), interest-cohort=()",
 };
 
-const securityHeadersMiddleware = createMiddleware().server(async ({ next }) => {
+const securityHeadersMiddleware = createMiddleware().server(async ({ next, request }) => {
   const result = await next();
   const candidate = result as unknown as { headers?: Headers; response?: { headers?: Headers } };
   const headers = candidate.response?.headers ?? candidate.headers;
   if (headers && typeof headers.set === "function") {
     for (const [key, value] of Object.entries(SECURITY_HEADERS)) headers.set(key, value);
+    const contentType = headers.get("content-type") ?? "";
+    const isHtml = contentType.includes("text/html");
+    // Vite's dev server injects its own inline scripts without a nonce, so the
+    // strict policy only applies to real builds.
+    const strict =
+      !import.meta.env.DEV &&
+      isStrictCspEnabled(process.env as Record<string, string | undefined>);
+    const nonce =
+      strict && isHtml
+        ? (await import("./lib/csp-nonce")).nonceForRequest(request)
+        : undefined;
+    headers.set("Content-Security-Policy", buildCsp({ strict, nonce }));
     // The app shell must never be served stale: a cached HTML document points
     // at hashed chunks that a newer deploy has already removed. Hashed assets
     // under /_build and /assets keep their long-lived immutable caching.
-    const contentType = headers.get("content-type") ?? "";
-    if (contentType.includes("text/html")) {
+    if (isHtml) {
       headers.set("Cache-Control", "no-cache, must-revalidate, max-age=0");
     }
   }

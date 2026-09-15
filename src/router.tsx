@@ -2,6 +2,7 @@ import { MutationCache, QueryCache, QueryClient } from "@tanstack/react-query";
 import { createRouter } from "@tanstack/react-router";
 import { routeTree } from "./routeTree.gen";
 import { captureIssue } from "./lib/monitoring/client";
+import { currentRequestNonce } from "./lib/csp-nonce";
 
 export const getRouter = () => {
   // Every failed data call is reported with the query/mutation key as the
@@ -28,11 +29,17 @@ export const getRouter = () => {
     }),
   });
 
+  // One fresh CSP nonce per SSR request. Every inline script TanStack emits,
+  // plus our own theme script, carries it; the security headers middleware
+  // resolves the same value for this request when building the CSP header.
+  const nonce = currentRequestNonce();
+
   const router = createRouter({
     routeTree,
     context: { queryClient },
     scrollRestoration: true,
     defaultPreloadStaleTime: 0,
+    ...(nonce ? { ssr: { nonce } } : {}),
   });
 
   return router;
