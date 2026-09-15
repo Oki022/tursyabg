@@ -2,6 +2,7 @@ import { MutationCache, QueryCache, QueryClient } from "@tanstack/react-query";
 import { createRouter } from "@tanstack/react-router";
 import { routeTree } from "./routeTree.gen";
 import { captureIssue } from "./lib/monitoring/client";
+import { currentRequestNonce } from "./lib/csp-nonce";
 
 export const getRouter = () => {
   // Every failed data call is reported with the query/mutation key as the

@@ -62,21 +62,7 @@ const SECURITY_HEADERS: Record<string, string> = {
  * TanStack renders — so reading it back here guarantees header and markup
  * always agree, even under concurrent requests.
  */
-async function requestNonce(): Promise<string | undefined> {
-  try {
-    const { getStartContext } = await import("@tanstack/start-storage-context");
-    const ctx = getStartContext({ throwIfNotFound: false }) as
-      | { getRouter?: () => Promise<{ options?: { ssr?: { nonce?: string } } }> }
-      | undefined;
-    if (!ctx?.getRouter) return undefined;
-    const router = await ctx.getRouter();
-    return router.options?.ssr?.nonce;
-  } catch {
-    return undefined;
-  }
-}
-
-const securityHeadersMiddleware = createMiddleware().server(async ({ next }) => {
+const securityHeadersMiddleware = createMiddleware().server(async ({ next, request }) => {
   const result = await next();
   const candidate = result as unknown as { headers?: Headers; response?: { headers?: Headers } };
   const headers = candidate.response?.headers ?? candidate.headers;
@@ -89,7 +75,10 @@ const securityHeadersMiddleware = createMiddleware().server(async ({ next }) => 
     const strict =
       !import.meta.env.DEV &&
       isStrictCspEnabled(process.env as Record<string, string | undefined>);
-    const nonce = strict && isHtml ? await requestNonce() : undefined;
+    const nonce =
+      strict && isHtml
+        ? (await import("./lib/csp-nonce")).nonceForRequest(request)
+        : undefined;
     headers.set("Content-Security-Policy", buildCsp({ strict, nonce }));
     // The app shell must never be served stale: a cached HTML document points
     // at hashed chunks that a newer deploy has already removed. Hashed assets
