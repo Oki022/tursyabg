@@ -56,12 +56,6 @@ const SECURITY_HEADERS: Record<string, string> = {
     "camera=(), microphone=(), geolocation=(self), payment=(self), usb=(), interest-cohort=()",
 };
 
-/**
- * The per-request nonce lives on the router created for this request
- * (src/router.tsx), which is also what stamps it onto every inline script
- * TanStack renders — so reading it back here guarantees header and markup
- * always agree, even under concurrent requests.
- */
 const securityHeadersMiddleware = createMiddleware().server(async ({ next, request }) => {
   const result = await next();
   const candidate = result as unknown as { headers?: Headers; response?: { headers?: Headers } };
