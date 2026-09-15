@@ -55,17 +55,46 @@ const SECURITY_HEADERS: Record<string, string> = {
     "camera=(), microphone=(), geolocation=(self), payment=(self), usb=(), interest-cohort=()",
 };
 
+/**
+ * The per-request nonce lives on the router created for this request
+ * (src/router.tsx), which is also what stamps it onto every inline script
+ * TanStack renders — so reading it back here guarantees header and markup
+ * always agree, even under concurrent requests.
+ */
+async function requestNonce(): Promise<string | undefined> {
+  try {
+    const { getStartContext } = await import("@tanstack/start-storage-context");
+    const ctx = getStartContext({ throwIfNotFound: false }) as
+      | { getRouter?: () => Promise<{ options?: { ssr?: { nonce?: string } } }> }
+      | undefined;
+    if (!ctx?.getRouter) return undefined;
+    const router = await ctx.getRouter();
+    return router.options?.ssr?.nonce;
+  } catch {
+    return undefined;
+  }
+}
+
 const securityHeadersMiddleware = createMiddleware().server(async ({ next }) => {
   const result = await next();
   const candidate = result as unknown as { headers?: Headers; response?: { headers?: Headers } };
   const headers = candidate.response?.headers ?? candidate.headers;
   if (headers && typeof headers.set === "function") {
     for (const [key, value] of Object.entries(SECURITY_HEADERS)) headers.set(key, value);
+    const contentType = headers.get("content-type") ?? "";
+    const isHtml = contentType.includes("text/html");
+    // Vite's dev server injects its own inline scripts without a nonce, so the
+    // strict policy only applies to real builds.
+    const strict =
+      isStrictCspEnabled(process.env as Record<string, string | undefined>) &&
+      process.env["NODE_ENV"] !== "development" &&
+      process.env["TSS_DEV_SERVER"] !== "true";
+    const nonce = strict && isHtml ? await requestNonce() : undefined;
+    headers.set("Content-Security-Policy", buildCsp({ strict, nonce }));
     // The app shell must never be served stale: a cached HTML document points
     // at hashed chunks that a newer deploy has already removed. Hashed assets
     // under /_build and /assets keep their long-lived immutable caching.
-    const contentType = headers.get("content-type") ?? "";
-    if (contentType.includes("text/html")) {
+    if (isHtml) {
       headers.set("Cache-Control", "no-cache, must-revalidate, max-age=0");
     }
   }
