@@ -44,31 +44,10 @@ const csrfMiddleware = createMiddleware().server(async ({ next, request }) => {
  * Security headers for every response. The CSP explicitly allows Stripe
  * (embedded checkout + its iframes), Supabase (REST/auth over https and
  * realtime over wss) and Sentry ingest, so payments, live messaging and
- * signed image URLs keep working.
+ * signed image URLs keep working. script-src is nonce based — see
+ * ./lib/csp.ts.
  */
-const CSP = [
-  "default-src 'self'",
-  "base-uri 'self'",
-  "object-src 'none'",
-  "frame-ancestors 'self'",
-  "form-action 'self'",
-  "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://js.stripe.com https://*.stripe.com",
-  "style-src 'self' 'unsafe-inline'",
-  "img-src 'self' data: blob: https:",
-  "font-src 'self' data:",
-  "media-src 'self' data: blob: https:",
-  "worker-src 'self' blob:",
-  [
-    "connect-src 'self' blob: data:",
-    "https://*.supabase.co wss://*.supabase.co https://*.supabase.in wss://*.supabase.in",
-    "https://api.stripe.com https://*.stripe.com",
-    "https://*.sentry.io https://*.ingest.sentry.io https://*.ingest.de.sentry.io",
-  ].join(" "),
-  "frame-src 'self' https://js.stripe.com https://hooks.stripe.com https://*.stripe.com",
-].join("; ");
-
 const SECURITY_HEADERS: Record<string, string> = {
-  "Content-Security-Policy": CSP,
   "X-Frame-Options": "SAMEORIGIN",
   "X-Content-Type-Options": "nosniff",
   "Referrer-Policy": "strict-origin-when-cross-origin",
