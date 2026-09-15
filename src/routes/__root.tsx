@@ -139,11 +139,14 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
 });
 
 function RootShell({ children }: { children: React.ReactNode }) {
+  // Per-request CSP nonce, so the anti-flash theme script runs under the
+  // strict (no 'unsafe-inline') script-src.
+  const nonce = useRouter().options.ssr?.nonce;
   return (
     <html lang="bg" suppressHydrationWarning>
       <head>
         <HeadContent />
-        <script dangerouslySetInnerHTML={{ __html: THEME_BOOT_SCRIPT }} />
+        <script nonce={nonce} dangerouslySetInnerHTML={{ __html: THEME_BOOT_SCRIPT }} />
       </head>
       <body>
         {children}
