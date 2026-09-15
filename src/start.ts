@@ -87,9 +87,8 @@ const securityHeadersMiddleware = createMiddleware().server(async ({ next }) => 
     // Vite's dev server injects its own inline scripts without a nonce, so the
     // strict policy only applies to real builds.
     const strict =
-      isStrictCspEnabled(process.env as Record<string, string | undefined>) &&
-      process.env["NODE_ENV"] !== "development" &&
-      process.env["TSS_DEV_SERVER"] !== "true";
+      !import.meta.env.DEV &&
+      isStrictCspEnabled(process.env as Record<string, string | undefined>);
     const nonce = strict && isHtml ? await requestNonce() : undefined;
     headers.set("Content-Security-Policy", buildCsp({ strict, nonce }));
     // The app shell must never be served stale: a cached HTML document points
