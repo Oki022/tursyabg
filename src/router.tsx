@@ -28,11 +28,20 @@ export const getRouter = () => {
     }),
   });
 
+  // One fresh CSP nonce per SSR request (a router is created per request on the
+  // server). Every inline script TanStack emits, plus our own theme script,
+  // carries it; the security headers middleware reads it back off the router
+  // to build the matching Content-Security-Policy header.
+  const nonce = import.meta.env.SSR
+    ? crypto.randomUUID().replace(/-/g, "")
+    : undefined;
+
   const router = createRouter({
     routeTree,
     context: { queryClient },
     scrollRestoration: true,
     defaultPreloadStaleTime: 0,
+    ...(nonce ? { ssr: { nonce } } : {}),
   });
 
   return router;
