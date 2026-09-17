@@ -9,127 +9,63 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as IndexRouteImport } from './routes/index'
-import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
-import { Route as AdminRouteImport } from './routes/admin'
-import { Route as ContactRouteImport } from './routes/contact'
-import { Route as CookiesRouteImport } from './routes/cookies'
-import { Route as FaqRouteImport } from './routes/faq'
-import { Route as ManifestDotwebmanifestRouteImport } from './routes/manifest[.]webmanifest'
-import { Route as PrivacyRouteImport } from './routes/privacy'
-import { Route as RefundPolicyRouteImport } from './routes/refund-policy'
-import { Route as ResetPasswordRouteImport } from './routes/reset-password'
-import { Route as RobotsDottxtRouteImport } from './routes/robots[.]txt'
-import { Route as SitemapPagesDotxmlRouteImport } from './routes/sitemap-pages[.]xml'
-import { Route as SitemapTasksDotxmlRouteImport } from './routes/sitemap-tasks[.]xml'
-import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
-import { Route as TasksRouteImport } from './routes/tasks'
 import { Route as TermsRouteImport } from './routes/terms'
-import { Route as AuthenticatedFavouritesRouteImport } from './routes/_authenticated/favourites'
-import { Route as AuthenticatedNotificationsRouteImport } from './routes/_authenticated/notifications'
-import { Route as AuthenticatedPostRouteImport } from './routes/_authenticated/post'
-import { Route as AuthenticatedProfileRouteImport } from './routes/_authenticated/profile'
-import { Route as AuthenticatedUnlockedRouteImport } from './routes/_authenticated/unlocked'
-import { Route as AdminIndexRouteImport } from './routes/admin.index'
-import { Route as AdminAuditRouteImport } from './routes/admin.audit'
-import { Route as AdminContactRouteImport } from './routes/admin.contact'
-import { Route as AdminDeletionsRouteImport } from './routes/admin.deletions'
-import { Route as AdminModerationRouteImport } from './routes/admin.moderation'
-import { Route as AdminPaymentsRouteImport } from './routes/admin.payments'
-import { Route as AdminRefundsRouteImport } from './routes/admin.refunds'
-import { Route as AdminReviewsRouteImport } from './routes/admin.reviews'
-import { Route as AdminTasksRouteImport } from './routes/admin.tasks'
-import { Route as AdminUsersRouteImport } from './routes/admin.users'
+import { Route as TasksRouteImport } from './routes/tasks'
+import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
+import { Route as SitemapTasksDotxmlRouteImport } from './routes/sitemap-tasks[.]xml'
+import { Route as SitemapPagesDotxmlRouteImport } from './routes/sitemap-pages[.]xml'
+import { Route as RobotsDottxtRouteImport } from './routes/robots[.]txt'
+import { Route as ResetPasswordRouteImport } from './routes/reset-password'
+import { Route as RefundPolicyRouteImport } from './routes/refund-policy'
+import { Route as PrivacyRouteImport } from './routes/privacy'
+import { Route as ManifestDotwebmanifestRouteImport } from './routes/manifest[.]webmanifest'
+import { Route as FaqRouteImport } from './routes/faq'
+import { Route as CookiesRouteImport } from './routes/cookies'
+import { Route as ContactRouteImport } from './routes/contact'
+import { Route as AdminRouteImport } from './routes/admin'
+import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
+import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthIndexRouteImport } from './routes/auth.index'
-import { Route as AuthCallbackRouteImport } from './routes/auth.callback'
-import { Route as AuthVerifyRouteImport } from './routes/auth.verify'
-import { Route as BillingCancelRouteImport } from './routes/billing.cancel'
-import { Route as CategoriesCategoryRouteImport } from './routes/categories.$category'
-import { Route as CityCityRouteImport } from './routes/city.$city'
-import { Route as TaskIdRouteImport } from './routes/task.$id'
+import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as UserIdRouteImport } from './routes/user.$id'
-import { Route as AuthenticatedBillingSuccessRouteImport } from './routes/_authenticated/billing.success'
-import { Route as AuthenticatedMessagesIndexRouteImport } from './routes/_authenticated/messages.index'
-import { Route as AuthenticatedMessagesConversationIdRouteImport } from './routes/_authenticated/messages.$conversationId'
-import { Route as AuthenticatedPostedIdRouteImport } from './routes/_authenticated/posted.$id'
-import { Route as AuthenticatedReviewEngagementIdRouteImport } from './routes/_authenticated/review.$engagementId'
-import { Route as AuthenticatedSettingsBillingRouteImport } from './routes/_authenticated/settings.billing'
-import { Route as AuthenticatedSettingsNotificationsRouteImport } from './routes/_authenticated/settings.notifications'
-import { Route as AuthenticatedSettingsSecurityRouteImport } from './routes/_authenticated/settings.security'
+import { Route as TaskIdRouteImport } from './routes/task.$id'
+import { Route as CityCityRouteImport } from './routes/city.$city'
+import { Route as CategoriesCategoryRouteImport } from './routes/categories.$category'
+import { Route as BillingCancelRouteImport } from './routes/billing.cancel'
+import { Route as AuthVerifyRouteImport } from './routes/auth.verify'
+import { Route as AuthCallbackRouteImport } from './routes/auth.callback'
+import { Route as AdminUsersRouteImport } from './routes/admin.users'
+import { Route as AdminTasksRouteImport } from './routes/admin.tasks'
+import { Route as AdminReviewsRouteImport } from './routes/admin.reviews'
+import { Route as AdminRefundsRouteImport } from './routes/admin.refunds'
+import { Route as AdminPaymentsRouteImport } from './routes/admin.payments'
+import { Route as AdminModerationRouteImport } from './routes/admin.moderation'
+import { Route as AdminDeletionsRouteImport } from './routes/admin.deletions'
+import { Route as AdminContactRouteImport } from './routes/admin.contact'
+import { Route as AdminAuditRouteImport } from './routes/admin.audit'
+import { Route as AuthenticatedUnlockedRouteImport } from './routes/_authenticated/unlocked'
+import { Route as AuthenticatedProfileRouteImport } from './routes/_authenticated/profile'
+import { Route as AuthenticatedPostRouteImport } from './routes/_authenticated/post'
+import { Route as AuthenticatedNotificationsRouteImport } from './routes/_authenticated/notifications'
+import { Route as AuthenticatedFavouritesRouteImport } from './routes/_authenticated/favourites'
 import { Route as CityCityIndexRouteImport } from './routes/city.$city.index'
+import { Route as AuthenticatedMessagesIndexRouteImport } from './routes/_authenticated/messages.index'
 import { Route as CityCityCategoryRouteImport } from './routes/city.$city.$category'
-import { Route as AuthenticatedTaskIdEditRouteImport } from './routes/_authenticated/task.$id.edit'
-import { Route as ApiPublicCronUnconfirmedRemindersRouteImport } from './routes/api/public/cron/unconfirmed-reminders'
-import { Route as ApiPublicMonitoringCronCheckRouteImport } from './routes/api/public/monitoring/cron-check'
+import { Route as AuthenticatedSettingsSecurityRouteImport } from './routes/_authenticated/settings.security'
+import { Route as AuthenticatedSettingsNotificationsRouteImport } from './routes/_authenticated/settings.notifications'
+import { Route as AuthenticatedSettingsBillingRouteImport } from './routes/_authenticated/settings.billing'
+import { Route as AuthenticatedReviewEngagementIdRouteImport } from './routes/_authenticated/review.$engagementId'
+import { Route as AuthenticatedPostedIdRouteImport } from './routes/_authenticated/posted.$id'
+import { Route as AuthenticatedMessagesConversationIdRouteImport } from './routes/_authenticated/messages.$conversationId'
+import { Route as AuthenticatedBillingSuccessRouteImport } from './routes/_authenticated/billing.success'
 import { Route as ApiPublicPaymentsWebhookRouteImport } from './routes/api/public/payments/webhook'
+import { Route as ApiPublicMonitoringCronCheckRouteImport } from './routes/api/public/monitoring/cron-check'
+import { Route as ApiPublicCronUnconfirmedRemindersRouteImport } from './routes/api/public/cron/unconfirmed-reminders'
+import { Route as AuthenticatedTaskIdEditRouteImport } from './routes/_authenticated/task.$id.edit'
 
-const IndexRoute = IndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
-  id: '/_authenticated',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AdminRoute = AdminRouteImport.update({
-  id: '/admin',
-  path: '/admin',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ContactRoute = ContactRouteImport.update({
-  id: '/contact',
-  path: '/contact',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const CookiesRoute = CookiesRouteImport.update({
-  id: '/cookies',
-  path: '/cookies',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const FaqRoute = FaqRouteImport.update({
-  id: '/faq',
-  path: '/faq',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ManifestDotwebmanifestRoute = ManifestDotwebmanifestRouteImport.update({
-  id: '/manifest.webmanifest',
-  path: '/manifest.webmanifest',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const PrivacyRoute = PrivacyRouteImport.update({
-  id: '/privacy',
-  path: '/privacy',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const RefundPolicyRoute = RefundPolicyRouteImport.update({
-  id: '/refund-policy',
-  path: '/refund-policy',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ResetPasswordRoute = ResetPasswordRouteImport.update({
-  id: '/reset-password',
-  path: '/reset-password',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const RobotsDottxtRoute = RobotsDottxtRouteImport.update({
-  id: '/robots.txt',
-  path: '/robots.txt',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const SitemapPagesDotxmlRoute = SitemapPagesDotxmlRouteImport.update({
-  id: '/sitemap-pages.xml',
-  path: '/sitemap-pages.xml',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const SitemapTasksDotxmlRoute = SitemapTasksDotxmlRouteImport.update({
-  id: '/sitemap-tasks.xml',
-  path: '/sitemap-tasks.xml',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
-  id: '/sitemap.xml',
-  path: '/sitemap.xml',
+const TermsRoute = TermsRouteImport.update({
+  id: '/terms',
+  path: '/terms',
   getParentRoute: () => rootRouteImport,
 } as any)
 const TasksRoute = TasksRouteImport.update({
@@ -137,14 +73,178 @@ const TasksRoute = TasksRouteImport.update({
   path: '/tasks',
   getParentRoute: () => rootRouteImport,
 } as any)
-const TermsRoute = TermsRouteImport.update({
-  id: '/terms',
-  path: '/terms',
+const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
+  id: '/sitemap.xml',
+  path: '/sitemap.xml',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AuthenticatedFavouritesRoute = AuthenticatedFavouritesRouteImport.update({
-  id: '/favourites',
-  path: '/favourites',
+const SitemapTasksDotxmlRoute = SitemapTasksDotxmlRouteImport.update({
+  id: '/sitemap-tasks.xml',
+  path: '/sitemap-tasks.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SitemapPagesDotxmlRoute = SitemapPagesDotxmlRouteImport.update({
+  id: '/sitemap-pages.xml',
+  path: '/sitemap-pages.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RobotsDottxtRoute = RobotsDottxtRouteImport.update({
+  id: '/robots.txt',
+  path: '/robots.txt',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ResetPasswordRoute = ResetPasswordRouteImport.update({
+  id: '/reset-password',
+  path: '/reset-password',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RefundPolicyRoute = RefundPolicyRouteImport.update({
+  id: '/refund-policy',
+  path: '/refund-policy',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PrivacyRoute = PrivacyRouteImport.update({
+  id: '/privacy',
+  path: '/privacy',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ManifestDotwebmanifestRoute = ManifestDotwebmanifestRouteImport.update({
+  id: '/manifest.webmanifest',
+  path: '/manifest.webmanifest',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FaqRoute = FaqRouteImport.update({
+  id: '/faq',
+  path: '/faq',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CookiesRoute = CookiesRouteImport.update({
+  id: '/cookies',
+  path: '/cookies',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ContactRoute = ContactRouteImport.update({
+  id: '/contact',
+  path: '/contact',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminRoute = AdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
+  id: '/_authenticated',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const IndexRoute = IndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthIndexRoute = AuthIndexRouteImport.update({
+  id: '/auth/',
+  path: '/auth/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminIndexRoute = AdminIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AdminRoute,
+} as any)
+const UserIdRoute = UserIdRouteImport.update({
+  id: '/user/$id',
+  path: '/user/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TaskIdRoute = TaskIdRouteImport.update({
+  id: '/task/$id',
+  path: '/task/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CityCityRoute = CityCityRouteImport.update({
+  id: '/city/$city',
+  path: '/city/$city',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CategoriesCategoryRoute = CategoriesCategoryRouteImport.update({
+  id: '/categories/$category',
+  path: '/categories/$category',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BillingCancelRoute = BillingCancelRouteImport.update({
+  id: '/billing/cancel',
+  path: '/billing/cancel',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthVerifyRoute = AuthVerifyRouteImport.update({
+  id: '/auth/verify',
+  path: '/auth/verify',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthCallbackRoute = AuthCallbackRouteImport.update({
+  id: '/auth/callback',
+  path: '/auth/callback',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminUsersRoute = AdminUsersRouteImport.update({
+  id: '/users',
+  path: '/users',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminTasksRoute = AdminTasksRouteImport.update({
+  id: '/tasks',
+  path: '/tasks',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminReviewsRoute = AdminReviewsRouteImport.update({
+  id: '/reviews',
+  path: '/reviews',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminRefundsRoute = AdminRefundsRouteImport.update({
+  id: '/refunds',
+  path: '/refunds',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminPaymentsRoute = AdminPaymentsRouteImport.update({
+  id: '/payments',
+  path: '/payments',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminModerationRoute = AdminModerationRouteImport.update({
+  id: '/moderation',
+  path: '/moderation',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminDeletionsRoute = AdminDeletionsRouteImport.update({
+  id: '/deletions',
+  path: '/deletions',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminContactRoute = AdminContactRouteImport.update({
+  id: '/contact',
+  path: '/contact',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminAuditRoute = AdminAuditRouteImport.update({
+  id: '/audit',
+  path: '/audit',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AuthenticatedUnlockedRoute = AuthenticatedUnlockedRouteImport.update({
+  id: '/unlocked',
+  path: '/unlocked',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedProfileRoute = AuthenticatedProfileRouteImport.update({
+  id: '/profile',
+  path: '/profile',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedPostRoute = AuthenticatedPostRouteImport.update({
+  id: '/post',
+  path: '/post',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedNotificationsRoute =
@@ -153,144 +253,31 @@ const AuthenticatedNotificationsRoute =
     path: '/notifications',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
-const AuthenticatedPostRoute = AuthenticatedPostRouteImport.update({
-  id: '/post',
-  path: '/post',
+const AuthenticatedFavouritesRoute = AuthenticatedFavouritesRouteImport.update({
+  id: '/favourites',
+  path: '/favourites',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
-const AuthenticatedProfileRoute = AuthenticatedProfileRouteImport.update({
-  id: '/profile',
-  path: '/profile',
-  getParentRoute: () => AuthenticatedRouteRoute,
-} as any)
-const AuthenticatedUnlockedRoute = AuthenticatedUnlockedRouteImport.update({
-  id: '/unlocked',
-  path: '/unlocked',
-  getParentRoute: () => AuthenticatedRouteRoute,
-} as any)
-const AdminIndexRoute = AdminIndexRouteImport.update({
+const CityCityIndexRoute = CityCityIndexRouteImport.update({
   id: '/',
   path: '/',
-  getParentRoute: () => AdminRoute,
+  getParentRoute: () => CityCityRoute,
 } as any)
-const AdminAuditRoute = AdminAuditRouteImport.update({
-  id: '/audit',
-  path: '/audit',
-  getParentRoute: () => AdminRoute,
-} as any)
-const AdminContactRoute = AdminContactRouteImport.update({
-  id: '/contact',
-  path: '/contact',
-  getParentRoute: () => AdminRoute,
-} as any)
-const AdminDeletionsRoute = AdminDeletionsRouteImport.update({
-  id: '/deletions',
-  path: '/deletions',
-  getParentRoute: () => AdminRoute,
-} as any)
-const AdminModerationRoute = AdminModerationRouteImport.update({
-  id: '/moderation',
-  path: '/moderation',
-  getParentRoute: () => AdminRoute,
-} as any)
-const AdminPaymentsRoute = AdminPaymentsRouteImport.update({
-  id: '/payments',
-  path: '/payments',
-  getParentRoute: () => AdminRoute,
-} as any)
-const AdminRefundsRoute = AdminRefundsRouteImport.update({
-  id: '/refunds',
-  path: '/refunds',
-  getParentRoute: () => AdminRoute,
-} as any)
-const AdminReviewsRoute = AdminReviewsRouteImport.update({
-  id: '/reviews',
-  path: '/reviews',
-  getParentRoute: () => AdminRoute,
-} as any)
-const AdminTasksRoute = AdminTasksRouteImport.update({
-  id: '/tasks',
-  path: '/tasks',
-  getParentRoute: () => AdminRoute,
-} as any)
-const AdminUsersRoute = AdminUsersRouteImport.update({
-  id: '/users',
-  path: '/users',
-  getParentRoute: () => AdminRoute,
-} as any)
-const AuthIndexRoute = AuthIndexRouteImport.update({
-  id: '/auth/',
-  path: '/auth/',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AuthCallbackRoute = AuthCallbackRouteImport.update({
-  id: '/auth/callback',
-  path: '/auth/callback',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AuthVerifyRoute = AuthVerifyRouteImport.update({
-  id: '/auth/verify',
-  path: '/auth/verify',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const BillingCancelRoute = BillingCancelRouteImport.update({
-  id: '/billing/cancel',
-  path: '/billing/cancel',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const CategoriesCategoryRoute = CategoriesCategoryRouteImport.update({
-  id: '/categories/$category',
-  path: '/categories/$category',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const CityCityRoute = CityCityRouteImport.update({
-  id: '/city/$city',
-  path: '/city/$city',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const TaskIdRoute = TaskIdRouteImport.update({
-  id: '/task/$id',
-  path: '/task/$id',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const UserIdRoute = UserIdRouteImport.update({
-  id: '/user/$id',
-  path: '/user/$id',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AuthenticatedBillingSuccessRoute =
-  AuthenticatedBillingSuccessRouteImport.update({
-    id: '/billing/success',
-    path: '/billing/success',
-    getParentRoute: () => AuthenticatedRouteRoute,
-  } as any)
 const AuthenticatedMessagesIndexRoute =
   AuthenticatedMessagesIndexRouteImport.update({
     id: '/messages/',
     path: '/messages/',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
-const AuthenticatedMessagesConversationIdRoute =
-  AuthenticatedMessagesConversationIdRouteImport.update({
-    id: '/messages/$conversationId',
-    path: '/messages/$conversationId',
-    getParentRoute: () => AuthenticatedRouteRoute,
-  } as any)
-const AuthenticatedPostedIdRoute = AuthenticatedPostedIdRouteImport.update({
-  id: '/posted/$id',
-  path: '/posted/$id',
-  getParentRoute: () => AuthenticatedRouteRoute,
+const CityCityCategoryRoute = CityCityCategoryRouteImport.update({
+  id: '/$category',
+  path: '/$category',
+  getParentRoute: () => CityCityRoute,
 } as any)
-const AuthenticatedReviewEngagementIdRoute =
-  AuthenticatedReviewEngagementIdRouteImport.update({
-    id: '/review/$engagementId',
-    path: '/review/$engagementId',
-    getParentRoute: () => AuthenticatedRouteRoute,
-  } as any)
-const AuthenticatedSettingsBillingRoute =
-  AuthenticatedSettingsBillingRouteImport.update({
-    id: '/settings/billing',
-    path: '/settings/billing',
+const AuthenticatedSettingsSecurityRoute =
+  AuthenticatedSettingsSecurityRouteImport.update({
+    id: '/settings/security',
+    path: '/settings/security',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
 const AuthenticatedSettingsNotificationsRoute =
@@ -299,31 +286,39 @@ const AuthenticatedSettingsNotificationsRoute =
     path: '/settings/notifications',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
-const AuthenticatedSettingsSecurityRoute =
-  AuthenticatedSettingsSecurityRouteImport.update({
-    id: '/settings/security',
-    path: '/settings/security',
+const AuthenticatedSettingsBillingRoute =
+  AuthenticatedSettingsBillingRouteImport.update({
+    id: '/settings/billing',
+    path: '/settings/billing',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
-const CityCityIndexRoute = CityCityIndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => CityCityRoute,
-} as any)
-const CityCityCategoryRoute = CityCityCategoryRouteImport.update({
-  id: '/$category',
-  path: '/$category',
-  getParentRoute: () => CityCityRoute,
-} as any)
-const AuthenticatedTaskIdEditRoute = AuthenticatedTaskIdEditRouteImport.update({
-  id: '/task/$id/edit',
-  path: '/task/$id/edit',
+const AuthenticatedReviewEngagementIdRoute =
+  AuthenticatedReviewEngagementIdRouteImport.update({
+    id: '/review/$engagementId',
+    path: '/review/$engagementId',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedPostedIdRoute = AuthenticatedPostedIdRouteImport.update({
+  id: '/posted/$id',
+  path: '/posted/$id',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
-const ApiPublicCronUnconfirmedRemindersRoute =
-  ApiPublicCronUnconfirmedRemindersRouteImport.update({
-    id: '/api/public/cron/unconfirmed-reminders',
-    path: '/api/public/cron/unconfirmed-reminders',
+const AuthenticatedMessagesConversationIdRoute =
+  AuthenticatedMessagesConversationIdRouteImport.update({
+    id: '/messages/$conversationId',
+    path: '/messages/$conversationId',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedBillingSuccessRoute =
+  AuthenticatedBillingSuccessRouteImport.update({
+    id: '/billing/success',
+    path: '/billing/success',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const ApiPublicPaymentsWebhookRoute =
+  ApiPublicPaymentsWebhookRouteImport.update({
+    id: '/api/public/payments/webhook',
+    path: '/api/public/payments/webhook',
     getParentRoute: () => rootRouteImport,
   } as any)
 const ApiPublicMonitoringCronCheckRoute =
@@ -332,12 +327,17 @@ const ApiPublicMonitoringCronCheckRoute =
     path: '/api/public/monitoring/cron-check',
     getParentRoute: () => rootRouteImport,
   } as any)
-const ApiPublicPaymentsWebhookRoute =
-  ApiPublicPaymentsWebhookRouteImport.update({
-    id: '/api/public/payments/webhook',
-    path: '/api/public/payments/webhook',
+const ApiPublicCronUnconfirmedRemindersRoute =
+  ApiPublicCronUnconfirmedRemindersRouteImport.update({
+    id: '/api/public/cron/unconfirmed-reminders',
+    path: '/api/public/cron/unconfirmed-reminders',
     getParentRoute: () => rootRouteImport,
   } as any)
+const AuthenticatedTaskIdEditRoute = AuthenticatedTaskIdEditRouteImport.update({
+  id: '/task/$id/edit',
+  path: '/task/$id/edit',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -697,102 +697,11 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/_authenticated': {
-      id: '/_authenticated'
-      path: ''
-      fullPath: '/'
-      preLoaderRoute: typeof AuthenticatedRouteRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/admin': {
-      id: '/admin'
-      path: '/admin'
-      fullPath: '/admin'
-      preLoaderRoute: typeof AdminRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/contact': {
-      id: '/contact'
-      path: '/contact'
-      fullPath: '/contact'
-      preLoaderRoute: typeof ContactRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/cookies': {
-      id: '/cookies'
-      path: '/cookies'
-      fullPath: '/cookies'
-      preLoaderRoute: typeof CookiesRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/faq': {
-      id: '/faq'
-      path: '/faq'
-      fullPath: '/faq'
-      preLoaderRoute: typeof FaqRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/manifest.webmanifest': {
-      id: '/manifest.webmanifest'
-      path: '/manifest.webmanifest'
-      fullPath: '/manifest.webmanifest'
-      preLoaderRoute: typeof ManifestDotwebmanifestRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/privacy': {
-      id: '/privacy'
-      path: '/privacy'
-      fullPath: '/privacy'
-      preLoaderRoute: typeof PrivacyRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/refund-policy': {
-      id: '/refund-policy'
-      path: '/refund-policy'
-      fullPath: '/refund-policy'
-      preLoaderRoute: typeof RefundPolicyRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/reset-password': {
-      id: '/reset-password'
-      path: '/reset-password'
-      fullPath: '/reset-password'
-      preLoaderRoute: typeof ResetPasswordRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/robots.txt': {
-      id: '/robots.txt'
-      path: '/robots.txt'
-      fullPath: '/robots.txt'
-      preLoaderRoute: typeof RobotsDottxtRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/sitemap-pages.xml': {
-      id: '/sitemap-pages.xml'
-      path: '/sitemap-pages.xml'
-      fullPath: '/sitemap-pages.xml'
-      preLoaderRoute: typeof SitemapPagesDotxmlRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/sitemap-tasks.xml': {
-      id: '/sitemap-tasks.xml'
-      path: '/sitemap-tasks.xml'
-      fullPath: '/sitemap-tasks.xml'
-      preLoaderRoute: typeof SitemapTasksDotxmlRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/sitemap.xml': {
-      id: '/sitemap.xml'
-      path: '/sitemap.xml'
-      fullPath: '/sitemap.xml'
-      preLoaderRoute: typeof SitemapDotxmlRouteImport
+    '/terms': {
+      id: '/terms'
+      path: '/terms'
+      fullPath: '/terms'
+      preLoaderRoute: typeof TermsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/tasks': {
@@ -802,117 +711,103 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TasksRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/terms': {
-      id: '/terms'
-      path: '/terms'
-      fullPath: '/terms'
-      preLoaderRoute: typeof TermsRouteImport
+    '/sitemap.xml': {
+      id: '/sitemap.xml'
+      path: '/sitemap.xml'
+      fullPath: '/sitemap.xml'
+      preLoaderRoute: typeof SitemapDotxmlRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/_authenticated/favourites': {
-      id: '/_authenticated/favourites'
-      path: '/favourites'
-      fullPath: '/favourites'
-      preLoaderRoute: typeof AuthenticatedFavouritesRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
+    '/sitemap-tasks.xml': {
+      id: '/sitemap-tasks.xml'
+      path: '/sitemap-tasks.xml'
+      fullPath: '/sitemap-tasks.xml'
+      preLoaderRoute: typeof SitemapTasksDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
     }
-    '/_authenticated/notifications': {
-      id: '/_authenticated/notifications'
-      path: '/notifications'
-      fullPath: '/notifications'
-      preLoaderRoute: typeof AuthenticatedNotificationsRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
+    '/sitemap-pages.xml': {
+      id: '/sitemap-pages.xml'
+      path: '/sitemap-pages.xml'
+      fullPath: '/sitemap-pages.xml'
+      preLoaderRoute: typeof SitemapPagesDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
     }
-    '/_authenticated/post': {
-      id: '/_authenticated/post'
-      path: '/post'
-      fullPath: '/post'
-      preLoaderRoute: typeof AuthenticatedPostRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
+    '/robots.txt': {
+      id: '/robots.txt'
+      path: '/robots.txt'
+      fullPath: '/robots.txt'
+      preLoaderRoute: typeof RobotsDottxtRouteImport
+      parentRoute: typeof rootRouteImport
     }
-    '/_authenticated/profile': {
-      id: '/_authenticated/profile'
-      path: '/profile'
-      fullPath: '/profile'
-      preLoaderRoute: typeof AuthenticatedProfileRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
+    '/reset-password': {
+      id: '/reset-password'
+      path: '/reset-password'
+      fullPath: '/reset-password'
+      preLoaderRoute: typeof ResetPasswordRouteImport
+      parentRoute: typeof rootRouteImport
     }
-    '/_authenticated/unlocked': {
-      id: '/_authenticated/unlocked'
-      path: '/unlocked'
-      fullPath: '/unlocked'
-      preLoaderRoute: typeof AuthenticatedUnlockedRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
+    '/refund-policy': {
+      id: '/refund-policy'
+      path: '/refund-policy'
+      fullPath: '/refund-policy'
+      preLoaderRoute: typeof RefundPolicyRouteImport
+      parentRoute: typeof rootRouteImport
     }
-    '/admin/': {
-      id: '/admin/'
-      path: '/'
-      fullPath: '/admin/'
-      preLoaderRoute: typeof AdminIndexRouteImport
-      parentRoute: typeof AdminRoute
+    '/privacy': {
+      id: '/privacy'
+      path: '/privacy'
+      fullPath: '/privacy'
+      preLoaderRoute: typeof PrivacyRouteImport
+      parentRoute: typeof rootRouteImport
     }
-    '/admin/audit': {
-      id: '/admin/audit'
-      path: '/audit'
-      fullPath: '/admin/audit'
-      preLoaderRoute: typeof AdminAuditRouteImport
-      parentRoute: typeof AdminRoute
+    '/manifest.webmanifest': {
+      id: '/manifest.webmanifest'
+      path: '/manifest.webmanifest'
+      fullPath: '/manifest.webmanifest'
+      preLoaderRoute: typeof ManifestDotwebmanifestRouteImport
+      parentRoute: typeof rootRouteImport
     }
-    '/admin/contact': {
-      id: '/admin/contact'
+    '/faq': {
+      id: '/faq'
+      path: '/faq'
+      fullPath: '/faq'
+      preLoaderRoute: typeof FaqRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/cookies': {
+      id: '/cookies'
+      path: '/cookies'
+      fullPath: '/cookies'
+      preLoaderRoute: typeof CookiesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/contact': {
+      id: '/contact'
       path: '/contact'
-      fullPath: '/admin/contact'
-      preLoaderRoute: typeof AdminContactRouteImport
-      parentRoute: typeof AdminRoute
+      fullPath: '/contact'
+      preLoaderRoute: typeof ContactRouteImport
+      parentRoute: typeof rootRouteImport
     }
-    '/admin/deletions': {
-      id: '/admin/deletions'
-      path: '/deletions'
-      fullPath: '/admin/deletions'
-      preLoaderRoute: typeof AdminDeletionsRouteImport
-      parentRoute: typeof AdminRoute
+    '/admin': {
+      id: '/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AdminRouteImport
+      parentRoute: typeof rootRouteImport
     }
-    '/admin/moderation': {
-      id: '/admin/moderation'
-      path: '/moderation'
-      fullPath: '/admin/moderation'
-      preLoaderRoute: typeof AdminModerationRouteImport
-      parentRoute: typeof AdminRoute
+    '/_authenticated': {
+      id: '/_authenticated'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof AuthenticatedRouteRouteImport
+      parentRoute: typeof rootRouteImport
     }
-    '/admin/payments': {
-      id: '/admin/payments'
-      path: '/payments'
-      fullPath: '/admin/payments'
-      preLoaderRoute: typeof AdminPaymentsRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/admin/refunds': {
-      id: '/admin/refunds'
-      path: '/refunds'
-      fullPath: '/admin/refunds'
-      preLoaderRoute: typeof AdminRefundsRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/admin/reviews': {
-      id: '/admin/reviews'
-      path: '/reviews'
-      fullPath: '/admin/reviews'
-      preLoaderRoute: typeof AdminReviewsRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/admin/tasks': {
-      id: '/admin/tasks'
-      path: '/tasks'
-      fullPath: '/admin/tasks'
-      preLoaderRoute: typeof AdminTasksRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/admin/users': {
-      id: '/admin/users'
-      path: '/users'
-      fullPath: '/admin/users'
-      preLoaderRoute: typeof AdminUsersRouteImport
-      parentRoute: typeof AdminRoute
+    '/': {
+      id: '/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/auth/': {
       id: '/auth/'
@@ -921,39 +816,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/auth/callback': {
-      id: '/auth/callback'
-      path: '/auth/callback'
-      fullPath: '/auth/callback'
-      preLoaderRoute: typeof AuthCallbackRouteImport
-      parentRoute: typeof rootRouteImport
+    '/admin/': {
+      id: '/admin/'
+      path: '/'
+      fullPath: '/admin/'
+      preLoaderRoute: typeof AdminIndexRouteImport
+      parentRoute: typeof AdminRoute
     }
-    '/auth/verify': {
-      id: '/auth/verify'
-      path: '/auth/verify'
-      fullPath: '/auth/verify'
-      preLoaderRoute: typeof AuthVerifyRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/billing/cancel': {
-      id: '/billing/cancel'
-      path: '/billing/cancel'
-      fullPath: '/billing/cancel'
-      preLoaderRoute: typeof BillingCancelRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/categories/$category': {
-      id: '/categories/$category'
-      path: '/categories/$category'
-      fullPath: '/categories/$category'
-      preLoaderRoute: typeof CategoriesCategoryRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/city/$city': {
-      id: '/city/$city'
-      path: '/city/$city'
-      fullPath: '/city/$city'
-      preLoaderRoute: typeof CityCityRouteImport
+    '/user/$id': {
+      id: '/user/$id'
+      path: '/user/$id'
+      fullPath: '/user/$id'
+      preLoaderRoute: typeof UserIdRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/task/$id': {
@@ -963,67 +837,137 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TaskIdRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/user/$id': {
-      id: '/user/$id'
-      path: '/user/$id'
-      fullPath: '/user/$id'
-      preLoaderRoute: typeof UserIdRouteImport
+    '/city/$city': {
+      id: '/city/$city'
+      path: '/city/$city'
+      fullPath: '/city/$city'
+      preLoaderRoute: typeof CityCityRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/_authenticated/billing/success': {
-      id: '/_authenticated/billing/success'
-      path: '/billing/success'
-      fullPath: '/billing/success'
-      preLoaderRoute: typeof AuthenticatedBillingSuccessRouteImport
+    '/categories/$category': {
+      id: '/categories/$category'
+      path: '/categories/$category'
+      fullPath: '/categories/$category'
+      preLoaderRoute: typeof CategoriesCategoryRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/billing/cancel': {
+      id: '/billing/cancel'
+      path: '/billing/cancel'
+      fullPath: '/billing/cancel'
+      preLoaderRoute: typeof BillingCancelRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth/verify': {
+      id: '/auth/verify'
+      path: '/auth/verify'
+      fullPath: '/auth/verify'
+      preLoaderRoute: typeof AuthVerifyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth/callback': {
+      id: '/auth/callback'
+      path: '/auth/callback'
+      fullPath: '/auth/callback'
+      preLoaderRoute: typeof AuthCallbackRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/users': {
+      id: '/admin/users'
+      path: '/users'
+      fullPath: '/admin/users'
+      preLoaderRoute: typeof AdminUsersRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/tasks': {
+      id: '/admin/tasks'
+      path: '/tasks'
+      fullPath: '/admin/tasks'
+      preLoaderRoute: typeof AdminTasksRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/reviews': {
+      id: '/admin/reviews'
+      path: '/reviews'
+      fullPath: '/admin/reviews'
+      preLoaderRoute: typeof AdminReviewsRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/refunds': {
+      id: '/admin/refunds'
+      path: '/refunds'
+      fullPath: '/admin/refunds'
+      preLoaderRoute: typeof AdminRefundsRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/payments': {
+      id: '/admin/payments'
+      path: '/payments'
+      fullPath: '/admin/payments'
+      preLoaderRoute: typeof AdminPaymentsRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/moderation': {
+      id: '/admin/moderation'
+      path: '/moderation'
+      fullPath: '/admin/moderation'
+      preLoaderRoute: typeof AdminModerationRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/deletions': {
+      id: '/admin/deletions'
+      path: '/deletions'
+      fullPath: '/admin/deletions'
+      preLoaderRoute: typeof AdminDeletionsRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/contact': {
+      id: '/admin/contact'
+      path: '/contact'
+      fullPath: '/admin/contact'
+      preLoaderRoute: typeof AdminContactRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/audit': {
+      id: '/admin/audit'
+      path: '/audit'
+      fullPath: '/admin/audit'
+      preLoaderRoute: typeof AdminAuditRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/_authenticated/unlocked': {
+      id: '/_authenticated/unlocked'
+      path: '/unlocked'
+      fullPath: '/unlocked'
+      preLoaderRoute: typeof AuthenticatedUnlockedRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/_authenticated/messages/': {
-      id: '/_authenticated/messages/'
-      path: '/messages'
-      fullPath: '/messages/'
-      preLoaderRoute: typeof AuthenticatedMessagesIndexRouteImport
+    '/_authenticated/profile': {
+      id: '/_authenticated/profile'
+      path: '/profile'
+      fullPath: '/profile'
+      preLoaderRoute: typeof AuthenticatedProfileRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/_authenticated/messages/$conversationId': {
-      id: '/_authenticated/messages/$conversationId'
-      path: '/messages/$conversationId'
-      fullPath: '/messages/$conversationId'
-      preLoaderRoute: typeof AuthenticatedMessagesConversationIdRouteImport
+    '/_authenticated/post': {
+      id: '/_authenticated/post'
+      path: '/post'
+      fullPath: '/post'
+      preLoaderRoute: typeof AuthenticatedPostRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/_authenticated/posted/$id': {
-      id: '/_authenticated/posted/$id'
-      path: '/posted/$id'
-      fullPath: '/posted/$id'
-      preLoaderRoute: typeof AuthenticatedPostedIdRouteImport
+    '/_authenticated/notifications': {
+      id: '/_authenticated/notifications'
+      path: '/notifications'
+      fullPath: '/notifications'
+      preLoaderRoute: typeof AuthenticatedNotificationsRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/_authenticated/review/$engagementId': {
-      id: '/_authenticated/review/$engagementId'
-      path: '/review/$engagementId'
-      fullPath: '/review/$engagementId'
-      preLoaderRoute: typeof AuthenticatedReviewEngagementIdRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
-    '/_authenticated/settings/billing': {
-      id: '/_authenticated/settings/billing'
-      path: '/settings/billing'
-      fullPath: '/settings/billing'
-      preLoaderRoute: typeof AuthenticatedSettingsBillingRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
-    '/_authenticated/settings/notifications': {
-      id: '/_authenticated/settings/notifications'
-      path: '/settings/notifications'
-      fullPath: '/settings/notifications'
-      preLoaderRoute: typeof AuthenticatedSettingsNotificationsRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
-    '/_authenticated/settings/security': {
-      id: '/_authenticated/settings/security'
-      path: '/settings/security'
-      fullPath: '/settings/security'
-      preLoaderRoute: typeof AuthenticatedSettingsSecurityRouteImport
+    '/_authenticated/favourites': {
+      id: '/_authenticated/favourites'
+      path: '/favourites'
+      fullPath: '/favourites'
+      preLoaderRoute: typeof AuthenticatedFavouritesRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/city/$city/': {
@@ -1033,6 +977,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CityCityIndexRouteImport
       parentRoute: typeof CityCityRoute
     }
+    '/_authenticated/messages/': {
+      id: '/_authenticated/messages/'
+      path: '/messages'
+      fullPath: '/messages/'
+      preLoaderRoute: typeof AuthenticatedMessagesIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/city/$city/$category': {
       id: '/city/$city/$category'
       path: '/$category'
@@ -1040,18 +991,60 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CityCityCategoryRouteImport
       parentRoute: typeof CityCityRoute
     }
-    '/_authenticated/task/$id/edit': {
-      id: '/_authenticated/task/$id/edit'
-      path: '/task/$id/edit'
-      fullPath: '/task/$id/edit'
-      preLoaderRoute: typeof AuthenticatedTaskIdEditRouteImport
+    '/_authenticated/settings/security': {
+      id: '/_authenticated/settings/security'
+      path: '/settings/security'
+      fullPath: '/settings/security'
+      preLoaderRoute: typeof AuthenticatedSettingsSecurityRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/api/public/cron/unconfirmed-reminders': {
-      id: '/api/public/cron/unconfirmed-reminders'
-      path: '/api/public/cron/unconfirmed-reminders'
-      fullPath: '/api/public/cron/unconfirmed-reminders'
-      preLoaderRoute: typeof ApiPublicCronUnconfirmedRemindersRouteImport
+    '/_authenticated/settings/notifications': {
+      id: '/_authenticated/settings/notifications'
+      path: '/settings/notifications'
+      fullPath: '/settings/notifications'
+      preLoaderRoute: typeof AuthenticatedSettingsNotificationsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/settings/billing': {
+      id: '/_authenticated/settings/billing'
+      path: '/settings/billing'
+      fullPath: '/settings/billing'
+      preLoaderRoute: typeof AuthenticatedSettingsBillingRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/review/$engagementId': {
+      id: '/_authenticated/review/$engagementId'
+      path: '/review/$engagementId'
+      fullPath: '/review/$engagementId'
+      preLoaderRoute: typeof AuthenticatedReviewEngagementIdRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/posted/$id': {
+      id: '/_authenticated/posted/$id'
+      path: '/posted/$id'
+      fullPath: '/posted/$id'
+      preLoaderRoute: typeof AuthenticatedPostedIdRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/messages/$conversationId': {
+      id: '/_authenticated/messages/$conversationId'
+      path: '/messages/$conversationId'
+      fullPath: '/messages/$conversationId'
+      preLoaderRoute: typeof AuthenticatedMessagesConversationIdRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/billing/success': {
+      id: '/_authenticated/billing/success'
+      path: '/billing/success'
+      fullPath: '/billing/success'
+      preLoaderRoute: typeof AuthenticatedBillingSuccessRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/api/public/payments/webhook': {
+      id: '/api/public/payments/webhook'
+      path: '/api/public/payments/webhook'
+      fullPath: '/api/public/payments/webhook'
+      preLoaderRoute: typeof ApiPublicPaymentsWebhookRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/public/monitoring/cron-check': {
@@ -1061,12 +1054,19 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicMonitoringCronCheckRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/public/payments/webhook': {
-      id: '/api/public/payments/webhook'
-      path: '/api/public/payments/webhook'
-      fullPath: '/api/public/payments/webhook'
-      preLoaderRoute: typeof ApiPublicPaymentsWebhookRouteImport
+    '/api/public/cron/unconfirmed-reminders': {
+      id: '/api/public/cron/unconfirmed-reminders'
+      path: '/api/public/cron/unconfirmed-reminders'
+      fullPath: '/api/public/cron/unconfirmed-reminders'
+      preLoaderRoute: typeof ApiPublicCronUnconfirmedRemindersRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/task/$id/edit': {
+      id: '/_authenticated/task/$id/edit'
+      path: '/task/$id/edit'
+      fullPath: '/task/$id/edit'
+      preLoaderRoute: typeof AuthenticatedTaskIdEditRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
     }
   }
 }
