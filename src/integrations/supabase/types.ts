@@ -1626,6 +1626,7 @@ export type Database = {
       }
       tasks: {
         Row: {
+          admin_hidden_at: string | null
           assigned_at: string | null
           budget: number
           bumped_at: string
@@ -1657,6 +1658,7 @@ export type Database = {
           view_count: number
         }
         Insert: {
+          admin_hidden_at?: string | null
           assigned_at?: string | null
           budget?: number
           bumped_at?: string
@@ -1688,6 +1690,7 @@ export type Database = {
           view_count?: number
         }
         Update: {
+          admin_hidden_at?: string | null
           assigned_at?: string | null
           budget?: number
           bumped_at?: string
@@ -1975,6 +1978,10 @@ export type Database = {
           _role: Database["public"]["Enums"]["app_role"]
           _user_id: string
         }
+        Returns: Json
+      }
+      admin_set_task_active: {
+        Args: { _active: boolean; _reason: string; _task_id: string }
         Returns: Json
       }
       admin_task_delete_preview: { Args: { _task_id: string }; Returns: Json }
