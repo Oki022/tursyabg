@@ -59,6 +59,12 @@ export type Task = {
   maxUnlocks?: number;
   /** ISO timestamps used for archiving old tasks. */
   createdAtIso?: string;
+  /** Set when an admin hid the task; the owner cannot bring it back. */
+  adminHiddenAt?: string | null;
+  /** Set on the source task once it was published again as a copy. */
+  repostedAt?: string | null;
+  /** Last real content edit (title, description, budget, category, location). */
+  contentEditedAt?: string | null;
   statusChangedAtIso?: string;
 };
 
