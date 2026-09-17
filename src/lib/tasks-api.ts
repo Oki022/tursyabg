@@ -520,25 +520,6 @@ export function useUpdateTask() {
     mutationFn: async (input: UpdateTaskInput): Promise<UpdateTaskResult> => {
       const [city, neighborhood] = input.location.split(",").map((s) => s.trim());
 
-      // Reposting is refused in the database for admin-hidden or already
-      // reposted tasks; check before creating the copy.
-      if (input.repostFrom) {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const { data: allowed, error: checkError } = await supabase.rpc("can_repost_task" as any, {
-          _source_task_id: input.repostFrom,
-        } as any);
-        if (checkError) throw checkError;
-        const check = (allowed ?? {}) as Record<string, unknown>;
-        if (!check["ok"]) {
-          throw new Error(
-            check["error"] === "ADMIN_HIDDEN"
-              ? "Задачата е скрита от администратор и не може да се публикува отново."
-              : check["error"] === "ALREADY_REPOSTED"
-                ? "Тази задача вече е публикувана отново."
-                : "Задачата не е намерена.",
-          );
-        }
-      }
 
       const { data, error } = await supabase.rpc("update_own_task", {
         _task_id: input.taskId,
