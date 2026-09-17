@@ -375,7 +375,12 @@ function OwnerTaskCard({
     <div className="flex min-w-0 flex-col gap-2">
       <TaskCard task={{ ...task, isTop: promotions.some((p) => p.type === "top"), isUrgent: promotions.some((p) => p.type === "urgent") }} />
       <div className="min-w-0 rounded-xl border border-border/60 bg-card p-2 text-[11px]">
-        {archived && (
+        {task.adminHiddenAt && (
+          <p className="mb-1 rounded-full bg-destructive/10 px-2 py-0.5 text-center text-[10px] font-semibold uppercase tracking-wide text-destructive">
+            Скрита от администратор
+          </p>
+        )}
+        {archived && !task.adminHiddenAt && (
           <p className="mb-1 rounded-full bg-muted px-2 py-0.5 text-center text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">
             Архивирана
           </p>
@@ -413,7 +418,7 @@ function OwnerTaskCard({
             {promotions.length > 0 ? "Управлявай" : "Промотирай"}
           </Button>
         )}
-        {repostable && (
+        {repostable && !task.adminHiddenAt && (
           <>
             <Button asChild size="sm" variant="outline" className="mt-2 h-7 w-full gap-1 text-[11px]">
               <Link to="/post" search={{ repost: task.id }}>
@@ -433,7 +438,25 @@ function OwnerTaskCard({
             <DeleteTaskDialog taskId={task.id} open={deleteOpen} onOpenChange={setDeleteOpen} />
           </>
         )}
-        {(task.status === "active" || task.status === "assigned") && (
+        {repostable && task.adminHiddenAt && (
+          <>
+            <p className="mt-2 leading-snug text-muted-foreground">
+              Задачата е скрита от администратор. Не може да бъде активирана или публикувана отново.
+              Ако смяташ, че има грешка, пиши ни през страницата Контакти.
+            </p>
+            <Button
+              size="sm"
+              variant="ghost"
+              className="mt-1 h-7 w-full gap-1 text-[11px] text-destructive hover:bg-destructive/10 hover:text-destructive"
+              onClick={() => setDeleteOpen(true)}
+            >
+              <Trash2 className="h-3 w-3" />
+              Изтрий
+            </Button>
+            <DeleteTaskDialog taskId={task.id} open={deleteOpen} onOpenChange={setDeleteOpen} />
+          </>
+        )}
+        {(task.status === "active" || task.status === "assigned") && !task.adminHiddenAt && (
           <div className="mt-2">
             <OwnerTaskControls task={task} compact />
           </div>

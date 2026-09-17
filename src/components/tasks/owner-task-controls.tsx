@@ -28,6 +28,7 @@ export function OwnerTaskControls({
   const unlockCount = task.unlockCount ?? 0;
   const maxUnlocks = task.maxUnlocks ?? 5;
   const isAssigned = task.status === "assigned";
+  const adminHidden = Boolean(task.adminHiddenAt);
   const { data: engagements = [] } = useMyEngagements(isAssigned);
   const hasEngagement = engagements.some((e) => e.taskId === task.id);
 
@@ -96,6 +97,7 @@ export function OwnerTaskControls({
               />
             </div>
           )}
+          {!adminHidden && (
           <Button
             variant="outline"
             size="sm"
@@ -106,6 +108,7 @@ export function OwnerTaskControls({
             <RefreshCw className="h-3.5 w-3.5 shrink-0" />
             Активирай отново
           </Button>
+          )}
         </div>
       ) : (
         <div className="w-full min-w-0">
