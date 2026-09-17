@@ -1633,6 +1633,7 @@ export type Database = {
           category: string
           category_corrected_at: string | null
           city: string | null
+          content_edited_at: string | null
           created_at: string
           currency: string
           deleted_at: string | null
@@ -1645,6 +1646,7 @@ export type Database = {
           municipality_id: string | null
           neighborhood: string | null
           region_id: string | null
+          reposted_at: string | null
           status: Database["public"]["Enums"]["task_status"]
           status_before_deactivation:
             | Database["public"]["Enums"]["task_status"]
@@ -1665,6 +1667,7 @@ export type Database = {
           category: string
           category_corrected_at?: string | null
           city?: string | null
+          content_edited_at?: string | null
           created_at?: string
           currency?: string
           deleted_at?: string | null
@@ -1677,6 +1680,7 @@ export type Database = {
           municipality_id?: string | null
           neighborhood?: string | null
           region_id?: string | null
+          reposted_at?: string | null
           status?: Database["public"]["Enums"]["task_status"]
           status_before_deactivation?:
             | Database["public"]["Enums"]["task_status"]
@@ -1697,6 +1701,7 @@ export type Database = {
           category?: string
           category_corrected_at?: string | null
           city?: string | null
+          content_edited_at?: string | null
           created_at?: string
           currency?: string
           deleted_at?: string | null
@@ -1709,6 +1714,7 @@ export type Database = {
           municipality_id?: string | null
           neighborhood?: string | null
           region_id?: string | null
+          reposted_at?: string | null
           status?: Database["public"]["Enums"]["task_status"]
           status_before_deactivation?:
             | Database["public"]["Enums"]["task_status"]
@@ -2005,6 +2011,7 @@ export type Database = {
       bg_slug: { Args: { _input: string }; Returns: string }
       call_unconfirmed_reminders: { Args: never; Returns: undefined }
       can_bump_task: { Args: { _task_id: string }; Returns: boolean }
+      can_repost_task: { Args: { _source_task_id: string }; Returns: Json }
       cancel_account_deletion: { Args: never; Returns: undefined }
       claim_engagement: { Args: { _task_id: string }; Returns: Json }
       close_task: {
@@ -2142,6 +2149,10 @@ export type Database = {
           _target_type: string
         }
         Returns: undefined
+      }
+      mark_task_reposted: {
+        Args: { _new_task_id: string; _source_task_id: string }
+        Returns: Json
       }
       mark_unconfirmed_reminder: {
         Args: { _email: string; _stage: number; _user_id: string }
