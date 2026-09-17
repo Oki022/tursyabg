@@ -30,11 +30,14 @@ type Row = {
   unlock_count?: number;
   max_unlocks?: number;
   user_id: string;
+  admin_hidden_at?: string | null;
+  reposted_at?: string | null;
+  content_edited_at?: string | null;
   task_images?: { image_url: string; sort_order: number }[] | null;
 };
 
 const SELECT =
-  "id, title, description, category, budget, city, neighborhood, status, unlock_cost, created_at, bumped_at, status_changed_at, view_count, unlock_count, max_unlocks, user_id, task_images(image_url, sort_order)";
+  "id, title, description, category, budget, city, neighborhood, status, unlock_cost, created_at, bumped_at, status_changed_at, view_count, unlock_count, max_unlocks, user_id, admin_hidden_at, reposted_at, content_edited_at, task_images(image_url, sort_order)";
 
 export function timeAgoBg(iso: string) {
   const diff = Date.now() - new Date(iso).getTime();
@@ -76,6 +79,9 @@ function mapRow(row: Row, signed: Record<string, string>, names: Record<string, 
     maxUnlocks: row.max_unlocks ?? 5,
     createdAtIso: row.created_at,
     statusChangedAtIso: row.status_changed_at ?? row.created_at,
+    adminHiddenAt: row.admin_hidden_at ?? null,
+    repostedAt: row.reposted_at ?? null,
+    contentEditedAt: row.content_edited_at ?? null,
   };
 }
 
@@ -270,6 +276,9 @@ export function useMyTasks(userId?: string) {
         .select(SELECT)
         .eq("user_id", userId!)
         .is("deleted_at", null)
+        // A reposted task lives on as its copy; keeping the source would show
+        // the same listing twice in the archive.
+        .is("reposted_at", null)
         .order("created_at", { ascending: false });
       if (error) throw error;
       return mapRows((data ?? []) as unknown as Row[]);
@@ -378,6 +387,26 @@ export function useCreateTask() {
 
       const [city, neighborhood] = input.location.split(",").map((s) => s.trim());
 
+      // Reposting is refused in the database for admin-hidden or already
+      // reposted tasks; check before creating the copy.
+      if (input.repostFrom) {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const { data: allowed, error: checkError } = await supabase.rpc("can_repost_task" as any, {
+          _source_task_id: input.repostFrom,
+        } as any);
+        if (checkError) throw checkError;
+        const check = (allowed ?? {}) as Record<string, unknown>;
+        if (!check["ok"]) {
+          throw new Error(
+            check["error"] === "ADMIN_HIDDEN"
+              ? "Задачата е скрита от администратор и не може да се публикува отново."
+              : check["error"] === "ALREADY_REPOSTED"
+                ? "Тази задача вече е публикувана отново."
+                : "Задачата не е намерена.",
+          );
+        }
+      }
+
       const { data: task, error } = await supabase
         .from("tasks")
         .insert({
@@ -419,6 +448,11 @@ export function useCreateTask() {
       // stored files are never touched — new rows point at the same paths.
       let copyFailed = false;
       if (input.repostFrom) {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        await supabase.rpc("mark_task_reposted" as any, {
+          _source_task_id: input.repostFrom,
+          _new_task_id: task.id,
+        } as any);
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const { error: copyError } = await supabase.rpc("copy_task_images" as any, {
           _source_task_id: input.repostFrom,
@@ -485,6 +519,26 @@ export function useUpdateTask() {
   return useMutation({
     mutationFn: async (input: UpdateTaskInput): Promise<UpdateTaskResult> => {
       const [city, neighborhood] = input.location.split(",").map((s) => s.trim());
+
+      // Reposting is refused in the database for admin-hidden or already
+      // reposted tasks; check before creating the copy.
+      if (input.repostFrom) {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const { data: allowed, error: checkError } = await supabase.rpc("can_repost_task" as any, {
+          _source_task_id: input.repostFrom,
+        } as any);
+        if (checkError) throw checkError;
+        const check = (allowed ?? {}) as Record<string, unknown>;
+        if (!check["ok"]) {
+          throw new Error(
+            check["error"] === "ADMIN_HIDDEN"
+              ? "Задачата е скрита от администратор и не може да се публикува отново."
+              : check["error"] === "ALREADY_REPOSTED"
+                ? "Тази задача вече е публикувана отново."
+                : "Задачата не е намерена.",
+          );
+        }
+      }
 
       const { data, error } = await supabase.rpc("update_own_task", {
         _task_id: input.taskId,
