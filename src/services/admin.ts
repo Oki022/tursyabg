@@ -272,25 +272,11 @@ export async function getAdminTasks(filters: AdminTaskFilters): Promise<AdminTas
 }
 
 export async function deactivateTask(taskId: string, reason: string) {
-  const { error } = await supabase.from("tasks").update({ status: "inactive" }).eq("id", taskId);
-  if (error) throw error;
-  await supabase.rpc("log_admin_action", {
-    _action_type: "task_deactivated",
-    _target_type: "task",
-    _target_id: taskId,
-    _details: { reason },
-  });
+  await callRpc("admin_set_task_active", { _task_id: taskId, _active: false, _reason: reason });
 }
 
 export async function activateTask(taskId: string) {
-  const { error } = await supabase.from("tasks").update({ status: "active" }).eq("id", taskId);
-  if (error) throw error;
-  await supabase.rpc("log_admin_action", {
-    _action_type: "task_activated",
-    _target_type: "task",
-    _target_id: taskId,
-    _details: {},
-  });
+  await callRpc("admin_set_task_active", { _task_id: taskId, _active: true, _reason: null });
 }
 
 export async function updateTaskCategory(taskId: string, category: string) {
