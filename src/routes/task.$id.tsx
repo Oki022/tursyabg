@@ -54,6 +54,13 @@ import { BackLink } from "@/components/back-link";
 import { TaskThumb } from "@/components/task-thumb";
 import { ImageLightbox } from "@/components/image-lightbox";
 
+/** "DD.MM в HH:MM" for the last real content edit. */
+function editedLabel(iso: string): string {
+  const d = new Date(iso);
+  const p = (n: number) => String(n).padStart(2, "0");
+  return `${p(d.getDate())}.${p(d.getMonth() + 1)} в ${p(d.getHours())}:${p(d.getMinutes())}`;
+}
+
 export const Route = createFileRoute("/task/$id")({
   loader: ({ params }) => fetchTaskSeo(params.id),
   head: ({ params, loaderData }) => {
@@ -347,7 +354,19 @@ function TaskDetails() {
             <span className="inline-flex items-center gap-1 rounded-full bg-secondary px-3 py-1 text-xs font-medium text-muted-foreground">
               <MapPin className="h-3.5 w-3.5" /> {formatLocation(task.location)}
             </span>
+            {task.contentEditedAt && (
+              <span className="inline-flex items-center gap-1 rounded-full bg-secondary px-3 py-1 text-xs font-medium text-muted-foreground">
+                Редактирано: {editedLabel(task.contentEditedAt)}
+              </span>
+            )}
           </div>
+
+          {isOwner && task.adminHiddenAt && (
+            <p className="mt-4 rounded-2xl border border-destructive/30 bg-destructive/10 px-4 py-3 text-sm text-destructive">
+              Задачата е скрита от администратор и не се показва публично. Не може да бъде активирана
+              или публикувана отново. Ако смяташ, че има грешка, пиши ни през страницата Контакти.
+            </p>
+          )}
 
           {(hasTop || hasUrgent) && (
             <div className="mt-4 flex flex-wrap items-center gap-2">
