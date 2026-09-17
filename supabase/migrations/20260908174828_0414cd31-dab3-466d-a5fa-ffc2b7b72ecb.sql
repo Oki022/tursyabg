@@ -1,6 +1,6 @@
 CREATE TABLE public.cron_secrets (
   name text PRIMARY KEY,
-  token text NOT NULL DEFAULT encode(gen_random_bytes(24), 'hex'),
+  token text NOT NULL DEFAULT encode(extensions.gen_random_bytes(24), 'hex'),
   created_at timestamptz NOT NULL DEFAULT now()
 );
 GRANT ALL ON public.cron_secrets TO service_role;
