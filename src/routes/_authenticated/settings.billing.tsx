@@ -94,14 +94,14 @@ function SettingsBillingPage() {
         <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
           {(packagesQuery.data ?? []).map((p) => (
             <div key={p.id} className="relative rounded-xl border border-border bg-background p-4">
-              {p.credits === 150 && (
+              {p.credits === 150 && p.priceEur === 29.99 && (
                 <Badge className="absolute -top-2 right-3 px-2 py-0.5 text-[10px]">
                   Най-изгодно
                 </Badge>
               )}
               <p className="text-sm font-semibold text-foreground">{p.name}</p>
-              <p className="mt-1 text-xl font-bold text-foreground">{formatEur(p.priceEur)}</p>
-              <p className="mt-1 text-xs text-muted-foreground">{creditsLabel(p.credits)}</p>
+              <p className="mt-1 text-xl font-bold text-foreground">{creditsLabel(p.credits)}</p>
+              <p className="mt-1 text-xs text-muted-foreground">{formatEur(p.priceEur)}</p>
               <Button
                 variant="outline"
                 size="sm"
