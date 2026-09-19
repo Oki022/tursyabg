@@ -1,4 +1,5 @@
 import { supabase } from "@/integrations/supabase/client";
+import { fetchPublicNames, FALLBACK_NAME } from "@/lib/public-profiles";
 
 export type NotificationType =
   | "new_message"
@@ -42,6 +43,8 @@ export type AppNotification = {
   body: string;
   link: string | null;
   taskId: string | null;
+  actorId: string | null;
+  actorName: string | null;
   readAt: string | null;
   createdAt: string;
 };
@@ -66,11 +69,12 @@ export function relativeTimeBg(iso: string): string {
 export async function getNotifications(limit = NOTIFICATIONS_PAGE_SIZE): Promise<AppNotification[]> {
   const { data, error } = await supabase
     .from("notifications")
-    .select("id, type, title, body, link, task_id, read_at, created_at")
+    .select("id, type, title, body, link, task_id, actor_id, read_at, created_at")
     .neq("type", "new_message")
     .order("created_at", { ascending: false })
     .limit(limit);
   if (error) throw error;
+  const actorNames = await fetchPublicNames((data ?? []).map((n) => n.actor_id));
   return (data ?? []).map((n) => ({
     id: n.id,
     type: n.type as NotificationType,
@@ -78,6 +82,8 @@ export async function getNotifications(limit = NOTIFICATIONS_PAGE_SIZE): Promise
     body: n.body,
     link: n.link,
     taskId: n.task_id,
+    actorId: n.actor_id,
+    actorName: n.actor_id ? (actorNames[n.actor_id] ?? FALLBACK_NAME) : null,
     readAt: n.read_at,
     createdAt: n.created_at,
   }));

@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
-import { Search, SlidersHorizontal, X } from "lucide-react";
+import { ChevronDown, Search, SlidersHorizontal, X } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -18,6 +18,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { clampDescription, seo } from "@/lib/seo";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import { cn } from "@/lib/utils";
 
 type Search = { q?: string; category?: string; location?: string; region?: string; from?: "home" };
 
@@ -60,29 +62,29 @@ function TasksPage() {
   });
   const filtered = data?.pages.flatMap((p) => p.items) ?? [];
   const sentinelRef = useRef<HTMLDivElement | null>(null);
-  const resultsRef = useRef<HTMLDivElement | null>(null);
-  // Filters the user landed on the page with; scrolling happens only after
-  // these change (i.e. the user actively applied a filter), not on first load.
-  const initialFiltersRef = useRef({ q: search.q, category: search.category, location: search.location, region: search.region });
+  const [filtersOpen, setFiltersOpen] = useState<boolean | undefined>(undefined);
 
   useEffect(() => {
-    if (typeof window === "undefined") return;
-    const init = initialFiltersRef.current;
-    const fromHome = search.from === "home";
-    const changed =
-      search.q !== init.q ||
-      search.category !== init.category ||
-      search.location !== init.location ||
-      search.region !== init.region;
-    if (!fromHome && !changed) return;
+    try {
+      const saved = window.localStorage.getItem("tasks-filters-open");
+      if (saved === "true" || saved === "false") {
+        setFiltersOpen(saved === "true");
+        return;
+      }
+    } catch {
+      // Storage can be unavailable in private browsing; use the viewport default.
+    }
+    setFiltersOpen(!window.matchMedia("(max-width: 767px)").matches);
+  }, []);
 
-    const mobile = window.matchMedia("(max-width: 767px)").matches;
-    if (!mobile) return;
-    const timer = window.setTimeout(() => {
-      resultsRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
-    }, 150);
-    return () => window.clearTimeout(timer);
-  }, [search.from, search.q, search.category, search.location, search.region]);
+  const changeFiltersOpen = (open: boolean) => {
+    setFiltersOpen(open);
+    try {
+      window.localStorage.setItem("tasks-filters-open", String(open));
+    } catch {
+      // The panel still works for this visit when storage is unavailable.
+    }
+  };
 
   useEffect(() => {
     const el = sentinelRef.current;
@@ -142,22 +144,34 @@ function TasksPage() {
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-[240px_1fr] lg:gap-5">
 
         {/* Sidebar */}
-        <aside className="space-y-6 rounded-2xl border border-border bg-card p-5 lg:sticky lg:top-20 lg:self-start">
-          <div className="flex items-center justify-between">
-            <h2 className="flex items-center gap-2 text-sm font-semibold">
-              <SlidersHorizontal className="h-4 w-4" /> Филтри
-            </h2>
-            {activeFilters > 0 && (
-              <button
-                onClick={() => navigate({ search: {} })}
-                className="text-xs text-primary hover:underline"
-              >
-                Изчисти
-              </button>
-            )}
-          </div>
+        <aside className="rounded-2xl border border-border bg-card p-5 lg:sticky lg:top-20 lg:self-start">
+          <Collapsible open={filtersOpen ?? false} onOpenChange={changeFiltersOpen}>
+            <div className="flex items-center gap-3">
+              <CollapsibleTrigger asChild>
+                <Button variant="ghost" className="h-auto min-w-0 flex-1 justify-between p-0 hover:bg-transparent">
+                  <span className="flex items-center gap-2 text-sm font-semibold">
+                    <SlidersHorizontal className="h-4 w-4" />
+                    Филтри
+                    {activeFilters > 0 && <span className="text-xs text-muted-foreground">({activeFilters})</span>}
+                  </span>
+                  <ChevronDown
+                    className={cn(
+                      "h-4 w-4 shrink-0 text-muted-foreground transition-transform duration-200 motion-reduce:transition-none",
+                      filtersOpen && "rotate-180",
+                    )}
+                  />
+                </Button>
+              </CollapsibleTrigger>
+              {activeFilters > 0 && (
+                <Button variant="link" size="sm" onClick={() => navigate({ search: {} })} className="h-auto p-0 text-xs">
+                  Изчисти
+                </Button>
+              )}
+            </div>
 
-          <div>
+            <CollapsibleContent className="collapsible-content">
+              <div className="space-y-6 pt-6">
+                <div>
             <h3 className="mb-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
               Категория
             </h3>
@@ -177,9 +191,9 @@ function TasksPage() {
                 );
               })}
             </div>
-          </div>
+                </div>
 
-          <div>
+                <div>
             <h3 className="mb-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
               Област
             </h3>
@@ -199,9 +213,9 @@ function TasksPage() {
                 ))}
               </SelectContent>
             </Select>
-          </div>
+                </div>
 
-          <div>
+                <div>
             <h3 className="mb-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
               Община или квартал
             </h3>
@@ -210,11 +224,14 @@ function TasksPage() {
               onChange={(v) => update({ location: v })}
               allowClear
             />
-          </div>
+                </div>
+              </div>
+            </CollapsibleContent>
+          </Collapsible>
         </aside>
 
         {/* Results */}
-        <div ref={resultsRef} data-results-anchor className="scroll-mt-20">
+        <div data-results-anchor className="scroll-mt-20">
           {activeFilters > 0 && (
             <div className="mb-4 flex flex-wrap gap-2">
               {search.category && (
