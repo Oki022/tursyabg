@@ -352,6 +352,7 @@ export type Database = {
         Row: {
           amount: number
           balance_after: number
+          counterparty_id: string | null
           created_at: string
           description: string
           id: string
@@ -363,6 +364,7 @@ export type Database = {
         Insert: {
           amount: number
           balance_after: number
+          counterparty_id?: string | null
           created_at?: string
           description?: string
           id?: string
@@ -374,6 +376,7 @@ export type Database = {
         Update: {
           amount?: number
           balance_after?: number
+          counterparty_id?: string | null
           created_at?: string
           description?: string
           id?: string
@@ -383,6 +386,13 @@ export type Database = {
           user_id?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "credit_transactions_counterparty_id_fkey"
+            columns: ["counterparty_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "credit_transactions_package_id_fkey"
             columns: ["package_id"]
