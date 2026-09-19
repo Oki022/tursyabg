@@ -14,7 +14,7 @@ export type CreditTransaction = {
   amount: number;
   type: "purchase" | "unlock" | "refund" | "bonus" | "promo_spend";
   taskId: string | null;
-  taskOwnerId: string | null;
+  counterpartyId: string | null;
   balanceAfter: number;
   description: string;
   createdAt: string;
@@ -96,7 +96,7 @@ export async function getTransactions(page: number): Promise<{ items: CreditTran
   const from = page * TRANSACTIONS_PAGE_SIZE;
   const { data, error } = await supabase
     .from("credit_transactions")
-    .select("id, amount, type, task_id, balance_after, description, created_at, tasks(user_id)")
+    .select("id, amount, type, task_id, counterparty_id, balance_after, description, created_at")
     .order("created_at", { ascending: false })
     .range(from, from + TRANSACTIONS_PAGE_SIZE);
   if (error) throw error;
@@ -108,7 +108,7 @@ export async function getTransactions(page: number): Promise<{ items: CreditTran
       amount: t.amount,
       type: t.type,
       taskId: t.task_id,
-      taskOwnerId: (t.tasks as { user_id: string } | null)?.user_id ?? null,
+      counterpartyId: t.counterparty_id,
       balanceAfter: t.balance_after,
       description: t.description,
       createdAt: t.created_at,

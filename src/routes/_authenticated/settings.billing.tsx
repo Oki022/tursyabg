@@ -169,8 +169,8 @@ function SettingsBillingPage() {
                         Виж задачата
                       </Link>
                     )}
-                    {t.taskOwnerId && t.taskOwnerId !== user?.id && (
-                      <Link to="/user/$id" params={{ id: t.taskOwnerId }} className="text-primary underline-offset-2 hover:underline">
+                    {t.counterpartyId && t.counterpartyId !== user?.id && (
+                      <Link to="/user/$id" params={{ id: t.counterpartyId }} className="text-primary underline-offset-2 hover:underline">
                         Виж профила
                       </Link>
                     )}
