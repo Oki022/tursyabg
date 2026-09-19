@@ -1,4 +1,4 @@
-import { useNavigate } from "@tanstack/react-router";
+import { Link, useNavigate } from "@tanstack/react-router";
 import {
   MessageSquare,
   Unlock,
@@ -119,6 +119,49 @@ export function NotificationList({
       {items.map((n) => {
         const Icon = ICONS[n.type] ?? FALLBACK_ICON;
         const unread = unreadIds ? unreadIds.has(n.id) : !n.readAt;
+        if (n.type === "contact_unlocked" && n.actorId) {
+          const markIfUnread = () => {
+            if (unread) markRead.mutate(n.id);
+            onNavigate?.();
+          };
+          return (
+            <li key={n.id} className={`flex items-start gap-3 px-3 py-3 ${unread ? "bg-primary/5" : ""}`}>
+              <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-primary/10 text-primary">
+                <Icon className="h-4 w-4" />
+              </span>
+              <span className="min-w-0 flex-1">
+                <span className="flex items-start justify-between gap-2">
+                  <span className="break-words text-sm font-semibold text-foreground">{n.title}</span>
+                  {unread && <span className="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-primary" />}
+                </span>
+                <span className="mt-0.5 block break-words text-xs text-muted-foreground">
+                  <Link
+                    to="/user/$id"
+                    params={{ id: n.actorId }}
+                    onClick={markIfUnread}
+                    className="font-medium text-primary underline-offset-2 hover:underline"
+                  >
+                    {n.actorName ?? "Потребител"}
+                  </Link>{" "}
+                  отключи контакта по задачата ти.
+                </span>
+                <span className="mt-1 flex items-center gap-3 text-[11px] text-muted-foreground">
+                  {n.taskId && (
+                    <Link
+                      to="/task/$id"
+                      params={{ id: n.taskId }}
+                      onClick={markIfUnread}
+                      className="text-primary underline-offset-2 hover:underline"
+                    >
+                      Виж задачата
+                    </Link>
+                  )}
+                  {relativeTimeBg(n.createdAt)}
+                </span>
+              </span>
+            </li>
+          );
+        }
         return (
           <li key={n.id}>
             <button

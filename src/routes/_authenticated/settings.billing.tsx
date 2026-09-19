@@ -18,6 +18,7 @@ import {
 
 import { SettingsPageShell } from "@/components/settings-page-shell";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { useAuth } from "@/lib/auth";
 import { useCreditBalance, useCreditPackages, useCreditTransactions } from "@/lib/credits-api";
 import { creditsLabel, formatEur } from "@/services/credits";
@@ -94,9 +95,9 @@ function SettingsBillingPage() {
           {(packagesQuery.data ?? []).map((p) => (
             <div key={p.id} className="relative rounded-xl border border-border bg-background p-4">
               {p.credits === 150 && (
-                <span className="absolute -top-2 right-3 rounded-full bg-primary px-2 py-0.5 text-[10px] font-semibold text-primary-foreground">
+                <Badge className="absolute -top-2 right-3 px-2 py-0.5 text-[10px]">
                   Най-изгодно
-                </span>
+                </Badge>
               )}
               <p className="text-sm font-semibold text-foreground">{p.name}</p>
               <p className="mt-1 text-xl font-bold text-foreground">{formatEur(p.priceEur)}</p>
@@ -162,6 +163,18 @@ function SettingsBillingPage() {
                 </span>
                 <div className="min-w-0">
                   <p className="truncate text-sm font-medium text-foreground">{t.description || "Движение"}</p>
+                  <div className="flex flex-wrap gap-x-3 text-xs">
+                    {t.taskId && (
+                      <Link to="/task/$id" params={{ id: t.taskId }} className="text-primary underline-offset-2 hover:underline">
+                        Виж задачата
+                      </Link>
+                    )}
+                    {t.taskOwnerId && t.taskOwnerId !== user?.id && (
+                      <Link to="/user/$id" params={{ id: t.taskOwnerId }} className="text-primary underline-offset-2 hover:underline">
+                        Виж профила
+                      </Link>
+                    )}
+                  </div>
                   <p className="text-xs text-muted-foreground">
                     {new Date(t.createdAt).toLocaleDateString("bg-BG", {
                       day: "numeric",
