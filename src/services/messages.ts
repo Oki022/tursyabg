@@ -23,6 +23,8 @@ export type ConversationSummary = {
   taskImage: string | null;
   taskCategory: string | null;
   taskDeleted: boolean;
+  /** Short Bulgarian label when the task is no longer active, else null. */
+  taskStateLabel: string | null;
   otherUserId: string;
   otherUserName: string;
   otherUserAvatar: string | null;
@@ -42,13 +44,27 @@ type ConversationRow = {
     title: string;
     budget: number;
     category: string;
+    status?: string | null;
+    expires_at?: string | null;
     deleted_at?: string | null;
     task_images: { image_url: string; sort_order: number }[] | null;
   } | null;
 };
 
 const CONVERSATION_SELECT =
-  "id, task_id, participant_a, participant_b, last_message_at, tasks(id, title, budget, category, deleted_at, task_images(image_url, sort_order))";
+  "id, task_id, participant_a, participant_b, last_message_at, tasks(id, title, budget, category, status, expires_at, deleted_at, task_images(image_url, sort_order))";
+
+/**
+ * Кратък етикет за състоянието на задачата, или null когато е активна.
+ * Само изтритите задачи спират разговора; останалите състояния са само информация.
+ */
+function stateLabel(task: ConversationRow["tasks"]): string | null {
+  if (!task || task.deleted_at) return "Задачата е изтрита";
+  const expired = task.expires_at ? new Date(task.expires_at).getTime() < Date.now() : false;
+  if (task.status === "assigned") return "Задачата е възложена";
+  if (task.status === "inactive") return expired ? "Задачата е изтекла" : "Задачата е затворена";
+  return expired ? "Задачата е изтекла" : null;
+}
 
 function mapMessage(row: {
   id: string;
@@ -141,6 +157,7 @@ export async function getConversations(
       taskImage: (firstPath ? imageMap[firstPath] : undefined) ?? null,
       taskCategory: r.tasks?.category ?? null,
       taskDeleted: !r.tasks || Boolean(r.tasks.deleted_at),
+      taskStateLabel: stateLabel(r.tasks),
       otherUserId: otherId,
       otherUserName: nameById.get(otherId) ?? "Потребител",
       otherUserAvatar: avatarById.get(otherId) ?? null,
@@ -187,6 +204,7 @@ export async function getConversation(conversationId: string): Promise<Conversat
     taskImage: (firstPath ? imageMap[firstPath] : undefined) ?? null,
     taskCategory: row.tasks?.category ?? null,
     taskDeleted: !row.tasks || Boolean(row.tasks.deleted_at),
+    taskStateLabel: stateLabel(row.tasks),
     otherUserId: otherId,
     otherUserName: profile?.full_name ?? "Потребител",
     otherUserAvatar: profile?.avatar_url ?? null,
@@ -277,17 +295,6 @@ export async function getUnreadCount(): Promise<number> {
   return count ?? 0;
 }
 
-/** Subscribes to all message changes visible to the user. Returns an unsubscribe fn. */
-export function subscribeToMessages(onChange: () => void): () => void {
-  const channel = supabase
-    .channel(`messages-live-${Math.random().toString(36).slice(2)}`)
-    .on("postgres_changes", { event: "*", schema: "public", table: "messages" }, () => onChange())
-    .subscribe();
-  return () => {
-    void supabase.removeChannel(channel);
-  };
-}
-
 /** Hides the conversation for the current user only; the other side still sees it. */
 export async function hideConversation(conversationId: string): Promise<void> {
   const { data, error } = await supabase.rpc(
@@ -297,4 +304,15 @@ export async function hideConversation(conversationId: string): Promise<void> {
   if (error) throw error;
   const r = data as { ok?: boolean; error?: string } | null;
   if (!r?.ok) throw new Error(r?.error ?? "FAILED");
+}
+
+/** Subscribes to all message changes visible to the user. Returns an unsubscribe fn. */
+export function subscribeToMessages(onChange: () => void): () => void {
+  const channel = supabase
+    .channel(`messages-live-${Math.random().toString(36).slice(2)}`)
+    .on("postgres_changes", { event: "*", schema: "public", table: "messages" }, () => onChange())
+    .subscribe();
+  return () => {
+    void supabase.removeChannel(channel);
+  };
 }

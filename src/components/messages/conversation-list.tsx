@@ -113,7 +113,7 @@ export function ConversationList({ selectedId, onSelect, variant = "desktop" }: 
                 </span>
               </div>
               <p className="truncate text-xs text-muted-foreground">
-                {c.taskDeleted ? "Задачата е изтрита" : c.taskTitle}
+                {c.taskStateLabel ?? c.taskTitle}
               </p>
               <p className="truncate text-xs text-muted-foreground">{c.lastMessage}</p>
             </div>

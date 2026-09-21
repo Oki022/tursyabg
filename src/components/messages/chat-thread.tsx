@@ -209,7 +209,9 @@ export function ChatThread({ conversationId }: { conversationId: string }) {
               />
               <div className="min-w-0 flex-1">
                 <p className="truncate text-sm font-semibold text-foreground">{conversation.taskTitle}</p>
-                <p className="text-xs text-muted-foreground">{conversation.taskBudget} €</p>
+                <p className="truncate text-xs text-muted-foreground">
+                  {conversation.taskStateLabel ?? `${conversation.taskBudget} €`}
+                </p>
               </div>
             </Link>
           )}
