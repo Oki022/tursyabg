@@ -96,8 +96,29 @@ function TasksPage() {
     return () => observer.disconnect();
   }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
 
-  const update = (next: Partial<Search>) =>
-    navigate({ search: (prev: Search) => ({ ...prev, ...next }) });
+      // Applying a filter scrolls to the results on mobile; removing or clearing
+  // one keeps the page still so the user can pick a different filter.
+  const update = (next: Partial<Search>) => {
+    const isRemoval = Object.values(next).every((v) => v === undefined || v === "");
+    navigate({
+      search: (prev: Search) => ({ ...prev, ...next }),
+      resetScroll: false,
+    });
+    if (isRemoval || typeof window === "undefined") return;
+    if (!window.matchMedia("(max-width: 767px)").matches) return;
+    window.setTimeout(() => {
+      document.querySelector("[data-results-anchor]")?.scrollIntoView({ behavior: "smooth", block: "start" });
+    }, 150);
+  };
+  
+  useEffect(() => {
+    if (typeof window === "undefined" || search.from !== "home") return;
+    if (!window.matchMedia("(max-width: 767px)").matches) return;
+    const timer = window.setTimeout(() => {
+      document.querySelector("[data-results-anchor]")?.scrollIntoView({ behavior: "smooth", block: "start" });
+    }, 300);
+    return () => window.clearTimeout(timer);
+  }, []);
 
   const activeFilters = [search.category, search.location, search.region, search.q].filter(Boolean).length;
 

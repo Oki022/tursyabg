@@ -146,7 +146,7 @@ function RootShell({ children }: { children: React.ReactNode }) {
     <html lang="bg" suppressHydrationWarning>
       <head>
         <HeadContent />
-        <script nonce={nonce} dangerouslySetInnerHTML={{ __html: THEME_BOOT_SCRIPT }} />
+        <script suppressHydrationWarning nonce={nonce} dangerouslySetInnerHTML={{ __html: THEME_BOOT_SCRIPT }} />
       </head>
       <body>
         {children}
