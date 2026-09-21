@@ -4,6 +4,7 @@ import { fetchPublicNames, FALLBACK_NAME } from "@/lib/public-profiles";
 export type NotificationType =
   | "new_message"
   | "contact_unlocked"
+  | "task_favourited"
   | "task_expiring"
   | "task_expired"
   | "promo_expiring"

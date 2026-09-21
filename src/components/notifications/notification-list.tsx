@@ -26,6 +26,7 @@ import {
   CalendarClock,
   Handshake,
   Star,
+  Heart,
 } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { relativeTimeBg, type AppNotification, type NotificationType } from "@/services/notifications";
@@ -36,6 +37,7 @@ const FALLBACK_ICON = Bell;
 const ICONS: Partial<Record<NotificationType, React.ComponentType<{ className?: string }>>> = {
   new_message: MessageSquare,
   contact_unlocked: Unlock,
+  task_favourited: Heart,
   task_expiring: Clock,
   task_expired: CalendarX,
   promo_expiring: Sparkles,
