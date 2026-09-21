@@ -407,14 +407,7 @@ export async function getPendingReports(): Promise<AdminReport[]> {
 }
 
 export async function setReportStatus(reportId: string, status: ReportStatus) {
-  const { error } = await supabase.from("task_reports").update({ status }).eq("id", reportId);
-  if (error) throw error;
-  await supabase.rpc("log_admin_action", {
-    _action_type: "report_" + status,
-    _target_type: "task_report",
-    _target_id: reportId,
-    _details: {},
-  });
+  await callRpc("admin_set_report_status", { _report_id: reportId, _status: status });
 }
 
 export async function reportTask(input: { taskId: string; reason: string; details: string }) {

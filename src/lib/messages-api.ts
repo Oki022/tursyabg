@@ -14,6 +14,7 @@ import {
   sendMessage,
   subscribeToMessages,
   findOrCreateConversation,
+  hideConversation,
 } from "@/services/messages";
 
 export const messageKeys = {
@@ -89,6 +90,15 @@ export function useUnreadCount(enabled: boolean) {
     queryKey: messageKeys.unread,
     enabled,
     queryFn: getUnreadCount,
+  });
+}
+export function useHideConversation() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: hideConversation,
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: ["messages"] });
+    },
   });
 }
 

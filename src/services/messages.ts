@@ -86,7 +86,7 @@ export async function getConversations(
   let query = supabase
     .from("conversations")
     .select(CONVERSATION_SELECT)
-    .or(`participant_a.eq.${me},participant_b.eq.${me}`)
+    .or(`and(participant_a.eq.${me},hidden_by_a_at.is.null),and(participant_b.eq.${me},hidden_by_b_at.is.null)`)
     .order("last_message_at", { ascending: false })
     .limit(CONVERSATIONS_PAGE_SIZE);
 
@@ -286,4 +286,15 @@ export function subscribeToMessages(onChange: () => void): () => void {
   return () => {
     void supabase.removeChannel(channel);
   };
+}
+
+/** Hides the conversation for the current user only; the other side still sees it. */
+export async function hideConversation(conversationId: string): Promise<void> {
+  const { data, error } = await supabase.rpc(
+    "hide_conversation" as never,
+    { _conversation_id: conversationId } as never,
+  );
+  if (error) throw error;
+  const r = data as { ok?: boolean; error?: string } | null;
+  if (!r?.ok) throw new Error(r?.error ?? "FAILED");
 }

@@ -112,7 +112,9 @@ export function ConversationList({ selectedId, onSelect, variant = "desktop" }: 
                   {relativeTimeBg(c.lastMessageAt)}
                 </span>
               </div>
-              <p className="truncate text-xs text-muted-foreground">{c.taskTitle}</p>
+              <p className="truncate text-xs text-muted-foreground">
+                {c.taskDeleted ? "Задачата е изтрита" : c.taskTitle}
+              </p>
               <p className="truncate text-xs text-muted-foreground">{c.lastMessage}</p>
             </div>
             {c.unread > 0 && (

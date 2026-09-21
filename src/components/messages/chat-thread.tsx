@@ -1,11 +1,25 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Link } from "@tanstack/react-router";
-import { Send, ShieldAlert, Loader2, Flag } from "lucide-react";
+import { Link, useNavigate } from "@tanstack/react-router";
+import { Send, ShieldAlert, Loader2, Flag, Trash2 } from "lucide-react";
 import { UserAvatar } from "@/components/user-avatar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { useAuth } from "@/lib/auth";
-import { useConversation, useMarkAsRead, useSendMessage, useThread } from "@/lib/messages-api";
+import {
+  useConversation,
+  useHideConversation,
+  useMarkAsRead,
+  useSendMessage,
+  useThread,
+} from "@/lib/messages-api";
 import type { ChatMessage } from "@/services/messages";
 import { CONTACT_MASK_WARNING, containsContactInfo, isValidBgPhone } from "@/lib/phone";
 import { toastError } from "@/lib/toast-error";
@@ -38,6 +52,22 @@ export function ChatThread({ conversationId }: { conversationId: string }) {
   const [text, setText] = useState("");
   const bottomRef = useRef<HTMLDivElement>(null);
   const markMutate = markRead.mutate;
+
+  const navigate = useNavigate();
+  const hide = useHideConversation();
+  const [confirmOpen, setConfirmOpen] = useState(false);
+
+  // Скрива разговора само за текущия потребител; другият продължава да го вижда.
+  const handleHide = async () => {
+    try {
+      await hide.mutateAsync(conversationId);
+      setConfirmOpen(false);
+      toast.success("Разговорът е изтрит.");
+      void navigate({ to: "/messages" });
+    } catch (err) {
+      toastError(err, { title: "Разговорът не беше изтрит" });
+    }
+  };
 
   const messages: ChatMessage[] = useMemo(
     () =>
@@ -79,6 +109,44 @@ export function ChatThread({ conversationId }: { conversationId: string }) {
     }
   };
 
+  const deleteButton = (
+    <>
+      <Button
+        type="button"
+        variant="ghost"
+        size="icon"
+        aria-label="Изтрий разговора"
+        onClick={() => setConfirmOpen(true)}
+        className="h-9 w-9 shrink-0 text-muted-foreground hover:text-destructive"
+      >
+        <Trash2 className="h-4 w-4" />
+      </Button>
+      <Dialog open={confirmOpen} onOpenChange={setConfirmOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Изтрий разговора?</DialogTitle>
+            <DialogDescription>
+              Разговорът ще изчезне само от твоя списък. Другият потребител ще продължи да го вижда.
+              Ако получиш ново съобщение, разговорът ще се появи отново.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter className="gap-2 sm:gap-2">
+            <Button variant="outline" onClick={() => setConfirmOpen(false)} className="sm:flex-1">
+              Отказ
+            </Button>
+            <Button
+              variant="destructive"
+              onClick={() => void handleHide()}
+              disabled={hide.isPending}
+              className="sm:flex-1"
+            >
+              {hide.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : "Изтрий"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </>
+  );
 
   if (thread.isLoading) {
     return (
@@ -110,24 +178,41 @@ export function ChatThread({ conversationId }: { conversationId: string }) {
     <div className="flex min-h-0 min-w-0 flex-1 flex-col">
       {conversation && (
         <div className="flex shrink-0 items-center gap-3 border-b border-border/60 bg-background px-4 py-3 md:bg-card">
-          <Link
-            to="/task/$id"
-            params={{ id: conversation.taskId }}
-            className="flex min-w-0 flex-1 items-center gap-3 rounded-xl transition-colors hover:bg-accent/40"
-          >
-            <TaskThumb
-              src={conversation.taskImage}
-              category={conversation.taskCategory}
-              title={conversation.taskTitle}
-              deleted={conversation.taskDeleted}
-              iconClassName="h-5 w-5"
-              className="h-11 w-11 shrink-0 rounded-xl"
-            />
-            <div className="min-w-0 flex-1">
-              <p className="truncate text-sm font-semibold text-foreground">{conversation.taskTitle}</p>
-              <p className="text-xs text-muted-foreground">{conversation.taskBudget} €</p>
+          {conversation.taskDeleted ? (
+            <div className="flex min-w-0 flex-1 items-center gap-3">
+              <TaskThumb
+                src={conversation.taskImage}
+                category={conversation.taskCategory}
+                title={conversation.taskTitle}
+                deleted
+                iconClassName="h-5 w-5"
+                className="h-11 w-11 shrink-0 rounded-xl"
+              />
+              <div className="min-w-0 flex-1">
+                <p className="truncate text-sm font-semibold text-foreground">{conversation.taskTitle}</p>
+                <p className="text-xs text-muted-foreground">Задачата е изтрита</p>
+              </div>
             </div>
-          </Link>
+          ) : (
+            <Link
+              to="/task/$id"
+              params={{ id: conversation.taskId }}
+              className="flex min-w-0 flex-1 items-center gap-3 rounded-xl transition-colors hover:bg-accent/40"
+            >
+              <TaskThumb
+                src={conversation.taskImage}
+                category={conversation.taskCategory}
+                title={conversation.taskTitle}
+                deleted={conversation.taskDeleted}
+                iconClassName="h-5 w-5"
+                className="h-11 w-11 shrink-0 rounded-xl"
+              />
+              <div className="min-w-0 flex-1">
+                <p className="truncate text-sm font-semibold text-foreground">{conversation.taskTitle}</p>
+                <p className="text-xs text-muted-foreground">{conversation.taskBudget} €</p>
+              </div>
+            </Link>
+          )}
           <Link
             to="/user/$id"
             params={{ id: conversation.otherUserId }}
@@ -139,6 +224,7 @@ export function ChatThread({ conversationId }: { conversationId: string }) {
               {conversation.otherUserName}
             </span>
           </Link>
+          {deleteButton}
         </div>
       )}
 
@@ -233,7 +319,11 @@ export function ChatThread({ conversationId }: { conversationId: string }) {
         }}
         className="sticky bottom-0 z-10 flex shrink-0 items-center gap-2 border-t border-border/60 bg-background/95 px-3 py-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] backdrop-blur md:pb-3"
       >
-        {user && (!user.phone || !isValidBgPhone(user.phone)) ? (
+        {conversation?.taskDeleted ? (
+          <p className="w-full py-1 text-center text-sm text-muted-foreground">
+            Задачата е изтрита. Не можеш да изпращаш нови съобщения.
+          </p>
+        ) : user && (!user.phone || !isValidBgPhone(user.phone)) ? (
           <RequirePhoneNotice
             className="w-full"
             title="Добави телефон, за да пишеш съобщения"
