@@ -175,7 +175,7 @@ function RootComponent() {
             className={
               isMessages
                 ? "flex h-[100dvh] w-full max-w-full flex-col overflow-x-hidden overflow-y-hidden bg-background pb-[calc(4rem+env(safe-area-inset-bottom))] md:h-auto md:min-h-screen md:overflow-visible md:pb-0"
-                : "flex min-h-screen w-full max-w-full flex-col overflow-x-hidden bg-background pb-24 md:pb-0"
+                : "flex min-h-screen w-full max-w-full flex-col overflow-x-clip bg-background pb-24 md:pb-0"
             }
           >
             <SiteHeader />

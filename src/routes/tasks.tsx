@@ -10,6 +10,7 @@ import { categories, getCategory } from "@/lib/mock-data";
 import { useTasksFeed } from "@/lib/tasks-api";
 import { useMunicipalities, useRegionCounts, useRegions } from "@/lib/locations-api";
 import { formatLocation, municipalityLabel, splitLocation } from "@/lib/locations";
+import { useHideOnScroll } from "@/hooks/use-hide-on-scroll";
 import {
   Select,
   SelectContent,
@@ -98,6 +99,10 @@ function TasksPage() {
 
       // Applying a filter scrolls to the results on mobile; removing or clearing
   // one keeps the page still so the user can pick a different filter.
+  const headerHidden = useHideOnScroll();
+
+  // Filtre eklenince/değişince ilanların başına yumuşakça kay; kaldırınca yerinde kal.
+  // Masaüstünde sadece ilanların başı ekranın üstünde kalmışsa kaydır.
   const update = (next: Partial<Search>) => {
     const isRemoval = Object.values(next).every((v) => v === undefined || v === "");
     navigate({
@@ -105,9 +110,12 @@ function TasksPage() {
       resetScroll: false,
     });
     if (isRemoval || typeof window === "undefined") return;
-    if (!window.matchMedia("(max-width: 767px)").matches) return;
+    const anchor = document.querySelector<HTMLElement>("[data-results-anchor]");
+    if (!anchor) return;
+    const mobile = window.matchMedia("(max-width: 767px)").matches;
+    if (!mobile && anchor.getBoundingClientRect().top >= 0) return;
     window.setTimeout(() => {
-      document.querySelector("[data-results-anchor]")?.scrollIntoView({ behavior: "smooth", block: "start" });
+      anchor.scrollIntoView({ behavior: "smooth", block: "start" });
     }, 150);
   };
   
@@ -165,7 +173,11 @@ function TasksPage() {
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-[240px_1fr] lg:gap-5">
 
         {/* Sidebar */}
-        <aside className="rounded-2xl border border-border bg-card p-5 lg:sticky lg:top-20 lg:self-start">
+        <aside
+          className={`rounded-2xl border border-border bg-card p-5 transition-[top] duration-300 lg:sticky lg:self-start ${
+            headerHidden ? "lg:top-4" : "lg:top-20"
+          }`}
+        >
           <Collapsible open={filtersOpen ?? false} onOpenChange={changeFiltersOpen}>
             <div className="flex items-center gap-3">
               <CollapsibleTrigger asChild>
