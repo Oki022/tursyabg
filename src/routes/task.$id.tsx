@@ -31,6 +31,7 @@ import { formatLocation } from "@/lib/locations";
 
 import { useMyUnlock } from "@/lib/credits-api";
 import { useTask } from "@/lib/tasks-api";
+import { useHideOnScroll } from "@/hooks/use-hide-on-scroll";
 import { UnlockContactCard } from "@/components/credits/unlock-contact-card";
 import { OwnerTaskControls } from "@/components/tasks/owner-task-controls";
 import { ReportTaskDialog } from "@/components/report-task-dialog";
@@ -165,6 +166,9 @@ function TaskDetails() {
     };
   }, [messageOpen, user, task?.id, task?.userId]);
 
+  // Дясната карта следва хедъра: под него, когато е видим, и нагоре, когато се скрие.
+  const headerHidden = useHideOnScroll();
+
   // SSR / първо зареждане: рендираме съдържанието от loader-а, за да го виждат
   // и търсачките (клиентската заявка го подменя веднага след hydration).
   if (isLoading) {
@@ -219,6 +223,52 @@ function TaskDetails() {
   const cat = getCategory(task.category);
   const Icon = cat.icon;
   const images = task.gallery ?? [];
+
+  const userBlock = (
+    <>
+      <div className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+        Потребител
+      </div>
+      <div className="mt-3 flex items-center gap-3">
+        <UserAvatar userId={task.userId} name={task.author} className="h-12 w-12" iconStrokeWidth={0.75} />
+        <div className="min-w-0">
+          {task.userId ? (
+            <Link
+              to="/user/$id"
+              params={{ id: task.userId }}
+              className="block truncate text-sm font-semibold text-foreground hover:underline"
+            >
+              {task.author}
+            </Link>
+          ) : (
+            <div className="truncate text-sm font-semibold text-foreground">{task.author}</div>
+          )}
+          <div className="mt-0.5 flex items-center gap-1 text-xs text-muted-foreground">
+            <CalendarDays className="h-3.5 w-3.5" /> Член от 2026 г.
+          </div>
+        </div>
+      </div>
+    </>
+  );
+
+  const locationBlock = (
+    <>
+      <div className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+        Локация
+      </div>
+      <div className="relative mt-3 h-32 overflow-hidden rounded-2xl bg-muted ring-1 ring-border/60">
+        <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(15,23,42,0.06)_1px,transparent_1px),linear-gradient(0deg,rgba(15,23,42,0.06)_1px,transparent_1px)] bg-[size:24px_24px]" />
+        <div className="absolute inset-0 grid place-items-center">
+          <div className="flex items-center gap-2 rounded-full bg-background/95 px-3 py-1.5 text-sm font-medium text-foreground shadow-md ring-1 ring-border/60 backdrop-blur">
+            <span className="grid h-6 w-6 place-items-center rounded-full bg-primary text-primary-foreground">
+              <MapPin className="h-3.5 w-3.5" />
+            </span>
+            {formatLocation(task.location)}
+          </div>
+        </div>
+      </div>
+    </>
+  );
 
   const prev = () => setActive((index) => (index - 1 + images.length) % images.length);
   const next = () => setActive((index) => (index + 1) % images.length);
@@ -396,9 +446,20 @@ function TaskDetails() {
               {task.description}
             </p>
           </section>
+
+          {/* На десктоп потребителят и локацията са в основната колона, за да остане
+              дясната карта къса и да се побира на екрана. На мобилен са в картата. */}
+          <section className="mt-8 hidden gap-8 rounded-3xl border border-border/60 bg-card p-6 shadow-sm md:p-7 lg:grid lg:grid-cols-2">
+            <div className="min-w-0">{userBlock}</div>
+            <div className="min-w-0">{locationBlock}</div>
+          </section>
         </div>
 
-        <aside className="lg:sticky lg:top-24 lg:self-start">
+        <aside
+          className={`transition-[top] duration-300 lg:sticky lg:self-start ${
+            headerHidden ? "lg:top-4" : "lg:top-24"
+          }`}
+        >
           <div className="rounded-3xl bg-card p-6 shadow-2xl shadow-primary/15 ring-1 ring-border/60">
             <div className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
               Бюджет
@@ -475,46 +536,9 @@ function TaskDetails() {
               <PromoteDialog taskId={task.id} open={promoteOpen} onOpenChange={setPromoteOpen} />
             )}
 
-            <div className="mt-6 border-t border-border/60 pt-5">
-              <div className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                Потребител
-              </div>
-              <div className="mt-3 flex items-center gap-3">
-                <UserAvatar userId={task.userId} name={task.author} className="h-12 w-12" iconStrokeWidth={0.75} />
-                <div className="min-w-0">
-                  {task.userId ? (
-                    <Link
-                      to="/user/$id"
-                      params={{ id: task.userId }}
-                      className="block truncate text-sm font-semibold text-foreground hover:underline"
-                    >
-                      {task.author}
-                    </Link>
-                  ) : (
-                    <div className="truncate text-sm font-semibold text-foreground">{task.author}</div>
-                  )}
-                  <div className="mt-0.5 flex items-center gap-1 text-xs text-muted-foreground">
-                    <CalendarDays className="h-3.5 w-3.5" /> Член от 2026 г.
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div className="mt-6 border-t border-border/60 pt-5">
-              <div className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                Локация
-              </div>
-              <div className="relative mt-3 h-32 overflow-hidden rounded-2xl bg-muted ring-1 ring-border/60">
-                <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(15,23,42,0.06)_1px,transparent_1px),linear-gradient(0deg,rgba(15,23,42,0.06)_1px,transparent_1px)] bg-[size:24px_24px]" />
-                <div className="absolute inset-0 grid place-items-center">
-                  <div className="flex items-center gap-2 rounded-full bg-background/95 px-3 py-1.5 text-sm font-medium text-foreground shadow-md ring-1 ring-border/60 backdrop-blur">
-                    <span className="grid h-6 w-6 place-items-center rounded-full bg-primary text-primary-foreground">
-                      <MapPin className="h-3.5 w-3.5" />
-                    </span>
-                    {formatLocation(task.location)}
-                  </div>
-                </div>
-              </div>
+            <div className="lg:hidden">
+              <div className="mt-6 border-t border-border/60 pt-5">{userBlock}</div>
+              <div className="mt-6 border-t border-border/60 pt-5">{locationBlock}</div>
             </div>
           </div>
         </aside>
