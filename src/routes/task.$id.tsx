@@ -11,6 +11,7 @@ import {
   ShieldCheck,
   ShieldAlert,
   Maximize2,
+  ExternalLink,
 } from "lucide-react";
 import { UserAvatar } from "@/components/user-avatar";
 import { Badge } from "@/components/ui/badge";
@@ -251,22 +252,37 @@ function TaskDetails() {
     </>
   );
 
+  // Само община/квартал, без точен адрес. Отваря Google Maps в нов раздел:
+  // без API ключ, без вграден iframe и без данни към Google, докато потребителят не кликне.
+  const locationText = formatLocation(task.location);
+  const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
+    `${locationText.replace(/^общ\.\s*/, "Община ")}, България`,
+  )}`;
+
   const locationBlock = (
     <>
       <div className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
         Локация
       </div>
-      <div className="relative mt-3 h-32 overflow-hidden rounded-2xl bg-muted ring-1 ring-border/60">
-        <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(15,23,42,0.06)_1px,transparent_1px),linear-gradient(0deg,rgba(15,23,42,0.06)_1px,transparent_1px)] bg-[size:24px_24px]" />
+      <div className="relative mt-3 h-32 overflow-hidden rounded-2xl bg-secondary ring-1 ring-border">
+        <div
+          aria-hidden="true"
+          className="absolute inset-0 text-foreground opacity-[0.08] bg-[linear-gradient(90deg,currentColor_1px,transparent_1px),linear-gradient(0deg,currentColor_1px,transparent_1px)] bg-[size:24px_24px]"
+        />
         <div className="absolute inset-0 grid place-items-center">
-          <div className="flex items-center gap-2 rounded-full bg-background/95 px-3 py-1.5 text-sm font-medium text-foreground shadow-md ring-1 ring-border/60 backdrop-blur">
+          <div className="flex items-center gap-2 rounded-full bg-card px-3 py-1.5 text-sm font-medium text-foreground shadow-md ring-1 ring-border">
             <span className="grid h-6 w-6 place-items-center rounded-full bg-primary text-primary-foreground">
               <MapPin className="h-3.5 w-3.5" />
             </span>
-            {formatLocation(task.location)}
+            {locationText}
           </div>
         </div>
       </div>
+      <Button asChild variant="outline" size="sm" className="mt-3 w-full gap-2">
+        <a href={mapsUrl} target="_blank" rel="noopener noreferrer">
+          <ExternalLink className="h-3.5 w-3.5" /> Виж в Google Maps
+        </a>
+      </Button>
     </>
   );
 
