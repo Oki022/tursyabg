@@ -264,25 +264,66 @@ function TaskDetails() {
       <div className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
         Локация
       </div>
-      <div className="relative mt-3 h-32 overflow-hidden rounded-2xl bg-secondary ring-1 ring-border">
-        <div
+      <a
+        href={mapsUrl}
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label={`Виж ${locationText} в Google Maps`}
+        className="group relative mt-3 block h-32 overflow-hidden rounded-2xl bg-secondary ring-1 ring-border transition hover:ring-primary/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+      >
+        {/* Стилизирана карта; цветовете идват от темата, затова работи и в светъл, и в тъмен режим. */}
+        <svg
           aria-hidden="true"
-          className="absolute inset-0 text-foreground opacity-[0.08] bg-[linear-gradient(90deg,currentColor_1px,transparent_1px),linear-gradient(0deg,currentColor_1px,transparent_1px)] bg-[size:24px_24px]"
-        />
+          viewBox="0 0 400 160"
+          preserveAspectRatio="xMidYMid slice"
+          className="absolute inset-0 h-full w-full"
+        >
+          <g className="text-foreground" fill="currentColor" opacity="0.05">
+            <rect x="10" y="10" width="72" height="46" rx="6" />
+            <rect x="16" y="86" width="58" height="58" rx="6" />
+            <rect x="118" y="8" width="62" height="40" rx="6" />
+            <rect x="122" y="112" width="60" height="40" rx="6" />
+            <rect x="214" y="100" width="64" height="48" rx="6" />
+            <rect x="306" y="10" width="80" height="40" rx="6" />
+            <rect x="314" y="84" width="74" height="62" rx="6" />
+          </g>
+          <ellipse cx="262" cy="36" rx="34" ry="20" fill="#22c55e" opacity="0.18" />
+          <path
+            d="M-10 132 C 60 112, 110 152, 180 130 S 300 102, 410 120"
+            fill="none"
+            stroke="#38bdf8"
+            strokeWidth="10"
+            strokeLinecap="round"
+            opacity="0.35"
+          />
+          <g className="text-foreground" fill="none" stroke="currentColor" strokeLinecap="round">
+            <path d="M-10 72 L 410 64" strokeWidth="8" opacity="0.16" />
+            <path d="M100 -10 L 108 170" strokeWidth="6" opacity="0.13" />
+            <path d="M292 -10 C 282 60, 302 110, 288 170" strokeWidth="6" opacity="0.13" />
+            <path d="M-10 32 L 180 36" strokeWidth="3" opacity="0.1" />
+            <path d="M200 104 L 410 100" strokeWidth="3" opacity="0.1" />
+            <path d="M30 170 L 58 72" strokeWidth="3" opacity="0.1" />
+            <path d="M186 -10 L 194 64" strokeWidth="3" opacity="0.1" />
+          </g>
+          <g className="text-primary" fill="currentColor" stroke="currentColor">
+            <circle cx="200" cy="80" r="48" opacity="0.1" stroke="none" />
+            <circle cx="200" cy="80" r="48" fill="none" strokeWidth="1.5" strokeDasharray="4 4" opacity="0.4" />
+          </g>
+        </svg>
+
         <div className="absolute inset-0 grid place-items-center">
-          <div className="flex items-center gap-2 rounded-full bg-card px-3 py-1.5 text-sm font-medium text-foreground shadow-md ring-1 ring-border">
+          <div className="flex items-center gap-2 rounded-full bg-card px-3 py-1.5 text-sm font-medium text-foreground shadow-md ring-1 ring-border transition-transform group-hover:scale-105">
             <span className="grid h-6 w-6 place-items-center rounded-full bg-primary text-primary-foreground">
               <MapPin className="h-3.5 w-3.5" />
             </span>
             {locationText}
           </div>
         </div>
-      </div>
-      <Button asChild variant="outline" size="sm" className="mt-3 w-full gap-2">
-        <a href={mapsUrl} target="_blank" rel="noopener noreferrer">
-          <ExternalLink className="h-3.5 w-3.5" /> Виж в Google Maps
-        </a>
-      </Button>
+
+        <span className="absolute right-2 top-2 flex items-center gap-1 rounded-full bg-card/90 px-2 py-0.5 text-[11px] font-medium text-muted-foreground ring-1 ring-border transition-colors group-hover:text-foreground">
+          Google Maps <ExternalLink className="h-3 w-3" />
+        </span>
+      </a>
     </>
   );
 
