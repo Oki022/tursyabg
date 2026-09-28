@@ -8,22 +8,47 @@ const supabase = createClient(
 );
 
 const PRO_ID = "32d544ca-d4ab-47c9-91ec-59d2d81d2587";
+// Тестовете отключват само задачи на тестовия клиент (+e2e1), никога на реални потребители.
+const CLIENT_ID = "215c05a5-b052-4b04-ade4-ae9bf0b94444";
+
+let taskId: string | null = null;
 
 test.beforeAll(async () => {
   await supabase.from("task_unlocks").delete().eq("user_id", PRO_ID);
+
+  const { data, error } = await supabase
+    .from("tasks")
+    .select("id")
+    .eq("user_id", CLIENT_ID)
+    .eq("status", "active")
+    .is("deleted_at", null)
+    .order("created_at", { ascending: false })
+    .limit(1);
+  if (error) throw error;
+  taskId = data?.[0]?.id ?? null;
+
+  if (taskId) {
+    // Изтриването на отключването не намалява брояча на задачата; нулираме го,
+    // иначе след няколко пускания лимитът от 5 изпълнители се запълва.
+    const { error: resetError } = await supabase
+      .from("tasks")
+      .update({ unlock_count: 0 })
+      .eq("id", taskId);
+    if (resetError) console.warn("unlock_count reset failed:", resetError.message);
+  }
 });
 
-async function openFirstTask(page: Page) {
-  await gotoApp(page, "/tasks");
-  await page.locator('a[href^="/task/"]').first().click();
+async function openClientTask(page: Page) {
+  await gotoApp(page, `/task/${taskId}`);
   await page.waitForURL(/\/task\//, { timeout: 15_000 });
 }
 
 test.describe("кредити и отключване", () => {
   test("картата за контакт показва състоянието си", async ({ browser }) => {
+    test.skip(!taskId, "няма активна задача на тестовия клиент (+e2e1)");
     const context = await browser.newContext({ storageState: PRO_AUTH });
     const page = await context.newPage();
-    await openFirstTask(page);
+    await openClientTask(page);
 
     const ownerAction = page.getByRole("button", { name: "Затвори" });
     const unlockButton = page.getByRole("button", { name: /Отключи контакта/ });
@@ -37,49 +62,16 @@ test.describe("кредити и отключване", () => {
   });
 
   test("отключване разкрива телефона", async ({ browser }) => {
+    test.skip(!taskId, "няма активна задача на тестовия клиент (+e2e1)");
     const context = await browser.newContext({ storageState: PRO_AUTH });
     const page = await context.newPage();
-    await gotoApp(page, "/tasks");
-
-    const links = page.locator('a[href^="/task/"]');
-    const count = await links.count();
-
-    if (count === 0) {
-      test.skip(true, "няма обяви в списъка");
-      await context.close();
-      return;
-    }
-
-    let foundExternal = false;
-    for (let i = 0; i < count; i++) {
-      const href = await links.nth(i).getAttribute("href");
-      await page.goto(href!);
-      await page.waitForURL(/\/task\//, { timeout: 15_000 });
-
-      const isOwn = await page
-        .getByRole("button", { name: "Затвори" })
-        .isVisible()
-        .catch(() => false);
-
-      if (!isOwn) {
-        foundExternal = true;
-        await page.waitForLoadState("networkidle");
-        break;
-      }
-
-      await gotoApp(page, "/tasks");
-    }
-
-    if (!foundExternal) {
-      test.skip(true, "всички обяви са собствени");
-      await context.close();
-      return;
-    }
+    await openClientTask(page);
+    await page.waitForLoadState("networkidle");
 
     const unlockButton = page.getByRole("button", { name: /Отключи контакта/ });
 
     if (!(await unlockButton.isVisible().catch(() => false))) {
-      test.skip(true, "контактът вече е отключен или кредитите не стигат");
+      test.skip(true, "кредитите не стигат или лимитът е запълнен");
       await context.close();
       return;
     }
