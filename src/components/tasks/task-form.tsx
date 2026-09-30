@@ -18,6 +18,7 @@ import {
   examplesFor,
   titleIssueBg,
 } from "@/lib/content-quality";
+import { useHydrated } from "@/hooks/use-hydrated";
 
 export type TaskFormValues = {
   title: string;
@@ -104,6 +105,8 @@ export function TaskForm({
   const [removed, setRemoved] = useState<string[]>([]);
   const [dragOver, setDragOver] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  // Бутонът чака hydration, иначе ранен клик изпраща обикновена HTML форма и данните се губят.
+  const hydrated = useHydrated();
 
   const keptExisting = existingImages.filter((i) => !removed.includes(i.id));
   const totalImages = keptExisting.length + photos.length;
@@ -405,7 +408,7 @@ export function TaskForm({
         <div className="text-xs text-muted-foreground">
           {footerNote ?? "С публикуването приемаш Условията за ползване."}
         </div>
-        <Button type="submit" size="lg" disabled={submitting || disabled} className="sm:px-8">
+        <Button type="submit" size="lg" disabled={!hydrated || submitting || disabled} className="sm:px-8">
           {submitting ? "Изчакай..." : submitLabel}
         </Button>
       </div>

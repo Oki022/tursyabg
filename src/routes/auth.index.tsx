@@ -13,6 +13,7 @@ import { Logo } from "@/components/Logo";
 import { Checkbox } from "@/components/ui/checkbox";
 import { seo } from "@/lib/seo";
 import { useWelcomeBonus } from "@/lib/settings-api";
+import { useHydrated } from "@/hooks/use-hydrated";
 
 type AuthSearch = { mode?: "login" | "register"; redirect?: string };
 
@@ -37,6 +38,9 @@ function AuthPage() {
   const navigate = useNavigate();
   const { login, loginSocial, register, resetPassword, resendConfirmation } = useAuth();
   const [busy, setBusy] = useState(false);
+  // Преди hydration формата е само HTML: клик би изпратил обикновена форма и
+  // би презаредил страницата, а входът би се загубил. Бутонът чака React.
+  const hydrated = useHydrated();
   const isRegister = mode === "register";
   const welcomeBonus = useWelcomeBonus().data ?? 0;
 
@@ -329,7 +333,7 @@ function AuthPage() {
             </label>
           )}
 
-          <Button type="submit" className="h-11 gap-2" disabled={busy || (isRegister && !acceptedTerms)}>
+          <Button type="submit" className="h-11 gap-2" disabled={!hydrated || busy || (isRegister && !acceptedTerms)}>
             {busy && <Loader2 className="h-4 w-4 animate-spin" />}
             {busy ? "Моля изчакай..." : isRegister ? "Създай профил" : "Вход"}
           </Button>
