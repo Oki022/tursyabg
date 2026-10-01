@@ -1,7 +1,7 @@
 trigger: none
 
 schedules:
-  - cron: "0 6 * * 1"
+  - cron: "0 6 * * *"        # Her gün 06:00 UTC
     displayName: Седмични E2E тестове
     branches:
       include:
