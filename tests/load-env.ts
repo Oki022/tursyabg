@@ -6,7 +6,7 @@ import fs from "node:fs";
 const FILE = ".env.test";
 if (fs.existsSync(FILE)) {
   dotenv.config({ path: FILE, override: true });
-} else if (!process.env.CI) {
+} else if (!process.env.CI && !process.env.TF_BUILD) {
   throw new Error(`${FILE} is missing. E2E tests must never run against the live project.`);
 }
 
