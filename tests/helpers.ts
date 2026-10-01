@@ -16,7 +16,7 @@ export const ADMIN_AUTH = "tests/.auth/admin.json";
 export async function dismissCookieBanner(page: Page) {
   const base = page.url().startsWith("http")
     ? page.url()
-    : process.env.PLAYWRIGHT_BASE_URL ?? "http://localhost:8080";
+    : process.env.PLAYWRIGHT_BASE_URL ?? "http://localhost:8081";
   const { hostname } = new URL(base);
   await page.context().addCookies([
     {

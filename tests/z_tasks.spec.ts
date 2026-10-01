@@ -1,29 +1,23 @@
 import { expect, test } from "@playwright/test";
 import { USER_AUTH } from "./helpers";
-import { createClient } from "@supabase/supabase-js";
+import { admin, CLIENT_EMAIL, userIdByEmail } from "./db";
 
-const BASE = "http://localhost:8080";
+const BASE = process.env.PLAYWRIGHT_BASE_URL || "http://localhost:8081";
 const TITLE = `Помощ с мебели ${Date.now()}`;
 const DESCRIPTION =
   "Трябват ми двама души за пренасяне на мебели, два големи шкафа и един диван.";
 
-const supabase = createClient(
-  process.env.VITE_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
-
-const USER_ID = "215c05a5-b052-4b04-ade4-ae9bf0b94444";
-
 test.afterAll(async () => {
-  await supabase
+  const userId = await userIdByEmail(CLIENT_EMAIL);
+  await admin
     .from("tasks")
     .delete()
-    .eq("user_id", USER_ID)
+    .eq("user_id", userId)
     .like("title", "Помощ с мебели%");
-  await supabase
+  await admin
     .from("profiles")
     .update({ free_tasks_used_this_month: 0 })
-    .eq("id", USER_ID);
+    .eq("id", userId);
 });
 
 test.describe("публикуване на работа", () => {

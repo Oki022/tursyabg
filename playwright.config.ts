@@ -1,7 +1,11 @@
-import dotenv from "dotenv";
-dotenv.config();
+import "./tests/load-env";
 
 import { defineConfig, devices } from "@playwright/test";
+
+// Tests use their own dev server on 8081, connected to the test project via .env.test.
+// The normal dev server on 8080 stays connected to the live project and is never reused here.
+const PORT = 8081;
+const BASE_URL = process.env.PLAYWRIGHT_BASE_URL || `http://localhost:${PORT}`;
 
 export default defineConfig({
   testDir: "./tests",
@@ -12,7 +16,7 @@ export default defineConfig({
   reporter: "html",
   globalSetup: "./tests/global-setup.ts",
   use: {
-    baseURL: process.env.PLAYWRIGHT_BASE_URL || "http://localhost:8080",
+    baseURL: BASE_URL,
     trace: "on-first-retry",
   },
   projects: [
@@ -30,8 +34,8 @@ export default defineConfig({
     },
   ],
   webServer: {
-    command: "npm run dev",
-    url: "http://localhost:8080",
+    command: `npx vite dev --port ${PORT} --strictPort`,
+    url: `http://localhost:${PORT}`,
     reuseExistingServer: !process.env.CI,
     timeout: 120 * 1000,
   },

@@ -42,3 +42,5 @@ playwright-report/
 tests/.auth/
 
 supabase/.temp/
+
+.env.test
