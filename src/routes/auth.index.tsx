@@ -7,7 +7,6 @@ import { Label } from "@/components/ui/label";
 import { useAuth } from "@/lib/auth";
 import { authErrorMessage, emailError, nameError, passwordError } from "@/lib/auth-errors";
 import { normalizeBgPhone, phoneError } from "@/lib/phone";
-import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { Logo } from "@/components/Logo";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -82,13 +81,6 @@ function AuthPage() {
         // При включено потвърждение на имейл signUp не връща сесия, затова
         // пращаме потребителя на /auth/verify вместо на формата за вход.
         const normalizedPhone = normalizeBgPhone(phone);
-        const { data: available } = await supabase.rpc("is_phone_available", { _phone: normalizedPhone });
-        if (available === false) {
-          toast.error("Този телефонен номер вече се използва от друг профил.", {
-            description: "Един номер може да е свързан само с един профил.",
-          });
-          return;
-        }
         const { needsConfirmation } = await register({
           name,
           email,
@@ -114,7 +106,11 @@ function AuthPage() {
       navigate({ to: redirect ?? "/" });
     } catch (err) {
       const raw = String((err as { message?: string })?.message ?? err).toLowerCase();
-      if (raw.includes("email not confirmed") || raw.includes("not confirmed")) {
+      if (raw.includes("phone_taken")) {
+        toast.error("Този телефонен номер вече се използва от друг профил.", {
+          description: "Един номер може да е свързан само с един профил.",
+        });
+      } else if (raw.includes("email not confirmed") || raw.includes("not confirmed")) {
         toast.error("Имейлът ти още не е потвърден.", {
           description: "Отвори писмото, което ти изпратихме, или поискай ново.",
           action: {

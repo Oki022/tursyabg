@@ -84,11 +84,11 @@ function initials(name: string) {
  * за потвърждение (по имейл адрес и по IP). При проблем с проверката не
  * блокираме потребителя.
  */
-async function throttleAuth(action: AuthGuardAction, email: string) {
+async function throttleAuth(action: AuthGuardAction, email: string, phone?: string) {
   try {
-    await guardAuthAttempt({ data: { action, email } });
+    await guardAuthAttempt({ data: { action, email, phone } });
   } catch (error) {
-    if (error instanceof Error && error.message.includes("RATE_LIMITED")) throw error;
+    if (error instanceof Error && /RATE_LIMITED|PHONE_TAKEN/.test(error.message)) throw error;
   }
 }
 
@@ -278,7 +278,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     // (Resend/Postmark), публичен маркетплейс се нуждае от верифицирани имейли срещу спам профили.
     // Когато го включиш, register ще върне needsConfirmation: true и потребителят
     // трябва да се насочи към /auth/verify?email=... (страницата вече е готова).
-    await throttleAuth("signup", email);
+    await throttleAuth("signup", email, phone);
     const { data, error } = await supabase.auth.signUp({
       email,
       password,
