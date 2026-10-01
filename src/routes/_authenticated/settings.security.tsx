@@ -33,6 +33,7 @@ import { CredentialsEditor } from "@/components/settings/credentials-editor";
 import { PhoneVerificationCard } from "@/components/settings/phone-verification-card";
 import { credentialError, type Credential } from "@/lib/credentials";
 import { toastError } from "@/lib/toast-error";
+import { useHydrated } from "@/hooks/use-hydrated";
 import {
   downloadJson,
   useDeactivateAccount,
@@ -63,6 +64,7 @@ export const Route = createFileRoute("/_authenticated/settings/security")({
 function SettingsSecurityPage() {
   const { user, logout, updateUser, changePassword, resetPassword } = useAuth();
   const navigate = useNavigate();
+  const hydrated = useHydrated();
 
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
@@ -405,7 +407,7 @@ function SettingsSecurityPage() {
           />
         </div>
 
-        <Button type="submit" disabled={saving || skills.isLoading} className="gap-2">
+        <Button type="submit" disabled={!hydrated || saving || skills.isLoading} className="gap-2">
           {saving && <Loader2 className="h-4 w-4 animate-spin" />}
           Запази промените
         </Button>

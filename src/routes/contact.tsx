@@ -14,6 +14,7 @@ import { sendContactMessage } from "@/services/contact";
 import { notifyContactMessage } from "@/lib/contact.functions";
 import { seo } from "@/lib/seo";
 import { BRAND_NAME } from "@/components/Logo";
+import { useHydrated } from "@/hooks/use-hydrated";
 
 const SUBJECTS = [
   "Проблем с задача",
@@ -37,6 +38,7 @@ export const Route = createFileRoute("/contact")({
 
 function ContactPage() {
   const { user } = useAuth();
+  const hydrated = useHydrated();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [subject, setSubject] = useState<string | undefined>(undefined);
@@ -154,7 +156,7 @@ function ContactPage() {
             <p className="text-xs text-muted-foreground">
               Не споделяй пароли или платежни данни в съобщението.
             </p>
-            <Button type="submit" size="lg" disabled={send.isPending} className="sm:px-8">
+            <Button type="submit" size="lg" disabled={!hydrated || send.isPending} className="sm:px-8">
               {send.isPending ? "Изпращане..." : "Изпрати съобщението"}
             </Button>
           </div>
