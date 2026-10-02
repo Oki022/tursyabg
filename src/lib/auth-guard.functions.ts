@@ -5,9 +5,14 @@ export type AuthGuardAction = "signup" | "login" | "reset" | "magiclink" | "rese
 
 const ACTIONS: AuthGuardAction[] = ["signup", "login", "reset", "magiclink", "resend"];
 
+/**
+ * The client IP as set by Vercel's edge. Vercel overwrites x-real-ip and
+ * x-forwarded-for, so visitors cannot fake them. cf-connecting-ip is NOT read:
+ * the site is not behind Cloudflare, so that header would come straight from
+ * the visitor and let them pick a new "IP" for every request.
+ */
 function clientIp(): string {
   const forwarded =
-    getRequestHeader("cf-connecting-ip") ??
     getRequestHeader("x-real-ip") ??
     getRequestHeader("x-forwarded-for") ??
     "";
