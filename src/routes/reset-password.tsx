@@ -144,7 +144,7 @@ function ResetPasswordPage() {
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder="ivan@example.com"
+                  placeholder="Твоят имейл"
                   className="h-10"
                 />
               </div>

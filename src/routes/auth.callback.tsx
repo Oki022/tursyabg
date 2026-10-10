@@ -126,7 +126,7 @@ function CallbackPage() {
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            placeholder="ivan@example.bg"
+            placeholder="Твоят имейл"
             className="h-11"
           />
           <Button onClick={resend} disabled={!email || sending} className="h-11 gap-2">

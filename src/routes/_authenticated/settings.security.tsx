@@ -337,7 +337,7 @@ function SettingsSecurityPage() {
               setName(e.target.value);
               setTouched(true);
             }}
-            placeholder="Иван Петров"
+            placeholder="Име и фамилия"
             className="h-11"
           />
           {nameMsg && <p className="text-xs text-destructive">{nameMsg}</p>}
@@ -369,7 +369,7 @@ function SettingsSecurityPage() {
                 setPhone(e.target.value);
                 setTouched(true);
               }}
-              placeholder="0888123456"
+              placeholder="08X XXX XXXX"
               className={`h-11 pl-9 ${phoneMsg ? "border-destructive focus-visible:ring-destructive" : ""}`}
             />
           </div>

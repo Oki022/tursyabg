@@ -210,7 +210,7 @@ function AuthPage() {
                     setName(e.target.value);
                     setTouched((t) => ({ ...t, name: true }));
                   }}
-                  placeholder="Иван Петров"
+                  placeholder="Име и фамилия"
                   aria-invalid={Boolean(nameMsg)}
                   className={`h-10 pl-9 ${nameMsg ? "border-destructive focus-visible:ring-destructive" : ""}`}
                 />
@@ -230,7 +230,7 @@ function AuthPage() {
                   setEmail(e.target.value);
                   setTouched((t) => ({ ...t, email: true }));
                 }}
-                placeholder="ivan@example.bg"
+                placeholder="Твоят имейл"
                 aria-invalid={Boolean(emailMsg)}
                 className={`h-10 pl-9 ${emailMsg ? "border-destructive focus-visible:ring-destructive" : ""}`}
               />
@@ -282,7 +282,7 @@ function AuthPage() {
                     setPhone(e.target.value);
                     setTouched((t) => ({ ...t, phone: true }));
                   }}
-                  placeholder="0888123456"
+                  placeholder="08X XXX XXXX"
                   aria-invalid={Boolean(phoneMsg)}
                   className={`h-10 pl-9 ${phoneMsg ? "border-destructive focus-visible:ring-destructive" : ""}`}
                 />
