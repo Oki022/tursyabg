@@ -13,8 +13,15 @@ export const Route = createFileRoute("/manifest.webmanifest")({
           lang: "bg",
           start_url: "/",
           display: "standalone",
-          background_color: "#0f172a",
-          theme_color: "#0f172a",
+          background_color: "#ffffff",
+          theme_color: "#ffffff",
+          icons: [
+            { src: "/android-chrome-192x192.png", sizes: "192x192", type: "image/png", purpose: "any" },
+            { src: "/android-chrome-512x512.png", sizes: "512x512", type: "image/png", purpose: "any" },
+            // Android crops these to a circle or squircle; the T sits inside the safe zone.
+            { src: "/maskable-192x192.png", sizes: "192x192", type: "image/png", purpose: "maskable" },
+            { src: "/maskable-512x512.png", sizes: "512x512", type: "image/png", purpose: "maskable" },
+          ],
         };
         return new Response(JSON.stringify(manifest, null, 2), {
           headers: {
