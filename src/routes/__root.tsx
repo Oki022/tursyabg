@@ -113,7 +113,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       {
         name: "description",
         content:
-          "Възложи работа или намери клиенти. Платформата, която свързва хора с майстори и изпълнители в България.",
+          "Публикувай задачата си безплатно. Телефонът ти виждат само до 5 майстори – без спам и без 20 обаждания. Ремонти, почистване, превоз и още.",
       },
       { property: "og:type", content: "website" },
       { property: "og:site_name", content: BRAND },
