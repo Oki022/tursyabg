@@ -1,3 +1,4 @@
+import { budgetParts, formatTaskBudget } from "@/lib/budget-range";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 import {
@@ -73,7 +74,7 @@ export const Route = createFileRoute("/task/$id")({
     const t = loaderData;
     const location = [t.city, t.neighborhood].filter(Boolean).join(", ");
     const cat = getCategory(t.category);
-    const budget = `${t.budget} €`;
+    const budget = formatTaskBudget(t.budget, t.budgetRange);
     const { meta, links } = seo({
       title: clampDescription(`${t.title}, ${location || "България"} | ${budget}`, 58),
       description: clampDescription(
@@ -99,8 +100,7 @@ export const Route = createFileRoute("/task/$id")({
           areaServed: { "@type": "City", name: t.city ?? "България", addressCountry: "BG" },
           offers: {
             "@type": "Offer",
-            price: t.budget,
-            priceCurrency: "EUR",
+            ...(t.budgetRange ? {} : { price: t.budget, priceCurrency: "EUR" }),
             availability: t.status === "active" ? "https://schema.org/InStock" : "https://schema.org/OutOfStock",
             validFrom: t.createdAt,
             validThrough: t.expiresAt,
@@ -200,7 +200,7 @@ function TaskDetails() {
         </h1>
         <p className="mt-2 text-sm text-muted-foreground">
           {getCategory(seoTask.category).name}
-          {seoLocation ? ` · ${seoLocation}` : ""} · {seoTask.budget} €
+          {seoLocation ? ` · ${seoLocation}` : ""} · {formatTaskBudget(seoTask.budget, seoTask.budgetRange)}
         </p>
         <h2 className="mt-8 text-lg font-semibold text-foreground">Описание</h2>
         <p className="mt-3 whitespace-pre-line break-words text-[15px] leading-relaxed text-foreground/90">
@@ -522,11 +522,18 @@ function TaskDetails() {
               Бюджет
             </div>
             <div className="mt-2 flex items-end justify-between gap-3">
-              <div className="text-4xl font-bold text-foreground">{task.budget} €</div>
+              <div className={`font-bold text-foreground ${task.budgetRange ? "text-3xl" : "text-4xl"}`}>
+                {budgetParts(task.budget, task.budgetRange).main}
+              </div>
               <span className="rounded-full bg-primary-soft px-3 py-1 text-xs font-semibold text-primary">
-                Фиксиран
+                {task.budgetRange ? "Договаряне" : "Фиксиран"}
               </span>
             </div>
+            {budgetParts(task.budget, task.budgetRange).hint && (
+              <div className="mt-1 text-sm text-muted-foreground">
+                {budgetParts(task.budget, task.budgetRange).hint}
+              </div>
+            )}
 
             <div className="mt-6 space-y-3">
               {isOwner && (

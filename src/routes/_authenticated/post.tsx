@@ -42,6 +42,7 @@ function PostPage() {
           category: source.data.category,
           description: source.data.description,
           budget: source.data.budget,
+          budgetRange: source.data.budgetRange ?? null,
           location: source.data.location,
         }
       : undefined;

@@ -1,3 +1,4 @@
+import { asBudgetRange, type BudgetRange } from "@/lib/budget-range";
 import {
   useInfiniteQuery,
   useMutation,
@@ -19,6 +20,7 @@ type Row = {
   description: string;
   category: string;
   budget: number;
+  budget_range?: string | null;
   city: string | null;
   neighborhood: string | null;
   status: TaskStatus;
@@ -37,7 +39,7 @@ type Row = {
 };
 
 const SELECT =
-  "id, title, description, category, budget, city, neighborhood, status, unlock_cost, created_at, bumped_at, status_changed_at, view_count, unlock_count, max_unlocks, user_id, admin_hidden_at, reposted_at, content_edited_at, task_images(image_url, sort_order)";
+  "id, title, description, category, budget, budget_range, city, neighborhood, status, unlock_cost, created_at, bumped_at, status_changed_at, view_count, unlock_count, max_unlocks, user_id, admin_hidden_at, reposted_at, content_edited_at, task_images(image_url, sort_order)";
 
 export function timeAgoBg(iso: string) {
   const diff = Date.now() - new Date(iso).getTime();
@@ -65,6 +67,7 @@ function mapRow(row: Row, signed: Record<string, string>, names: Record<string, 
     description: row.description,
     category: row.category,
     budget: Number(row.budget),
+    budgetRange: asBudgetRange(row.budget_range),
     location: [row.city, row.neighborhood].filter(Boolean).join(", "),
     postedAt: timeAgoBg(row.created_at),
     author: names[row.user_id] ?? FALLBACK_NAME,
@@ -103,6 +106,7 @@ type FeedRow = {
   description: string;
   category: string;
   budget: number;
+  budget_range: string | null;
   city: string | null;
   neighborhood: string | null;
   status: TaskStatus;
@@ -145,6 +149,7 @@ async function mapFeedRows(rows: FeedRow[]): Promise<Task[]> {
       description: row.description,
       category: row.category,
       budget: Number(row.budget),
+      budgetRange: asBudgetRange(row.budget_range),
       location: [row.city, row.neighborhood].filter(Boolean).join(", "),
       postedAt: timeAgoBg(row.bumped_at),
       author: row.author ?? FALLBACK_NAME,
@@ -344,6 +349,8 @@ export type CreateTaskInput = {
   description: string;
   category: string;
   budget: number;
+  /** "По договаряне" range; the database then sets `budget` itself. */
+  budgetRange: BudgetRange | null;
   location: string;
   files: File[];
   /** When reposting, the archived task whose approved photos carry over. */
@@ -415,6 +422,7 @@ export function useCreateTask() {
           description: input.description,
           category: input.category,
           budget: input.budget,
+          budget_range: input.budgetRange,
           city: city ?? null,
           neighborhood: neighborhood ?? null,
           status: "active",
@@ -497,6 +505,7 @@ export type UpdateTaskInput = {
   description: string;
   category: string;
   budget: number;
+  budgetRange: BudgetRange | null;
   location: string;
   files: File[];
   removedImageIds: string[];
@@ -527,6 +536,7 @@ export function useUpdateTask() {
         _description: input.description,
         _category: input.category,
         _budget: input.budget,
+        _budget_range: input.budgetRange,
         _city: city ?? null,
         _neighborhood: neighborhood ?? null,
       });

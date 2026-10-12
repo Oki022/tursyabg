@@ -1,3 +1,4 @@
+import type { BudgetRange } from "@/lib/budget-range";
 import { Wrench, Sparkles, Truck, Laptop, GraduationCap, Trees, PawPrint, Camera, HelpCircle, HeartPulse, Briefcase } from "lucide-react";
 
 export type Category = {
@@ -40,6 +41,8 @@ export type Task = {
   category: string;
   location: string;
   budget: number;
+  /** Set when the client chose "По договаряне"; `budget` then holds the range's representative value. */
+  budgetRange?: BudgetRange | null;
   description: string;
   postedAt: string;
   author: string;

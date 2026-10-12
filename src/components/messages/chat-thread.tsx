@@ -1,3 +1,4 @@
+import { formatTaskBudget } from "@/lib/budget-range";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Link, useNavigate } from "@tanstack/react-router";
 import { Send, ShieldAlert, Loader2, Flag, Trash2 } from "lucide-react";
@@ -210,7 +211,7 @@ export function ChatThread({ conversationId }: { conversationId: string }) {
               <div className="min-w-0 flex-1">
                 <p className="truncate text-sm font-semibold text-foreground">{conversation.taskTitle}</p>
                 <p className="truncate text-xs text-muted-foreground">
-                  {conversation.taskStateLabel ?? `${conversation.taskBudget} €`}
+                  {conversation.taskStateLabel ?? formatTaskBudget(conversation.taskBudget, conversation.taskBudgetRange)}
                 </p>
               </div>
             </Link>

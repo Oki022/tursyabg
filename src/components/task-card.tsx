@@ -1,3 +1,4 @@
+import { budgetParts } from "@/lib/budget-range";
 import { Link } from "@tanstack/react-router";
 import { MapPin, Clock } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
@@ -52,7 +53,15 @@ export function TaskCard({ task }: { task: Task }) {
         <h3 className="break-words text-[13px] font-medium leading-snug text-foreground line-clamp-2">
           {task.title}
         </h3>
-        <p className="text-sm font-bold text-primary md:text-base">{task.budget} €</p>
+        {(() => {
+          const b = budgetParts(task.budget, task.budgetRange);
+          return (
+            <p className="text-sm font-bold text-primary md:text-base">
+              {b.main}
+              {b.hint && <span className="block text-[11px] font-medium text-muted-foreground">{b.hint}</span>}
+            </p>
+          );
+        })()}
         <div className="mt-auto flex min-w-0 flex-col gap-0.5 pt-1 text-[11px] text-muted-foreground">
           <span className="flex min-w-0 items-center gap-1">
             <MapPin className="h-3 w-3 shrink-0" />

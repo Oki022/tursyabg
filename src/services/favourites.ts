@@ -1,3 +1,4 @@
+import { asBudgetRange } from "@/lib/budget-range";
 import { supabase } from "@/integrations/supabase/client";
 import { type Task, type TaskStatus } from "@/lib/mock-data";
 import { resolveImageUrls } from "@/services/storage";
@@ -26,6 +27,7 @@ type Row = {
     description: string;
     category: string;
     budget: number;
+    budget_range?: string | null;
     city: string | null;
     neighborhood: string | null;
     status: TaskStatus;
@@ -38,7 +40,7 @@ type Row = {
 };
 
 const SELECT =
-  "id, task_id, created_at, tasks(id, title, description, category, budget, city, neighborhood, status, unlock_cost, created_at, user_id, deleted_at, task_images(image_url, sort_order))";
+  "id, task_id, created_at, tasks(id, title, description, category, budget, budget_range, city, neighborhood, status, unlock_cost, created_at, user_id, deleted_at, task_images(image_url, sort_order))";
 
 /** IDs of every task the signed-in user has saved. */
 export async function getFavouriteIds(): Promise<string[]> {
@@ -90,6 +92,7 @@ export async function getFavouritesPage(cursor?: string): Promise<{
         description: t.description,
         category: t.category,
         budget: Number(t.budget),
+        budgetRange: asBudgetRange(t.budget_range),
         location: [t.city, t.neighborhood].filter(Boolean).join(", "),
         postedAt: timeAgoBg(t.created_at),
         author: names[t.user_id] ?? FALLBACK_NAME,

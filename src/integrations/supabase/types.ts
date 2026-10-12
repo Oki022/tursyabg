@@ -1649,6 +1649,7 @@ export type Database = {
           admin_hidden_at: string | null
           assigned_at: string | null
           budget: number
+          budget_range: string | null
           bumped_at: string
           category: string
           category_corrected_at: string | null
@@ -1683,6 +1684,7 @@ export type Database = {
           admin_hidden_at?: string | null
           assigned_at?: string | null
           budget?: number
+          budget_range?: string | null
           bumped_at?: string
           category: string
           category_corrected_at?: string | null
@@ -1717,6 +1719,7 @@ export type Database = {
           admin_hidden_at?: string | null
           assigned_at?: string | null
           budget?: number
+          budget_range?: string | null
           bumped_at?: string
           category?: string
           category_corrected_at?: string | null
@@ -2116,6 +2119,7 @@ export type Database = {
           author_rating: number
           author_review_count: number
           budget: number
+          budget_range: string | null
           bumped_at: string
           category: string
           city: string
@@ -2391,6 +2395,7 @@ export type Database = {
       update_own_task: {
         Args: {
           _budget: number
+          _budget_range?: string | null
           _category: string
           _city: string
           _description: string

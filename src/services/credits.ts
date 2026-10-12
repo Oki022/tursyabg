@@ -1,3 +1,4 @@
+import { asBudgetRange, type BudgetRange } from "@/lib/budget-range";
 import { supabase } from "@/integrations/supabase/client";
 import { fetchPublicNames, FALLBACK_NAME } from "@/lib/public-profiles";
 
@@ -28,6 +29,7 @@ export type UnlockedTask = {
   expiresAt: string;
   title: string;
   budget: number;
+  budgetRange: BudgetRange | null;
   category: string;
   ownerName: string;
   phone: string | null;
@@ -159,7 +161,7 @@ export async function getMyUnlockedTasks(): Promise<UnlockedTask[]> {
   const { data, error } = await supabase
     .from("task_unlocks")
     .select(
-      "id, task_id, credits_spent, unlocked_at, expires_at, tasks(title, budget, category, status, deleted_at, user_id)",
+      "id, task_id, credits_spent, unlocked_at, expires_at, tasks(title, budget, budget_range, category, status, deleted_at, user_id)",
     )
     .order("unlocked_at", { ascending: false });
   if (error) throw error;
@@ -172,6 +174,7 @@ export async function getMyUnlockedTasks(): Promise<UnlockedTask[]> {
     tasks: {
       title: string;
       budget: number;
+      budget_range?: string | null;
       category: string;
       status: string;
       deleted_at: string | null;
@@ -197,6 +200,7 @@ export async function getMyUnlockedTasks(): Promise<UnlockedTask[]> {
     expiresAt: r.expires_at,
     title: r.tasks?.title ?? "Задача",
     budget: Number(r.tasks?.budget ?? 0),
+    budgetRange: asBudgetRange(r.tasks?.budget_range),
     category: r.tasks?.category ?? "",
     ownerName: (r.tasks?.user_id ? ownerNames[r.tasks.user_id] : null) ?? FALLBACK_NAME,
     phone: r.tasks?.user_id ? (phones[r.tasks.user_id] ?? null) : null,

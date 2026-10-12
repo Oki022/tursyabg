@@ -1,3 +1,4 @@
+import { asBudgetRange, type BudgetRange } from "@/lib/budget-range";
 import { supabase } from "@/integrations/supabase/client";
 
 export type TaskSeo = {
@@ -6,6 +7,7 @@ export type TaskSeo = {
   description: string;
   category: string;
   budget: number;
+  budgetRange: BudgetRange | null;
   city: string | null;
   neighborhood: string | null;
   status: string;
@@ -19,7 +21,7 @@ export async function fetchTaskSeo(id: string): Promise<TaskSeo | null> {
   try {
     const { data } = await supabase
       .from("tasks")
-      .select("id, title, description, category, budget, city, neighborhood, status, created_at, task_images(image_url, sort_order)")
+      .select("id, title, description, category, budget, budget_range, city, neighborhood, status, created_at, task_images(image_url, sort_order)")
       .eq("id", id)
       .maybeSingle();
     if (!data) return null;
@@ -32,6 +34,7 @@ export async function fetchTaskSeo(id: string): Promise<TaskSeo | null> {
       description: row.description,
       category: row.category,
       budget: Number(row.budget),
+      budgetRange: asBudgetRange(row.budget_range),
       city: row.city,
       neighborhood: row.neighborhood,
       status: row.status,

@@ -1,3 +1,4 @@
+import { formatTaskBudget } from "@/lib/budget-range";
 import { AdminUserLink } from "@/components/admin/user-link";
 import { useMemo, useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
@@ -249,7 +250,7 @@ function AdminTasks() {
                     )}
                   </div>
                   <div className="mt-1 text-xs text-muted-foreground">
-                    <AdminUserLink id={t.userId} name={t.authorName} /> · {t.budget} € · {[t.city, t.neighborhood].filter(Boolean).join(", ") || "няма"} · {formatDateBg(t.createdAt)}
+                    <AdminUserLink id={t.userId} name={t.authorName} /> · {formatTaskBudget(t.budget, t.budgetRange)} · {[t.city, t.neighborhood].filter(Boolean).join(", ") || "няма"} · {formatDateBg(t.createdAt)}
                   </div>
                   <p className="mt-2 whitespace-pre-line text-sm text-foreground/90">{t.description}</p>
                   {t.images.length > 1 && (

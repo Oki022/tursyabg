@@ -75,6 +75,7 @@ function EditTaskPage() {
           category: task.category,
           description: task.description,
           budget: task.budget,
+          budgetRange: task.budgetRange ?? null,
           location: task.location,
         }}
         existingImages={images.map((i) => ({ id: i.id, url: i.url }))}
@@ -91,6 +92,7 @@ function EditTaskPage() {
               description: values.description,
               category: values.category,
               budget: values.budget,
+              budgetRange: values.budgetRange,
               location: values.location,
               files,
               removedImageIds,

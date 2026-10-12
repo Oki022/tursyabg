@@ -19,12 +19,15 @@ import {
   titleIssueBg,
 } from "@/lib/content-quality";
 import { useHydrated } from "@/hooks/use-hydrated";
+import { BUDGET_RANGES, budgetForRange, type BudgetRange } from "@/lib/budget-range";
 
 export type TaskFormValues = {
   title: string;
   category: string;
   description: string;
   budget: number;
+  /** "По договаряне" range, or null for an exact amount. */
+  budgetRange: BudgetRange | null;
   location: string;
 };
 
@@ -98,7 +101,11 @@ export function TaskForm({
   const [title, setTitle] = useState(initial?.title ?? "");
   const [category, setCategory] = useState<string | undefined>(initial?.category);
   const [description, setDescription] = useState(initial?.description ?? "");
-  const [budget, setBudget] = useState(initial?.budget != null ? String(initial.budget) : "");
+  const [budgetRange, setBudgetRange] = useState<BudgetRange | null>(initial?.budgetRange ?? null);
+  const [budgetMode, setBudgetMode] = useState<"exact" | "range">(initial?.budgetRange ? "range" : "exact");
+  const [budget, setBudget] = useState(
+    initial?.budget != null && !initial?.budgetRange ? String(initial.budget) : "",
+  );
   const [location, setLocation] = useState<string | undefined>(initial?.location || undefined);
   const [manuallyTouched, setManuallyTouched] = useState(mode === "edit");
   const [photos, setPhotos] = useState<{ id: string; url: string; name: string; file: File }[]>([]);
@@ -119,7 +126,8 @@ export function TaskForm({
   const descriptionHint = debouncedDescription.trim()
     ? descriptionIssueBg(debouncedDescription, title)
     : null;
-  const budgetHint = debouncedBudget.trim() ? budgetIssueBg(Number(debouncedBudget)) : null;
+  const budgetHint =
+    budgetMode === "exact" && debouncedBudget.trim() ? budgetIssueBg(Number(debouncedBudget)) : null;
 
   const addFiles = (files: FileList | File[]) => {
     const arr = Array.from(files).filter((f) => f.type.startsWith("image/"));
@@ -157,23 +165,34 @@ export function TaskForm({
         () => form.querySelector("[data-field-hint]")?.scrollIntoView({ behavior: "smooth", block: "center" }),
         500,
       );
-    if (!title || !category || !description || !budget || !location) {
-      onError("Моля, попълни всички полета");
+    const isRange = budgetMode === "range";
+    if (!title || !category || !description || !location || (isRange ? !budgetRange : !budget)) {
+      onError(isRange && !budgetRange ? "Избери ориентировъчен бюджет." : "Моля, попълни всички полета");
       return;
     }
-    const budgetValue = Number(budget) || 0;
+    const budgetValue = isRange && budgetRange ? budgetForRange(budgetRange) : Number(budget) || 0;
     if (minBudget != null && budgetValue < minBudget) {
       onError(`Бюджетът не може да бъде под ${minBudget} €.`);
       return;
     }
-    const problem = titleIssueBg(title) ?? descriptionIssueBg(description, title) ?? budgetIssueBg(budgetValue);
+    const problem =
+      titleIssueBg(title) ??
+      descriptionIssueBg(description, title) ??
+      (isRange ? null : budgetIssueBg(budgetValue));
     if (problem) {
       onError(problem);
       scrollToHint();
       return;
     }
     await onSubmit({
-      values: { title, category, description, budget: budgetValue, location },
+      values: {
+        title,
+        category,
+        description,
+        budget: budgetValue,
+        budgetRange: isRange ? budgetRange : null,
+        location,
+      },
       files: photos.map((p) => p.file),
       removedImageIds: removed,
     });
@@ -371,21 +390,77 @@ export function TaskForm({
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="budget">Бюджет (€)</Label>
-        <div className="relative">
-          <Input
-            id="budget"
-            type="number"
-            min={minBudget ?? 0}
-            placeholder="Напр. 500"
-            value={budget}
-            onChange={(e) => setBudget(e.target.value)}
-            className="h-11 pr-10"
-          />
-          <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">
-            €
-          </span>
+        <Label htmlFor={budgetMode === "exact" ? "budget" : undefined}>Бюджет</Label>
+        <div role="radiogroup" aria-label="Вид бюджет" className="grid grid-cols-2 gap-1 rounded-xl bg-secondary/60 p-1">
+          {(
+            [
+              { id: "exact", label: "Точна сума" },
+              { id: "range", label: "По договаряне" },
+            ] as const
+          ).map((opt) => (
+            <button
+              key={opt.id}
+              type="button"
+              role="radio"
+              aria-checked={budgetMode === opt.id}
+              onClick={() => setBudgetMode(opt.id)}
+              className={`h-9 rounded-lg text-sm font-medium transition-colors ${
+                budgetMode === opt.id
+                  ? "bg-background text-foreground shadow-sm"
+                  : "text-muted-foreground hover:text-foreground"
+              }`}
+            >
+              {opt.label}
+            </button>
+          ))}
         </div>
+
+        {budgetMode === "exact" ? (
+          <div className="relative">
+            <Input
+              id="budget"
+              aria-label="Бюджет (€)"
+              type="number"
+              min={minBudget ?? 0}
+              placeholder="Напр. 500"
+              value={budget}
+              onChange={(e) => setBudget(e.target.value)}
+              className="h-11 pr-10"
+            />
+            <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">
+              €
+            </span>
+          </div>
+        ) : (
+          <>
+            <div role="radiogroup" aria-label="Ориентировъчен бюджет" className="flex flex-wrap gap-2">
+              {BUDGET_RANGES.map((r) => {
+                const blocked = minBudget != null && r.value < minBudget;
+                const active = budgetRange === r.id;
+                return (
+                  <button
+                    key={r.id}
+                    type="button"
+                    role="radio"
+                    aria-checked={active}
+                    disabled={blocked}
+                    onClick={() => setBudgetRange(r.id)}
+                    className={`rounded-full border px-3.5 py-2 text-sm font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-40 ${
+                      active
+                        ? "border-primary bg-primary/10 text-primary"
+                        : "border-border text-foreground hover:border-primary/50"
+                    }`}
+                  >
+                    {r.label}
+                  </button>
+                );
+              })}
+            </div>
+            <p className="text-xs text-muted-foreground">
+              Майсторите ще видят ориентировъчния бюджет. Цената се уточнява с избрания майстор.
+            </p>
+          </>
+        )}
         {budgetHint && <FieldHint message={budgetHint} />}
         {minBudget != null && (
           <p className="flex items-start gap-1.5 rounded-xl bg-secondary/60 px-3 py-2 text-xs text-muted-foreground">

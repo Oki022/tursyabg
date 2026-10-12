@@ -1,3 +1,4 @@
+import { formatTaskBudget } from "@/lib/budget-range";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { KeyRound, Phone, MapPin } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -63,7 +64,7 @@ function UnlockedPage() {
                       {cat.name}
                     </Badge>
                     <span className="inline-flex items-center gap-1">
-                      <MapPin className="h-3.5 w-3.5" /> {u.budget} €
+                      <MapPin className="h-3.5 w-3.5" /> {formatTaskBudget(u.budget, u.budgetRange)}
                     </span>
                     <span>
                       Достъп до{" "}

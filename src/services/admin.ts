@@ -1,3 +1,4 @@
+import { asBudgetRange, type BudgetRange } from "@/lib/budget-range";
 import { supabase } from "@/integrations/supabase/client";
 import { getImageUrls } from "@/services/storage";
 
@@ -193,6 +194,7 @@ export type AdminTask = {
   category: string;
   status: string;
   budget: number;
+  budgetRange: BudgetRange | null;
   city: string | null;
   neighborhood: string | null;
   createdAt: string;
@@ -214,7 +216,7 @@ export async function getAdminTasks(filters: AdminTaskFilters): Promise<AdminTas
   let query = supabase
     .from("tasks")
     .select(
-      "id, title, description, category, status, budget, city, neighborhood, created_at, user_id, profiles(full_name), task_images(image_url, sort_order)",
+      "id, title, description, category, status, budget, budget_range, city, neighborhood, created_at, user_id, profiles(full_name), task_images(image_url, sort_order)",
     )
     .order("created_at", { ascending: false })
     .limit(200);
@@ -236,6 +238,7 @@ export async function getAdminTasks(filters: AdminTaskFilters): Promise<AdminTas
     category: string;
     status: string;
     budget: number;
+    budget_range?: string | null;
     city: string | null;
     neighborhood: string | null;
     created_at: string;
@@ -256,6 +259,7 @@ export async function getAdminTasks(filters: AdminTaskFilters): Promise<AdminTas
       category: r.category,
       status: r.status,
       budget: Number(r.budget),
+      budgetRange: asBudgetRange(r.budget_range),
       city: r.city,
       neighborhood: r.neighborhood,
       createdAt: r.created_at,

@@ -1,3 +1,4 @@
+import { asBudgetRange, type BudgetRange } from "@/lib/budget-range";
 import { supabase } from "@/integrations/supabase/client";
 import { resolveImageUrls } from "@/services/storage";
 
@@ -19,6 +20,7 @@ export type ConversationSummary = {
   taskId: string;
   taskTitle: string;
   taskBudget: number;
+  taskBudgetRange: BudgetRange | null;
   /** Signed URL of the task's first image, or null when it has none. */
   taskImage: string | null;
   taskCategory: string | null;
@@ -43,6 +45,7 @@ type ConversationRow = {
     id: string;
     title: string;
     budget: number;
+    budget_range?: string | null;
     category: string;
     status?: string | null;
     expires_at?: string | null;
@@ -52,7 +55,7 @@ type ConversationRow = {
 };
 
 const CONVERSATION_SELECT =
-  "id, task_id, participant_a, participant_b, last_message_at, tasks(id, title, budget, category, status, expires_at, deleted_at, task_images(image_url, sort_order))";
+  "id, task_id, participant_a, participant_b, last_message_at, tasks(id, title, budget, budget_range, category, status, expires_at, deleted_at, task_images(image_url, sort_order))";
 
 /**
  * Кратък етикет за състоянието на задачата, или null когато е активна.
@@ -154,6 +157,7 @@ export async function getConversations(
       taskId: r.task_id,
       taskTitle: r.tasks?.title ?? "Задача",
       taskBudget: Number(r.tasks?.budget ?? 0),
+      taskBudgetRange: asBudgetRange(r.tasks?.budget_range),
       taskImage: (firstPath ? imageMap[firstPath] : undefined) ?? null,
       taskCategory: r.tasks?.category ?? null,
       taskDeleted: !r.tasks || Boolean(r.tasks.deleted_at),
@@ -201,6 +205,7 @@ export async function getConversation(conversationId: string): Promise<Conversat
     taskId: row.task_id,
     taskTitle: row.tasks?.title ?? "Задача",
     taskBudget: Number(row.tasks?.budget ?? 0),
+    taskBudgetRange: asBudgetRange(row.tasks?.budget_range),
     taskImage: (firstPath ? imageMap[firstPath] : undefined) ?? null,
     taskCategory: row.tasks?.category ?? null,
     taskDeleted: !row.tasks || Boolean(row.tasks.deleted_at),
