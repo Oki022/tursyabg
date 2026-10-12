@@ -378,7 +378,7 @@ function SettingsSecurityPage() {
           ) : (
             <p className="flex items-center gap-1.5 text-xs text-muted-foreground">
               <ShieldCheck className="h-3.5 w-3.5 text-primary" />
-              Номерът е скрит и се показва само на майстор, отключил контакта с кредити.
+              Номерът е скрит и се показва само на майстор, отключил контакта с точки.
             </p>
           )}
         </div>
@@ -491,7 +491,7 @@ function SettingsSecurityPage() {
           <h2 className="text-lg font-semibold text-foreground">Моите данни</h2>
         </div>
         <p className="mt-2 text-sm text-muted-foreground">
-          Изтегли копие на профила си, задачите, отзивите и историята на кредитите във формат JSON.
+          Изтегли копие на профила си, задачите, отзивите и историята на точките във формат JSON.
         </p>
         <Button
           variant="outline"
@@ -525,7 +525,7 @@ function SettingsSecurityPage() {
               <p className="text-sm font-medium text-foreground">Деактивирай профила</p>
               <p className="text-xs text-muted-foreground">
                 Активните ти задачи се скриват от каталога, никой не може да отключва контакта ти и
-                няма да можеш да публикуваш или да пишеш съобщения. Отзивите, договорките и кредитите
+                няма да можеш да публикуваш или да пишеш съобщения. Отзивите, договорките и точките
                 ти се запазват. Можеш да активираш профила при следващо влизане.
               </p>
             </div>

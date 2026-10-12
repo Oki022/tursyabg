@@ -64,17 +64,17 @@ function SettingsBillingPage() {
   return (
     <SettingsPageShell
       title="Баланс и плащания"
-      description="Виж кредитите си, купувай пакети и следи всички движения по сметката."
+      description="Виж точките си, купувай пакети и следи всички движения по сметката."
     >
       <div className="rounded-2xl border border-border/60 bg-card p-5 shadow-sm md:p-6">
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div className="min-w-0">
-            <p className="text-sm text-muted-foreground">Наличност кредити</p>
+            <p className="text-sm text-muted-foreground">Наличност точки</p>
             <p className="mt-1 text-3xl font-bold tracking-tight text-foreground">
               {balanceQuery.isLoading ? "няма" : creditsLabel(balance)}
             </p>
             <p className="mt-1 text-xs text-muted-foreground">
-              Публикуването на задачи е безплатно. Кредитите се използват за отключване на контакти.
+              Публикуването на задачи е безплатно. Точките се използват за отключване на контакти.
             </p>
           </div>
           <Button asChild variant="outline" className="gap-2">
@@ -89,14 +89,14 @@ function SettingsBillingPage() {
       <div className="rounded-2xl border border-border/60 bg-card p-5 shadow-sm md:p-6">
         <div className="flex items-center gap-2">
           <Package className="h-4 w-4 text-primary" />
-          <h2 className="text-lg font-semibold text-foreground">Пакети кредити</h2>
+          <h2 className="text-lg font-semibold text-foreground">Пакети точки</h2>
         </div>
         <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
           {(packagesQuery.data ?? []).map((p) => (
             <div key={p.id} className="relative rounded-xl border border-border bg-background p-4">
               {p.credits === 150 && p.priceEur === 29.99 && (
                 <Badge className="absolute -top-2 right-3 px-2 py-0.5 text-[10px]">
-                  Най-изгодно
+                  Най-популярен
                 </Badge>
               )}
               <p className="text-sm font-semibold text-foreground">{p.name}</p>
@@ -122,7 +122,7 @@ function SettingsBillingPage() {
           </Link>{" "}
           и{" "}
           <Link to="/refund-policy" className="underline hover:text-foreground">
-            Политиката за връщане на кредити
+            Политиката за връщане на точки
           </Link>
           .
         </p>

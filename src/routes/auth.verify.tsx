@@ -78,7 +78,7 @@ function VerifyPage() {
         </p>
 
         <p className="mt-4 rounded-xl border border-emerald-300/60 bg-emerald-50 px-3 py-2.5 text-sm font-medium text-emerald-900">
-          Веднага след потвърждението те чакат безплатни кредити за първите ти отключвания.
+          Веднага след потвърждението те чакат безплатни точки за първите ти отключвания.
         </p>
 
         <div className="mt-6 rounded-xl border border-border/60 bg-background p-4 text-left text-sm text-muted-foreground">

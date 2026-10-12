@@ -593,7 +593,7 @@ export async function getAuditLog(filters: { admin: string; actionType: string }
 export const ACTION_TYPE_BG: Record<string, string> = {
   refund_approved: "Одобрено възстановяване",
   refund_rejected: "Отказано възстановяване",
-  credits_adjusted: "Корекция на кредити",
+  credits_adjusted: "Корекция на точки",
   user_banned: "Блокиран потребител",
   user_unbanned: "Отблокиран потребител",
   role_granted: "Дадена роля",

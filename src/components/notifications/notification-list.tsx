@@ -110,7 +110,7 @@ export function NotificationList({
         </div>
         <p className="text-sm font-semibold text-foreground">Няма известия</p>
         <p className="text-xs text-muted-foreground">
-          Тук ще виждаш новини за задачите, съобщенията и кредитите си.
+          Тук ще виждаш новини за задачите, съобщенията и точките си.
         </p>
       </div>
     );

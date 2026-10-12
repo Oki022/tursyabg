@@ -88,7 +88,7 @@ test.describe("кредити и отключване", () => {
 
     const ownerAction = page.getByRole("button", { name: "Затвори" });
     const unlockButton = page.getByRole("button", { name: /Отключи контакта/ });
-    const buyCredits = page.getByRole("link", { name: "Купи кредити" });
+    const buyCredits = page.getByRole("link", { name: "Купи точки" });
     const callButton = page.getByRole("link", { name: /Обади се/ });
 
     await expect(
@@ -105,7 +105,7 @@ test.describe("кредити и отключване", () => {
 
     const unlockButton = page.getByRole("button", { name: /Отключи контакта/ });
     await expect(unlockButton).toBeVisible({ timeout: 15_000 });
-    await expect(unlockButton).toContainText(/кредита/);
+    await expect(unlockButton).toContainText(/точки/);
     await unlockButton.click();
 
     await expect(

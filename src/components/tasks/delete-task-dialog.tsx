@@ -54,8 +54,8 @@ export function DeleteTaskDialog({
       toast.success("Задачата е изтрита.", {
         description:
           res.refundedUsers > 0
-            ? `Върнахме ${res.refundedCredits} кредита на ${res.refundedUsers} майстор(а).`
-            : "Няма майстори за възстановяване на кредити.",
+            ? `Върнахме ${res.refundedCredits} точки на ${res.refundedUsers} майстор(а).`
+            : "Няма майстори за възстановяване на точки.",
       });
       if (redirectTo === "profile") void navigate({ to: "/profile" });
     } catch (err) {
@@ -85,7 +85,7 @@ export function DeleteTaskDialog({
                 <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" />
                 <span>
                   {unlockers} майстор(а) вече платиха за контакта ти. При изтриване автоматично им
-                  връщаме общо {credits} кредита и ги уведомяваме.
+                  връщаме общо {credits} точки и ги уведомяваме.
                 </span>
               </div>
             )}

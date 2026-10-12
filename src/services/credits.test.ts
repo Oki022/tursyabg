@@ -56,12 +56,12 @@ describe("formatEur", () => {
 
 describe("creditsLabel", () => {
   it("използва единствено число само за 1", () => {
-    expect(creditsLabel(1)).toMatch(/^1 кредит$/);
+    expect(creditsLabel(1)).toMatch(/^1 точка$/);
   });
 
   it("използва множествено число за всичко останало", () => {
-    expect(creditsLabel(0)).toMatch(/кредита$/);
-    expect(creditsLabel(2)).toMatch(/кредита$/);
-    expect(creditsLabel(80)).toMatch(/кредита$/);
+    expect(creditsLabel(0)).toMatch(/точки$/);
+    expect(creditsLabel(2)).toMatch(/точки$/);
+    expect(creditsLabel(80)).toMatch(/точки$/);
   });
 });

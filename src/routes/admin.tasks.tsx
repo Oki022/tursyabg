@@ -59,7 +59,7 @@ const PAGE_SIZE = 10;
 
 /** Deletion always requires an explicit reason; only `fraud` triggers automatic refunds. */
 const DELETE_REASONS: { key: string; label: string; fraudulent: boolean }[] = [
-  { key: "fraud", label: "Измамна задача (кредитите се връщат)", fraudulent: true },
+  { key: "fraud", label: "Измамна задача (точките се връщат)", fraudulent: true },
   { key: "spam", label: "Спам", fraudulent: false },
   { key: "inappropriate", label: "Неподходящо съдържание", fraudulent: false },
   { key: "duplicate", label: "Дублирана задача", fraudulent: false },
@@ -122,7 +122,7 @@ function AdminTasks() {
     onSuccess: (res) => {
       toast.success(
         res.refundedUsers > 0
-          ? `Задачата е изтрита. Върнати са ${res.refundedCredits} кредита на ${res.refundedUsers} потребители.`
+          ? `Задачата е изтрита. Върнати са ${res.refundedCredits} точки на ${res.refundedUsers} потребители.`
           : "Задачата е изтрита.",
       );
       setDeleteTarget(null);
@@ -355,16 +355,16 @@ function AdminTasks() {
           />
           <div className="rounded-md border border-border bg-muted/60 px-3 py-2 text-sm text-foreground">
             Контактът е отключен от <strong>{preview.data?.unlockers ?? 0}</strong> потребители
-            {" "}(общо <strong>{preview.data?.credits ?? 0}</strong> кредита).
+            {" "}(общо <strong>{preview.data?.credits ?? 0}</strong> точки).
           </div>
           {fraudulent ? (
             <div className="rounded-md border border-amber-300 bg-amber-50 px-3 py-2 text-sm text-amber-900">
-              Задачата ще бъде премахната като измамна: {preview.data?.credits ?? 0} кредита ще бъдат върнати
+              Задачата ще бъде премахната като измамна: {preview.data?.credits ?? 0} точки ще бъдат върнати
               автоматично на {preview.data?.unlockers ?? 0} потребители и те ще получат известие.
             </div>
           ) : (
             <div className="rounded-md border border-border px-3 py-2 text-xs text-muted-foreground">
-              При тази причина кредити не се връщат. Ако задачата е измамна, избери „Измамна задача“.
+              При тази причина точки не се връщат. Ако задачата е измамна, избери „Измамна задача“.
             </div>
           )}
           <DialogFooter>
@@ -375,7 +375,7 @@ function AdminTasks() {
               disabled={!deleteReasonKey || mDelete.isPending}
               onClick={() => mDelete.mutate()}
             >
-              {fraudulent ? "Изтрий и върни кредитите" : "Изтрий"}
+              {fraudulent ? "Изтрий и върни точките" : "Изтрий"}
             </Button>
           </DialogFooter>
         </DialogContent>

@@ -94,7 +94,7 @@ function AuthPage() {
         toast.success(`Добре дошъл, ${name.split(" ")[0]}!`, {
           description:
             welcomeBonus > 0
-              ? `Профилът ти е готов и получи ${welcomeBonus} безплатни кредита. Публикуването на задачи е безплатно.`
+              ? `Профилът ти е готов и получи ${welcomeBonus} безплатни точки. Публикуването на задачи е безплатно.`
               : "Профилът ти е готов. Публикуването на задачи е безплатно.",
         });
         navigate({ to: redirect ?? "/" });
@@ -193,7 +193,7 @@ function AuthPage() {
         {isRegister && welcomeBonus > 0 && (
           <p className="mb-4 flex items-start gap-2 rounded-xl border border-emerald-300/60 bg-emerald-50 px-3 py-2.5 text-sm font-medium text-emerald-900">
             <Gift className="mt-0.5 h-4 w-4 shrink-0" />
-            Получи {welcomeBonus} безплатни кредита при регистрация и отключи първите контакти, без да плащаш.
+            Получи {welcomeBonus} безплатни точки при регистрация и отключи първите контакти, без да плащаш.
           </p>
         )}
 
@@ -291,7 +291,7 @@ function AuthPage() {
                 <p className="text-xs text-destructive">{phoneMsg}</p>
               ) : (
                 <p className="text-xs text-muted-foreground">
-                  Скрит е за всички, вижда се само след отключване с кредити.
+                  Скрит е за всички, вижда се само след отключване с точки.
                 </p>
               )}
             </div>

@@ -391,7 +391,7 @@ export function TaskForm({
           <p className="flex items-start gap-1.5 rounded-xl bg-secondary/60 px-3 py-2 text-xs text-muted-foreground">
             <Info className="mt-0.5 h-3.5 w-3.5 shrink-0 text-primary" />
             <span>
-              Майстори вече платиха кредити за тази задача според бюджета ѝ. Затова бюджетът не може да
+              Майстори вече платиха точки за тази задача според бюджета ѝ. Затова бюджетът не може да
               бъде намаляван под {minBudget} €, можеш само да го увеличиш. Всичко останало е свободно за
               редакция.
             </span>

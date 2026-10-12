@@ -25,7 +25,7 @@ export const Route = createFileRoute("/admin/users")({
   head: () => ({
     meta: [
       { title: "Потребители | Админ" },
-      { name: "description", content: "Търсене на потребители, корекция на кредити, блокиране и роли." },
+      { name: "description", content: "Търсене на потребители, корекция на точки, блокиране и роли." },
       { property: "og:title", content: "Потребители" },
       { property: "og:description", content: "Управление на потребителите на платформата." },
       { property: "og:type", content: "website" },
@@ -100,7 +100,7 @@ function AdminUsers() {
                   <TableHead>Потребител</TableHead>
                   <TableHead>Регистрация</TableHead>
                   <TableHead className="text-right">Задачи</TableHead>
-                  <TableHead className="text-right">Кредити</TableHead>
+                  <TableHead className="text-right">Точки</TableHead>
                   <TableHead className="text-right">Отключвания</TableHead>
                   <TableHead className="text-right">Похарчени / Платени</TableHead>
                   <TableHead className="text-right">Действия</TableHead>
@@ -133,12 +133,12 @@ function AdminUsers() {
                     <TableCell className="text-right tabular-nums font-medium">{u.credits}</TableCell>
                     <TableCell className="text-right tabular-nums">{u.unlockCount}</TableCell>
                     <TableCell className="whitespace-nowrap text-right text-xs tabular-nums text-muted-foreground">
-                      {u.totalSpentCredits} кр. / {formatEur(u.totalPaidEur)}
+                      {u.totalSpentCredits} точки / {formatEur(u.totalPaidEur)}
                     </TableCell>
                     <TableCell className="text-right">
                       <div className="flex flex-wrap justify-end gap-1.5">
                         <Button size="sm" variant="outline" className="h-8 rounded-md" onClick={() => { setCreditsTarget(u); setAmount(""); setReason(""); }}>
-                          Кредити
+                          Точки
                         </Button>
                         {!u.isAdmin && (
                           <Button size="sm" variant="outline" className="h-8 rounded-md" onClick={() => mRole.mutate({ id: u.id, grant: !u.isModerator })}>
@@ -168,9 +168,9 @@ function AdminUsers() {
       <Dialog open={Boolean(creditsTarget)} onOpenChange={(o) => !o && setCreditsTarget(null)}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Корекция на кредити</DialogTitle>
+            <DialogTitle>Корекция на точки</DialogTitle>
             <DialogDescription>
-              {creditsTarget?.fullName ?? "Потребител"}, текущ баланс {creditsTarget?.credits} кредита. Положително число добавя, отрицателно отнема.
+              {creditsTarget?.fullName ?? "Потребител"}, текущ баланс {creditsTarget?.credits} точки. Положително число добавя, отрицателно отнема.
             </DialogDescription>
           </DialogHeader>
           <Input type="number" value={amount} onChange={(e) => setAmount(e.target.value)} placeholder="напр. 10 или -5" className="rounded-md" />

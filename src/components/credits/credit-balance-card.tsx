@@ -27,7 +27,7 @@ export function CreditBalanceCard({ className }: { className?: string }) {
         <div className="min-w-0">
           <p className="flex items-center gap-1.5 text-xs font-medium uppercase tracking-wide text-muted-foreground">
             <Coins className="h-3.5 w-3.5" />
-            Кредити
+            Точки
           </p>
           <p className="mt-0.5 truncate text-3xl font-extrabold leading-tight text-primary md:text-4xl">
             {isLoading ? "..." : credits}
@@ -47,21 +47,21 @@ export function CreditBalanceCard({ className }: { className?: string }) {
             to="/settings/billing"
             className="rounded-full bg-gradient-to-r from-orange-500 to-rose-500 px-3.5 py-2 text-xs font-semibold text-white shadow-sm transition-transform active:scale-95"
           >
-            Купи кредити
+            Купи точки
           </Link>
         </div>
       </div>
       {low ? (
         <p className="mt-3 flex items-start gap-1.5 rounded-lg bg-amber-500/10 px-2.5 py-2 text-xs font-medium text-amber-700">
           <AlertTriangle className="mt-0.5 h-3.5 w-3.5 shrink-0" />
-          Балансът ти е под цената на най-евтиното отключване. Зареди кредити, за да продължиш.
+          Балансът ти е под цената на най-евтиното отключване. Зареди точки, за да продължиш.
         </p>
       ) : (
         spent || (
           <p className="mt-3 text-xs text-muted-foreground">
-            С кредити отключваш телефона на възложителя по задача, която те интересува. Едно отключване струва
-            между 5 и 80 кредита според бюджета на задачата.
-            {bonus ? ` Първите ${bonus} кредита са подарък при регистрация.` : ""}
+            С точки отключваш телефона на възложителя по задача, която те интересува. Едно отключване струва
+            между 5 и 80 точки според бюджета на задачата.
+            {bonus ? ` Първите ${bonus} точки са подарък при регистрация.` : ""}
           </p>
         )
       )}

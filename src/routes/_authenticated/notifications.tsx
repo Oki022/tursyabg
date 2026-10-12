@@ -17,7 +17,7 @@ export const Route = createFileRoute("/_authenticated/notifications")({
       { title: "Известия | ТърсяБГ" },
       {
         name: "description",
-        content: "Всички твои известия за задачи, съобщения, кредити и промоции в ТърсяБГ.",
+        content: "Всички твои известия за задачи, съобщения, точки и промоции в ТърсяБГ.",
       },
       { property: "og:title", content: "Известия | ТърсяБГ" },
       { property: "og:description", content: "Следи новините по своите задачи и съобщения." },

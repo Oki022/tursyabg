@@ -33,9 +33,9 @@ export const Route = createFileRoute("/admin/refunds")({
   head: () => ({
     meta: [
       { title: "Заявки за възстановяване | Админ" },
-      { name: "description", content: "Одобрявай или отказвай заявки за възстановяване на кредити." },
+      { name: "description", content: "Одобрявай или отказвай заявки за възстановяване на точки." },
       { property: "og:title", content: "Заявки за възстановяване" },
-      { property: "og:description", content: "Модерация на заявки за възстановяване на кредити." },
+      { property: "og:description", content: "Модерация на заявки за възстановяване на точки." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
     ],
@@ -84,7 +84,7 @@ function AdminRefunds() {
   const resolve = useMutation({
     mutationFn: () => resolveRefund({ requestId: target!.req.id, approve: target!.approve, note }),
     onSuccess: () => {
-      toast.success(target?.approve ? "Кредитите са възстановени." : "Заявката е отказана.");
+      toast.success(target?.approve ? "Точките са възстановени." : "Заявката е отказана.");
       setTarget(null);
       setNote("");
       void qc.invalidateQueries({ queryKey: ["admin"] });
@@ -147,7 +147,7 @@ function AdminRefunds() {
                   <TableHead>Задача</TableHead>
                   <TableHead>Причина</TableHead>
                   <TableHead>Данни</TableHead>
-                  <TableHead className="text-right">Кредити</TableHead>
+                  <TableHead className="text-right">Точки</TableHead>
                   <TableHead>Дата</TableHead>
                   <TableHead>Статус</TableHead>
                   <TableHead className="text-right">Действия</TableHead>
@@ -217,7 +217,7 @@ function AdminRefunds() {
             <DialogTitle>{target?.approve ? "Одобри възстановяване" : "Откажи заявка"}</DialogTitle>
             <DialogDescription>
               {target?.approve
-                ? `${target?.req.credits} кредита ще бъдат върнати на ${target?.req.userName}.`
+                ? `${target?.req.credits} точки ще бъдат върнати на ${target?.req.userName}.`
                 : "Задължителна вътрешна бележка защо заявката се отказва."}
             </DialogDescription>
           </DialogHeader>
@@ -236,7 +236,7 @@ function AdminRefunds() {
               disabled={resolve.isPending || (!target?.approve && note.trim().length === 0)}
               onClick={() => resolve.mutate()}
             >
-              {target?.approve ? "Одобри и върни кредити" : "Откажи заявката"}
+              {target?.approve ? "Одобри и върни точки" : "Откажи заявката"}
             </Button>
           </DialogFooter>
         </DialogContent>

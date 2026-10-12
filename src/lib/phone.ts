@@ -32,4 +32,4 @@ export function containsContactInfo(text: string): boolean {
 }
 
 export const CONTACT_MASK_WARNING =
-  "Телефони, имейли и контакти във Viber/WhatsApp/Telegram се скриват автоматично. Контактите се разменят само през платформата, след отключване с кредити.";
+  "Телефони, имейли и контакти във Viber/WhatsApp/Telegram се скриват автоматично. Контактите се разменят само през платформата, след отключване с точки.";

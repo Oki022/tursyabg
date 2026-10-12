@@ -115,7 +115,7 @@ export const APP_ERROR_BG: Record<string, { title: string; description: string }
   },
   BUDGET_LOWERED: {
     title: "Бюджетът не може да бъде намаляван",
-    description: "Майстори вече са платили кредити според текущия бюджет на задачата.",
+    description: "Майстори вече са платили точки според текущия бюджет на задачата.",
   },
   TASK_NOT_FOUND: {
     title: "Задачата не е намерена",
@@ -128,8 +128,8 @@ export const APP_ERROR_BG: Record<string, { title: string; description: string }
 
   // Кредити и отключвания
   INSUFFICIENT_CREDITS: {
-    title: "Нямаш достатъчно кредити",
-    description: "Купи кредити от Настройки → Баланс и плащания и опитай отново.",
+    title: "Нямаш достатъчно точки",
+    description: "Купи точки от Настройки → Баланс и плащания и опитай отново.",
   },
   UNLOCK_LIMIT_REACHED: {
     title: "Местата са запълнени",
@@ -137,7 +137,7 @@ export const APP_ERROR_BG: Record<string, { title: string; description: string }
   },
   ALREADY_UNLOCKED: {
     title: "Контактът вече е отключен",
-    description: "Няма да ти бъдат удържани кредити повторно.",
+    description: "Няма да ти бъдат удържани точки повторно.",
   },
 
   // Модерация и ограничения

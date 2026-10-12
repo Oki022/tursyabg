@@ -41,7 +41,7 @@ export const NOTIFICATION_GROUPS: {
   },
   {
     key: "credits",
-    title: "Кредити и плащания",
+    title: "Точки и плащания",
     description: "Отключени контакти и предупреждение при нисък баланс.",
   },
   {

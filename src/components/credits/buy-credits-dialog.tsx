@@ -53,7 +53,7 @@ export function BuyCreditsDialog({
           </Link>{" "}
           и{" "}
           <Link to="/refund-policy" className="underline hover:text-foreground">
-            Политиката за връщане на кредити
+            Политиката за връщане на точки
           </Link>
           .
         </p>

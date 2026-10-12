@@ -196,7 +196,7 @@ function SenderCell({ message }: { message: ContactMessage }) {
             Оценка: {rating == null ? "няма отзиви" : formatRatingBg(rating)}
             {rating == null ? "" : ` (${(s.reviewCountAsPro ?? 0) + (s.reviewCountAsClient ?? 0)})`}
           </li>
-          <li>Кредити: {s.credits ?? 0}</li>
+          <li>Точки: {s.credits ?? 0}</li>
           <li>
             Нарушения: {s.violationCount ?? 0}
             {s.bannedAt ? " · блокиран" : s.suspendedUntil ? " · спрян" : ""}

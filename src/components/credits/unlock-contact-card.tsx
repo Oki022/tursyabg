@@ -65,7 +65,7 @@ export function UnlockContactCard({
         return;
       }
       if (res.error === "INSUFFICIENT_CREDITS") {
-        toast.error("Нямаш достатъчно кредити", { description: "Купи кредити, за да отключиш контакта." });
+        toast.error("Нямаш достатъчно точки", { description: "Купи точки, за да отключиш контакта." });
         void navigate({ to: "/settings/billing" });
         return;
       }
@@ -133,7 +133,7 @@ export function UnlockContactCard({
                   : !user
                     ? "Влез, за да отключиш контакта"
                     : !canAfford
-                      ? "Купи кредити"
+                      ? "Купи точки"
                       : unlock.isPending
                         ? "Отключване..."
                         : "Отключи контакта"}
@@ -159,7 +159,7 @@ export function UnlockContactCard({
           </span>
         )}
         <Link to="/settings/billing" className="font-medium text-primary hover:underline">
-          Купи кредити
+          Купи точки
         </Link>
       </div>
     </div>

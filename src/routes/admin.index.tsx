@@ -125,7 +125,7 @@ function AdminDashboard() {
 
       {(s?.credit_mismatches ?? 0) > 0 && (
         <div className="rounded-md border border-red-400 bg-red-50 px-3 py-2 text-sm font-medium text-red-900">
-          Несъответствие в кредитите при {s?.credit_mismatches}{" "}
+          Несъответствие в точките при {s?.credit_mismatches}{" "}
           {s?.credit_mismatches === 1 ? "потребител" : "потребители"}: балансът не отговаря на историята на трансакциите.
         </div>
       )}
@@ -136,7 +136,7 @@ function AdminDashboard() {
         <Stat label="Нови задачи" value={String(s?.tasks_7d ?? "няма")} hint={`за 7 дни · ${s?.tasks_30d ?? 0} за 30 дни`} />
         <Stat label="Отключвания" value={String(s?.unlocks_total ?? "няма")} />
         <Stat
-          label="Бонус кредити"
+          label="Бонус точки"
           value={String(s?.welcome_bonus_total ?? "няма")}
           hint={`${s?.welcome_bonus_7d ?? 0} за 7 дни · ${s?.welcome_bonus_users_7d ?? 0} нови профила · по ${s?.welcome_bonus_amount ?? 0} на регистрация`}
         />
@@ -146,7 +146,7 @@ function AdminDashboard() {
           hint={`за 30 дни · ${s?.unconfirmed_flagged ?? 0} за ръчен преглед`}
         />
         <Stat label="Потвърдени телефони" value={String(s?.phone_verified_users ?? "няма")} />
-        <Stat label="Продадени кредити" value={String(s?.credits_sold ?? "няма")} />
+        <Stat label="Продадени точки" value={String(s?.credits_sold ?? "няма")} />
         <Stat label="Приходи (общо)" value={s ? formatEur(Number(s.revenue_total)) : "няма"} />
         <Stat label="Приходи 7 дни" value={s ? formatEur(Number(s.revenue_7d)) : "няма"} />
         <Stat label="Приходи 30 дни" value={s ? formatEur(Number(s.revenue_30d)) : "няма"} />

@@ -32,7 +32,7 @@ export function SiteFooter() {
             Контакти
           </Link>
           <Link to="/refund-policy" className="hover:text-foreground hover:underline">
-            Връщане на кредити
+            Връщане на точки
           </Link>
         </nav>
         <p>© {new Date().getFullYear()} {BRAND_NAME}, Свържи се с хората, които могат да го свършат.</p>

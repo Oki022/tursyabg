@@ -97,13 +97,13 @@ export function SiteHeader() {
                   </DropdownMenuLabel>
                   <div className="mx-1 mb-1 flex items-center justify-between gap-2 rounded-lg bg-gradient-to-r from-primary/10 to-accent/10 px-2.5 py-2">
                     <span className="min-w-0 truncate text-sm font-bold text-primary">
-                      Кредити: {credits}
+                      Точки: {credits}
                     </span>
                     <Link
                       to="/settings/billing"
                       className="shrink-0 rounded-full bg-gradient-to-r from-primary to-accent px-2.5 py-1 text-[11px] font-semibold text-primary-foreground"
                     >
-                      Купи кредити
+                      Купи точки
                     </Link>
                   </div>
                   <DropdownMenuSeparator />

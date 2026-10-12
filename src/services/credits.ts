@@ -56,7 +56,7 @@ export function formatEur(value: number): string {
 }
 
 export function creditsLabel(n: number): string {
-  return n === 1 ? "1 кредит" : `${n} кредита`;
+  return n === 1 ? "1 точка" : `${n} точки`;
 }
 
 export async function getCreditPackages(): Promise<CreditPackage[]> {

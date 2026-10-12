@@ -48,7 +48,7 @@ function AdminPayments() {
                 <TableRow>
                   <TableHead>Дата</TableHead>
                   <TableHead>Потребител</TableHead>
-                  <TableHead className="text-right">Кредити</TableHead>
+                  <TableHead className="text-right">Точки</TableHead>
                   <TableHead className="text-right">Сума</TableHead>
                   <TableHead>Доставчик</TableHead>
                   <TableHead>Статус</TableHead>

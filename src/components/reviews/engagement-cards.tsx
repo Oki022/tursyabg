@@ -94,7 +94,7 @@ export function ConfirmClaimCard({ engagement }: { engagement: Engagement }) {
             </li>
             <li className="flex items-start gap-2">
               <Lock className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
-              Други изпълнители няма да могат да харчат кредити за контактите ти по нея.
+              Други изпълнители няма да могат да харчат точки за контактите ти по нея.
             </li>
             <li className="flex items-start gap-2">
               <Sparkles className="mt-0.5 h-4 w-4 shrink-0 text-primary" />

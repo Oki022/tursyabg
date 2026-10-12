@@ -74,12 +74,12 @@ export async function createStripeCheckout(input: CheckoutInput): Promise<{ clie
           currency: "eur",
           unit_amount: amountInCents,
           product_data: {
-            name: `${pkg.name}, ${pkg.credits} кредита`,
+            name: `${pkg.name}, ${pkg.credits} точки`,
           },
         },
       },
     ],
-    payment_intent_data: { description: `${pkg.name}, ${pkg.credits} кредита` },
+    payment_intent_data: { description: `${pkg.name}, ${pkg.credits} точки` },
     metadata: {
       userId: input.userId,
       packageId: pkg.id,
