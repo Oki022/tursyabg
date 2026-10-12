@@ -525,9 +525,11 @@ function TaskDetails() {
               <div className={`font-bold text-foreground ${task.budgetRange ? "text-3xl" : "text-4xl"}`}>
                 {budgetParts(task.budget, task.budgetRange).main}
               </div>
-              <span className="rounded-full bg-primary-soft px-3 py-1 text-xs font-semibold text-primary">
-                {task.budgetRange ? "Договаряне" : "Фиксиран"}
-              </span>
+              {!task.budgetRange && (
+                <span className="rounded-full bg-primary-soft px-3 py-1 text-xs font-semibold text-primary">
+                  Фиксиран
+                </span>
+              )}
             </div>
             {budgetParts(task.budget, task.budgetRange).hint && (
               <div className="mt-1 text-sm text-muted-foreground">
