@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="bg">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="color-scheme" content="light">
+<title>Потвърди новия имейл</title>
+</head>
+<body style="margin:0;padding:0;background:#f1f5f9">
+<div style="display:none;max-height:0;overflow:hidden;opacity:0">Потвърди новия си имейл адрес.</div>
+<table role="presentation" width="100%" cellspacing="0" cellpadding="0" bgcolor="#f1f5f9" style="background:#f1f5f9">
+  <tr><td align="center" style="padding:24px 12px">
+    <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="max-width:600px;background:#ffffff;border-radius:16px;overflow:hidden">
+      <tr><td bgcolor="#0b1120" style="background:#0b1120;padding:22px 32px">
+        <a href="https://tursya.bg" style="text-decoration:none"><img src="https://tursya.bg/brand/email-logo.png" width="222" height="44" alt="ТърсяБГ" style="display:block;border:0"></a>
+      </td></tr>
+      <tr><td style="height:4px;line-height:4px;font-size:0;background:#F94144;background-image:linear-gradient(90deg,#FB7C00,#EC305A)">&nbsp;</td></tr>
+      <tr><td style="padding:32px 32px 8px;font-family:Arial,Helvetica,sans-serif">
+        <h1 style="margin:0 0 12px;font-size:24px;line-height:1.25;color:#0f172a">Потвърди новия имейл</h1>
+        <div style="font-size:15px;line-height:1.6;color:#334155"><p style="margin:0 0 10px">Здравей!</p><p style="margin:0">Поискана е смяна на имейла на профила ти от <b>{{ .Email }}</b> на <b>{{ .NewEmail }}</b>. Натисни бутона, за да потвърдиш.</p></div>
+      </td></tr>
+      <tr><td style="padding:16px 32px 8px">
+        <table role="presentation" cellspacing="0" cellpadding="0"><tr>
+          <td bgcolor="#F94144" style="border-radius:999px;background:#F94144;background-image:linear-gradient(90deg,#FB7C00,#EC305A)">
+            <a href="{{ .ConfirmationURL }}" style="display:inline-block;padding:14px 28px;font-family:Arial,Helvetica,sans-serif;font-size:15px;font-weight:bold;color:#ffffff;text-decoration:none;border-radius:999px">Потвърди смяната</a>
+          </td>
+        </tr></table>
+      </td></tr>
+      <tr><td style="padding:16px 32px 0;font-family:Arial,Helvetica,sans-serif;font-size:14px;line-height:1.6;color:#475569">Ако бутонът не работи, копирай този линк в браузъра:<br>
+        <a href="{{ .ConfirmationURL }}" style="color:#EC305A;word-break:break-all">{{ .ConfirmationURL }}</a></td></tr>
+      <tr><td style="padding:24px 32px 32px;font-family:Arial,Helvetica,sans-serif;font-size:12px;line-height:1.6;color:#94a3b8">
+        Ако не си поискал тази смяна, не натискай бутона и смени паролата си от Настройки → Сигурност.<br>Нужна ти е помощ? Пиши ни на <a href="https://tursya.bg/contact" style="color:#64748b">tursya.bg/contact</a>.
+      </td></tr>
+    </table>
+    <p style="margin:16px 0 0;font-family:Arial,Helvetica,sans-serif;font-size:12px;color:#94a3b8">
+      ТърсяБГ · Борса за работа и услуги в България · <a href="https://tursya.bg" style="color:#94a3b8">tursya.bg</a>
+    </p>
+  </td></tr>
+</table>
+</body>
+</html>

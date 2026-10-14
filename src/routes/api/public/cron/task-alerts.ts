@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { absoluteUrl } from "@/lib/brand";
 import { asBudgetRange, formatTaskBudget } from "@/lib/budget-range";
+import { emailLayout, escapeHtml } from "@/lib/email-layout";
 import { getCategory } from "@/lib/mock-data";
 import { municipalityLabel } from "@/lib/locations";
 
@@ -23,70 +24,72 @@ type DigestTask = {
   budget_range: string | null;
 };
 
-function escapeHtml(value: string): string {
-  return value
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;");
-}
-
-type SavedSearch = { category: string | null; city: string | null; region: string | null };
-
-/** With exactly one saved search, links open /tasks with its filters; otherwise plain /tasks. */
-function tasksLink(searches: SavedSearch[]): string {
-  if (searches.length !== 1) return "/tasks";
-  const s = searches[0]!;
+/**
+ * Link for "see all": /tasks filtered by whatever the new tasks have in
+ * common (same category and/or same община), so it opens on exactly them.
+ */
+function tasksLink(tasks: DigestTask[]): string {
+  if (tasks.length === 0) return "/tasks";
   const params = new URLSearchParams();
-  if (s.category) params.set("category", s.category);
-  if (s.city) params.set("location", s.city);
-  else if (s.region) params.set("region", s.region);
+  const category = tasks[0]!.category;
+  if (category && tasks.every((t) => t.category === category)) params.set("category", category);
+  const city = tasks[0]!.city;
+  if (city && tasks.every((t) => t.city === city)) params.set("location", city);
   const qs = params.toString();
   return qs ? `/tasks?${qs}` : "/tasks";
 }
 
-function subjectFor(count: number): string {
-  return count === 1 ? "1 нова задача за теб в ТърсяБГ" : `${count} нови задачи за теб в ТърсяБГ`;
+function plural(count: number): string {
+  return count === 1 ? "1 нова задача" : `${count} нови задачи`;
 }
 
-function digestHtml(name: string | null, count: number, tasks: DigestTask[], link: string): string {
-  const hello = name ? `Здравей, ${escapeHtml(name.split(" ")[0] ?? name)}!` : "Здравей!";
-  const rows = tasks
-    .slice(0, MAX_LISTED)
-    .map((t) => {
-      const meta = [
-        getCategory(t.category).name,
-        t.city ? municipalityLabel(t.city) : null,
-        formatTaskBudget(Number(t.budget), asBudgetRange(t.budget_range)),
-      ]
-        .filter(Boolean)
-        .join(" · ");
-      return `
-        <tr><td style="padding:12px 0;border-bottom:1px solid #e2e8f0">
-          <a href="${absoluteUrl(`/task/${t.id}`)}" style="color:#0f172a;font-weight:600;text-decoration:none;font-size:15px">${escapeHtml(t.title)}</a>
-          <div style="color:#64748b;font-size:13px;margin-top:4px">${escapeHtml(meta)}</div>
-        </td></tr>`;
-    })
-    .join("");
+function taskCard(t: DigestTask): string {
+  const url = absoluteUrl(`/task/${t.id}`);
+  const place = t.city ? municipalityLabel(t.city) : "България";
+  const budget = formatTaskBudget(Number(t.budget), asBudgetRange(t.budget_range));
+  return `
+    <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="margin:0 0 12px;border:1px solid #e2e8f0;border-radius:12px">
+      <tr><td style="padding:16px 18px">
+        <span style="display:inline-block;padding:3px 10px;border-radius:999px;background:#FFF1E8;color:#C2410C;font-size:12px;font-weight:bold">${escapeHtml(getCategory(t.category).name)}</span>
+        <div style="margin:10px 0 6px">
+          <a href="${url}" style="color:#0f172a;font-size:17px;font-weight:bold;line-height:1.35;text-decoration:none">${escapeHtml(t.title)}</a>
+        </div>
+        <div style="color:#475569;font-size:14px;line-height:1.5">📍 ${escapeHtml(place)} &nbsp;·&nbsp; 💶 ${escapeHtml(budget)}</div>
+        <div style="margin-top:10px"><a href="${url}" style="color:#EC305A;font-size:14px;font-weight:bold;text-decoration:none">Виж задачата →</a></div>
+      </td></tr>
+    </table>`;
+}
+
+function digestEmail(name: string | null, count: number, tasks: DigestTask[], link: string): string {
+  const first = name?.trim().split(/\s+/)[0];
+  const hello = first ? `Здравей, ${escapeHtml(first)}!` : "Здравей!";
+  const listed = tasks.slice(0, MAX_LISTED);
   const more =
     count > MAX_LISTED
-      ? `<p style="margin:16px 0 0;color:#475569">…и още ${count - MAX_LISTED}.</p>`
+      ? `<p style="margin:4px 0 0;color:#475569;font-size:14px">…и още ${count - MAX_LISTED} в сайта.</p>`
       : "";
 
-  return `
-  <div style="font-family:Arial,sans-serif;font-size:14px;color:#0f172a;max-width:560px;margin:0 auto">
-    <p style="margin:0 0 8px">${hello}</p>
-    <p style="margin:0 0 16px">${count === 1 ? "Има нова задача" : `Има ${count} нови задачи`} по търсенията, за които си включил известия.</p>
-    <table role="presentation" width="100%" cellspacing="0" cellpadding="0">${rows}</table>
-    ${more}
-    <p style="margin:24px 0">
-      <a href="${absoluteUrl(link)}" style="background:#F94144;color:#fff;padding:12px 20px;border-radius:999px;text-decoration:none;font-weight:600">Виж всички задачи</a>
-    </p>
-    <p style="margin:24px 0 0;color:#94a3b8;font-size:12px">
+  return emailLayout({
+    preheader: listed
+      .slice(0, 2)
+      .map((t) => t.title)
+      .join(" · "),
+    title: `${plural(count)} за теб`,
+    introHtml: `
+      <p style="margin:0 0 10px">${hello}</p>
+      <p style="margin:0">${count === 1 ? "Появи се нова задача" : `Появиха се ${count} нови задачи`} по известията, които си включил.
+      Контактът на всеки клиент могат да отключат най-много 5 майстори, затова е добре да се свържеш навреме.</p>`,
+    bodyHtml: listed.map(taskCard).join("") + more,
+    cta:
+      count === 1 && listed[0]
+        ? { label: "Отвори задачата", href: absoluteUrl(`/task/${listed[0].id}`) }
+        : { label: "Виж всички нови задачи", href: absoluteUrl(link) },
+    footerHtml: `
       Получаваш този имейл, защото си включил известия за нови задачи в ТърсяБГ.
-      Можеш да ги изключиш от <a href="${absoluteUrl("/settings/notifications")}" style="color:#94a3b8">Настройки → Нотификации</a>.
-    </p>
-  </div>`;
+      Изпращаме го най-много веднъж на ден и само ако има нещо ново.<br>
+      <a href="${absoluteUrl("/settings/notifications")}" style="color:#64748b">Управлявай известията</a>
+      &nbsp;·&nbsp; <a href="${absoluteUrl("/faq")}" style="color:#64748b">Помощ</a>`,
+  });
 }
 
 export const Route = createFileRoute("/api/public/cron/task-alerts")({
@@ -124,11 +127,7 @@ export const Route = createFileRoute("/api/public/cron/task-alerts")({
           for (const row of batch ?? []) {
             const tasks = (Array.isArray(row.tasks) ? row.tasks : []) as unknown as DigestTask[];
             const count = row.task_count;
-            const { data: searches } = await supabaseAdmin
-              .from("task_alerts")
-              .select("category, city, region")
-              .eq("user_id", row.user_id);
-            const link = tasksLink((searches ?? []) as SavedSearch[]);
+            const link = tasksLink(tasks);
 
             if (apiKey && row.email) {
               try {
@@ -138,8 +137,8 @@ export const Route = createFileRoute("/api/public/cron/task-alerts")({
                   body: JSON.stringify({
                     from: FROM,
                     to: [row.email],
-                    subject: subjectFor(count),
-                    html: digestHtml(row.full_name, count, tasks, link),
+                    subject: `${plural(count)} за теб в ТърсяБГ`,
+                    html: digestEmail(row.full_name, count, tasks, link),
                     headers: { "List-Unsubscribe": `<${absoluteUrl("/settings/notifications")}>` },
                   }),
                 });
@@ -150,8 +149,12 @@ export const Route = createFileRoute("/api/public/cron/task-alerts")({
             }
 
             // Marks the hits as sent (so nobody gets the same task twice) and
-            // adds the in-app notification.
-            await supabaseAdmin.rpc("task_alert_finish", { _user_id: row.user_id, _count: count, _link: link });
+            // adds the in-app notification, which opens the same filtered list.
+            await supabaseAdmin.rpc("task_alert_finish", {
+              _user_id: row.user_id,
+              _count: count,
+              _link: count === 1 && tasks[0] ? `/task/${tasks[0].id}` : link,
+            });
             users += 1;
           }
         } catch (e) {
