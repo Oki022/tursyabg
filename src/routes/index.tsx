@@ -13,9 +13,9 @@ import { absoluteUrl, BRAND, BRAND_LATIN, BRAND_TAGLINE } from "@/lib/brand";
 export const Route = createFileRoute("/")({
   head: () => {
     const { meta, links } = seo({
-      title: "Кажи какво трябва. Майсторите ще те намерят",
+      // No page title: the tab and search results show "ТърсяБГ | Борса за работа и услуги в България".
       description:
-        "Публикувай задачата си безплатно. Телефонът ти виждат само до 5 майстори – без спам и без 20 обаждания. Ремонти, почистване, превоз и още.",
+        "Публикувай задачата си безплатно. Телефонът ти виждат само до 5 изпълнители – без спам и без 20 обаждания. Ремонти, почистване, превоз и още.",
       path: "/",
     });
     return {

@@ -32,7 +32,7 @@ export const Route = createFileRoute("/city/$city/$category")({
     const { meta, links } = seo({
       title: `${catName} в ${cityName}, задачи и работа`,
       description: clampDescription(
-        `Търсиш майстор за ${catName.toLowerCase()} в община ${cityName}${region ? `, област ${region}` : ""}? Виж активните задачи, свържи се директно със заявителя и договори цена в евро.`,
+        `Търсиш специалист за ${catName.toLowerCase()} в община ${cityName}${region ? `, област ${region}` : ""}? Виж активните задачи, свържи се директно със заявителя и договори цена в евро.`,
       ),
       path,
     });

@@ -25,7 +25,7 @@ export const Route = createFileRoute("/city/$city/")({
     const region = loaderData?.municipality.regionName;
     const path = `/city/${params.city}`;
     const { meta, links } = seo({
-      title: `Задачи и майстори в ${name}`,
+      title: `Задачи и изпълнители в ${name}`,
       description: clampDescription(
         `Виж активните задачи в община ${name}${region ? `, област ${region}` : ""}, ремонти, почистване, превоз, уроци и още. Публикувай задача безплатно или намери работа като изпълнител.`,
       ),

@@ -33,7 +33,7 @@ export function PromoteDialog({
           <DialogDescription>
             {selected
               ? `${formatEur(selected.priceEur)} · Плащането е защитено.`
-              : "Повече показвания означават повече оферти от майстори."}
+              : "Повече показвания означават повече оферти от изпълнители."}
           </DialogDescription>
         </DialogHeader>
 

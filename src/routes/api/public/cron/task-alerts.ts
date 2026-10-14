@@ -66,7 +66,7 @@ function digestEmail(name: string | null, count: number, tasks: DigestTask[]): s
     introHtml: `
       <p style="margin:0 0 10px">${hello}</p>
       <p style="margin:0">${count === 1 ? "Появи се нова задача" : `Появиха се ${count} нови задачи`} по известията, които си включил.
-      Контактът на всеки клиент могат да отключат най-много 5 майстори, затова е добре да се свържеш навреме.</p>`,
+      Контактът на всеки клиент могат да отключат най-много 5 изпълнители, затова е добре да се свържеш навреме.</p>`,
     bodyHtml: listed.map(taskCard).join("") + more,
     cta:
       count === 1 && listed[0]

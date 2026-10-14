@@ -9,7 +9,7 @@ function hash(str: string) {
 }
 
 const OPENINGS = [
-  (c: string, city: string) => `Търсиш майстор за ${c.toLowerCase()} в ${city}? Тук намираш реални задачи и изпълнители от района, без посредници и без обаждания на сляпо.`,
+  (c: string, city: string) => `Търсиш специалист за ${c.toLowerCase()} в ${city}? Тук намираш реални задачи и изпълнители от района, без посредници и без обаждания на сляпо.`,
   (c: string, city: string) => `${c} в ${city} е една от най-търсените услуги в платформата. Клиентите публикуват задачата си безплатно, а изпълнители от общината се свързват директно с тях.`,
   (c: string, city: string) => `Ако ти трябва изпълнител за ${c.toLowerCase()} в ${city}, това е мястото да сравниш оферти и да избереш човек с реални отзиви.`,
   (c: string, city: string) => `Всяка седмица в ${city} се публикуват нови задачи за ${c.toLowerCase()}. Виж актуалните задачи по-долу и се свържи със заявителя още днес.`,
@@ -28,7 +28,7 @@ const MIDDLES = [
 
 const CLOSINGS = [
   (c: string, city: string) => `Разгледай активните задачи за ${c.toLowerCase()} в ${city}, отвори тази, която ти пасва, и започни разговор директно със заявителя.`,
-  (c: string, city: string) => `Ако си клиент от ${city}, публикувай своята задача за ${c.toLowerCase()} и получи предложения от местни майстори в рамките на часове.`,
+  (c: string, city: string) => `Ако си клиент от ${city}, публикувай своята задача за ${c.toLowerCase()} и получи предложения от местни изпълнители в рамките на часове.`,
   (c: string, city: string) => `Следвай връзките към съседните общини и близките категории, ако не откриваш подходяща задача за ${c.toLowerCase()} точно в ${city}.`,
   (c: string, city: string) => `Запази страницата за ${c.toLowerCase()} в ${city} и се връщай, защото списъкът се обновява при всяка нова публикувана задача.`,
 ];
@@ -80,9 +80,9 @@ export function landingH1(opts: { municipality?: Municipality; category?: Catego
   const { municipality, category } = opts;
   // "Търся" here is the verb ("I'm looking for"), not the brand name.
   if (municipality && category)
-    return `Търся майстор за ${category.name.toLowerCase()} в ${municipalityLabel(municipality.name, municipality.hasNeighborhoods)}`;
+    return `Търся специалист за ${category.name.toLowerCase()} в ${municipalityLabel(municipality.name, municipality.hasNeighborhoods)}`;
   if (municipality)
     return `Търся изпълнител в ${municipalityLabel(municipality.name, municipality.hasNeighborhoods)}, задачи и услуги`;
-  if (category) return `${category.name}, задачи и майстори в цяла България`;
+  if (category) return `${category.name}, задачи и изпълнители в цяла България`;
   return `${BRAND}, задачи и услуги`;
 }

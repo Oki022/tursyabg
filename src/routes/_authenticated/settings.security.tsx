@@ -378,7 +378,7 @@ function SettingsSecurityPage() {
           ) : (
             <p className="flex items-center gap-1.5 text-xs text-muted-foreground">
               <ShieldCheck className="h-3.5 w-3.5 text-primary" />
-              Номерът е скрит и се показва само на майстор, отключил контакта с точки.
+              Номерът е скрит и се показва само на изпълнител, отключил контакта с точки.
             </p>
           )}
         </div>

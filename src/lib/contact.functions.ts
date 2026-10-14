@@ -33,7 +33,7 @@ function supportEmail(row: { id: string; name: string; email: string; subject: s
     bodyHtml: `
       <div style="margin-top:8px;padding:16px 18px;border:1px solid #e2e8f0;border-radius:12px;background:#f8fafc;color:#0f172a;font-size:15px;line-height:1.6;white-space:pre-wrap">${escapeHtml(row.body)}</div>`,
     cta: { label: "Отвори в админ панела", href: absoluteUrl(`/admin/contact#msg-${row.id}`) },
-    footerHtml: "Можеш да отговориш директно на този имейл — отговорът отива до подателя.",
+    footerHtml: "Можеш да отговориш директно на този имейл. Отговорът отива до подателя.",
   });
 }
 
@@ -94,7 +94,7 @@ export const notifyContactMessage = createServerFn({ method: "POST" })
         from: SUPPORT_FROM,
         to: [SUPPORT_TO],
         reply_to: row.email,
-        subject: `[Контакт] ${row.subject} — ${row.name}`,
+        subject: `[Контакт] ${row.subject} от ${row.name}`,
         html: supportEmail(row),
       });
     } catch (e) {
@@ -116,7 +116,7 @@ export const notifyContactMessage = createServerFn({ method: "POST" })
           from: SUPPORT_FROM,
           to: [row.email],
           reply_to: SUPPORT_TO,
-          subject: "Получихме съобщението ти — ТърсяБГ",
+          subject: "Получихме съобщението ти",
           html: confirmationEmail(),
         });
       }
