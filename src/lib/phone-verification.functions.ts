@@ -51,7 +51,7 @@ export const requestPhoneCode = createServerFn({ method: "POST" })
 /** Проверява въведения код и отбелязва телефона като потвърден. */
 export const confirmPhoneCode = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((input: { code: string }) => {
+  .validator((input: { code: string }) => {
     const code = String(input?.code ?? "").replace(/\D/g, "").slice(0, 6);
     if (code.length !== 6) throw new Error("INVALID_INPUT");
     return { code };

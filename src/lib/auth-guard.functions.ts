@@ -37,7 +37,7 @@ function clientIp(): string {
  * registered by calling the database directly.
  */
 export const guardAuthAttempt = createServerFn({ method: "POST" })
-  .inputValidator((input: { action: AuthGuardAction; email?: string; phone?: string }) => {
+  .validator((input: { action: AuthGuardAction; email?: string; phone?: string }) => {
     if (!input || !ACTIONS.includes(input.action)) throw new Error("INVALID_INPUT");
     const email = typeof input.email === "string" ? input.email.trim().slice(0, 320) : "";
     const phone = typeof input.phone === "string" ? input.phone.trim().slice(0, 20) : "";

@@ -21,7 +21,7 @@ function escapeHtml(value: string): string {
 }
 
 export const notifyContactMessage = createServerFn({ method: "POST" })
-  .inputValidator((input: { id: string }) => {
+  .validator((input: { id: string }) => {
     const id = String(input?.id ?? "").trim();
     if (!/^[0-9a-f-]{36}$/i.test(id)) throw new Error("INVALID_INPUT");
     return { id };

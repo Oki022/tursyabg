@@ -9,7 +9,7 @@ const KEY_RE = /^[A-Za-z0-9/_.-]{3,200}$/;
  * validated and only ever read.
  */
 export const signR2Urls = createServerFn({ method: "POST" })
-  .inputValidator((input: { keys: string[] }) => {
+  .validator((input: { keys: string[] }) => {
     const keys = (input?.keys ?? []).filter((k) => typeof k === "string" && KEY_RE.test(k)).slice(0, 100);
     return { keys };
   })
@@ -49,7 +49,7 @@ export const signR2Urls = createServerFn({ method: "POST" })
 /** Deletes one of the caller's own R2 objects (keys are prefixed with the user id). */
 export const deleteR2Object = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((input: { key: string }) => {
+  .validator((input: { key: string }) => {
     if (!input?.key || !KEY_RE.test(input.key)) throw new Error("INVALID_INPUT");
     return input;
   })

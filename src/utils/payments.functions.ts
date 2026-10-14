@@ -5,7 +5,7 @@ import { getStripeErrorMessage, type StripeEnv } from "@/lib/stripe.server";
 
 export const createCheckoutSession = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((data: { packageId: string; environment: StripeEnv; returnUrl: string }) => {
+  .validator((data: { packageId: string; environment: StripeEnv; returnUrl: string }) => {
     if (typeof data.packageId !== "string" || data.packageId.length < 10) {
       throw new Error("Невалиден пакет.");
     }
@@ -39,7 +39,7 @@ export const createCheckoutSession = createServerFn({ method: "POST" })
 
 export const createPromotionCheckoutSession = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator(
+  .validator(
     (data: { promoProductId: string; taskId: string; environment: StripeEnv; returnUrl: string }) => {
       if (typeof data.promoProductId !== "string" || data.promoProductId.length < 10) {
         throw new Error("Невалидна промоция.");

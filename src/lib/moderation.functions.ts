@@ -15,7 +15,7 @@ type Input = { taskId: string; index: number; dataUrl: string };
  */
 export const uploadModeratedTaskImage = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((input: Input) => {
+  .validator((input: Input) => {
     if (!input?.taskId || typeof input.dataUrl !== "string") throw new Error("INVALID_INPUT");
     return input;
   })
