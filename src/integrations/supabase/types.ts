@@ -2443,7 +2443,7 @@ export type Database = {
         }[]
       }
       task_alert_finish: {
-        Args: { _count: number; _user_id: string }
+        Args: { _count: number; _link?: string; _user_id: string }
         Returns: undefined
       }
       user_trust: { Args: { _user_id: string }; Returns: Json }

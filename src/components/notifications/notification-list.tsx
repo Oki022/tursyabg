@@ -172,7 +172,13 @@ export function NotificationList({
               onClick={() => {
                 if (unread) markRead.mutate(n.id);
                 onNavigate?.();
-                if (n.link) void navigate({ to: n.link as unknown as "/" });
+                if (n.link) {
+                  const [path, qs] = n.link.split("?");
+                  void navigate({
+                    to: path as unknown as "/",
+                    ...(qs ? { search: Object.fromEntries(new URLSearchParams(qs)) as never } : {}),
+                  });
+                }
               }}
               className={`flex w-full items-start gap-3 px-3 py-3 text-left transition-colors hover:bg-accent/60 ${
                 unread ? "bg-primary/5" : ""

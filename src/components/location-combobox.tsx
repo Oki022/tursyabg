@@ -36,6 +36,10 @@ type Props = {
   allowGeolocation?: boolean;
   /** One-line hint under the picker, adapted to the selected община vs град. */
   postingHint?: boolean;
+  /** Pick only the община; skip the квартал step for big cities. */
+  cityOnly?: boolean;
+  /** Set when the picker sits inside a dialog, so its list can be scrolled. */
+  modal?: boolean;
 };
 
 function postingLocationHint(value: string | undefined, municipalities: Municipality[]): string {
@@ -57,6 +61,8 @@ export function LocationCombobox({
   allowClear = false,
   allowGeolocation = true,
   postingHint = false,
+  cityOnly = false,
+  modal = false,
 }: Props) {
   const [open, setOpen] = React.useState(false);
   const [query, setQuery] = React.useState("");
@@ -84,7 +90,7 @@ export function LocationCombobox({
   const selected = splitLocation(value);
 
   function pick(m: Municipality) {
-    if (m.hasNeighborhoods) {
+    if (m.hasNeighborhoods && !cityOnly) {
       setPending(m);
       setQuery("");
       return;
@@ -124,6 +130,7 @@ export function LocationCombobox({
   return (
     <div className="space-y-1.5">
     <Popover
+      modal={modal}
       open={open}
       onOpenChange={(next) => {
         setOpen(next);

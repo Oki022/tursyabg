@@ -31,11 +31,25 @@ function escapeHtml(value: string): string {
     .replace(/"/g, "&quot;");
 }
 
+type SavedSearch = { category: string | null; city: string | null; region: string | null };
+
+/** With exactly one saved search, links open /tasks with its filters; otherwise plain /tasks. */
+function tasksLink(searches: SavedSearch[]): string {
+  if (searches.length !== 1) return "/tasks";
+  const s = searches[0]!;
+  const params = new URLSearchParams();
+  if (s.category) params.set("category", s.category);
+  if (s.city) params.set("location", s.city);
+  else if (s.region) params.set("region", s.region);
+  const qs = params.toString();
+  return qs ? `/tasks?${qs}` : "/tasks";
+}
+
 function subjectFor(count: number): string {
   return count === 1 ? "1 нова задача за теб в ТърсяБГ" : `${count} нови задачи за теб в ТърсяБГ`;
 }
 
-function digestHtml(name: string | null, count: number, tasks: DigestTask[]): string {
+function digestHtml(name: string | null, count: number, tasks: DigestTask[], link: string): string {
   const hello = name ? `Здравей, ${escapeHtml(name.split(" ")[0] ?? name)}!` : "Здравей!";
   const rows = tasks
     .slice(0, MAX_LISTED)
@@ -66,7 +80,7 @@ function digestHtml(name: string | null, count: number, tasks: DigestTask[]): st
     <table role="presentation" width="100%" cellspacing="0" cellpadding="0">${rows}</table>
     ${more}
     <p style="margin:24px 0">
-      <a href="${absoluteUrl("/tasks")}" style="background:#F94144;color:#fff;padding:12px 20px;border-radius:999px;text-decoration:none;font-weight:600">Виж всички задачи</a>
+      <a href="${absoluteUrl(link)}" style="background:#F94144;color:#fff;padding:12px 20px;border-radius:999px;text-decoration:none;font-weight:600">Виж всички задачи</a>
     </p>
     <p style="margin:24px 0 0;color:#94a3b8;font-size:12px">
       Получаваш този имейл, защото си включил известия за нови задачи в ТърсяБГ.
@@ -110,6 +124,11 @@ export const Route = createFileRoute("/api/public/cron/task-alerts")({
           for (const row of batch ?? []) {
             const tasks = (Array.isArray(row.tasks) ? row.tasks : []) as unknown as DigestTask[];
             const count = row.task_count;
+            const { data: searches } = await supabaseAdmin
+              .from("task_alerts")
+              .select("category, city, region")
+              .eq("user_id", row.user_id);
+            const link = tasksLink((searches ?? []) as SavedSearch[]);
 
             if (apiKey && row.email) {
               try {
@@ -120,7 +139,7 @@ export const Route = createFileRoute("/api/public/cron/task-alerts")({
                     from: FROM,
                     to: [row.email],
                     subject: subjectFor(count),
-                    html: digestHtml(row.full_name, count, tasks),
+                    html: digestHtml(row.full_name, count, tasks, link),
                     headers: { "List-Unsubscribe": `<${absoluteUrl("/settings/notifications")}>` },
                   }),
                 });
@@ -132,7 +151,7 @@ export const Route = createFileRoute("/api/public/cron/task-alerts")({
 
             // Marks the hits as sent (so nobody gets the same task twice) and
             // adds the in-app notification.
-            await supabaseAdmin.rpc("task_alert_finish", { _user_id: row.user_id, _count: count });
+            await supabaseAdmin.rpc("task_alert_finish", { _user_id: row.user_id, _count: count, _link: link });
             users += 1;
           }
         } catch (e) {
