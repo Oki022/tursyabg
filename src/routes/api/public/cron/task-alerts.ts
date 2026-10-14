@@ -20,13 +20,14 @@ type DigestTask = {
   title: string;
   category: string;
   city: string | null;
+  region: string | null;
   budget: number;
   budget_range: string | null;
 };
 
 /**
  * Link for "see all": /tasks filtered by whatever the new tasks have in
- * common (same category and/or same община), so it opens on exactly them.
+ * common (same category; same община, or else same област).
  */
 function tasksLink(tasks: DigestTask[]): string {
   if (tasks.length === 0) return "/tasks";
@@ -34,7 +35,9 @@ function tasksLink(tasks: DigestTask[]): string {
   const category = tasks[0]!.category;
   if (category && tasks.every((t) => t.category === category)) params.set("category", category);
   const city = tasks[0]!.city;
+  const region = tasks[0]!.region;
   if (city && tasks.every((t) => t.city === city)) params.set("location", city);
+  else if (region && tasks.every((t) => t.region === region)) params.set("region", region);
   const qs = params.toString();
   return qs ? `/tasks?${qs}` : "/tasks";
 }
