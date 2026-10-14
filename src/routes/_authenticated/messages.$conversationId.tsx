@@ -16,7 +16,7 @@ export const Route = createFileRoute("/_authenticated/messages/$conversationId")
   component: ConversationPage,
   errorComponent: ({ error }) => (
     <div role="alert" className="p-6 text-center text-sm text-muted-foreground">
-      {error.message}
+      {error instanceof Error ? error.message : "Разговорът не можа да се зареди."}
     </div>
   ),
   notFoundComponent: () => (

@@ -55,7 +55,8 @@ function NotFoundComponent() {
   );
 }
 
-function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
+function ErrorComponent({ error: raw, reset }: { error: unknown; reset: () => void }) {
+  const error = raw instanceof Error ? raw : new Error(String(raw));
   console.error(error);
   const router = useRouter();
 
@@ -71,7 +72,7 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
       error,
       route: typeof window !== "undefined" ? window.location.pathname : undefined,
     });
-  }, [error]);
+  }, [raw]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-background px-4">

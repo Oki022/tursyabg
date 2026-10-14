@@ -35,7 +35,8 @@ export type NotificationType =
   | "account_banned"
   | "contact_message"
   | "account_deletion_scheduled"
-  | "account_deletion_cancelled";
+  | "account_deletion_cancelled"
+  | "task_alert";
 
 export type AppNotification = {
   id: string;

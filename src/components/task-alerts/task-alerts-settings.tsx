@@ -1,11 +1,8 @@
 import { useState } from "react";
 import { BellRing, Plus, Trash2, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { LocationCombobox } from "@/components/location-combobox";
-import { categories } from "@/lib/mock-data";
-import { splitLocation } from "@/lib/locations";
+import { AlertFields, type AlertDraft } from "@/components/task-alerts/alert-fields";
+import { draftToAlert } from "@/components/task-alerts/save-alert-button";
 import { useRegions } from "@/lib/locations-api";
 import {
   taskAlertLabel,
@@ -23,25 +20,14 @@ export function TaskAlertsSettings() {
   const { data: regions = [] } = useRegions();
   const regionName = (slug: string) => regions.find((r) => r.slug === slug)?.name;
 
-  const [category, setCategory] = useState<string>("all");
-  const [location, setLocation] = useState<string | undefined>(undefined);
+  const empty: AlertDraft = { category: "all", region: "all", location: undefined };
+  const [draft, setDraft] = useState<AlertDraft>(empty);
 
   const list = alerts.data ?? [];
   const full = list.length >= MAX_TASK_ALERTS;
 
   const add = () => {
-    create.mutate(
-      {
-        category: category === "all" ? null : category,
-        city: splitLocation(location).city ?? null,
-      },
-      {
-        onSuccess: () => {
-          setCategory("all");
-          setLocation(undefined);
-        },
-      },
-    );
+    create.mutate(draftToAlert(draft), { onSuccess: () => setDraft(empty) });
   };
 
   return (
@@ -84,31 +70,18 @@ export function TaskAlertsSettings() {
         </ul>
       )}
 
-      <div className="mt-5 grid gap-3 border-t border-border/60 pt-5 md:grid-cols-[1fr_1fr_auto] md:items-end">
-        <div className="grid gap-1.5">
-          <Label htmlFor="alert-category">Категория</Label>
-          <Select value={category} onValueChange={setCategory}>
-            <SelectTrigger id="alert-category" className="h-10">
-              <SelectValue placeholder="Всички категории" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">Всички категории</SelectItem>
-              {categories.map((c) => (
-                <SelectItem key={c.id} value={c.id}>
-                  {c.name}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+      <div className="mt-5 border-t border-border/60 pt-5">
+        <p className="mb-3 text-sm font-medium text-foreground">Ново известие</p>
+        <AlertFields draft={draft} onChange={setDraft} idPrefix="alert-settings" />
+        <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
+          <p className="text-sm text-muted-foreground">
+            Ще получаваш: <span className="font-medium text-foreground">{taskAlertLabel(draftToAlert(draft), regionName)}</span>
+          </p>
+          <Button type="button" className="gap-2" disabled={create.isPending || full} onClick={add}>
+            {create.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Plus className="h-4 w-4" />}
+            Добави
+          </Button>
         </div>
-        <div className="grid gap-1.5">
-          <Label htmlFor="alert-location">Община</Label>
-          <LocationCombobox id="alert-location" value={location} onChange={setLocation} allowClear placeholder="Цяла България" />
-        </div>
-        <Button type="button" className="h-10 gap-2" disabled={create.isPending || full} onClick={add}>
-          {create.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Plus className="h-4 w-4" />}
-          Добави
-        </Button>
       </div>
       {full && (
         <p className="mt-2 text-xs text-muted-foreground">
