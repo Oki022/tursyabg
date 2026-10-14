@@ -16,7 +16,7 @@ export type MetaTag = Record<string, string>;
 /** Full per-page metadata: title, description, canonical, Open Graph, Twitter card. */
 export function seo({ title, description, path, image, type = "website", noindex }: SeoInput) {
   // Pages without their own picture share the default brand image (public/og-image.png).
-  image = image ?? absoluteUrl("/og-image.png");
+  image = image ?? absoluteUrl("/og-image.png?v=2");
   const fullTitle = pageTitle(title);
   const url = absoluteUrl(path);
   const meta: MetaTag[] = [
