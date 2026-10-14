@@ -1644,6 +1644,33 @@ export type Database = {
           },
         ]
       }
+      task_alerts: {
+        Row: {
+          category: string | null
+          city: string | null
+          created_at: string
+          id: string
+          region: string | null
+          user_id: string
+        }
+        Insert: {
+          category?: string | null
+          city?: string | null
+          created_at?: string
+          id?: string
+          region?: string | null
+          user_id: string
+        }
+        Update: {
+          category?: string | null
+          city?: string | null
+          created_at?: string
+          id?: string
+          region?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       tasks: {
         Row: {
           admin_hidden_at: string | null
@@ -2405,6 +2432,20 @@ export type Database = {
         }
         Returns: Json
       }
+      task_alert_digest_batch: {
+        Args: { _limit?: number }
+        Returns: {
+          email: string
+          full_name: string | null
+          task_count: number
+          tasks: Json
+          user_id: string
+        }[]
+      }
+      task_alert_finish: {
+        Args: { _count: number; _user_id: string }
+        Returns: undefined
+      }
       user_trust: { Args: { _user_id: string }; Returns: Json }
     }
     Enums: {
@@ -2450,6 +2491,7 @@ export type Database = {
         | "task_removed"
         | "task_category_changed"
         | "review_removed"
+        | "task_alert"
       promo_type: "bump" | "urgent" | "top"
       refund_reason:
         | "fake_task"
@@ -2644,6 +2686,7 @@ export const Constants = {
         "task_removed",
         "task_category_changed",
         "review_removed",
+        "task_alert",
       ],
       promo_type: ["bump", "urgent", "top"],
       refund_reason: [

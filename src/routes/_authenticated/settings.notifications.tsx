@@ -1,3 +1,4 @@
+import { TaskAlertsSettings } from "@/components/task-alerts/task-alerts-settings";
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -68,6 +69,8 @@ function SettingsNotificationsPage() {
       title="Нотификации"
       description="Избери за какво да получаваш известия. Промените се запазват веднага."
     >
+      <TaskAlertsSettings />
+
       <div className="divide-y divide-border/60 rounded-2xl border border-border/60 bg-card shadow-sm">
         {NOTIFICATION_GROUPS.map((group) => (
           <div key={group.key} className="flex items-start justify-between gap-4 p-4 md:p-5">

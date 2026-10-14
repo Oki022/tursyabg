@@ -1,3 +1,4 @@
+import { SaveAlertButton } from "@/components/task-alerts/save-alert-button";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 import { ChevronDown, Search, SlidersHorizontal, X } from "lucide-react";
@@ -168,6 +169,17 @@ function TasksPage() {
           />
           <Button type="submit" className="shrink-0 rounded-full px-5">Търси</Button>
         </form>
+
+        {(search.category || search.location || search.region) && (
+          <SaveAlertButton
+            className="mt-3"
+            alert={{
+              category: search.category ?? null,
+              city: splitLocation(search.location).city ?? null,
+              region: search.location ? null : (search.region ?? null),
+            }}
+          />
+        )}
       </div>
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-[240px_1fr] lg:gap-5">

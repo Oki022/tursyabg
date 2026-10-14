@@ -1,5 +1,5 @@
 import { Link, useNavigate } from "@tanstack/react-router";
-import {
+import { BellRing,
   MessageSquare,
   Unlock,
   Clock,
@@ -47,6 +47,7 @@ const ICONS: Partial<Record<NotificationType, React.ComponentType<{ className?: 
   task_reported: Flag,
   task_still_open: HelpCircle,
   task_freshness: RefreshCw,
+  task_alert: BellRing,
   refund_auto_approved: BadgeCheck,
   credits_adjusted: CoinsIcon,
   account_restored: ShieldCheck,
