@@ -70,7 +70,7 @@ const DELETE_REASONS: { key: string; label: string; fraudulent: boolean }[] = [
 
 function AdminTasks() {
   const qc = useQueryClient();
-  const [filters, setFilters] = useState({ status: "all", category: "all", city: "all", days: "all", reportedOnly: false });
+  const [filters, setFilters] = useState({ status: "all", category: "all", city: "all", days: "all", budgetType: "all", reportedOnly: false });
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(0);
   const [deactivateTarget, setDeactivateTarget] = useState<AdminTask | null>(null);
@@ -216,6 +216,14 @@ function AdminTasks() {
             <SelectItem value="1">Последните 24 ч.</SelectItem>
             <SelectItem value="7">Последните 7 дни</SelectItem>
             <SelectItem value="30">Последните 30 дни</SelectItem>
+          </SelectContent>
+        </Select>
+        <Select value={filters.budgetType} onValueChange={(v) => { setFilters((f) => ({ ...f, budgetType: v })); setPage(0); }}>
+          <SelectTrigger className="h-9 w-40 rounded-md"><SelectValue placeholder="Бюджет" /></SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">Всички бюджети</SelectItem>
+            <SelectItem value="exact">Точна сума</SelectItem>
+            <SelectItem value="negotiable">По договаряне</SelectItem>
           </SelectContent>
         </Select>
         <Button

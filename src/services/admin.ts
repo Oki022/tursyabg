@@ -209,6 +209,8 @@ export type AdminTaskFilters = {
   category: string;
   city: string;
   days: string;
+  /** "all" | "exact" | "negotiable" */
+  budgetType?: string;
   reportedOnly: boolean;
 };
 
@@ -224,6 +226,8 @@ export async function getAdminTasks(filters: AdminTaskFilters): Promise<AdminTas
   if (filters.status !== "all") query = query.eq("status", filters.status as never);
   if (filters.category !== "all") query = query.eq("category", filters.category);
   if (filters.city !== "all") query = query.eq("city", filters.city);
+  if (filters.budgetType === "exact") query = query.is("budget_range", null);
+  if (filters.budgetType === "negotiable") query = query.not("budget_range", "is", null);
   if (filters.days !== "all") {
     const since = new Date(Date.now() - Number(filters.days) * 86400000).toISOString();
     query = query.gte("created_at", since);
