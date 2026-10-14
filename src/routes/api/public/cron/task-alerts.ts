@@ -20,27 +20,12 @@ type DigestTask = {
   title: string;
   category: string;
   city: string | null;
-  region: string | null;
   budget: number;
   budget_range: string | null;
 };
 
-/**
- * Link for "see all": /tasks filtered by whatever the new tasks have in
- * common (same category; same община, or else same област).
- */
-function tasksLink(tasks: DigestTask[]): string {
-  if (tasks.length === 0) return "/tasks";
-  const params = new URLSearchParams();
-  const category = tasks[0]!.category;
-  if (category && tasks.every((t) => t.category === category)) params.set("category", category);
-  const city = tasks[0]!.city;
-  const region = tasks[0]!.region;
-  if (city && tasks.every((t) => t.city === city)) params.set("location", city);
-  else if (region && tasks.every((t) => t.region === region)) params.set("region", region);
-  const qs = params.toString();
-  return qs ? `/tasks?${qs}` : "/tasks";
-}
+/** Where "see all" leads: the page that lists exactly the user's matched tasks. */
+const ALERTS_PATH = "/alerts";
 
 function plural(count: number): string {
   return count === 1 ? "1 нова задача" : `${count} нови задачи`;
@@ -63,7 +48,7 @@ function taskCard(t: DigestTask): string {
     </table>`;
 }
 
-function digestEmail(name: string | null, count: number, tasks: DigestTask[], link: string): string {
+function digestEmail(name: string | null, count: number, tasks: DigestTask[]): string {
   const first = name?.trim().split(/\s+/)[0];
   const hello = first ? `Здравей, ${escapeHtml(first)}!` : "Здравей!";
   const listed = tasks.slice(0, MAX_LISTED);
@@ -86,11 +71,12 @@ function digestEmail(name: string | null, count: number, tasks: DigestTask[], li
     cta:
       count === 1 && listed[0]
         ? { label: "Отвори задачата", href: absoluteUrl(`/task/${listed[0].id}`) }
-        : { label: "Виж всички нови задачи", href: absoluteUrl(link) },
+        : { label: "Виж всички нови задачи", href: absoluteUrl(ALERTS_PATH) },
     footerHtml: `
       Получаваш този имейл, защото си включил известия за нови задачи в ТърсяБГ.
       Изпращаме го най-много веднъж на ден и само ако има нещо ново.<br>
-      <a href="${absoluteUrl("/settings/notifications")}" style="color:#64748b">Управлявай известията</a>
+      <a href="${absoluteUrl(ALERTS_PATH)}" style="color:#64748b">Всички задачи за теб</a>
+      &nbsp;·&nbsp; <a href="${absoluteUrl("/settings/notifications")}" style="color:#64748b">Управлявай известията</a>
       &nbsp;·&nbsp; <a href="${absoluteUrl("/faq")}" style="color:#64748b">Помощ</a>`,
   });
 }
@@ -130,7 +116,6 @@ export const Route = createFileRoute("/api/public/cron/task-alerts")({
           for (const row of batch ?? []) {
             const tasks = (Array.isArray(row.tasks) ? row.tasks : []) as unknown as DigestTask[];
             const count = row.task_count;
-            const link = tasksLink(tasks);
 
             if (apiKey && row.email) {
               try {
@@ -141,7 +126,7 @@ export const Route = createFileRoute("/api/public/cron/task-alerts")({
                     from: FROM,
                     to: [row.email],
                     subject: `${plural(count)} за теб в ТърсяБГ`,
-                    html: digestEmail(row.full_name, count, tasks, link),
+                    html: digestEmail(row.full_name, count, tasks),
                     headers: { "List-Unsubscribe": `<${absoluteUrl("/settings/notifications")}>` },
                   }),
                 });
@@ -152,11 +137,11 @@ export const Route = createFileRoute("/api/public/cron/task-alerts")({
             }
 
             // Marks the hits as sent (so nobody gets the same task twice) and
-            // adds the in-app notification, which opens the same filtered list.
+            // adds the in-app notification (one task: that task; more: /alerts).
             await supabaseAdmin.rpc("task_alert_finish", {
               _user_id: row.user_id,
               _count: count,
-              _link: count === 1 && tasks[0] ? `/task/${tasks[0].id}` : link,
+              _link: count === 1 && tasks[0] ? `/task/${tasks[0].id}` : ALERTS_PATH,
             });
             users += 1;
           }

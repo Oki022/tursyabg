@@ -100,7 +100,7 @@ async function mapRows(rows: Row[]): Promise<Task[]> {
 /** `location` is "Община" or "Община, кв. Х"; `region` is an област slug. */
 export type TaskFilters = { q?: string; category?: string; location?: string; region?: string };
 
-type FeedRow = {
+export type FeedRow = {
   id: string;
   title: string;
   description: string;
@@ -136,7 +136,7 @@ function feedSeed(): string {
   return seed;
 }
 
-async function mapFeedRows(rows: FeedRow[]): Promise<Task[]> {
+export async function mapFeedRows(rows: FeedRow[]): Promise<Task[]> {
   const paths = rows.flatMap((r) => r.images ?? []).filter((p) => !p.startsWith("http"));
   const signed = await resolveImageUrls(paths);
   return rows.map((row) => {

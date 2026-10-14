@@ -25,6 +25,7 @@ import { Route as SitemapTasksDotxmlRouteImport } from './routes/sitemap-tasks[.
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as TasksRouteImport } from './routes/tasks'
 import { Route as TermsRouteImport } from './routes/terms'
+import { Route as AuthenticatedAlertsRouteImport } from './routes/_authenticated/alerts'
 import { Route as AuthenticatedFavouritesRouteImport } from './routes/_authenticated/favourites'
 import { Route as AuthenticatedNotificationsRouteImport } from './routes/_authenticated/notifications'
 import { Route as AuthenticatedPostRouteImport } from './routes/_authenticated/post'
@@ -142,6 +143,11 @@ const TermsRoute = TermsRouteImport.update({
   id: '/terms',
   path: '/terms',
   getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedAlertsRoute = AuthenticatedAlertsRouteImport.update({
+  id: '/alerts',
+  path: '/alerts',
+  getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedFavouritesRoute = AuthenticatedFavouritesRouteImport.update({
   id: '/favourites',
@@ -361,6 +367,7 @@ export interface FileRoutesByFullPath {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/tasks': typeof TasksRoute
   '/terms': typeof TermsRoute
+  '/alerts': typeof AuthenticatedAlertsRoute
   '/favourites': typeof AuthenticatedFavouritesRoute
   '/notifications': typeof AuthenticatedNotificationsRoute
   '/post': typeof AuthenticatedPostRoute
@@ -415,6 +422,7 @@ export interface FileRoutesByTo {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/tasks': typeof TasksRoute
   '/terms': typeof TermsRoute
+  '/alerts': typeof AuthenticatedAlertsRoute
   '/favourites': typeof AuthenticatedFavouritesRoute
   '/notifications': typeof AuthenticatedNotificationsRoute
   '/post': typeof AuthenticatedPostRoute
@@ -471,6 +479,7 @@ export interface FileRoutesById {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/tasks': typeof TasksRoute
   '/terms': typeof TermsRoute
+  '/_authenticated/alerts': typeof AuthenticatedAlertsRoute
   '/_authenticated/favourites': typeof AuthenticatedFavouritesRoute
   '/_authenticated/notifications': typeof AuthenticatedNotificationsRoute
   '/_authenticated/post': typeof AuthenticatedPostRoute
@@ -528,6 +537,7 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/tasks'
     | '/terms'
+    | '/alerts'
     | '/favourites'
     | '/notifications'
     | '/post'
@@ -582,6 +592,7 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/tasks'
     | '/terms'
+    | '/alerts'
     | '/favourites'
     | '/notifications'
     | '/post'
@@ -637,6 +648,7 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/tasks'
     | '/terms'
+    | '/_authenticated/alerts'
     | '/_authenticated/favourites'
     | '/_authenticated/notifications'
     | '/_authenticated/post'
@@ -821,6 +833,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/terms'
       preLoaderRoute: typeof TermsRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/alerts': {
+      id: '/_authenticated/alerts'
+      path: '/alerts'
+      fullPath: '/alerts'
+      preLoaderRoute: typeof AuthenticatedAlertsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/favourites': {
       id: '/_authenticated/favourites'
@@ -1092,6 +1111,7 @@ declare module '@tanstack/react-router' {
 }
 
 interface AuthenticatedRouteRouteChildren {
+  AuthenticatedAlertsRoute: typeof AuthenticatedAlertsRoute
   AuthenticatedFavouritesRoute: typeof AuthenticatedFavouritesRoute
   AuthenticatedNotificationsRoute: typeof AuthenticatedNotificationsRoute
   AuthenticatedPostRoute: typeof AuthenticatedPostRoute
@@ -1109,6 +1129,7 @@ interface AuthenticatedRouteRouteChildren {
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedAlertsRoute: AuthenticatedAlertsRoute,
   AuthenticatedFavouritesRoute: AuthenticatedFavouritesRoute,
   AuthenticatedNotificationsRoute: AuthenticatedNotificationsRoute,
   AuthenticatedPostRoute: AuthenticatedPostRoute,
