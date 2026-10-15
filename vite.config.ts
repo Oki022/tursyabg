@@ -5,6 +5,7 @@
 //     error logger plugins, and sandbox detection (port/host/strictPort).
 // You can pass additional config via defineConfig({ vite: { ... } }) if needed.
 import { defineConfig } from "@lovable.dev/vite-tanstack-config";
+import { legacyColors } from "./vite-plugins/legacy-colors";
 
 // Release id for error monitoring: tied to the deployment so Sentry can show
 // which build introduced an error. Falls back to a build timestamp locally.
@@ -23,6 +24,8 @@ export default defineConfig({
     server: { entry: "server" },
   },
   vite: {
+    // Colour fallbacks for older browsers (Chrome < 111, Safari < 16.4). Build only.
+    plugins: [legacyColors()],
     define: {
       __APP_RELEASE__: JSON.stringify(release),
     },
