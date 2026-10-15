@@ -1,15 +1,27 @@
 import { createFileRoute } from "@tanstack/react-router";
 
 /**
- * Cron watchdog: scans recent scheduled-job runs and forwards failures to
- * Sentry as high-priority alerts. Read-only, returns no personal data.
- * Point an external scheduler (or pg_cron via net.http_post) at it hourly.
+ * Cron watchdog: scans the last hour of scheduled-job runs and forwards
+ * failures to Sentry as high-priority alerts. Called hourly by pg_cron
+ * (public.call_cron_check) with a secret key in the x-cron-key header, so
+ * outsiders cannot trigger it and flood Sentry. Returns no personal data.
  */
 export const Route = createFileRoute("/api/public/monitoring/cron-check")({
   server: {
     handlers: {
-      GET: async () => {
+      POST: async ({ request }) => {
         const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+
+        const provided = request.headers.get("x-cron-key") ?? "";
+        const { data: expected } = await supabaseAdmin
+          .from("cron_secrets")
+          .select("token")
+          .eq("name", "cron_check")
+          .maybeSingle();
+        if (!expected?.token || provided !== expected.token) {
+          return new Response("Unauthorized", { status: 401 });
+        }
+
         const { reportServerIssue } = await import("@/lib/monitoring/sentry.server");
 
         const since = new Date(Date.now() - 60 * 60 * 1000).toISOString();

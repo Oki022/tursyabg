@@ -9,7 +9,11 @@ const SUPABASE_URL = process.env.VITE_SUPABASE_URL ?? "";
 const ANON_KEY = process.env.VITE_SUPABASE_PUBLISHABLE_KEY ?? process.env.SUPABASE_PUBLISHABLE_KEY ?? "";
 
 test.describe("cron адреси", () => {
-  for (const path of ["/api/public/cron/task-alerts", "/api/public/cron/unconfirmed-reminders"]) {
+  for (const path of [
+    "/api/public/cron/task-alerts",
+    "/api/public/cron/unconfirmed-reminders",
+    "/api/public/monitoring/cron-check",
+  ]) {
     test(`${path} отказва без правилен ключ`, async ({ request }) => {
       const noKey = await request.post(path);
       expect(noKey.status()).toBe(401);
