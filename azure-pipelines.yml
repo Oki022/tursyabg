@@ -1,8 +1,8 @@
 trigger: none
 
 schedules:
-  - cron: "0 6 * * *"        # Her gün 06:00 UTC
-    displayName: Седмични E2E тестове
+  - cron: "0 6 * * *"        # Her gГјn 06:00 UTC
+    displayName: РЎРµРґРјРёС‡РЅРё E2E С‚РµСЃС‚РѕРІРµ
     branches:
       include:
         - main
@@ -15,19 +15,19 @@ steps:
   - task: NodeTool@0
     inputs:
       versionSpec: '22.x'
-    displayName: 'Инсталирай Node.js'
+    displayName: 'РРЅСЃС‚Р°Р»РёСЂР°Р№ Node.js'
 
-  - script: npm install
-    displayName: 'Инсталирай зависимости'
+  - script: npm ci
+    displayName: 'РРЅСЃС‚Р°Р»РёСЂР°Р№ Р·Р°РІРёСЃРёРјРѕСЃС‚Рё'
 
   - script: npm run test:unit
-    displayName: 'Пусни unit тестовете'
+    displayName: 'РџСѓСЃРЅРё unit С‚РµСЃС‚РѕРІРµС‚Рµ'
 
   - script: npx playwright install --with-deps chromium
-    displayName: 'Инсталирай Playwright браузъри'
+    displayName: 'РРЅСЃС‚Р°Р»РёСЂР°Р№ Playwright Р±СЂР°СѓР·СЉСЂРё'
 
   - script: npx playwright test --project=chromium --reporter=list,junit
-    displayName: 'Пусни E2E тестовете'
+    displayName: 'РџСѓСЃРЅРё E2E С‚РµСЃС‚РѕРІРµС‚Рµ'
     env:
       PLAYWRIGHT_JUNIT_OUTPUT_NAME: 'test-results/results.xml'
       VITE_SUPABASE_URL: $(VITE_SUPABASE_URL)
@@ -44,4 +44,4 @@ steps:
       testResultsFormat: 'JUnit'
       testResultsFiles: 'test-results/**/*.xml'
       testRunTitle: 'Playwright E2E'
-    displayName: 'Публикувай резултатите'
+    displayName: 'РџСѓР±Р»РёРєСѓРІР°Р№ СЂРµР·СѓР»С‚Р°С‚РёС‚Рµ'

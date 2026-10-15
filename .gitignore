@@ -31,8 +31,6 @@ dist-ssr
 *.sln
 *.sw?
 
-# Lockfiles (project uses bun)
-package-lock.json
 
 # Environment variables
 .env
