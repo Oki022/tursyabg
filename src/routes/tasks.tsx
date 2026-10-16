@@ -73,6 +73,12 @@ function TasksPage() {
   const [filtersOpen, setFiltersOpen] = useState<boolean | undefined>(undefined);
 
   useEffect(() => {
+    // Ana sayfadan kategoriyle gelindiyse mobilde panel açık gelsin ki alt kategori seçilebilsin.
+    // Bu tercih kaydedilmez.
+    if (search.from === "home" && search.category && window.matchMedia("(max-width: 767px)").matches) {
+      setFiltersOpen(true);
+      return;
+    }
     try {
       const saved = window.localStorage.getItem("tasks-filters-open");
       if (saved === "true" || saved === "false") {
@@ -135,6 +141,8 @@ function TasksPage() {
   
   useEffect(() => {
     if (typeof window === "undefined" || search.from !== "home") return;
+    // Kategoriyle gelindiyse kaydırma yok: önce alt kategori seçilir, kaydırma o zaman olur.
+    if (search.category) return;
     if (!window.matchMedia("(max-width: 767px)").matches) return;
     const timer = window.setTimeout(() => {
       document.querySelector("[data-results-anchor]")?.scrollIntoView({ behavior: "smooth", block: "start" });
