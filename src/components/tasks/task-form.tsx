@@ -109,6 +109,14 @@ export function TaskForm({
     initial?.subcategory ?? (mode === "edit" && initial?.category ? OTHER_SUBCATEGORY : undefined),
   );
   const subOptions = subcategoriesFor(category);
+  // Clearing the title starts over: the category, the subcategory and with them
+  // the suggestions and example texts follow what is typed next.
+  useEffect(() => {
+    if (mode === "create" && title.trim() === "") {
+      setCategory(undefined);
+      setSubcategory(undefined);
+    }
+  }, [mode, title]);
   // A new category keeps the subcategory only when it also exists there.
   useEffect(() => {
     if (subcategory && !isValidSubcategory(category, subcategory)) setSubcategory(undefined);
@@ -120,7 +128,6 @@ export function TaskForm({
     initial?.budget != null && !initial?.budgetRange ? String(initial.budget) : "",
   );
   const [location, setLocation] = useState<string | undefined>(initial?.location || undefined);
-  const [manuallyTouched, setManuallyTouched] = useState(mode === "edit");
   const [photos, setPhotos] = useState<{ id: string; url: string; name: string; file: File }[]>([]);
   const [removed, setRemoved] = useState<string[]>([]);
   const [dragOver, setDragOver] = useState(false);
@@ -164,8 +171,14 @@ export function TaskForm({
   // Full-text analysis (title + description) with weighted Bulgarian phrase
   // scoring; the top 2-3 candidates are offered as one-tap chips.
   const candidates = useMemo(
-    () => (manuallyTouched ? [] : suggestCategories(debouncedTitle, debouncedDescription)),
-    [debouncedTitle, debouncedDescription, manuallyTouched],
+    () =>
+      mode === "edit"
+        ? []
+        : suggestCategories(debouncedTitle, debouncedDescription).filter(
+            // Hide a chip that only repeats what is already selected.
+            (c) => !(c.id === category && (c.subcategory?.id ?? subcategory) === subcategory),
+          ),
+    [mode, debouncedTitle, debouncedDescription, category, subcategory],
   );
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -250,8 +263,7 @@ export function TaskForm({
                 type="button"
                 onClick={() => {
                   setCategory(c.id);
-                  if (c.subcategory) setSubcategory(c.subcategory.id);
-                  setManuallyTouched(true);
+                  setSubcategory(c.subcategory?.id);
                 }}
                 className={
                   i === 0
@@ -265,10 +277,9 @@ export function TaskForm({
           </div>
         )}
         <Select
-          value={category}
+          value={category ?? ""}
           onValueChange={(v) => {
             setCategory(v);
-            setManuallyTouched(true);
           }}
         >
           <SelectTrigger id="category" className="h-11">

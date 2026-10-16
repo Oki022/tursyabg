@@ -110,13 +110,8 @@ function TasksPage() {
 
   // Filtre eklenince/değişince ilanların başına yumuşakça kay; kaldırınca yerinde kal.
   // Masaüstünde sadece ilanların başı ekranın üstünde kalmışsa kaydır.
-  const update = (next: Partial<Search>) => {
-    const isRemoval = Object.values(next).every((v) => v === undefined || v === "");
-    navigate({
-      search: (prev: Search) => ({ ...prev, ...next }),
-      resetScroll: false,
-    });
-    if (isRemoval || typeof window === "undefined") return;
+  const scrollToResults = () => {
+    if (typeof window === "undefined") return;
     const anchor = document.querySelector<HTMLElement>("[data-results-anchor]");
     if (!anchor) return;
     const mobile = window.matchMedia("(max-width: 767px)").matches;
@@ -124,6 +119,18 @@ function TasksPage() {
     window.setTimeout(() => {
       anchor.scrollIntoView({ behavior: "smooth", block: "start" });
     }, 150);
+  };
+
+  // `scroll: false` keeps the page still, e.g. after picking a category so the
+  // user can choose a subcategory first.
+  const update = (next: Partial<Search>, { scroll = true }: { scroll?: boolean } = {}) => {
+    const isRemoval = Object.values(next).every((v) => v === undefined || v === "");
+    navigate({
+      search: (prev: Search) => ({ ...prev, ...next }),
+      resetScroll: false,
+    });
+    if (isRemoval || !scroll) return;
+    scrollToResults();
   };
   
   useEffect(() => {
@@ -153,18 +160,12 @@ function TasksPage() {
   return (
     <div className="container mx-auto px-4 py-8 md:py-12">
       <div className="mb-6">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight text-foreground md:text-4xl">
-            Борса за работа
-          </h1>
-          <p className="mt-2 text-muted-foreground">
-            {isLoading ? "Зареждане..." : `${filtered.length}${hasNextPage ? "+" : ""} ${filtered.length === 1 ? "активна задача" : "активни задачи"}`}
-          </p>
-        </div>
+        {/* Kept for screen readers and search engines; visitors already know the page. */}
+        <h1 className="sr-only">Борса за работа</h1>
 
         <form
           onSubmit={(e) => { e.preventDefault(); update({ q: query || undefined }); }}
-          className="mt-4 flex w-full max-w-[640px] items-center gap-2 rounded-full border border-border/60 bg-card p-1.5 pl-4 shadow-sm"
+          className="flex w-full max-w-[640px] items-center gap-2 rounded-full border border-border/60 bg-card p-1.5 pl-4 shadow-sm"
         >
           <Search className="h-4 w-4 shrink-0 text-muted-foreground" />
           <Input
@@ -233,7 +234,17 @@ function TasksPage() {
                 return (
                   <div key={c.id}>
                     <button
-                      onClick={() => update({ category: active ? undefined : c.id, sub: undefined })}
+                      onClick={() => {
+                        if (!active) {
+                          // Stay here: the subcategories open right below.
+                          update({ category: c.id, sub: undefined }, { scroll: subcategoriesFor(c.id).length === 0 });
+                        } else if (window.matchMedia("(max-width: 767px)").matches) {
+                          // Second tap on mobile: go to the tasks of the whole category.
+                          scrollToResults();
+                        } else {
+                          update({ category: undefined, sub: undefined });
+                        }
+                      }}
                       className={`flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-sm transition-colors ${active ? "bg-primary/10 text-primary font-medium" : "text-foreground hover:bg-secondary"}`}
                     >
                       <Icon className="h-4 w-4" />
@@ -302,6 +313,9 @@ function TasksPage() {
 
         {/* Results */}
         <div data-results-anchor className="scroll-mt-20">
+          <p className="mb-3 text-sm text-muted-foreground">
+            {isLoading ? "Зареждане..." : `${filtered.length}${hasNextPage ? "+" : ""} ${filtered.length === 1 ? "активна задача" : "активни задачи"}`}
+          </p>
           {activeFilters > 0 && (
             <div className="mb-4 flex flex-wrap gap-2">
               {search.category && (

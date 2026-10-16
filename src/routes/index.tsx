@@ -101,7 +101,7 @@ function Index() {
         <h2 className="mb-6 text-sm font-semibold uppercase tracking-wider text-muted-foreground">
           Популярни категории
         </h2>
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-5 lg:grid-cols-10">
+        <div className="grid grid-cols-3 gap-2 sm:grid-cols-4 sm:gap-3 md:grid-cols-6 xl:grid-cols-12">
           {categories.map((c) => {
             const Icon = c.icon;
             return (
@@ -109,13 +109,13 @@ function Index() {
                 key={c.id}
                 to="/tasks"
                 search={{ category: c.id, from: "home" }}
-                className="group flex flex-col items-center gap-2 rounded-xl border border-border bg-card p-4 text-center transition-all hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-sm dark:bg-card"
+                className="group flex flex-col items-center gap-1.5 rounded-xl border border-border bg-card px-1.5 py-3 text-center transition-all hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-sm dark:bg-card"
               >
-                <span className="grid h-12 w-12 place-items-center rounded-lg bg-primary/10 text-primary transition-colors group-hover:bg-primary group-hover:text-primary-foreground">
-                  <Icon className="h-6 w-6" />
+                <span className="grid h-10 w-10 place-items-center rounded-lg bg-primary/10 text-primary transition-colors group-hover:bg-primary group-hover:text-primary-foreground">
+                  <Icon className="h-5 w-5" />
                 </span>
 
-                <span className="text-xs font-medium text-foreground">{c.name}</span>
+                <span className="text-[11px] font-medium leading-tight text-foreground sm:text-xs">{c.name}</span>
               </Link>
             );
           })}
