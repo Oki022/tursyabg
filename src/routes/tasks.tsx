@@ -186,7 +186,7 @@ function TasksPage() {
         </form>
 
         <SaveAlertButton
-          className="mt-3 w-full lg:w-[240px]"
+          className="mt-3 w-full lg:w-[272px]"
           initial={{
             category: search.category ?? "all",
             subcategories: search.category && search.sub ? [search.sub] : [],
@@ -196,11 +196,11 @@ function TasksPage() {
         />
       </div>
 
-      <div className="grid grid-cols-1 gap-6 lg:grid-cols-[240px_1fr] lg:gap-5">
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-[272px_1fr] lg:gap-5">
 
         {/* Sidebar */}
         <aside
-          className={`rounded-2xl border border-border bg-card p-5 transition-[top] duration-300 lg:sticky lg:self-start ${
+          className={`rounded-2xl border border-border bg-card p-5 lg:p-4 transition-[top] duration-300 lg:sticky lg:self-start ${
             headerHidden ? "lg:top-4" : "lg:top-20"
           }`}
         >
@@ -253,10 +253,10 @@ function TasksPage() {
                           update({ category: undefined, sub: undefined });
                         }
                       }}
-                      className={`flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-sm transition-colors ${active ? "bg-primary/10 text-primary font-medium" : "text-foreground hover:bg-secondary"}`}
+                      className={`flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left text-sm transition-colors ${active ? "bg-primary/10 text-primary font-medium" : "text-foreground hover:bg-secondary"}`}
                     >
-                      <Icon className="h-4 w-4" />
-                      {c.name}
+                      <Icon className="h-4 w-4 shrink-0" />
+                      <span className="min-w-0 truncate">{c.name}</span>
                     </button>
                     {subs.length > 0 && (
                       <div className="flex flex-wrap gap-1.5 px-2 pb-2 pt-2">
