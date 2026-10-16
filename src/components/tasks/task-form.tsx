@@ -8,6 +8,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { LocationCombobox } from "@/components/location-combobox";
 import { categories } from "@/lib/mock-data";
 import { suggestCategories } from "@/lib/category-suggest";
+import { OTHER_SUBCATEGORY, isValidSubcategory, subcategoriesFor } from "@/lib/subcategories";
+import { cn } from "@/lib/utils";
 import {
   DESCRIPTION_MAX,
   DESCRIPTION_MIN,
@@ -24,6 +26,8 @@ import { BUDGET_RANGES, budgetForRange, type BudgetRange } from "@/lib/budget-ra
 export type TaskFormValues = {
   title: string;
   category: string;
+  /** Required for new tasks; "drugo" when nothing fits. */
+  subcategory: string | null;
   description: string;
   budget: number;
   /** "По договаряне" range, or null for an exact amount. */
@@ -100,6 +104,15 @@ export function TaskForm({
 }) {
   const [title, setTitle] = useState(initial?.title ?? "");
   const [category, setCategory] = useState<string | undefined>(initial?.category);
+  // Tasks from before subcategories open in the edit form as "Друго".
+  const [subcategory, setSubcategory] = useState<string | undefined>(
+    initial?.subcategory ?? (mode === "edit" && initial?.category ? OTHER_SUBCATEGORY : undefined),
+  );
+  const subOptions = subcategoriesFor(category);
+  // A new category keeps the subcategory only when it also exists there.
+  useEffect(() => {
+    if (subcategory && !isValidSubcategory(category, subcategory)) setSubcategory(undefined);
+  }, [category, subcategory]);
   const [description, setDescription] = useState(initial?.description ?? "");
   const [budgetRange, setBudgetRange] = useState<BudgetRange | null>(initial?.budgetRange ?? null);
   const [budgetMode, setBudgetMode] = useState<"exact" | "range">(initial?.budgetRange ? "range" : "exact");
@@ -170,6 +183,10 @@ export function TaskForm({
       onError(isRange && !budgetRange ? "Избери ориентировъчен бюджет." : "Моля, попълни всички полета");
       return;
     }
+    if (!subcategory || !isValidSubcategory(category, subcategory)) {
+      onError("Избери вид услуга. Ако нищо не пасва, избери „Друго“.");
+      return;
+    }
     const budgetValue = isRange && budgetRange ? budgetForRange(budgetRange) : Number(budget) || 0;
     if (minBudget != null && budgetValue < minBudget) {
       onError(`Бюджетът не може да бъде под ${minBudget} €.`);
@@ -188,6 +205,7 @@ export function TaskForm({
       values: {
         title,
         category,
+        subcategory,
         description,
         budget: budgetValue,
         budgetRange: isRange ? budgetRange : null,
@@ -266,6 +284,34 @@ export function TaskForm({
           </SelectContent>
         </Select>
       </div>
+
+      {subOptions.length > 0 && (
+        <div className="space-y-2">
+          <Label id="subcategory-label">Вид услуга</Label>
+          <div role="radiogroup" aria-labelledby="subcategory-label" className="flex flex-wrap gap-2">
+            {subOptions.map((s) => {
+              const active = subcategory === s.id;
+              return (
+                <button
+                  key={s.id}
+                  type="button"
+                  role="radio"
+                  aria-checked={active}
+                  onClick={() => setSubcategory(s.id)}
+                  className={cn(
+                    "rounded-full border px-3.5 py-1.5 text-sm transition-colors",
+                    active
+                      ? "border-primary bg-primary text-primary-foreground"
+                      : "border-border bg-background text-foreground hover:border-primary/50 hover:bg-primary/5",
+                  )}
+                >
+                  {s.name}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      )}
 
       <div className="space-y-2">
         <div className="flex items-center justify-between gap-2">

@@ -3,22 +3,27 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { LocationCombobox } from "@/components/location-combobox";
 import { categories } from "@/lib/mock-data";
+import { subcategoriesFor } from "@/lib/subcategories";
+import { cn } from "@/lib/utils";
 import { splitLocation } from "@/lib/locations";
 import { useMunicipalities, useRegions } from "@/lib/locations-api";
 import type { TaskAlertInput } from "@/services/task-alerts";
 
 export type AlertDraft = {
   category: string; // "all" or a category id
+  /** Subcategory ids inside the category; empty = the whole category. */
+  subcategories?: string[];
   region: string; // "all" or a region slug
   location?: string; // община name from LocationCombobox
 };
 
-export const EMPTY_DRAFT: AlertDraft = { category: "all", region: "all", location: undefined };
+export const EMPTY_DRAFT: AlertDraft = { category: "all", subcategories: [], region: "all", location: undefined };
 
 export function draftToAlert(d: AlertDraft): TaskAlertInput {
   const city = splitLocation(d.location).city ?? null;
   return {
     category: d.category === "all" ? null : d.category,
+    subcategories: d.category === "all" ? null : (d.subcategories ?? []),
     city,
     // An община is more specific than an област; keep only one of them.
     region: city ? null : d.region === "all" ? null : d.region,
@@ -44,6 +49,8 @@ export function AlertFields({
 }) {
   const { data: regions = [] } = useRegions();
   const { data: municipalities = [] } = useMunicipalities();
+  const subOptions = draft.category === "all" ? [] : subcategoriesFor(draft.category);
+  const selectedSubs = draft.subcategories ?? [];
 
   // Filters from /tasks may carry only an община; show its област as well.
   useEffect(() => {
@@ -58,7 +65,7 @@ export function AlertFields({
     <div className="grid gap-3">
       <div className="grid gap-1.5">
         <Label htmlFor={`${idPrefix}-category`}>Категория</Label>
-        <Select value={draft.category} onValueChange={(v) => onChange({ ...draft, category: v })}>
+        <Select value={draft.category} onValueChange={(v) => onChange({ ...draft, category: v, subcategories: [] })}>
           <SelectTrigger id={`${idPrefix}-category`} className="h-10">
             <SelectValue placeholder="Всички категории" />
           </SelectTrigger>
@@ -72,6 +79,43 @@ export function AlertFields({
           </SelectContent>
         </Select>
       </div>
+
+      {subOptions.length > 0 && (
+        <div className="grid gap-1.5">
+          <span className="text-sm font-medium leading-none" id={`${idPrefix}-subs-label`}>
+            Вид услуга (по избор)
+          </span>
+          <p className="text-xs text-muted-foreground">
+            Избери една или няколко. Ако не избереш, ще получаваш цялата категория.
+          </p>
+          <div role="group" aria-labelledby={`${idPrefix}-subs-label`} className="flex flex-wrap gap-1.5">
+            {subOptions.map((s) => {
+              const on = selectedSubs.includes(s.id);
+              return (
+                <button
+                  key={s.id}
+                  type="button"
+                  aria-pressed={on}
+                  onClick={() =>
+                    onChange({
+                      ...draft,
+                      subcategories: on ? selectedSubs.filter((x) => x !== s.id) : [...selectedSubs, s.id],
+                    })
+                  }
+                  className={cn(
+                    "rounded-full border px-2.5 py-1 text-xs transition-colors",
+                    on
+                      ? "border-primary bg-primary text-primary-foreground"
+                      : "border-border text-foreground hover:border-primary/50 hover:bg-primary/5",
+                  )}
+                >
+                  {s.name}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      )}
 
       <div className="grid gap-3 sm:grid-cols-2">
         <div className="grid gap-1.5">

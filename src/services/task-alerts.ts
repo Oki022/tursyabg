@@ -8,6 +8,8 @@ export type TaskAlert = {
   city: string | null;
   /** Region (област) slug. */
   region: string | null;
+  /** Subcategory ids; null = the whole category. */
+  subcategories: string[] | null;
   createdAt: string;
 };
 
@@ -15,28 +17,39 @@ export type TaskAlertInput = {
   category?: string | null;
   city?: string | null;
   region?: string | null;
+  subcategories?: string[] | null;
 };
 
 export const MAX_TASK_ALERTS = 10;
 
 function clean(input: TaskAlertInput) {
+  const category = input.category || null;
+  // Subcategories only make sense inside a category; stored sorted so the
+  // database's uniqueness check sees the same list in any click order.
+  const subs = category ? [...new Set(input.subcategories ?? [])].sort() : [];
   return {
-    category: input.category || null,
+    category,
     city: input.city || null,
     region: input.region || null,
+    subcategories: subs.length > 0 ? subs : null,
   };
 }
 
 export function sameAlert(a: TaskAlertInput, b: TaskAlertInput): boolean {
   const x = clean(a);
   const y = clean(b);
-  return x.category === y.category && x.city === y.city && x.region === y.region;
+  return (
+    x.category === y.category &&
+    x.city === y.city &&
+    x.region === y.region &&
+    (x.subcategories ?? []).join(",") === (y.subcategories ?? []).join(",")
+  );
 }
 
 export async function getMyTaskAlerts(): Promise<TaskAlert[]> {
   const { data, error } = await supabase
     .from("task_alerts")
-    .select("id, category, city, region, created_at")
+    .select("id, category, city, region, subcategories, created_at")
     .order("created_at", { ascending: false });
   if (error) throw error;
   return (data ?? []).map((r) => ({
@@ -44,6 +57,7 @@ export async function getMyTaskAlerts(): Promise<TaskAlert[]> {
     category: r.category,
     city: r.city,
     region: r.region,
+    subcategories: r.subcategories ?? null,
     createdAt: r.created_at,
   }));
 }

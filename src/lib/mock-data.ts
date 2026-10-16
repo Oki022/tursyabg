@@ -39,6 +39,8 @@ export type Task = {
   id: string;
   title: string;
   category: string;
+  /** Subcategory id from src/lib/subcategories.ts; null for tasks from before subcategories. */
+  subcategory?: string | null;
   location: string;
   budget: number;
   /** Set when the client chose "По договаряне"; `budget` then holds the range's representative value. */

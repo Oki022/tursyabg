@@ -73,6 +73,7 @@ function EditTaskPage() {
         initial={{
           title: task.title,
           category: task.category,
+          subcategory: task.subcategory ?? null,
           description: task.description,
           budget: task.budget,
           budgetRange: task.budgetRange ?? null,
@@ -91,6 +92,7 @@ function EditTaskPage() {
               title: values.title,
               description: values.description,
               category: values.category,
+              subcategory: values.subcategory,
               budget: values.budget,
               budgetRange: values.budgetRange,
               location: values.location,

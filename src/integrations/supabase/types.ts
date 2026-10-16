@@ -1651,6 +1651,7 @@ export type Database = {
           created_at: string
           id: string
           region: string | null
+          subcategories: string[] | null
           user_id: string
         }
         Insert: {
@@ -1659,6 +1660,7 @@ export type Database = {
           created_at?: string
           id?: string
           region?: string | null
+          subcategories?: string[] | null
           user_id: string
         }
         Update: {
@@ -1667,6 +1669,7 @@ export type Database = {
           created_at?: string
           id?: string
           region?: string | null
+          subcategories?: string[] | null
           user_id?: string
         }
         Relationships: []
@@ -1680,6 +1683,7 @@ export type Database = {
           bumped_at: string
           category: string
           category_corrected_at: string | null
+          subcategory: string | null
           city: string | null
           content_edited_at: string | null
           created_at: string
@@ -1715,6 +1719,7 @@ export type Database = {
           bumped_at?: string
           category: string
           category_corrected_at?: string | null
+          subcategory?: string | null
           city?: string | null
           content_edited_at?: string | null
           created_at?: string
@@ -1750,6 +1755,7 @@ export type Database = {
           bumped_at?: string
           category?: string
           category_corrected_at?: string | null
+          subcategory?: string | null
           city?: string | null
           content_edited_at?: string | null
           created_at?: string
@@ -2140,6 +2146,7 @@ export type Database = {
           _q?: string
           _region?: string
           _seed?: string
+          _subcategory?: string
         }
         Returns: {
           author: string
@@ -2161,6 +2168,7 @@ export type Database = {
           promo_expires_at: string
           promoted_slot: boolean
           status: Database["public"]["Enums"]["task_status"]
+          subcategory: string | null
           title: string
           unlock_cost: number
           unlock_count: number
@@ -2462,6 +2470,10 @@ export type Database = {
         Returns: undefined
       }
       task_alert_push_inapp: { Args: never; Returns: number }
+      set_task_subcategory: {
+        Args: { _subcategory: string | null; _task_id: string }
+        Returns: undefined
+      }
       my_alert_tasks: {
         Args: { _limit?: number }
         Returns: {

@@ -19,6 +19,7 @@ type Row = {
   title: string;
   description: string;
   category: string;
+  subcategory?: string | null;
   budget: number;
   budget_range?: string | null;
   city: string | null;
@@ -39,7 +40,7 @@ type Row = {
 };
 
 const SELECT =
-  "id, title, description, category, budget, budget_range, city, neighborhood, status, unlock_cost, created_at, bumped_at, status_changed_at, view_count, unlock_count, max_unlocks, user_id, admin_hidden_at, reposted_at, content_edited_at, task_images(image_url, sort_order)";
+  "id, title, description, category, subcategory, budget, budget_range, city, neighborhood, status, unlock_cost, created_at, bumped_at, status_changed_at, view_count, unlock_count, max_unlocks, user_id, admin_hidden_at, reposted_at, content_edited_at, task_images(image_url, sort_order)";
 
 export function timeAgoBg(iso: string) {
   const diff = Date.now() - new Date(iso).getTime();
@@ -66,6 +67,7 @@ function mapRow(row: Row, signed: Record<string, string>, names: Record<string, 
     title: row.title,
     description: row.description,
     category: row.category,
+    subcategory: row.subcategory ?? null,
     budget: Number(row.budget),
     budgetRange: asBudgetRange(row.budget_range),
     location: [row.city, row.neighborhood].filter(Boolean).join(", "),
@@ -98,13 +100,14 @@ async function mapRows(rows: Row[]): Promise<Task[]> {
 }
 
 /** `location` is "Община" or "Община, кв. Х"; `region` is an област slug. */
-export type TaskFilters = { q?: string; category?: string; location?: string; region?: string };
+export type TaskFilters = { q?: string; category?: string; subcategory?: string; location?: string; region?: string };
 
 export type FeedRow = {
   id: string;
   title: string;
   description: string;
   category: string;
+  subcategory?: string | null;
   budget: number;
   budget_range: string | null;
   city: string | null;
@@ -148,6 +151,7 @@ export async function mapFeedRows(rows: FeedRow[]): Promise<Task[]> {
       title: row.title,
       description: row.description,
       category: row.category,
+      subcategory: row.subcategory ?? null,
       budget: Number(row.budget),
       budgetRange: asBudgetRange(row.budget_range),
       location: [row.city, row.neighborhood].filter(Boolean).join(", "),
@@ -186,6 +190,7 @@ async function fetchTasksPage({
     _seed: feedSeed(),
     _promo_offset: page.promoOffset,
     ...(filters.category ? { _category: filters.category } : {}),
+    ...(filters.category && filters.subcategory ? { _subcategory: filters.subcategory } : {}),
     ...(city ? { _city: city } : {}),
     ...(neighborhood ? { _neighborhood: neighborhood } : {}),
     ...(filters.q ? { _q: filters.q } : {}),
@@ -348,6 +353,7 @@ export type CreateTaskInput = {
   title: string;
   description: string;
   category: string;
+  subcategory: string | null;
   budget: number;
   /** "По договаряне" range; the database then sets `budget` itself. */
   budgetRange: BudgetRange | null;
@@ -421,6 +427,7 @@ export function useCreateTask() {
           title: input.title,
           description: input.description,
           category: input.category,
+          subcategory: input.subcategory,
           budget: input.budget,
           budget_range: input.budgetRange,
           city: city ?? null,
@@ -504,6 +511,7 @@ export type UpdateTaskInput = {
   title: string;
   description: string;
   category: string;
+  subcategory: string | null;
   budget: number;
   budgetRange: BudgetRange | null;
   location: string;
@@ -543,6 +551,13 @@ export function useUpdateTask() {
       if (error) throw error;
       const res = (data ?? {}) as Record<string, unknown>;
       if (!res["ok"]) throw new Error(String(res["error"] ?? "UNKNOWN"));
+
+      // The subcategory is not part of the moderated edit; it is saved separately.
+      const { error: subError } = await supabase.rpc("set_task_subcategory", {
+        _task_id: input.taskId,
+        _subcategory: input.subcategory,
+      });
+      if (subError) throw subError;
 
       if (input.removedImageIds.length > 0) {
         const { error: delError } = await supabase

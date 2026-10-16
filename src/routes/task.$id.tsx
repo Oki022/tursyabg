@@ -29,6 +29,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { useAuth } from "@/lib/auth";
 import { findOrCreateConversation, useSendMessage, useThread } from "@/lib/messages-api";
 import { getCategory } from "@/lib/mock-data";
+import { subcategoryName } from "@/lib/subcategories";
 import { formatLocation } from "@/lib/locations";
 
 import { useMyUnlock } from "@/lib/credits-api";
@@ -223,6 +224,7 @@ function TaskDetails() {
 
   const cat = getCategory(task.category);
   const Icon = cat.icon;
+  const subName = subcategoryName(task.category, task.subcategory);
   const images = task.gallery ?? [];
 
   const userBlock = (
@@ -454,6 +456,7 @@ function TaskDetails() {
           <div className="mt-7 flex flex-wrap items-center gap-2">
             <Badge variant="secondary" className="gap-1.5 rounded-full px-3 py-1">
               <Icon className="h-3.5 w-3.5" /> {cat.name}
+              {subName && subName !== "Друго" && <span className="text-muted-foreground">· {subName}</span>}
             </Badge>
             <span className="inline-flex items-center gap-1 rounded-full bg-secondary px-3 py-1 text-xs font-medium text-muted-foreground">
               <Clock className="h-3.5 w-3.5" /> {task.postedAt}
@@ -710,4 +713,4 @@ function TaskDetails() {
 
     </div>
   );
-}
+}

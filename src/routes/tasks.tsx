@@ -8,6 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { TaskCard, TaskCardSkeleton } from "@/components/task-card";
 import { LocationCombobox } from "@/components/location-combobox";
 import { categories, getCategory } from "@/lib/mock-data";
+import { OTHER_SUBCATEGORY, subcategoriesFor, subcategoryName } from "@/lib/subcategories";
 import { useTasksFeed } from "@/lib/tasks-api";
 import { useMunicipalities, useRegionCounts, useRegions } from "@/lib/locations-api";
 import { formatLocation, municipalityLabel, splitLocation } from "@/lib/locations";
@@ -23,12 +24,15 @@ import { clampDescription, seo } from "@/lib/seo";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { cn } from "@/lib/utils";
 
-type Search = { q?: string; category?: string; location?: string; region?: string; from?: "home" };
+type Search = { q?: string; category?: string; sub?: string; location?: string; region?: string; from?: "home" };
 
 export const Route = createFileRoute("/tasks")({
   head: ({ match }) => {
     const s = (match.search ?? {}) as Search;
-    const cat = s.category ? getCategory(s.category).name : undefined;
+    const subName = s.category ? subcategoryName(s.category, s.sub) : null;
+    const cat = s.category
+      ? `${getCategory(s.category).name}${subName && s.sub !== OTHER_SUBCATEGORY ? ` · ${subName}` : ""}`
+      : undefined;
     const city = s.location ? s.location.split(",")[0]!.trim() : undefined;
     const label = [cat, city ? `в ${municipalityLabel(city)}` : undefined].filter(Boolean).join(" ");
 
@@ -45,6 +49,7 @@ export const Route = createFileRoute("/tasks")({
   validateSearch: (s: Record<string, unknown>): Search => ({
     q: typeof s.q === "string" ? s.q : undefined,
     category: typeof s.category === "string" ? s.category : undefined,
+    sub: typeof s.sub === "string" ? s.sub : undefined,
     location: typeof s.location === "string" ? s.location : undefined,
     region: typeof s.region === "string" ? s.region : undefined,
     from: s.from === "home" ? "home" : undefined,
@@ -59,6 +64,7 @@ function TasksPage() {
   const { data, isLoading, fetchNextPage, hasNextPage, isFetchingNextPage } = useTasksFeed({
     q: search.q,
     category: search.category,
+    subcategory: search.category && search.sub ? search.sub : undefined,
     location: search.location,
     region: search.region,
   });
@@ -174,6 +180,7 @@ function TasksPage() {
           className="mt-3 w-full lg:w-[240px]"
           initial={{
             category: search.category ?? "all",
+            subcategories: search.category && search.sub ? [search.sub] : [],
             region: search.region ?? "all",
             location: search.location,
           }}
@@ -222,15 +229,35 @@ function TasksPage() {
               {categories.map((c) => {
                 const active = search.category === c.id;
                 const Icon = c.icon;
+                const subs = active ? subcategoriesFor(c.id) : [];
                 return (
-                  <button
-                    key={c.id}
-                    onClick={() => update({ category: active ? undefined : c.id })}
-                    className={`flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-sm transition-colors ${active ? "bg-primary/10 text-primary font-medium" : "text-foreground hover:bg-secondary"}`}
-                  >
-                    <Icon className="h-4 w-4" />
-                    {c.name}
-                  </button>
+                  <div key={c.id}>
+                    <button
+                      onClick={() => update({ category: active ? undefined : c.id, sub: undefined })}
+                      className={`flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-sm transition-colors ${active ? "bg-primary/10 text-primary font-medium" : "text-foreground hover:bg-secondary"}`}
+                    >
+                      <Icon className="h-4 w-4" />
+                      {c.name}
+                    </button>
+                    {subs.length > 0 && (
+                      <div className="flex flex-wrap gap-1.5 px-2 pb-2 pt-2">
+                        {subs.map((s) => {
+                          const on = search.sub === s.id;
+                          return (
+                            <button
+                              key={s.id}
+                              type="button"
+                              aria-pressed={on}
+                              onClick={() => update({ sub: on ? undefined : s.id })}
+                              className={`rounded-full border px-2.5 py-1 text-xs transition-colors ${on ? "border-primary bg-primary text-primary-foreground" : "border-border text-foreground hover:border-primary/50 hover:bg-primary/5"}`}
+                            >
+                              {s.name}
+                            </button>
+                          );
+                        })}
+                      </div>
+                    )}
+                  </div>
                 );
               })}
             </div>
@@ -280,7 +307,8 @@ function TasksPage() {
               {search.category && (
                 <Badge variant="secondary" className="gap-1.5">
                   {getCategory(search.category).name}
-                  <button onClick={() => update({ category: undefined })}><X className="h-3 w-3" /></button>
+                  {search.sub && subcategoryName(search.category, search.sub) ? ` · ${subcategoryName(search.category, search.sub)}` : ""}
+                  <button onClick={() => update({ category: undefined, sub: undefined })}><X className="h-3 w-3" /></button>
                 </Badge>
               )}
               {search.location && (

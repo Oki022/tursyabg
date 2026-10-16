@@ -3,6 +3,7 @@ import { absoluteUrl } from "@/lib/brand";
 import { asBudgetRange, formatTaskBudget } from "@/lib/budget-range";
 import { emailLayout, escapeHtml } from "@/lib/email-layout";
 import { getCategory } from "@/lib/mock-data";
+import { OTHER_SUBCATEGORY, subcategoryName } from "@/lib/subcategories";
 import { municipalityLabel } from "@/lib/locations";
 
 /**
@@ -21,6 +22,7 @@ type DigestTask = {
   id: string;
   title: string;
   category: string;
+  subcategory?: string | null;
   city: string | null;
   budget: number;
   budget_range: string | null;
@@ -47,6 +49,11 @@ function plural(count: number): string {
   return count === 1 ? "1 нова задача" : `${count} нови задачи`;
 }
 
+function categoryLabel(t: DigestTask): string {
+  const sub = t.subcategory && t.subcategory !== OTHER_SUBCATEGORY ? subcategoryName(t.category, t.subcategory) : null;
+  return sub ? `${getCategory(t.category).name} · ${sub}` : getCategory(t.category).name;
+}
+
 function taskCard(t: DigestTask): string {
   const url = absoluteUrl(`/task/${t.id}`);
   const place = t.city ? municipalityLabel(t.city) : "България";
@@ -54,7 +61,7 @@ function taskCard(t: DigestTask): string {
   return `
     <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="margin:0 0 12px;border:1px solid #e2e8f0;border-radius:12px">
       <tr><td style="padding:16px 18px">
-        <span style="display:inline-block;padding:3px 10px;border-radius:999px;background:#FFF1E8;color:#C2410C;font-size:12px;font-weight:bold">${escapeHtml(getCategory(t.category).name)}</span>
+        <span style="display:inline-block;padding:3px 10px;border-radius:999px;background:#FFF1E8;color:#C2410C;font-size:12px;font-weight:bold">${escapeHtml(categoryLabel(t))}</span>
         <div style="margin:10px 0 6px">
           <a href="${url}" style="color:#0f172a;font-size:17px;font-weight:bold;line-height:1.35;text-decoration:none">${escapeHtml(t.title)}</a>
         </div>

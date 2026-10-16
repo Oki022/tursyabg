@@ -3,6 +3,7 @@ import { toast } from "sonner";
 import { useAuth } from "@/lib/auth";
 import { getCategory } from "@/lib/mock-data";
 import { municipalityLabel } from "@/lib/locations";
+import { subcategoryName } from "@/lib/subcategories";
 import { toastError } from "@/lib/toast-error";
 import {
   MAX_TASK_ALERTS,
@@ -65,12 +66,17 @@ export function useDeleteTaskAlert() {
   });
 }
 
-/** "Ремонти · общ. Шумен", "Всички задачи · обл. Варна", "Ремонти · цяла България". */
+/** "Ремонти (ВиК, Електро) · общ. Шумен", "Всички задачи · обл. Варна", "Ремонти · цяла България". */
 export function taskAlertLabel(
   alert: TaskAlertInput,
   regionName?: (slug: string) => string | undefined,
 ): string {
-  const what = alert.category ? getCategory(alert.category).name : "Всички задачи";
+  const subs = (alert.category ? (alert.subcategories ?? []) : [])
+    .map((s) => subcategoryName(alert.category, s))
+    .filter(Boolean);
+  const what = alert.category
+    ? `${getCategory(alert.category).name}${subs.length > 0 ? ` (${subs.join(", ")})` : ""}`
+    : "Всички задачи";
   const where = alert.city
     ? municipalityLabel(alert.city)
     : alert.region

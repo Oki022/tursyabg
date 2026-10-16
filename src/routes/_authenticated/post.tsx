@@ -40,6 +40,7 @@ function PostPage() {
       ? {
           title: source.data.title,
           category: source.data.category,
+          subcategory: source.data.subcategory ?? null,
           description: source.data.description,
           budget: source.data.budget,
           budgetRange: source.data.budgetRange ?? null,
