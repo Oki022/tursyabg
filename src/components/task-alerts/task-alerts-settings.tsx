@@ -10,8 +10,8 @@ export function TaskAlertsSettings() {
         <h2 className="text-lg font-semibold text-foreground">Известия за нови задачи</h2>
       </div>
       <p className="mb-4 mt-1.5 text-sm text-muted-foreground">
-        Всяка сутрин ще получиш едно съобщение в приложението и по имейл, ако има нови задачи по
-        търсенията ти. Ако няма, няма да те безпокоим.
+        Проверяваме за нови задачи по търсенията ти на всеки 30 минути (7:00–22:00). Известието в
+        приложението идва веднага, а имейл пращаме най-много веднъж на 3 часа.
       </p>
       <TaskAlertsManager formInitiallyOpen={false} idPrefix="alert-settings" />
     </section>

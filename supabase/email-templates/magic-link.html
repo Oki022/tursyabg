@@ -22,12 +22,12 @@
       <tr><td style="padding:16px 32px 8px">
         <table role="presentation" cellspacing="0" cellpadding="0"><tr>
           <td bgcolor="#F94144" style="border-radius:999px;background:#F94144;background-image:linear-gradient(90deg,#FB7C00,#EC305A)">
-            <a href="{{ .ConfirmationURL }}" style="display:inline-block;padding:14px 28px;font-family:Arial,Helvetica,sans-serif;font-size:15px;font-weight:bold;color:#ffffff;text-decoration:none;border-radius:999px">Влез в профила</a>
+            <a href="https://tursya.bg/auth/confirm?token_hash={{ .TokenHash }}&amp;type=magiclink" style="display:inline-block;padding:14px 28px;font-family:Arial,Helvetica,sans-serif;font-size:15px;font-weight:bold;color:#ffffff;text-decoration:none;border-radius:999px">Влез в профила</a>
           </td>
         </tr></table>
       </td></tr>
       <tr><td style="padding:16px 32px 0;font-family:Arial,Helvetica,sans-serif;font-size:14px;line-height:1.6;color:#475569">Ако бутонът не работи, копирай този линк в браузъра:<br>
-        <a href="{{ .ConfirmationURL }}" style="color:#EC305A;word-break:break-all">{{ .ConfirmationURL }}</a></td></tr>
+        <a href="https://tursya.bg/auth/confirm?token_hash={{ .TokenHash }}&amp;type=magiclink" style="color:#EC305A;word-break:break-all">https://tursya.bg/auth/confirm?token_hash={{ .TokenHash }}&amp;type=magiclink</a></td></tr>
       <tr><td style="padding:24px 32px 32px;font-family:Arial,Helvetica,sans-serif;font-size:12px;line-height:1.6;color:#94a3b8">
         Ако не си се опитвал да влезеш, игнорирай този имейл. Никой не може да влезе без този линк.<br>Нужна ти е помощ? Пиши ни на <a href="https://tursya.bg/contact" style="color:#64748b">tursya.bg/contact</a>.
       </td></tr>

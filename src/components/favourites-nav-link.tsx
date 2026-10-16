@@ -21,13 +21,13 @@ export function FavouritesNavLink() {
         "relative h-9! w-9! [&_svg]:size-[22px]",
         hasFavourites
           ? "text-rose-500 hover:text-rose-600"
-          : "text-muted-foreground hover:text-foreground"
+          : "text-foreground hover:text-rose-500"
       )}
     >
       <Link to="/favourites" aria-label="Любими задачи">
         <Heart
           className={cn("transition-colors", hasFavourites && "fill-current")}
-          strokeWidth={1.6}
+          strokeWidth={1.8}
         />
       </Link>
     </Button>

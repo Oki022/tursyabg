@@ -171,7 +171,7 @@ function TasksPage() {
         </form>
 
         <SaveAlertButton
-          className="mt-3"
+          className="mt-3 w-full lg:w-[240px]"
           initial={{
             category: search.category ?? "all",
             region: search.region ?? "all",
@@ -350,4 +350,4 @@ function TasksPage() {
       </div>
     </div>
   );
-}
+}

@@ -6,10 +6,12 @@ import { getCategory } from "@/lib/mock-data";
 import { municipalityLabel } from "@/lib/locations";
 
 /**
- * Сутрешно известие за нови задачи по запазените търсения.
- * Извиква се от планираната задача в базата (public.call_task_alerts) с таен
- * ключ в заглавната част. За всеки потребител с нови съвпадения: едно
- * известие в приложението и един имейл. Не връща лични данни.
+ * Известия за нови задачи по запазените търсения.
+ * Извиква се на всеки 30 минути от планираната задача в базата
+ * (public.call_task_alerts) с таен ключ в заглавната част. Работи само между
+ * 07:00 и 22:00 българско време. При всяко пускане: известие в приложението
+ * за новите съвпадения; имейл най-много веднъж на 3 часа на потребител.
+ * Не връща лични данни.
  */
 
 const FROM = "ТърсяБГ <noreply@tursya.bg>";
@@ -26,6 +28,20 @@ type DigestTask = {
 
 /** Where "see all" leads: the page that lists exactly the user's matched tasks. */
 const ALERTS_PATH = "/alerts";
+
+/** 07:00-22:00 in Sofia (handles summer and winter time). */
+function withinSendingHours(now: Date): boolean {
+  const parts = new Intl.DateTimeFormat("en-GB", {
+    timeZone: "Europe/Sofia",
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false,
+  }).formatToParts(now);
+  const hour = Number(parts.find((p) => p.type === "hour")?.value ?? "0") % 24;
+  const minute = Number(parts.find((p) => p.type === "minute")?.value ?? "0");
+  // The 22:00 run still counts; a few minutes of slack for a late cron start.
+  return (hour >= 7 && hour < 22) || (hour === 22 && minute < 10);
+}
 
 function plural(count: number): string {
   return count === 1 ? "1 нова задача" : `${count} нови задачи`;
@@ -74,7 +90,7 @@ function digestEmail(name: string | null, count: number, tasks: DigestTask[]): s
         : { label: "Виж всички нови задачи", href: absoluteUrl(ALERTS_PATH) },
     footerHtml: `
       Получаваш този имейл, защото си включил известия за нови задачи в ТърсяБГ.
-      Изпращаме го най-много веднъж на ден и само ако има нещо ново.<br>
+      Изпращаме имейл най-много веднъж на 3 часа и само ако има нещо ново.<br>
       <a href="${absoluteUrl(ALERTS_PATH)}" style="color:#64748b">Всички задачи за теб</a>
       &nbsp;·&nbsp; <a href="${absoluteUrl("/settings/notifications")}" style="color:#64748b">Управлявай известията</a>
       &nbsp;·&nbsp; <a href="${absoluteUrl("/faq")}" style="color:#64748b">Помощ</a>`,
@@ -98,6 +114,10 @@ export const Route = createFileRoute("/api/public/cron/task-alerts")({
           return new Response("Unauthorized", { status: 401 });
         }
 
+        if (!withinSendingHours(new Date())) {
+          return Response.json({ ok: true, skipped: "outside 07:00-22:00 Sofia" });
+        }
+
         const { data: runRow } = await supabaseAdmin
           .from("cron_runs")
           .insert({ job_name: "task_alerts", started_at: new Date().toISOString() })
@@ -110,14 +130,20 @@ export const Route = createFileRoute("/api/public/cron/task-alerts")({
         let failure: string | null = null;
 
         try {
-          const { data: batch, error } = await supabaseAdmin.rpc("task_alert_digest_batch", { _limit: 200 });
-          if (error) throw new Error(error.message);
+          // 1) In-app notifications for everything new (all in the database).
+          const { data: notified, error: inAppError } = await supabaseAdmin.rpc("task_alert_push_inapp");
+          if (inAppError) throw new Error(inAppError.message);
+          users = notified ?? 0;
 
-          for (const row of batch ?? []) {
-            const tasks = (Array.isArray(row.tasks) ? row.tasks : []) as unknown as DigestTask[];
-            const count = row.task_count;
+          // 2) E-mails: only users without an e-mail in the last 3 hours.
+          if (apiKey) {
+            const { data: batch, error } = await supabaseAdmin.rpc("task_alert_email_batch", { _limit: 200 });
+            if (error) throw new Error(error.message);
 
-            if (apiKey && row.email) {
+            for (const row of batch ?? []) {
+              const tasks = (Array.isArray(row.tasks) ? row.tasks : []) as unknown as DigestTask[];
+              const count = row.task_count;
+              if (!row.email || count < 1) continue;
               try {
                 const res = await fetch("https://api.resend.com/emails", {
                   method: "POST",
@@ -130,25 +156,23 @@ export const Route = createFileRoute("/api/public/cron/task-alerts")({
                     headers: { "List-Unsubscribe": `<${absoluteUrl("/settings/notifications")}>` },
                   }),
                 });
-                if (res.ok) emails += 1;
+                // Only a delivered e-mail is marked, so a failed one is retried next run.
+                if (res.ok) {
+                  await supabaseAdmin.rpc("task_alert_mark_emailed", {
+                    _user_id: row.user_id,
+                    _until: row.until_at,
+                  });
+                  emails += 1;
+                }
               } catch {
-                // The in-app notification below still goes out.
+                // Retried on the next run.
               }
             }
-
-            // Marks the hits as sent (so nobody gets the same task twice) and
-            // adds the in-app notification (one task: that task; more: /alerts).
-            await supabaseAdmin.rpc("task_alert_finish", {
-              _user_id: row.user_id,
-              _count: count,
-              _link: count === 1 && tasks[0] ? `/task/${tasks[0].id}` : ALERTS_PATH,
-            });
-            users += 1;
           }
         } catch (e) {
           failure = e instanceof Error ? e.message : String(e);
           const { reportServerIssue } = await import("@/lib/monitoring/sentry.server");
-          reportServerIssue({ area: "cron", action: "send task alert digests", error: e });
+          reportServerIssue({ area: "cron", action: "send task alerts", error: e });
         }
 
         if (runRow?.id) {
@@ -156,7 +180,7 @@ export const Route = createFileRoute("/api/public/cron/task-alerts")({
             .from("cron_runs")
             .update({
               finished_at: new Date().toISOString(),
-              rows_processed: users,
+              rows_processed: users + emails,
               error: failure,
             })
             .eq("id", runRow.id);

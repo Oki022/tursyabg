@@ -17,10 +17,19 @@ import { draftToAlert, isNarrow, type AlertDraft } from "./alert-fields";
 import { TaskAlertsManager } from "./task-alerts-manager";
 
 /**
- * "Известия" on /tasks. Opens a dialog with the user's saved searches and a
- * form pre-filled with the page filters.
+ * "Известия" button (/tasks, homepage). Opens a dialog with the user's saved
+ * searches and a form pre-filled with the given filters. `compact` shows a
+ * short label on small screens.
  */
-export function SaveAlertButton({ initial, className }: { initial: AlertDraft; className?: string }) {
+export function SaveAlertButton({
+  initial,
+  className,
+  compact = false,
+}: {
+  initial: AlertDraft;
+  className?: string;
+  compact?: boolean;
+}) {
   const { user } = useAuth();
   const navigate = useNavigate();
   const href = useRouterState({ select: (s) => s.location.href });
@@ -49,7 +58,18 @@ export function SaveAlertButton({ initial, className }: { initial: AlertDraft; c
         }}
       >
         {count > 0 ? <BellRing className="h-4 w-4" /> : <Bell className="h-4 w-4" />}
-        {count > 0 ? `Известия за нови задачи (${count})` : "Известявай ме за нови задачи"}
+        {compact ? (
+          <>
+            <span className="sm:hidden">{count > 0 ? `Известия (${count})` : "Известия"}</span>
+            <span className="hidden sm:inline">
+              {count > 0 ? `Известия за нови задачи (${count})` : "Известявай ме за нови задачи"}
+            </span>
+          </>
+        ) : count > 0 ? (
+          `Известия за нови задачи (${count})`
+        ) : (
+          "Известявай ме за нови задачи"
+        )}
       </Button>
 
       <Dialog open={open} onOpenChange={setOpen}>
@@ -57,8 +77,9 @@ export function SaveAlertButton({ initial, className }: { initial: AlertDraft; c
           <DialogHeader>
             <DialogTitle>Известия за нови задачи</DialogTitle>
             <DialogDescription>
-              Всяка сутрин ще ти изпращаме новите задачи по твоите търсения, в приложението и по
-              имейл. Ако няма нови, няма да те безпокоим.
+              Проверяваме за нови задачи на всеки 30 минути (7:00–22:00). Известието в
+              приложението идва веднага, а имейл пращаме най-много веднъж на 3 часа. Ако няма нови,
+              няма да те безпокоим.
             </DialogDescription>
           </DialogHeader>
           {/* Mounted only while open, so the form starts from the current filters every time. */}

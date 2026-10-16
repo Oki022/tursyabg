@@ -34,7 +34,7 @@ export function useCreateTaskAlert() {
     onSuccess: () => {
       void qc.invalidateQueries({ queryKey: KEY });
       toast.success("Известието е включено", {
-        description: "Ще получиш съобщение сутрин, когато има нови задачи по това търсене.",
+        description: "Ще ти пишем, щом се появят нови задачи по това търсене.",
       });
     },
     onError: (err: unknown) => {

@@ -43,6 +43,7 @@ import { Route as AdminTasksRouteImport } from './routes/admin.tasks'
 import { Route as AdminUsersRouteImport } from './routes/admin.users'
 import { Route as AuthIndexRouteImport } from './routes/auth.index'
 import { Route as AuthCallbackRouteImport } from './routes/auth.callback'
+import { Route as AuthConfirmRouteImport } from './routes/auth.confirm'
 import { Route as AuthVerifyRouteImport } from './routes/auth.verify'
 import { Route as BillingCancelRouteImport } from './routes/billing.cancel'
 import { Route as CategoriesCategoryRouteImport } from './routes/categories.$category'
@@ -235,6 +236,11 @@ const AuthCallbackRoute = AuthCallbackRouteImport.update({
   path: '/auth/callback',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthConfirmRoute = AuthConfirmRouteImport.update({
+  id: '/auth/confirm',
+  path: '/auth/confirm',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthVerifyRoute = AuthVerifyRouteImport.update({
   id: '/auth/verify',
   path: '/auth/verify',
@@ -383,6 +389,7 @@ export interface FileRoutesByFullPath {
   '/admin/tasks': typeof AdminTasksRoute
   '/admin/users': typeof AdminUsersRoute
   '/auth/callback': typeof AuthCallbackRoute
+  '/auth/confirm': typeof AuthConfirmRoute
   '/auth/verify': typeof AuthVerifyRoute
   '/billing/cancel': typeof BillingCancelRoute
   '/categories/$category': typeof CategoriesCategoryRoute
@@ -438,6 +445,7 @@ export interface FileRoutesByTo {
   '/admin/tasks': typeof AdminTasksRoute
   '/admin/users': typeof AdminUsersRoute
   '/auth/callback': typeof AuthCallbackRoute
+  '/auth/confirm': typeof AuthConfirmRoute
   '/auth/verify': typeof AuthVerifyRoute
   '/billing/cancel': typeof BillingCancelRoute
   '/categories/$category': typeof CategoriesCategoryRoute
@@ -495,6 +503,7 @@ export interface FileRoutesById {
   '/admin/tasks': typeof AdminTasksRoute
   '/admin/users': typeof AdminUsersRoute
   '/auth/callback': typeof AuthCallbackRoute
+  '/auth/confirm': typeof AuthConfirmRoute
   '/auth/verify': typeof AuthVerifyRoute
   '/billing/cancel': typeof BillingCancelRoute
   '/categories/$category': typeof CategoriesCategoryRoute
@@ -553,6 +562,7 @@ export interface FileRouteTypes {
     | '/admin/tasks'
     | '/admin/users'
     | '/auth/callback'
+    | '/auth/confirm'
     | '/auth/verify'
     | '/billing/cancel'
     | '/categories/$category'
@@ -608,6 +618,7 @@ export interface FileRouteTypes {
     | '/admin/tasks'
     | '/admin/users'
     | '/auth/callback'
+    | '/auth/confirm'
     | '/auth/verify'
     | '/billing/cancel'
     | '/categories/$category'
@@ -664,6 +675,7 @@ export interface FileRouteTypes {
     | '/admin/tasks'
     | '/admin/users'
     | '/auth/callback'
+    | '/auth/confirm'
     | '/auth/verify'
     | '/billing/cancel'
     | '/categories/$category'
@@ -707,6 +719,7 @@ export interface RootRouteChildren {
   TasksRoute: typeof TasksRoute
   TermsRoute: typeof TermsRoute
   AuthCallbackRoute: typeof AuthCallbackRoute
+  AuthConfirmRoute: typeof AuthConfirmRoute
   AuthVerifyRoute: typeof AuthVerifyRoute
   BillingCancelRoute: typeof BillingCancelRoute
   CategoriesCategoryRoute: typeof CategoriesCategoryRoute
@@ -960,6 +973,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthCallbackRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/auth/confirm': {
+      id: '/auth/confirm'
+      path: '/auth/confirm'
+      fullPath: '/auth/confirm'
+      preLoaderRoute: typeof AuthConfirmRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/auth/verify': {
       id: '/auth/verify'
       path: '/auth/verify'
@@ -1211,6 +1231,7 @@ const rootRouteChildren: RootRouteChildren = {
   TasksRoute: TasksRoute,
   TermsRoute: TermsRoute,
   AuthCallbackRoute: AuthCallbackRoute,
+  AuthConfirmRoute: AuthConfirmRoute,
   AuthVerifyRoute: AuthVerifyRoute,
   BillingCancelRoute: BillingCancelRoute,
   CategoriesCategoryRoute: CategoriesCategoryRoute,

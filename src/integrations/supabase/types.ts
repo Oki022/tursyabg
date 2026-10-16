@@ -2446,6 +2446,48 @@ export type Database = {
         Args: { _count: number; _link?: string; _user_id: string }
         Returns: undefined
       }
+      task_alert_email_batch: {
+        Args: { _limit?: number }
+        Returns: {
+          email: string
+          full_name: string | null
+          task_count: number
+          tasks: Json
+          until_at: string
+          user_id: string
+        }[]
+      }
+      task_alert_mark_emailed: {
+        Args: { _until: string; _user_id: string }
+        Returns: undefined
+      }
+      task_alert_push_inapp: { Args: never; Returns: number }
+      my_alert_tasks: {
+        Args: { _limit?: number }
+        Returns: {
+          author: string | null
+          budget: number
+          budget_range: string | null
+          bumped_at: string
+          category: string
+          city: string | null
+          created_at: string
+          description: string
+          id: string
+          images: string[]
+          is_top: boolean
+          is_urgent: boolean
+          max_unlocks: number
+          neighborhood: string | null
+          promo_expires_at: string | null
+          promoted_slot: boolean
+          status: Database["public"]["Enums"]["task_status"]
+          title: string
+          unlock_cost: number | null
+          unlock_count: number
+          user_id: string
+        }[]
+      }
       user_trust: { Args: { _user_id: string }; Returns: Json }
     }
     Enums: {

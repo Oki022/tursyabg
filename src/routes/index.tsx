@@ -5,6 +5,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { TaskCard, TaskCardSkeleton } from "@/components/task-card";
+import { SaveAlertButton } from "@/components/task-alerts/save-alert-button";
 import { categories } from "@/lib/mock-data";
 import { useTasksFeed } from "@/lib/tasks-api";
 import { jsonLd, seo } from "@/lib/seo";
@@ -123,7 +124,7 @@ function Index() {
 
       {/* Recent tasks */}
       <section className="container mx-auto px-4 py-12">
-        <div className="mb-6 flex items-end justify-between gap-4">
+        <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
           <div>
             <h2 className="text-2xl font-bold tracking-tight text-foreground md:text-3xl">
               Последни задачи
@@ -132,9 +133,12 @@ function Index() {
               Най-новите задачи, които чакат изпълнител.
             </p>
           </div>
-          <Button asChild variant="ghost" className="gap-1">
-            <Link to="/tasks">Виж всички <ArrowRight className="h-4 w-4" /></Link>
-          </Button>
+          <div className="flex shrink-0 items-center gap-2">
+            <SaveAlertButton compact initial={{ category: "all", region: "all" }} />
+            <Button asChild variant="ghost" className="gap-1">
+              <Link to="/tasks">Виж всички <ArrowRight className="h-4 w-4" /></Link>
+            </Button>
+          </div>
         </div>
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:gap-4 lg:grid-cols-4 xl:grid-cols-5">
           {isLoading

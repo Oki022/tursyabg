@@ -53,9 +53,9 @@ export function ThemeToggle({ className, showLabel = false }: { className?: stri
       onClick={cycleTheme}
       aria-label={nextLabel}
       title={nextLabel}
-      className={cn("h-9 w-9 rounded-full", className)}
+      className={cn("h-9! w-9! rounded-full text-foreground [&_svg]:size-[22px]", className)}
     >
-      <Icon className="h-[22px] w-[22px]" strokeWidth={1.6} />
+      <Icon strokeWidth={1.6} />
     </Button>
   );
-}
+}
