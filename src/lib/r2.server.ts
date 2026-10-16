@@ -62,7 +62,10 @@ export async function r2SignedUrl(key: string, expiresIn = 3600): Promise<string
  */
 export async function r2VerifyReadable(key: string): Promise<string> {
   const url = await r2SignedUrl(key);
-  const res = await fetch(url, { method: "HEAD" });
+  // GET (not HEAD): a presigned URL is signed for GET, and R2 rejects any other
+  // method with 403. The Range header keeps the check to a single byte.
+  const res = await fetch(url, { method: "GET", headers: { Range: "bytes=0-0" } });
+  await res.body?.cancel();
   if (!res.ok) throw new Error(`R2_NOT_READABLE ${res.status} for ${key}`);
   return url;
 }

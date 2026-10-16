@@ -1,4 +1,5 @@
 import { categories } from "@/lib/mock-data";
+import { subcategoryName } from "@/lib/subcategories";
 
 /**
  * Weighted, Bulgarian-first category suggestion.
@@ -312,16 +313,111 @@ const CATEGORY_TERMS: Record<string, Term[]> = {
   ],
 };
 
+/**
+ * Words that point to a specific subcategory (see src/lib/subcategories.ts).
+ * They also count towards the category, so a title like "Смяна на бойлер"
+ * suggests "Ремонти · Битова техника" even without a generic repair word.
+ */
+const SUBCATEGORY_TERMS: Record<string, Record<string, Term[]>> = {
+  remonti: {
+    vik: [T("вик", 4), T("водопровод", 4), T("тръба", 3), T("тръби", 3), T("теч", 2), T("тече", 2), T("смесител", 4), T("батерия за баня", 4), T("канал", 2), T("отпушване", 4), T("запушен", 3), T("казанче", 4), T("тоалетна", 2), T("мивка", 2), T("сифон", 4), T("спирателен кран", 4), T("бойлер", 4), T("водомер", 4), T("канализация", 3)],
+    elektro: [T("ел табло", 5), T("електро", 4), T("електротехник", 5), T("електричество", 4), T("контакт", 3), T("ключ за осветление", 4), T("осветление", 3), T("лампа", 2), T("плафониера", 4), T("полилей", 4), T("кабел", 3), T("бушон", 4), T("предпазител", 4), T("ток", 2)],
+    "boya-plochki-podove": [T("боядисване", 4), T("бояджия", 4), T("латекс", 4), T("шпакловка", 4), T("шпаклофка", 4), T("мазилка", 3), T("плочки", 4), T("фаянс", 4), T("теракот", 4), T("ламинат", 4), T("паркет", 4), T("подова настилка", 4), T("замазка", 3), T("тапети", 3), T("гипсокартон", 3)],
+    "dograma-pokrivi": [T("дограма", 5), T("пвц", 3), T("алуминиева", 3), T("стъклопакет", 4), T("щора", 2), T("покрив", 5), T("керемиди", 4), T("улуци", 4), T("хидроизолация", 4), T("изолация", 3), T("топлоизолация", 4), T("комин", 3)],
+    "mebeli-montazh": [T("сглобяване", 4), T("сглоби", 4), T("икеа", 4), T("ikea", 4), T("гардероб", 3), T("кухненски шкаф", 4), T("мебели", 3), T("мебел", 2), T("монтаж на телевизор", 4), T("корниз", 3), T("рафт", 2)],
+    "bitova-tehnika": [T("пералня", 5), T("перална", 5), T("съдомиялна", 5), T("хладилник", 5), T("фризер", 4), T("климатик", 5), T("климатици", 5), T("печка", 3), T("фурна", 4), T("котлон", 4), T("аспиратор", 4), T("бойлер", 3), T("прахосмукачка", 3), T("микровълнова", 4), T("битова техника", 5)],
+    avtomobili: [T("автомобил", 5), T("кола", 3), T("колата", 3), T("автосервиз", 5), T("двигател", 4), T("мотор", 2), T("съединител", 4), T("спирачки", 4), T("накладки", 4), T("амортисьор", 4), T("смяна на масло", 4), T("акумулатор", 3), T("ремък", 3), T("скоростна кутия", 4), T("тенекеджия", 5), T("автобояджия", 5), T("гуми", 3), T("джанти", 3), T("диагностика", 3)],
+    "selskostopanska-tehnika": [T("трактор", 5), T("комбайн", 5), T("мотофреза", 5), T("косачка", 3), T("багер", 5), T("булдозер", 5), T("мини багер", 5), T("селскостопанска", 5), T("земеделска техника", 5), T("бобкат", 5), T("мотокар", 5)],
+    "drebni-remonti": [T("дребни ремонти", 5), T("дребен ремонт", 5), T("майстор за всичко", 5), T("закачване", 3), T("окачване", 3), T("брава", 3), T("брави", 3), T("пант", 3), T("силикон", 3)],
+  },
+  pochistvane: {
+    dom: [T("апартамент", 2), T("къща", 2), T("основно почистване", 4), T("генерално почистване", 4), T("седмично почистване", 3)],
+    "sled-remont": [T("след ремонт", 5), T("строителни отпадъци", 3), T("след строителство", 5)],
+    "ofisi-vhodove": [T("офис", 4), T("офиси", 4), T("вход", 3), T("входове", 4), T("стълбище", 4), T("магазин", 2)],
+    prozorci: [T("прозорци", 4), T("прозорец", 3), T("стъкла", 3), T("витрина", 4)],
+    "meka-mebel-kilimi": [T("килим", 5), T("килими", 5), T("мека мебел", 5), T("диван", 3), T("матрак", 4), T("пране на", 3), T("мокет", 5)],
+    deca: [T("детегледачка", 6), T("детегледач", 6), T("гледане на дете", 6), T("гледане на деца", 6), T("бебе", 3), T("бавачка", 6)],
+    vazrastni: [T("възрастен", 4), T("възрастна", 4), T("възрастни", 4), T("болногледач", 6), T("гледане на възрастен", 6), T("баба", 2), T("дядо", 2)],
+  },
+  gradina: {
+    kosene: [T("косене", 5), T("коси", 3), T("трева", 4), T("тревна площ", 4), T("плевели", 3), T("поддръжка на двор", 4)],
+    darveta: [T("дърво", 3), T("дървета", 5), T("отсичане", 5), T("резитба", 5), T("подрязване", 4), T("храсти", 3), T("клони", 3)],
+    ozelenyavane: [T("озеленяване", 6), T("поливна система", 6), T("поливане", 4), T("засаждане", 4), T("тревен чим", 5), T("ландшафт", 5)],
+  },
+  prevoz: {
+    premestvane: [T("преместване", 5), T("местене", 5), T("пренасяне", 4), T("хамали", 3), T("хамалин", 3), T("етаж", 1), T("кашони", 3)],
+    tovari: [T("товар", 4), T("товари", 4), T("палет", 4), T("палети", 4), T("бус", 2), T("камион", 4), T("транспорт", 3), T("доставка", 3), T("куриер", 3)],
+    otpadaci: [T("извозване", 5), T("отпадъци", 5), T("строителни отпадъци", 5), T("боклук", 4), T("стари мебели", 3), T("чистене на мазе", 4)],
+    "patna-pomosht": [T("пътна помощ", 6), T("репатрак", 6), T("закъсал", 5), T("аварирал", 5), T("теглене", 4), T("евакуатор", 5)],
+  },
+  it: {
+    kompyutri: [T("компютър", 5), T("лаптоп", 5), T("windows", 4), T("уиндоус", 4), T("вирус", 4), T("преинсталиране", 5), T("принтер", 4), T("бавен компютър", 5)],
+    telefoni: [T("телефон", 4), T("смартфон", 5), T("айфон", 5), T("iphone", 5), T("дисплей", 3), T("екран на телефон", 5), T("таблет", 4)],
+    mrezhi: [T("wifi", 5), T("wi-fi", 5), T("уайфай", 5), T("рутер", 5), T("интернет", 4), T("мрежа", 3), T("lan", 3)],
+    videonablyudenie: [T("видеонаблюдение", 6), T("камера", 4), T("камери", 4), T("аларма", 5), T("домофон", 5), T("охранителна", 4)],
+    "saitove-softuer": [T("сайт", 5), T("уебсайт", 5), T("онлайн магазин", 5), T("програмиране", 4), T("приложение", 3), T("софтуер", 4), T("wordpress", 5), T("seo", 4), T("лого", 3)],
+  },
+  eksperti: {
+    schetovodstvo: [T("счетоводител", 6), T("счетоводство", 6), T("данъчна декларация", 6), T("ддс", 4), T("фактури", 3), T("заплати", 3)],
+    pravni: [T("адвокат", 6), T("юрист", 6), T("договор", 3), T("нотариус", 5), T("съд", 3), T("наследство", 4), T("развод", 4)],
+    prevodi: [T("превод", 6), T("преводач", 6), T("легализация", 5), T("заклет преводач", 6)],
+    proektirane: [T("архитект", 6), T("проект", 4), T("проектиране", 6), T("инженер", 4), T("конструктор", 5), T("строително разрешение", 5), T("геодезист", 5)],
+  },
+  uroci: {
+    uchilishtni: [T("математика", 5), T("физика", 5), T("химия", 5), T("биология", 5), T("история", 4), T("литература", 4), T("нво", 5), T("матура", 5), T("клас", 2)],
+    ezici: [T("английски", 5), T("немски", 5), T("испански", 5), T("френски", 5), T("италиански", 5), T("руски", 4), T("турски", 4), T("език", 3)],
+    "muzika-izkustva": [T("пиано", 5), T("китара", 5), T("пеене", 5), T("цигулка", 5), T("рисуване", 5), T("барабани", 5)],
+    sport: [T("плуване", 5), T("тенис", 5), T("футбол", 4), T("танци", 5), T("йога", 4), T("фитнес", 3), T("бокс", 4)],
+    shofyorski: [T("шофьорски", 6), T("шофиране", 5), T("книжка", 4), T("кормуване", 5), T("автоинструктор", 6)],
+  },
+  "krasota-zdrave": {
+    kosa: [T("фризьор", 6), T("прическа", 5), T("подстригване", 5), T("боядисване на коса", 6), T("кичури", 4), T("бръснар", 6), T("коса", 3)],
+    nokti: [T("маникюр", 6), T("педикюр", 6), T("нокти", 5), T("гел лак", 6)],
+    "grim-kozmetika": [T("грим", 5), T("гримьор", 6), T("козметик", 5), T("почистване на лице", 5), T("мигли", 5), T("вежди", 4), T("епилация", 5)],
+    masazh: [T("масаж", 6), T("масажист", 6), T("рехабилитация", 4), T("физиотерапевт", 5)],
+    fitnes: [T("личен треньор", 6), T("фитнес треньор", 6), T("тренировки", 4), T("отслабване", 3)],
+  },
+  domashni: {
+    "razhodka-gledane": [T("разходка", 5), T("разхождане", 5), T("гледане на куче", 6), T("гледане на котка", 6), T("пансион", 5), T("хранене", 3)],
+    gruming: [T("грумиинг", 6), T("груминг", 6), T("подстригване на куче", 6), T("къпане на куче", 6), T("нокти на куче", 5)],
+    dresura: [T("дресура", 6), T("дресьор", 6), T("обучение на куче", 6), T("агресивно куче", 4)],
+  },
+  foto: {
+    foto: [T("фотограф", 5), T("снимки", 4), T("фотосесия", 5), T("фото", 3), T("кръщене", 2), T("абитуриентски", 3)],
+    video: [T("видео", 4), T("видеооператор", 6), T("заснемане", 4), T("клип", 4), T("монтаж на видео", 6), T("дрон", 5)],
+    keturing: [T("кетъринг", 6), T("торта", 5), T("торти", 5), T("сладкиши", 4), T("хапки", 4), T("готвач", 4)],
+    "muzika-vodesht": [T("dj", 6), T("диджей", 6), T("водещ", 5), T("музиканти", 5), T("оркестър", 5), T("певица", 4)],
+    animatori: [T("аниматор", 6), T("аниматори", 6), T("детски рожден ден", 5), T("украса", 5), T("балони", 5), T("фотобудка", 5)],
+  },
+};
+
+function scoreTerms(terms: Term[], titleText: string, descText: string): number {
+  let score = 0;
+  for (const { term, weight } of terms) {
+    const needle = ` ${term} `;
+    if (titleText.includes(needle) || titleText.includes(term)) score += weight * 2;
+    if (descText.includes(needle) || descText.includes(term)) score += weight;
+  }
+  return score;
+}
+
 function normalize(text: string): string {
   return ` ${text.toLowerCase().replace(/[“”„"']/g, "").replace(/\s+/g, " ").trim()} `;
 }
 
-export type CategorySuggestion = { id: string; name: string; score: number };
+export type CategorySuggestion = {
+  id: string;
+  name: string;
+  score: number;
+  /** Best-matching subcategory, when one stands out. */
+  subcategory?: { id: string; name: string };
+};
 
 /**
- * Scores every category against title + description and returns the top
- * candidates (highest first). Empty when nothing reaches the threshold, so
- * the caller can leave the category untouched.
+ * Scores every category (its own words plus its subcategories' words) against
+ * title + description and returns the top candidates (highest first), each
+ * with the best subcategory when it scores clearly. Empty when nothing reaches
+ * the threshold, so the caller can leave the category untouched.
  */
 export function suggestCategories(title: string, description: string, limit = 3): CategorySuggestion[] {
   const titleText = normalize(title);
@@ -330,17 +426,21 @@ export function suggestCategories(title: string, description: string, limit = 3)
 
   const scored: CategorySuggestion[] = [];
   for (const cat of categories) {
-    const terms = CATEGORY_TERMS[cat.id];
-    if (!terms || terms.length === 0) continue;
-    let score = 0;
-    for (const { term, weight } of terms) {
-      const needle = ` ${term} `;
-      const hitInTitle = titleText.includes(needle) || titleText.includes(term);
-      const hitInDesc = descText.includes(needle) || descText.includes(term);
-      if (hitInTitle) score += weight * 2;
-      if (hitInDesc) score += weight;
+    const base = scoreTerms(CATEGORY_TERMS[cat.id] ?? [], titleText, descText);
+    let bestSub: { id: string; score: number } | null = null;
+    for (const [subId, terms] of Object.entries(SUBCATEGORY_TERMS[cat.id] ?? {})) {
+      const subScore = scoreTerms(terms, titleText, descText);
+      if (subScore > 0 && (!bestSub || subScore > bestSub.score)) bestSub = { id: subId, score: subScore };
     }
-    if (score >= 3) scored.push({ id: cat.id, name: cat.name, score });
+    const score = base + (bestSub?.score ?? 0);
+    if (score < 3) continue;
+    const subName = bestSub && bestSub.score >= 4 ? subcategoryName(cat.id, bestSub.id) : null;
+    scored.push({
+      id: cat.id,
+      name: cat.name,
+      score,
+      ...(bestSub && subName ? { subcategory: { id: bestSub.id, name: subName } } : {}),
+    });
   }
 
   scored.sort((a, b) => b.score - a.score);

@@ -131,7 +131,7 @@ export function TaskForm({
   const keptExisting = existingImages.filter((i) => !removed.includes(i.id));
   const totalImages = keptExisting.length + photos.length;
 
-  const examples = examplesFor(category);
+  const examples = examplesFor(category, subcategory);
   const debouncedTitle = useDebounced(title);
   const debouncedDescription = useDebounced(description);
   const debouncedBudget = useDebounced(budget);
@@ -250,6 +250,7 @@ export function TaskForm({
                 type="button"
                 onClick={() => {
                   setCategory(c.id);
+                  if (c.subcategory) setSubcategory(c.subcategory.id);
                   setManuallyTouched(true);
                 }}
                 className={
@@ -258,7 +259,7 @@ export function TaskForm({
                     : "inline-flex items-center rounded-full bg-muted px-3 py-1.5 text-xs font-medium text-muted-foreground transition hover:bg-accent hover:text-foreground"
                 }
               >
-                {c.name}
+                {c.subcategory ? `${c.name} · ${c.subcategory.name}` : c.name}
               </button>
             ))}
           </div>
