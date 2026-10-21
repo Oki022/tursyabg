@@ -617,3 +617,68 @@ export const ACTION_TYPE_BG: Record<string, string> = {
 export function formatDateBg(iso: string) {
   return new Date(iso).toLocaleString("bg-BG", { dateStyle: "short", timeStyle: "short" });
 }
+
+// ---------------------------------------------------------------------------
+// Monthly revenue report (/admin/reports). Admins only; checked in the database.
+
+export type RevenueMonth = {
+  month: string; // YYYY-MM-01
+  salesCount: number;
+  salesEur: number;
+  creditsEur: number;
+  promotionEur: number;
+  refundsCount: number;
+  refundsEur: number;
+  netEur: number;
+};
+
+export type RevenuePayment = {
+  id: string;
+  paidAt: string;
+  refundedAt: string | null;
+  status: string;
+  kind: string;
+  item: string;
+  credits: number;
+  amountEur: number;
+  currency: string;
+  userId: string;
+  userName: string;
+  paymentIntentId: string | null;
+  receiptUrl: string | null;
+};
+
+export async function getRevenueMonths(months = 12): Promise<RevenueMonth[]> {
+  const { data, error } = await supabase.rpc("admin_revenue_months", { _months: months });
+  if (error) throw error;
+  return (data ?? []).map((r) => ({
+    month: r.month,
+    salesCount: r.sales_count,
+    salesEur: Number(r.sales_eur),
+    creditsEur: Number(r.credits_eur),
+    promotionEur: Number(r.promotion_eur),
+    refundsCount: r.refunds_count,
+    refundsEur: Number(r.refunds_eur),
+    netEur: Number(r.net_eur),
+  }));
+}
+
+export async function getRevenuePayments(month: string): Promise<RevenuePayment[]> {
+  const { data, error } = await supabase.rpc("admin_revenue_payments", { _month: month });
+  if (error) throw error;
+  return (data ?? []).map((r) => ({
+    id: r.id,
+    paidAt: r.paid_at,
+    refundedAt: r.refunded_at ?? null,
+    status: r.status,
+    kind: r.kind,
+    item: r.item ?? "",
+    credits: r.credits ?? 0,
+    amountEur: Number(r.amount_eur),
+    currency: r.currency,
+    userId: r.user_id,
+    userName: r.user_name || "Потребител",
+    paymentIntentId: r.stripe_payment_intent_id ?? null,
+    receiptUrl: r.receipt_url ?? null,
+  }));
+}

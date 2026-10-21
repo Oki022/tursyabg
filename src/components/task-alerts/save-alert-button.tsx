@@ -78,8 +78,8 @@ export function SaveAlertButton({
             <DialogTitle>Известия за нови задачи</DialogTitle>
             <DialogDescription>
               Проверяваме за нови задачи на всеки 30 минути (7:00–22:00). Известието в
-              приложението идва веднага, а имейл пращаме най-много веднъж на 3 часа. Ако няма нови,
-              няма да те безпокоим.
+              приложението идва веднага. Ако не го отвориш до 3 часа, пращаме и имейл, най-много
+              веднъж на 3 часа. Ако няма нови, няма да те безпокоим.
             </DialogDescription>
           </DialogHeader>
           {/* Mounted only while open, so the form starts from the current filters every time. */}

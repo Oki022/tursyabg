@@ -11,7 +11,8 @@ import { municipalityLabel } from "@/lib/locations";
  * Извиква се на всеки 30 минути от планираната задача в базата
  * (public.call_task_alerts) с таен ключ в заглавната част. Работи само между
  * 07:00 и 22:00 българско време. При всяко пускане: известие в приложението
- * за новите съвпадения; имейл най-много веднъж на 3 часа на потребител.
+ * за новите съвпадения; имейл само за задачи, чието известие още не е
+ * прочетено 3 часа след изпращането, и най-много веднъж на 3 часа на потребител.
  * Не връща лични данни.
  */
 
@@ -97,7 +98,7 @@ function digestEmail(name: string | null, count: number, tasks: DigestTask[]): s
         : { label: "Виж всички нови задачи", href: absoluteUrl(ALERTS_PATH) },
     footerHtml: `
       Получаваш този имейл, защото си включил известия за нови задачи в ТърсяБГ.
-      Изпращаме имейл най-много веднъж на 3 часа и само ако има нещо ново.<br>
+      Пращаме имейл само за задачи, които не си видял в сайта, и най-много веднъж на 3 часа.<br>
       <a href="${absoluteUrl(ALERTS_PATH)}" style="color:#64748b">Всички задачи за теб</a>
       &nbsp;·&nbsp; <a href="${absoluteUrl("/settings/notifications")}" style="color:#64748b">Управлявай известията</a>
       &nbsp;·&nbsp; <a href="${absoluteUrl("/faq")}" style="color:#64748b">Помощ</a>`,
@@ -142,7 +143,8 @@ export const Route = createFileRoute("/api/public/cron/task-alerts")({
           if (inAppError) throw new Error(inAppError.message);
           users = notified ?? 0;
 
-          // 2) E-mails: only users without an e-mail in the last 3 hours.
+          // 2) E-mails: tasks still unread in the app 3 hours after the notification,
+          //    for users without an e-mail in the last 3 hours (all in the database).
           if (apiKey) {
             const { data: batch, error } = await supabaseAdmin.rpc("task_alert_email_batch", { _limit: 200 });
             if (error) throw new Error(error.message);

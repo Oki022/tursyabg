@@ -11,7 +11,8 @@ export function TaskAlertsSettings() {
       </div>
       <p className="mb-4 mt-1.5 text-sm text-muted-foreground">
         Проверяваме за нови задачи по търсенията ти на всеки 30 минути (7:00–22:00). Известието в
-        приложението идва веднага, а имейл пращаме най-много веднъж на 3 часа.
+        приложението идва веднага. Ако не го отвориш до 3 часа, пращаме и имейл, най-много веднъж
+        на 3 часа.
       </p>
       <TaskAlertsManager formInitiallyOpen={false} idPrefix="alert-settings" />
     </section>

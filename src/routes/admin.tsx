@@ -11,6 +11,7 @@ import {
   ArrowLeft,
   ShieldAlert,
   UserMinus,
+  FileBarChart,
 } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
@@ -42,13 +43,16 @@ const NAV = [
   { to: "/admin/reviews", label: "Отзиви", icon: Star },
   { to: "/admin/users", label: "Потребители", icon: Users },
   { to: "/admin/payments", label: "Плащания", icon: CreditCard },
+  { to: "/admin/reports", label: "Отчети", icon: FileBarChart, adminOnly: true },
   { to: "/admin/contact", label: "Контакти", icon: Mail },
   { to: "/admin/deletions", label: "Изтриване на профил", icon: UserMinus },
   { to: "/admin/audit", label: "Одит лог", icon: ScrollText },
-] as { to: string; label: string; icon: typeof LayoutDashboard; exact?: boolean }[];
+] as { to: string; label: string; icon: typeof LayoutDashboard; exact?: boolean; adminOnly?: boolean }[];
 
 function AdminLayout() {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const { staff } = Route.useRouteContext();
+  const nav = NAV.filter((item) => !item.adminOnly || staff.isAdmin);
 
   return (
     <div className="min-h-screen bg-background">
@@ -59,7 +63,7 @@ function AdminLayout() {
               Администрация
             </div>
             <nav className="space-y-0.5">
-              {NAV.map((item) => {
+              {nav.map((item) => {
                 const active = item.exact ? pathname === item.to : pathname.startsWith(item.to);
                 return (
                   <Link
@@ -91,7 +95,7 @@ function AdminLayout() {
             <div className="flex items-center gap-1 px-3 py-2">
               <BackLink className="shrink-0" />
               <div className="flex gap-1 overflow-x-auto">
-              {NAV.map((item) => {
+              {nav.map((item) => {
                 const active = item.exact ? pathname === item.to : pathname.startsWith(item.to);
                 return (
                   <Link

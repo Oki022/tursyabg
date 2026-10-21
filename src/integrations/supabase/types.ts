@@ -2017,6 +2017,37 @@ export type Database = {
         }[]
       }
       admin_refund_evidence: { Args: { _request_id: string }; Returns: Json }
+      admin_revenue_months: {
+        Args: { _months?: number }
+        Returns: {
+          credits_eur: number
+          month: string
+          net_eur: number
+          promotion_eur: number
+          refunds_count: number
+          refunds_eur: number
+          sales_count: number
+          sales_eur: number
+        }[]
+      }
+      admin_revenue_payments: {
+        Args: { _month: string }
+        Returns: {
+          amount_eur: number
+          credits: number
+          currency: string
+          id: string
+          item: string
+          kind: string
+          paid_at: string
+          receipt_url: string
+          refunded_at: string
+          status: string
+          stripe_payment_intent_id: string
+          user_id: string
+          user_name: string
+        }[]
+      }
       admin_resolve_moderation: {
         Args: { _approve: boolean; _item_id: string; _reason: string }
         Returns: Json
