@@ -46,7 +46,7 @@ async function handleCheckoutCompleted(session: any, env: StripeEnv) {
   // Route to the right fulfilment RPC based on what the payment bought.
   const { data: payment } = await admin
     .from("payments")
-    .select("kind")
+    .select("id, kind")
     .eq("stripe_session_id", session.id as string)
     .maybeSingle();
 
@@ -58,6 +58,7 @@ async function handleCheckoutCompleted(session: any, env: StripeEnv) {
     });
     if (promoError) throw new Error(promoError.message);
     console.log("complete_promotion_payment:", JSON.stringify(promoResult));
+    await confirmByEmail(payment.id, promoResult);
     return;
   }
 
@@ -68,6 +69,15 @@ async function handleCheckoutCompleted(session: any, env: StripeEnv) {
   });
   if (error) throw new Error(error.message);
   console.log("complete_payment:", JSON.stringify(data));
+  if (payment?.id) await confirmByEmail(payment.id, data);
+}
+
+/** Purchase e-mail only when this call completed the payment (not on a Stripe retry). */
+async function confirmByEmail(paymentId: string, result: unknown) {
+  const r = (result ?? {}) as { ok?: boolean; already?: boolean };
+  if (!r.ok || r.already) return;
+  const { sendPurchaseEmail } = await import("@/lib/purchase-email.server");
+  await sendPurchaseEmail(paymentId);
 }
 
 async function handleRefund(charge: any, status: "refunded" | "disputed") {
@@ -135,4 +145,4 @@ export const Route = createFileRoute("/api/public/payments/webhook")({
       },
     },
   },
-});
+});

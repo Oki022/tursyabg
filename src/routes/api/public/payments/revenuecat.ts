@@ -107,7 +107,7 @@ export const Route = createFileRoute("/api/public/payments/revenuecat")({
               _test_mode: event.environment === "SANDBOX" || event.store === "TEST_STORE",
             });
             if (error) throw new Error(error.message);
-            const result = (data ?? {}) as { ok?: boolean; error?: string };
+            const result = (data ?? {}) as { ok?: boolean; error?: string; already?: boolean; payment_id?: string };
             if (!result.ok) {
               // The money was taken but nothing was granted: highest priority.
               reportServerIssue({
@@ -116,6 +116,10 @@ export const Route = createFileRoute("/api/public/payments/revenuecat")({
                 error: new Error(`complete_store_purchase: ${result.error ?? "failed"} (${event.product_id})`),
                 route: "/api/public/payments/revenuecat",
               });
+            }
+            if (result.ok && !result.already && result.payment_id) {
+              const { sendPurchaseEmail } = await import("@/lib/purchase-email.server");
+              await sendPurchaseEmail(result.payment_id);
             }
             return Response.json({ ok: !!result.ok });
           }

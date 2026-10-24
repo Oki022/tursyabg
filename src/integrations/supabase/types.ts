@@ -2659,6 +2659,7 @@ export type Database = {
         | "task_category_changed"
         | "review_removed"
         | "task_alert"
+        | "payment_completed"
       promo_type: "bump" | "urgent" | "top"
       refund_reason:
         | "fake_task"
@@ -2854,6 +2855,7 @@ export const Constants = {
         "task_category_changed",
         "review_removed",
         "task_alert",
+        "payment_completed",
       ],
       promo_type: ["bump", "urgent", "top"],
       refund_reason: [

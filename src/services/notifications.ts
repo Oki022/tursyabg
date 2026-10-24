@@ -36,7 +36,8 @@ export type NotificationType =
   | "contact_message"
   | "account_deletion_scheduled"
   | "account_deletion_cancelled"
-  | "task_alert";
+  | "task_alert"
+  | "payment_completed";
 
 export type AppNotification = {
   id: string;
