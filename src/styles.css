@@ -236,3 +236,16 @@
   .collapsible-content[data-state="open"],
   .collapsible-content[data-state="closed"] { animation: none; }
 }
+
+/* --- Open menu / dialog (Radix scroll lock) ---
+ * The lock puts overflow:hidden on <body>. Because <html> has overflow-x:hidden,
+ * that turns <body> into its own scroll box: the sticky header then sticks to the
+ * top of the page instead of the screen, jumps out of view with its open menu,
+ * and the page looks frozen. Lock the real scroller (<html>) instead and keep
+ * <body> a plain box. */
+html body[data-scroll-locked] {
+  overflow: clip !important;
+}
+html:has(> body[data-scroll-locked]) {
+  overflow: hidden !important;
+}
