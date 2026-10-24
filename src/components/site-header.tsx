@@ -53,7 +53,8 @@ export function SiteHeader() {
       style={{ paddingTop: "env(safe-area-inset-top)" }}
     >
       <div className="mx-auto flex h-16 w-full max-w-7xl items-center justify-between gap-1 px-2 sm:gap-2 sm:px-4 md:grid md:grid-cols-[1fr_auto_1fr]">
-        <Logo size="md" />
+        {/* In the app the logo is hidden (html.native-app is set before first paint). */}
+        <Logo size="md" className="[.native-app_&]:hidden" />
         {!isHome && (
           <nav className="hidden items-center gap-2 justify-self-center md:flex">
             <Link to="/" className={navLinkIdle} activeOptions={{ exact: true }} activeProps={{ className: navLinkActive }}>
@@ -64,7 +65,7 @@ export function SiteHeader() {
             </Link>
           </nav>
         )}
-        <div className="flex items-center gap-2 justify-self-end md:col-start-3">
+        <div className="flex items-center gap-2 justify-self-end md:col-start-3 [.native-app_&]:ml-auto">
           {authState === "pending" && <AuthClusterPlaceholder />}
           {authState === "in" && <MessagesNavLink />}
           {authState === "in" && <FavouritesNavLink />}
@@ -166,4 +167,4 @@ function AuthClusterPlaceholder() {
       <span className="ml-1 hidden h-9 w-[124px] animate-pulse rounded-full bg-muted/60 md:block" />
     </div>
   );
-}
+}

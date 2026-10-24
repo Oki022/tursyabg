@@ -26,6 +26,10 @@ export function NativeAppBridge() {
     let cancelled = false;
 
     void (async () => {
+      // The site is on screen: hide the launch screen (our turning logo).
+      await import("@capacitor/splash-screen")
+        .then(({ SplashScreen }) => SplashScreen.hide())
+        .catch(() => undefined);
       await ensurePushListeners(openLink).catch(() => undefined);
       const { App } = await import("@capacitor/app");
       const handle = await App.addListener("appUrlOpen", ({ url }) => {

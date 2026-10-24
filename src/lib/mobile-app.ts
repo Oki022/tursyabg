@@ -19,6 +19,9 @@ export function isNativeApp(): boolean {
   return !!capacitor()?.isNativePlatform?.();
 }
 
+/** Marker the app adds to its user agent (mobile/capacitor.config.ts). */
+export const APP_USER_AGENT_MARKER = "TursyaBGApp";
+
 export function nativePlatform(): "android" | "ios" | null {
   const p = capacitor()?.getPlatform?.();
   return p === "android" || p === "ios" ? p : null;

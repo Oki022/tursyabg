@@ -29,7 +29,7 @@ import { allowIndexing } from "@/lib/indexing";
 import { bootAppUpdates, isStaleChunkError, reloadForNewVersion } from "@/lib/app-updates";
 import { ThemeProvider } from "@/lib/theme";
 
-const THEME_BOOT_SCRIPT = `(function(){try{var k='tursya-theme';var s=localStorage.getItem(k);var d=s==='dark'||(s!=='light'&&matchMedia('(prefers-color-scheme: dark)').matches);document.documentElement.classList.toggle('dark',d);document.documentElement.style.colorScheme=d?'dark':'light'}catch(e){}})()`;
+const THEME_BOOT_SCRIPT = `(function(){try{var k='tursya-theme';var s=localStorage.getItem(k);var d=s==='dark'||(s!=='light'&&matchMedia('(prefers-color-scheme: dark)').matches);document.documentElement.classList.toggle('dark',d);document.documentElement.style.colorScheme=d?'dark':'light'}catch(e){}try{if(/TursyaBGApp/.test(navigator.userAgent)||(window.Capacitor&&window.Capacitor.isNativePlatform&&window.Capacitor.isNativePlatform())){document.documentElement.classList.add('native-app')}}catch(e){}})()`;
 
 const SUPABASE_ORIGIN =
   (import.meta as any).env?.VITE_SUPABASE_URL ?? "https://xrltdrxhtennbscgbyxb.supabase.co";
