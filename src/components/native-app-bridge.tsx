@@ -6,6 +6,7 @@ import { useAuth } from "@/lib/auth";
 import { captureIssue } from "@/lib/monitoring/client";
 import { APP_AUTH_CALLBACK, isNativeApp } from "@/lib/mobile-app";
 import { ensurePushListeners, registerForPush } from "@/lib/push-device";
+import { resumePendingPromotions, storePurchasesEnabled } from "@/lib/store-purchases";
 
 /**
  * Glue between the website and the mobile app. Renders nothing and does
@@ -51,6 +52,8 @@ export function NativeAppBridge() {
     void registerForPush(openLink).catch((error) =>
       captureIssue({ area: "api", action: "register for push", error }),
     );
+    // A promotion paid in an earlier session but not applied yet.
+    if (storePurchasesEnabled()) void resumePendingPromotions().catch(() => undefined);
   }, [user?.id, router]);
 
   return null;

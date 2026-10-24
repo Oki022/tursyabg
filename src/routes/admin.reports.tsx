@@ -12,6 +12,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { getRevenueMonths, getRevenuePayments, type RevenueMonth } from "@/services/admin";
 import { formatEur } from "@/services/credits";
 import {
+  CHANNEL_BG,
   KIND_BG,
   REVENUE_STATUS_BG,
   downloadCsv,
@@ -129,6 +130,25 @@ function AdminReports() {
             </div>
           ) : null}
 
+          {summary ? (
+            <AdminCard className="flex flex-wrap gap-x-6 gap-y-1 px-4 py-3 text-sm">
+              <span className="font-medium text-foreground">По канали:</span>
+              <span className="text-muted-foreground">
+                Сайт (карта) <span className="tabular-nums text-foreground">{formatEur(summary.siteEur)}</span>
+              </span>
+              <span className="text-muted-foreground">
+                Google Play <span className="tabular-nums text-foreground">{formatEur(summary.googlePlayEur)}</span>
+              </span>
+              <span className="text-muted-foreground">
+                App Store <span className="tabular-nums text-foreground">{formatEur(summary.appStoreEur)}</span>
+              </span>
+              <span className="text-muted-foreground">
+                Комисиона на магазините{" "}
+                <span className="tabular-nums text-foreground">{formatEur(summary.storeCommissionEur)}</span>
+              </span>
+            </AdminCard>
+          ) : null}
+
           <AdminCard>
             <div className="border-b border-border px-4 py-3 text-sm font-semibold text-foreground">
               Последните {MONTHS} месеца
@@ -181,6 +201,7 @@ function AdminReports() {
                       <TableHead>Платено</TableHead>
                       <TableHead>Потребител</TableHead>
                       <TableHead>Продукт</TableHead>
+                      <TableHead>Канал</TableHead>
                       <TableHead className="text-right">Сума</TableHead>
                       <TableHead>Статус</TableHead>
                       <TableHead className="text-right">Разписка</TableHead>
@@ -205,6 +226,9 @@ function AdminReports() {
                           <TableCell className="text-sm">
                             <div className="text-foreground">{p.item || "—"}</div>
                             <div className="text-xs text-muted-foreground">{KIND_BG[p.kind] ?? p.kind}</div>
+                          </TableCell>
+                          <TableCell className="whitespace-nowrap text-xs text-muted-foreground">
+                            {CHANNEL_BG[p.provider] ?? p.provider}
                           </TableCell>
                           <TableCell className="text-right tabular-nums">{formatEur(p.amountEur)}</TableCell>
                           <TableCell>

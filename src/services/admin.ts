@@ -627,6 +627,12 @@ export type RevenueMonth = {
   salesEur: number;
   creditsEur: number;
   promotionEur: number;
+  /** By channel: card on the site (Stripe), Google Play, App Store. */
+  siteEur: number;
+  googlePlayEur: number;
+  appStoreEur: number;
+  /** Store commission (Google / Apple) on the month's store sales. */
+  storeCommissionEur: number;
   refundsCount: number;
   refundsEur: number;
   netEur: number;
@@ -638,10 +644,15 @@ export type RevenuePayment = {
   refundedAt: string | null;
   status: string;
   kind: string;
+  /** stripe | google_play | app_store */
+  provider: string;
   item: string;
   credits: number;
   amountEur: number;
   currency: string;
+  /** Store commission as a fraction (0.15 = 15%), only for store payments. */
+  storeCommissionPct: number | null;
+  storeTransactionId: string | null;
   userId: string;
   userName: string;
   paymentIntentId: string | null;
@@ -657,6 +668,10 @@ export async function getRevenueMonths(months = 12): Promise<RevenueMonth[]> {
     salesEur: Number(r.sales_eur),
     creditsEur: Number(r.credits_eur),
     promotionEur: Number(r.promotion_eur),
+    siteEur: Number(r.site_eur),
+    googlePlayEur: Number(r.google_play_eur),
+    appStoreEur: Number(r.app_store_eur),
+    storeCommissionEur: Number(r.store_commission_eur),
     refundsCount: r.refunds_count,
     refundsEur: Number(r.refunds_eur),
     netEur: Number(r.net_eur),
@@ -672,10 +687,13 @@ export async function getRevenuePayments(month: string): Promise<RevenuePayment[
     refundedAt: r.refunded_at ?? null,
     status: r.status,
     kind: r.kind,
+    provider: r.provider,
     item: r.item ?? "",
     credits: r.credits ?? 0,
     amountEur: Number(r.amount_eur),
     currency: r.currency,
+    storeCommissionPct: r.store_commission_pct == null ? null : Number(r.store_commission_pct),
+    storeTransactionId: r.store_transaction_id ?? null,
     userId: r.user_id,
     userName: r.user_name || "Потребител",
     paymentIntentId: r.stripe_payment_intent_id ?? null,

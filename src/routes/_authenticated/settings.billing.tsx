@@ -24,7 +24,15 @@ import { useCreditBalance, useCreditPackages, useCreditTransactions } from "@/li
 import { creditsLabel, formatEur } from "@/services/credits";
 import { getMyPayments, type Payment } from "@/services/payments";
 import { BuyCreditsDialog } from "@/components/credits/buy-credits-dialog";
+import { useHydrated } from "@/hooks/use-hydrated";
+import { nativePlatform } from "@/lib/mobile-app";
+import { storePurchasesEnabled } from "@/lib/store-purchases";
+
 import { durationLabel, getPromoProductsByIds, type PromoProduct, type PromoType } from "@/services/promotions";
+
+function storeLabel(): string {
+  return nativePlatform() === "ios" ? "App Store" : "Google Play";
+}
 
 export const Route = createFileRoute("/_authenticated/settings/billing")({
   head: () => ({
@@ -57,9 +65,15 @@ function SettingsBillingPage() {
     queryFn: () => getPromoProductsByIds(promoIds),
   });
   const promoProducts = promoQuery.data ?? {};
-  const [buying, setBuying] = useState<{ id: string; name: string; credits: number; priceEur: number } | null>(
-    null,
-  );
+  const [buying, setBuying] = useState<{
+    id: string;
+    name: string;
+    credits: number;
+    priceEur: number;
+    storeProductId: string | null;
+  } | null>(null);
+  const hydrated = useHydrated();
+  const storeName = hydrated && storePurchasesEnabled() ? storeLabel() : null;
 
   return (
     <SettingsPageShell
@@ -106,7 +120,15 @@ function SettingsBillingPage() {
                 variant="outline"
                 size="sm"
                 className="mt-3 w-full"
-                onClick={() => setBuying({ id: p.id, name: p.name, credits: p.credits, priceEur: p.priceEur })}
+                onClick={() =>
+                  setBuying({
+                    id: p.id,
+                    name: p.name,
+                    credits: p.credits,
+                    priceEur: p.priceEur,
+                    storeProductId: p.storeProductId,
+                  })
+                }
               >
                 Купи пакет
               </Button>
@@ -116,7 +138,7 @@ function SettingsBillingPage() {
             [0, 1, 2, 3].map((i) => <div key={i} className="h-32 animate-pulse rounded-xl bg-muted" />)}
         </div>
         <p className="mt-3 text-xs text-muted-foreground">
-          Плащане с карта. С покупката приемаш{" "}
+          {storeName ? `Плащане през ${storeName}.` : "Плащане с карта."} С покупката приемаш{" "}
           <Link to="/terms" className="underline hover:text-foreground">
             Общите условия
           </Link>{" "}

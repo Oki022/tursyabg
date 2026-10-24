@@ -257,6 +257,7 @@ export type Database = {
       }
       credit_packages: {
         Row: {
+          store_product_id: string | null
           created_at: string
           credits: number
           id: string
@@ -267,6 +268,7 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          store_product_id?: string | null
           created_at?: string
           credits: number
           id?: string
@@ -277,6 +279,7 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          store_product_id?: string | null
           created_at?: string
           credits?: number
           id?: string
@@ -962,6 +965,12 @@ export type Database = {
       }
       payments: {
         Row: {
+          store_commission_pct: number | null
+          store_currency: string | null
+          store_price: number | null
+          store_product_id: string | null
+          store_transaction_id: string | null
+          test_mode: boolean
           amount_eur: number
           completed_at: string | null
           created_at: string
@@ -981,6 +990,12 @@ export type Database = {
           user_id: string
         }
         Insert: {
+          store_commission_pct?: number | null
+          store_currency?: string | null
+          store_price?: number | null
+          store_product_id?: string | null
+          store_transaction_id?: string | null
+          test_mode?: boolean
           amount_eur: number
           completed_at?: string | null
           created_at?: string
@@ -1000,6 +1015,12 @@ export type Database = {
           user_id: string
         }
         Update: {
+          store_commission_pct?: number | null
+          store_currency?: string | null
+          store_price?: number | null
+          store_product_id?: string | null
+          store_transaction_id?: string | null
+          test_mode?: boolean
           amount_eur?: number
           completed_at?: string | null
           created_at?: string
@@ -1246,6 +1267,7 @@ export type Database = {
       }
       promo_products: {
         Row: {
+          store_product_id: string | null
           code: string
           created_at: string
           duration_days: number
@@ -1258,6 +1280,7 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          store_product_id?: string | null
           code: string
           created_at?: string
           duration_days?: number
@@ -1270,6 +1293,7 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          store_product_id?: string | null
           code?: string
           created_at?: string
           duration_days?: number
@@ -2044,7 +2068,9 @@ export type Database = {
       admin_revenue_months: {
         Args: { _months?: number }
         Returns: {
+          app_store_eur: number
           credits_eur: number
+          google_play_eur: number
           month: string
           net_eur: number
           promotion_eur: number
@@ -2052,6 +2078,8 @@ export type Database = {
           refunds_eur: number
           sales_count: number
           sales_eur: number
+          site_eur: number
+          store_commission_eur: number
         }[]
       }
       admin_revenue_payments: {
@@ -2064,9 +2092,12 @@ export type Database = {
           item: string
           kind: string
           paid_at: string
+          provider: string
           receipt_url: string
           refunded_at: string
           status: string
+          store_commission_pct: number
+          store_transaction_id: string
           stripe_payment_intent_id: string
           user_id: string
           user_name: string
@@ -2121,6 +2152,10 @@ export type Database = {
       }
       bg_slug: { Args: { _input: string }; Returns: string }
       call_unconfirmed_reminders: { Args: never; Returns: undefined }
+      apply_store_promotion: {
+        Args: { _task_id: string; _transaction_id: string }
+        Returns: Json
+      }
       can_bump_task: { Args: { _task_id: string }; Returns: boolean }
       can_repost_task: { Args: { _source_task_id: string }; Returns: Json }
       cancel_account_deletion: { Args: never; Returns: undefined }
@@ -2150,6 +2185,20 @@ export type Database = {
         Returns: Json
       }
       confirm_task_active: { Args: { _task_id: string }; Returns: Json }
+      complete_store_purchase: {
+        Args: {
+          _commission_pct: number | null
+          _currency: string | null
+          _price: number | null
+          _product_id: string
+          _provider: string
+          _purchased_at: string | null
+          _test_mode: boolean
+          _transaction_id: string
+          _user_id: string
+        }
+        Returns: Json
+      }
       copy_task_images: {
         Args: {
           _exclude_ids?: string[]
@@ -2359,6 +2408,10 @@ export type Database = {
         Returns: string
       }
       reactivate_own_account: { Args: never; Returns: undefined }
+      refund_store_purchase: {
+        Args: { _provider: string; _status: string; _transaction_id: string }
+        Returns: Json
+      }
       register_push_device: {
         Args: { _platform: string; _token: string }
         Returns: undefined

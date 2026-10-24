@@ -1,11 +1,15 @@
 import { Link, useNavigate } from "@tanstack/react-router";
+import { useQueryClient } from "@tanstack/react-query";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { getProvider, type PaymentProvider } from "@/services/payments";
 import { creditsLabel, formatEur } from "@/services/credits";
 import { toast } from "sonner";
+import { StoreBuyButton } from "@/components/payments/store-buy-button";
+import { useHydrated } from "@/hooks/use-hydrated";
+import { storePurchasesEnabled } from "@/lib/store-purchases";
 
-type Pkg = { id: string; name: string; credits: number; priceEur: number };
+type Pkg = { id: string; name: string; credits: number; priceEur: number; storeProductId?: string | null };
 
 export function BuyCreditsDialog({
   pkg,
@@ -17,8 +21,21 @@ export function BuyCreditsDialog({
   provider?: PaymentProvider;
 }) {
   const navigate = useNavigate();
+  const qc = useQueryClient();
   const adapter = getProvider(provider);
   const CheckoutSurface = adapter?.CheckoutSurface;
+  // In the mobile app the points are paid through Google Play / App Store.
+  const hydrated = useHydrated();
+  const storeProductId = hydrated && storePurchasesEnabled() ? (pkg?.storeProductId ?? null) : null;
+
+  const onStorePurchased = () => {
+    onOpenChange(false);
+    toast.success("Плащането мина!", { description: "Точките ще се появят след няколко секунди." });
+    // The store confirmation reaches our server shortly after: refresh a few times.
+    for (const ms of [2000, 5000, 10000, 20000]) {
+      window.setTimeout(() => void qc.invalidateQueries({ queryKey: ["credits"] }), ms);
+    }
+  };
 
   return (
     <Dialog open={Boolean(pkg)} onOpenChange={onOpenChange}>
@@ -30,13 +47,23 @@ export function BuyCreditsDialog({
           </DialogDescription>
         </DialogHeader>
 
-        {pkg && CheckoutSurface && (
+        {pkg && storeProductId && (
+          <div className="rounded-xl border border-border/60 bg-background">
+            <StoreBuyButton
+              productId={storeProductId}
+              fallbackPrice={formatEur(pkg.priceEur)}
+              onPurchased={onStorePurchased}
+            />
+          </div>
+        )}
+
+        {pkg && !storeProductId && CheckoutSurface && (
           <div className="rounded-xl border border-border/60 bg-background p-1">
             <CheckoutSurface target={{ kind: "credits", packageId: pkg.id }} />
           </div>
         )}
 
-        {pkg && !CheckoutSurface && (
+        {pkg && !storeProductId && !CheckoutSurface && (
           <p className="rounded-xl border border-border/60 bg-background p-4 text-sm text-muted-foreground">
             Този метод на плащане още не е наличен.
           </p>
@@ -63,13 +90,14 @@ export function BuyCreditsDialog({
           size="sm"
           onClick={() => {
             onOpenChange(false);
+            if (storeProductId) return;
             toast.info("Плащането е прекратено.");
             void navigate({ to: "/billing/cancel" });
           }}
         >
-          Откажи плащането
+          {storeProductId ? "Затвори" : "Откажи плащането"}
         </Button>
       </DialogContent>
     </Dialog>
   );
-}
+}

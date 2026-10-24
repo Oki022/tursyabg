@@ -36,6 +36,12 @@ export const KIND_BG: Record<string, string> = {
   promotion: "Промотиране на задача",
 };
 
+export const CHANNEL_BG: Record<string, string> = {
+  stripe: "Сайт (карта)",
+  google_play: "Google Play",
+  app_store: "App Store",
+};
+
 export const REVENUE_STATUS_BG: Record<string, string> = {
   completed: "Платено",
   refunded: "Възстановено",
@@ -66,14 +72,16 @@ export function revenueCsv(rows: RevenuePayment[], month: string): string {
     "Дата на възстановяване",
     "Статус",
     "Вид",
+    "Канал",
     "Продукт",
     "Точки",
     "Сума",
     "Сума за месеца",
     "Валута",
+    "Комисиона на магазина %",
     "Потребител",
     "ID на потребител",
-    "Stripe Payment Intent",
+    "Номер на плащането",
     "Разписка",
   ];
   const lines = rows.map((r) => {
@@ -85,14 +93,16 @@ export function revenueCsv(rows: RevenuePayment[], month: string): string {
       cell(r.refundedAt ? sofiaDateTime(r.refundedAt) : ""),
       cell(REVENUE_STATUS_BG[r.status] ?? r.status),
       cell(KIND_BG[r.kind] ?? r.kind),
+      cell(CHANNEL_BG[r.provider] ?? r.provider),
       cell(r.item),
       String(r.credits),
       amount(r.amountEur),
       amount(signed),
       cell(r.currency),
+      r.storeCommissionPct == null ? "" : amount(r.storeCommissionPct * 100),
       cell(r.userName),
       cell(r.userId),
-      cell(r.paymentIntentId ?? ""),
+      cell(r.paymentIntentId ?? r.storeTransactionId ?? ""),
       cell(r.receiptUrl ?? ""),
     ].join(";");
   });

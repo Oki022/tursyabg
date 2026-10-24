@@ -8,6 +8,8 @@ export type CreditPackage = {
   credits: number;
   priceEur: number;
   sortOrder: number;
+  /** Product id in Google Play / App Store (in-app purchase in the mobile app). */
+  storeProductId: string | null;
 };
 
 export type CreditTransaction = {
@@ -64,7 +66,7 @@ export function creditsLabel(n: number): string {
 export async function getCreditPackages(): Promise<CreditPackage[]> {
   const { data, error } = await supabase
     .from("credit_packages")
-    .select("id, name, credits, price_eur, sort_order")
+    .select("id, name, credits, price_eur, sort_order, store_product_id")
     .eq("is_active", true)
     .order("sort_order");
   if (error) throw error;
@@ -74,6 +76,7 @@ export async function getCreditPackages(): Promise<CreditPackage[]> {
     credits: p.credits,
     priceEur: Number(p.price_eur),
     sortOrder: p.sort_order,
+    storeProductId: p.store_product_id ?? null,
   }));
 }
 

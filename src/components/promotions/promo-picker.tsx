@@ -14,6 +14,9 @@ import {
 import { useCanBump, usePromoProducts, useTaskPromotions } from "@/lib/promotions-api";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
+import { StoreBuyButton } from "@/components/payments/store-buy-button";
+import { useHydrated } from "@/hooks/use-hydrated";
+import { applyStorePromotion, storePurchasesEnabled } from "@/lib/store-purchases";
 
 const ICONS: Record<PromoType, typeof Crown> = {
   bump: ArrowUpCircle,
@@ -46,6 +49,23 @@ export function PromoPicker({
   const canBump = useCanBump(taskId);
   const adapter = getProvider(provider);
   const CheckoutSurface = adapter?.CheckoutSurface;
+  // In the mobile app the promotion is paid through Google Play / App Store.
+  const hydrated = useHydrated();
+  const useStore = hydrated && storePurchasesEnabled();
+  const [applying, setApplying] = useState(false);
+
+  const onStorePurchased = async (transactionId: string) => {
+    setApplying(true);
+    // The realtime listener below shows "Промоцията е активирана!" when it lands.
+    const ok = await applyStorePromotion(transactionId, taskId);
+    setApplying(false);
+    if (!ok) {
+      toast.info("Плащането мина. Промоцията ще се активира до минута.", {
+        description: "Ако не стане, пиши ни от страницата за контакти.",
+      });
+    }
+    setSelected(null);
+  };
 
   const activeByType = useMemo(() => {
     const map: Partial<Record<PromoType, string>> = {};
@@ -92,7 +112,21 @@ export function PromoPicker({
     return (
       <div className="space-y-3">
         <div className="rounded-xl border border-border/60 bg-background p-1">
-          {CheckoutSurface ? (
+          {useStore && selected.storeProductId ? (
+            applying ? (
+              <div className="flex items-center justify-center gap-2 p-4 text-sm text-muted-foreground">
+                <Loader2 className="h-4 w-4 animate-spin" /> Активираме промоцията…
+              </div>
+            ) : (
+              <StoreBuyButton
+                productId={selected.storeProductId}
+                fallbackPrice={formatEur(selected.priceEur)}
+                onPurchased={(tx) => void onStorePurchased(tx)}
+              />
+            )
+          ) : useStore ? (
+            <p className="p-4 text-sm text-muted-foreground">Този метод на плащане още не е наличен.</p>
+          ) : CheckoutSurface ? (
             <CheckoutSurface
               target={{ kind: "promotion", promoProductId: selected.id, taskId }}
               {...(returnUrl ? { returnUrl } : {})}

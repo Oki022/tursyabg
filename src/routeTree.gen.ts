@@ -65,6 +65,7 @@ import { Route as AuthenticatedTaskIdEditRouteImport } from './routes/_authentic
 import { Route as ApiPublicCronTaskAlertsRouteImport } from './routes/api/public/cron/task-alerts'
 import { Route as ApiPublicCronUnconfirmedRemindersRouteImport } from './routes/api/public/cron/unconfirmed-reminders'
 import { Route as ApiPublicMonitoringCronCheckRouteImport } from './routes/api/public/monitoring/cron-check'
+import { Route as ApiPublicPaymentsRevenuecatRouteImport } from './routes/api/public/payments/revenuecat'
 import { Route as ApiPublicPaymentsWebhookRouteImport } from './routes/api/public/payments/webhook'
 import { Route as ApiPublicPushSendRouteImport } from './routes/api/public/push/send'
 
@@ -357,6 +358,12 @@ const ApiPublicMonitoringCronCheckRoute =
     path: '/api/public/monitoring/cron-check',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiPublicPaymentsRevenuecatRoute =
+  ApiPublicPaymentsRevenuecatRouteImport.update({
+    id: '/api/public/payments/revenuecat',
+    path: '/api/public/payments/revenuecat',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiPublicPaymentsWebhookRoute =
   ApiPublicPaymentsWebhookRouteImport.update({
     id: '/api/public/payments/webhook',
@@ -425,6 +432,7 @@ export interface FileRoutesByFullPath {
   '/api/public/cron/task-alerts': typeof ApiPublicCronTaskAlertsRoute
   '/api/public/cron/unconfirmed-reminders': typeof ApiPublicCronUnconfirmedRemindersRoute
   '/api/public/monitoring/cron-check': typeof ApiPublicMonitoringCronCheckRoute
+  '/api/public/payments/revenuecat': typeof ApiPublicPaymentsRevenuecatRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
   '/api/public/push/send': typeof ApiPublicPushSendRoute
 }
@@ -482,6 +490,7 @@ export interface FileRoutesByTo {
   '/api/public/cron/task-alerts': typeof ApiPublicCronTaskAlertsRoute
   '/api/public/cron/unconfirmed-reminders': typeof ApiPublicCronUnconfirmedRemindersRoute
   '/api/public/monitoring/cron-check': typeof ApiPublicMonitoringCronCheckRoute
+  '/api/public/payments/revenuecat': typeof ApiPublicPaymentsRevenuecatRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
   '/api/public/push/send': typeof ApiPublicPushSendRoute
 }
@@ -543,6 +552,7 @@ export interface FileRoutesById {
   '/api/public/cron/task-alerts': typeof ApiPublicCronTaskAlertsRoute
   '/api/public/cron/unconfirmed-reminders': typeof ApiPublicCronUnconfirmedRemindersRoute
   '/api/public/monitoring/cron-check': typeof ApiPublicMonitoringCronCheckRoute
+  '/api/public/payments/revenuecat': typeof ApiPublicPaymentsRevenuecatRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
   '/api/public/push/send': typeof ApiPublicPushSendRoute
 }
@@ -604,6 +614,7 @@ export interface FileRouteTypes {
     | '/api/public/cron/task-alerts'
     | '/api/public/cron/unconfirmed-reminders'
     | '/api/public/monitoring/cron-check'
+    | '/api/public/payments/revenuecat'
     | '/api/public/payments/webhook'
     | '/api/public/push/send'
   fileRoutesByTo: FileRoutesByTo
@@ -661,6 +672,7 @@ export interface FileRouteTypes {
     | '/api/public/cron/task-alerts'
     | '/api/public/cron/unconfirmed-reminders'
     | '/api/public/monitoring/cron-check'
+    | '/api/public/payments/revenuecat'
     | '/api/public/payments/webhook'
     | '/api/public/push/send'
   id:
@@ -721,6 +733,7 @@ export interface FileRouteTypes {
     | '/api/public/cron/task-alerts'
     | '/api/public/cron/unconfirmed-reminders'
     | '/api/public/monitoring/cron-check'
+    | '/api/public/payments/revenuecat'
     | '/api/public/payments/webhook'
     | '/api/public/push/send'
   fileRoutesById: FileRoutesById
@@ -754,6 +767,7 @@ export interface RootRouteChildren {
   ApiPublicCronTaskAlertsRoute: typeof ApiPublicCronTaskAlertsRoute
   ApiPublicCronUnconfirmedRemindersRoute: typeof ApiPublicCronUnconfirmedRemindersRoute
   ApiPublicMonitoringCronCheckRoute: typeof ApiPublicMonitoringCronCheckRoute
+  ApiPublicPaymentsRevenuecatRoute: typeof ApiPublicPaymentsRevenuecatRoute
   ApiPublicPaymentsWebhookRoute: typeof ApiPublicPaymentsWebhookRoute
   ApiPublicPushSendRoute: typeof ApiPublicPushSendRoute
 }
@@ -1152,6 +1166,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicMonitoringCronCheckRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/payments/revenuecat': {
+      id: '/api/public/payments/revenuecat'
+      path: '/api/public/payments/revenuecat'
+      fullPath: '/api/public/payments/revenuecat'
+      preLoaderRoute: typeof ApiPublicPaymentsRevenuecatRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/payments/webhook': {
       id: '/api/public/payments/webhook'
       path: '/api/public/payments/webhook'
@@ -1284,6 +1305,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPublicCronUnconfirmedRemindersRoute:
     ApiPublicCronUnconfirmedRemindersRoute,
   ApiPublicMonitoringCronCheckRoute: ApiPublicMonitoringCronCheckRoute,
+  ApiPublicPaymentsRevenuecatRoute: ApiPublicPaymentsRevenuecatRoute,
   ApiPublicPaymentsWebhookRoute: ApiPublicPaymentsWebhookRoute,
   ApiPublicPushSendRoute: ApiPublicPushSendRoute,
 }

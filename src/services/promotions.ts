@@ -10,6 +10,8 @@ export type PromoProduct = {
   durationDays: number;
   priceEur: number;
   sortOrder: number;
+  /** Product id in Google Play / App Store (in-app purchase in the mobile app). */
+  storeProductId: string | null;
 };
 
 export type TaskPromotion = {
@@ -41,6 +43,7 @@ function mapProduct(r: Record<string, any>): PromoProduct {
     durationDays: r["duration_days"],
     priceEur: Number(r["price_eur"]),
     sortOrder: r["sort_order"],
+    storeProductId: r["store_product_id"] ?? null,
   };
 }
 
@@ -57,7 +60,7 @@ function mapPromotion(r: Record<string, any>): TaskPromotion {
 export async function listPromoProducts(): Promise<PromoProduct[]> {
   const { data, error } = await supabase
     .from("promo_products")
-    .select("id, code, name_bg, type, duration_days, price_eur, sort_order")
+    .select("id, code, name_bg, type, duration_days, price_eur, sort_order, store_product_id")
     .eq("is_active", true)
     .order("sort_order", { ascending: true });
   if (error) throw error;
@@ -119,7 +122,7 @@ export async function getPromoProductsByIds(ids: string[]): Promise<Record<strin
   if (ids.length === 0) return {};
   const { data, error } = await supabase
     .from("promo_products")
-    .select("id, code, name_bg, type, duration_days, price_eur, sort_order")
+    .select("id, code, name_bg, type, duration_days, price_eur, sort_order, store_product_id")
     .in("id", ids);
   if (error) throw error;
   const out: Record<string, PromoProduct> = {};
