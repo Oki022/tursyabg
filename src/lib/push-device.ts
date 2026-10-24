@@ -43,7 +43,7 @@ export function ensurePushListeners(openLink: (link: string) => void): Promise<v
     // Tap on a notification: open the page it points to.
     await PushNotifications.addListener("pushNotificationActionPerformed", (action) => {
       const link = (action.notification?.data as { link?: unknown } | undefined)?.link;
-      if (typeof link === "string" && link.startsWith("/")) openLink(link);
+      if (typeof link === "string" && link.startsWith("/") && !link.startsWith("//")) openLink(link);
     });
   })();
   return listenersReady;

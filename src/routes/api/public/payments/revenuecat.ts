@@ -95,6 +95,24 @@ export const Route = createFileRoute("/api/public/payments/revenuecat")({
               });
               return Response.json({ ok: false, error: "NO_USER" });
             }
+            // Test purchases cost nothing (RevenueCat Test Store, Google Play
+            // test accounts). The test key is public in the site's code, so
+            // anyone could make one: only admins / moderators get anything.
+            const isTest = event.environment === "SANDBOX" || event.store === "TEST_STORE";
+            if (isTest) {
+              const { data: staff, error: staffError } = await supabaseAdmin.rpc("is_staff", { _user_id: userId });
+              if (staffError) throw new Error(staffError.message);
+              if (!staff) {
+                reportServerIssue({
+                  area: "payments.webhook",
+                  action: "test purchase by non-staff user ignored",
+                  error: new Error(`RevenueCat test purchase ${event.transaction_id} by a non-staff user: nothing granted`),
+                  route: "/api/public/payments/revenuecat",
+                });
+                return Response.json({ ok: true, ignored: "test_purchase_not_staff" });
+              }
+            }
+
             const { data, error } = await supabaseAdmin.rpc("complete_store_purchase", {
               _provider: provider,
               _transaction_id: event.transaction_id,
@@ -104,7 +122,7 @@ export const Route = createFileRoute("/api/public/payments/revenuecat")({
               _currency: event.currency ?? null,
               _commission_pct: event.commission_percentage ?? null,
               _purchased_at: event.purchased_at_ms ? new Date(event.purchased_at_ms).toISOString() : null,
-              _test_mode: event.environment === "SANDBOX" || event.store === "TEST_STORE",
+              _test_mode: isTest,
             });
             if (error) throw new Error(error.message);
             const result = (data ?? {}) as { ok?: boolean; error?: string; already?: boolean; payment_id?: string };

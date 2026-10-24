@@ -4,7 +4,7 @@ import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth";
 import { captureIssue } from "@/lib/monitoring/client";
-import { APP_AUTH_CALLBACK, isNativeApp } from "@/lib/mobile-app";
+import { APP_AUTH_CALLBACK, isNativeApp, takeAppSignInStarted } from "@/lib/mobile-app";
 import { ensurePushListeners, registerForPush } from "@/lib/push-device";
 import { resumePendingPromotions, storePurchasesEnabled } from "@/lib/store-purchases";
 
@@ -34,7 +34,8 @@ export function NativeAppBridge() {
       await ensurePushListeners(openLink).catch(() => undefined);
       const { App } = await import("@capacitor/app");
       const handle = await App.addListener("appUrlOpen", ({ url }) => {
-        if (url.startsWith(APP_AUTH_CALLBACK)) void finishGoogleSignIn(url, openLink);
+        // Only a sign-in this app started itself (not a link sent by someone else).
+        if (url.startsWith(APP_AUTH_CALLBACK) && takeAppSignInStarted()) void finishGoogleSignIn(url, openLink);
       });
       if (cancelled) void handle.remove();
       else removeUrlListener = () => void handle.remove();

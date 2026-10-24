@@ -26,3 +26,30 @@ export function nativePlatform(): "android" | "ios" | null {
   const p = capacitor()?.getPlatform?.();
   return p === "android" || p === "ios" ? p : null;
 }
+
+const SIGN_IN_KEY = "tursya-app-google-sign-in-started";
+const SIGN_IN_WINDOW_MS = 10 * 60 * 1000;
+
+/** Called right before the app opens Google sign-in in the browser sheet. */
+export function markAppSignInStarted(): void {
+  try {
+    window.localStorage.setItem(SIGN_IN_KEY, String(Date.now()));
+  } catch {
+    // storage blocked: the callback will then be refused, the user can retry
+  }
+}
+
+/**
+ * True once if this app started a Google sign-in in the last 10 minutes.
+ * A sign-in link that someone else sent to the user (which would log them in
+ * to a stranger's account) is refused.
+ */
+export function takeAppSignInStarted(): boolean {
+  try {
+    const started = Number(window.localStorage.getItem(SIGN_IN_KEY) ?? "0");
+    window.localStorage.removeItem(SIGN_IN_KEY);
+    return started > 0 && Date.now() - started < SIGN_IN_WINDOW_MS;
+  } catch {
+    return false;
+  }
+}

@@ -4,7 +4,7 @@ import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { guardAuthAttempt, type AuthGuardAction } from "@/lib/auth-guard.functions";
 import { captureIssue } from "@/lib/monitoring/client";
-import { APP_AUTH_CALLBACK, isNativeApp } from "@/lib/mobile-app";
+import { APP_AUTH_CALLBACK, isNativeApp, markAppSignInStarted } from "@/lib/mobile-app";
 import { unregisterPushDevice } from "@/lib/push-device";
 import { GOOGLE_WEB_CLIENT_ID, nativeGoogleSignIn } from "@/lib/native-google-sign-in";
 
@@ -288,6 +288,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         throw failure;
       }
       const { Browser } = await import("@capacitor/browser");
+      markAppSignInStarted();
       await Browser.open({ url: data.url });
       return false;
     }
