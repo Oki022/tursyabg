@@ -66,6 +66,7 @@ import { Route as ApiPublicCronTaskAlertsRouteImport } from './routes/api/public
 import { Route as ApiPublicCronUnconfirmedRemindersRouteImport } from './routes/api/public/cron/unconfirmed-reminders'
 import { Route as ApiPublicMonitoringCronCheckRouteImport } from './routes/api/public/monitoring/cron-check'
 import { Route as ApiPublicPaymentsWebhookRouteImport } from './routes/api/public/payments/webhook'
+import { Route as ApiPublicPushSendRouteImport } from './routes/api/public/push/send'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -362,6 +363,11 @@ const ApiPublicPaymentsWebhookRoute =
     path: '/api/public/payments/webhook',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiPublicPushSendRoute = ApiPublicPushSendRouteImport.update({
+  id: '/api/public/push/send',
+  path: '/api/public/push/send',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -420,6 +426,7 @@ export interface FileRoutesByFullPath {
   '/api/public/cron/unconfirmed-reminders': typeof ApiPublicCronUnconfirmedRemindersRoute
   '/api/public/monitoring/cron-check': typeof ApiPublicMonitoringCronCheckRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
+  '/api/public/push/send': typeof ApiPublicPushSendRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -476,6 +483,7 @@ export interface FileRoutesByTo {
   '/api/public/cron/unconfirmed-reminders': typeof ApiPublicCronUnconfirmedRemindersRoute
   '/api/public/monitoring/cron-check': typeof ApiPublicMonitoringCronCheckRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
+  '/api/public/push/send': typeof ApiPublicPushSendRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -536,6 +544,7 @@ export interface FileRoutesById {
   '/api/public/cron/unconfirmed-reminders': typeof ApiPublicCronUnconfirmedRemindersRoute
   '/api/public/monitoring/cron-check': typeof ApiPublicMonitoringCronCheckRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
+  '/api/public/push/send': typeof ApiPublicPushSendRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -596,6 +605,7 @@ export interface FileRouteTypes {
     | '/api/public/cron/unconfirmed-reminders'
     | '/api/public/monitoring/cron-check'
     | '/api/public/payments/webhook'
+    | '/api/public/push/send'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -652,6 +662,7 @@ export interface FileRouteTypes {
     | '/api/public/cron/unconfirmed-reminders'
     | '/api/public/monitoring/cron-check'
     | '/api/public/payments/webhook'
+    | '/api/public/push/send'
   id:
     | '__root__'
     | '/'
@@ -711,6 +722,7 @@ export interface FileRouteTypes {
     | '/api/public/cron/unconfirmed-reminders'
     | '/api/public/monitoring/cron-check'
     | '/api/public/payments/webhook'
+    | '/api/public/push/send'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -743,6 +755,7 @@ export interface RootRouteChildren {
   ApiPublicCronUnconfirmedRemindersRoute: typeof ApiPublicCronUnconfirmedRemindersRoute
   ApiPublicMonitoringCronCheckRoute: typeof ApiPublicMonitoringCronCheckRoute
   ApiPublicPaymentsWebhookRoute: typeof ApiPublicPaymentsWebhookRoute
+  ApiPublicPushSendRoute: typeof ApiPublicPushSendRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -1146,6 +1159,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicPaymentsWebhookRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/push/send': {
+      id: '/api/public/push/send'
+      path: '/api/public/push/send'
+      fullPath: '/api/public/push/send'
+      preLoaderRoute: typeof ApiPublicPushSendRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -1265,6 +1285,7 @@ const rootRouteChildren: RootRouteChildren = {
     ApiPublicCronUnconfirmedRemindersRoute,
   ApiPublicMonitoringCronCheckRoute: ApiPublicMonitoringCronCheckRoute,
   ApiPublicPaymentsWebhookRoute: ApiPublicPaymentsWebhookRoute,
+  ApiPublicPushSendRoute: ApiPublicPushSendRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

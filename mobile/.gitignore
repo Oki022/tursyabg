@@ -1,0 +1,3 @@
+# Firebase config stays on the computer that builds the app (GitHub would flag the API key in it).
+android/app/google-services.json
+node_modules/

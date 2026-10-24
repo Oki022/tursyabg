@@ -15,6 +15,7 @@ import { ClientOnly } from "@tanstack/react-router";
 import { SiteHeader } from "@/components/site-header";
 import { MobileNav } from "@/components/mobile-nav";
 import { SiteFooter } from "@/components/site-footer";
+import { NativeAppBridge } from "@/components/native-app-bridge";
 import { Toaster } from "@/components/ui/sonner";
 import { AuthProvider } from "@/lib/auth";
 import { BRAND, pageTitle } from "@/lib/brand";
@@ -206,6 +207,7 @@ function RootComponent() {
           {!isMessages && <CookieConsent />}
         </CookieConsentProvider>
         <ClientOnly fallback={null}><AccountStatusGate /></ClientOnly>
+        <ClientOnly fallback={null}><NativeAppBridge /></ClientOnly>
         <ClientOnly fallback={null}><Toaster /></ClientOnly>
         </AuthProvider>
       </QueryClientProvider>

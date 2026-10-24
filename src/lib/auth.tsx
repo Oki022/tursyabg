@@ -4,6 +4,8 @@ import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { guardAuthAttempt, type AuthGuardAction } from "@/lib/auth-guard.functions";
 import { captureIssue } from "@/lib/monitoring/client";
+import { APP_AUTH_CALLBACK, isNativeApp } from "@/lib/mobile-app";
+import { unregisterPushDevice } from "@/lib/push-device";
 
 export type AuthUser = {
   id: string;
@@ -260,6 +262,24 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const loginSocial: AuthContextValue["loginSocial"] = async () => {
+    // In the mobile app Google blocks sign-in inside the app's web view, so it
+    // opens in an in-app browser sheet and comes back through a deep link
+    // (handled in components/native-app-bridge.tsx).
+    if (isNativeApp()) {
+      const { data, error } = await supabase.auth.signInWithOAuth({
+        provider: "google",
+        options: { redirectTo: APP_AUTH_CALLBACK, skipBrowserRedirect: true },
+      });
+      if (error || !data?.url) {
+        const failure = error ?? new Error("No Google sign-in URL");
+        captureIssue({ area: "auth", action: "sign in with google in app", error: failure });
+        throw failure;
+      }
+      const { Browser } = await import("@capacitor/browser");
+      await Browser.open({ url: data.url });
+      return;
+    }
+
     const base = authRedirectBase();
     const { error } = await supabase.auth.signInWithOAuth({
       provider: "google",
@@ -357,6 +377,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const logout = async () => {
+    // In the app: this phone stops getting this user's push notifications.
+    await unregisterPushDevice();
     try {
       await supabase.auth.signOut();
     } catch {

@@ -1104,6 +1104,30 @@ export type Database = {
         }
         Relationships: []
       }
+      push_devices: {
+        Row: {
+          created_at: string
+          last_seen_at: string
+          platform: string
+          token: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          last_seen_at?: string
+          platform: string
+          token: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          last_seen_at?: string
+          platform?: string
+          token?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       profile_contacts: {
         Row: {
           created_at: string
@@ -2335,6 +2359,10 @@ export type Database = {
         Returns: string
       }
       reactivate_own_account: { Args: never; Returns: undefined }
+      register_push_device: {
+        Args: { _platform: string; _token: string }
+        Returns: undefined
+      }
       recompute_review_aggregates: {
         Args: { _user_id: string }
         Returns: undefined
@@ -2457,6 +2485,7 @@ export type Database = {
           user_id: string
         }[]
       }
+      unregister_push_device: { Args: { _token: string }; Returns: undefined }
       unlock_task_contact: { Args: { _task_id: string }; Returns: Json }
       update_own_task: {
         Args: {
