@@ -6,6 +6,7 @@ import { guardAuthAttempt, type AuthGuardAction } from "@/lib/auth-guard.functio
 import { captureIssue } from "@/lib/monitoring/client";
 import { APP_AUTH_CALLBACK, isNativeApp } from "@/lib/mobile-app";
 import { unregisterPushDevice } from "@/lib/push-device";
+import { GOOGLE_WEB_CLIENT_ID, nativeGoogleSignIn } from "@/lib/native-google-sign-in";
 
 export type AuthUser = {
   id: string;
@@ -29,7 +30,8 @@ type AuthContextValue = {
   /** null = още не знаем (сървър/първо рисуване), true/false = има ли запазена сесия */
   hasStoredSession: boolean | null;
   login: (email: string, password: string) => Promise<void>;
-  loginSocial: (provider: "google") => Promise<void>;
+  /** Resolves true when the user is signed in right away (app account picker), false when a redirect follows. */
+  loginSocial: (provider: "google") => Promise<boolean>;
   register: (data: { name: string; email: string; password: string; phone: string }) => Promise<{ needsConfirmation: boolean }>;
   resetPassword: (email: string) => Promise<void>;
   resendConfirmation: (email: string) => Promise<void>;
@@ -266,6 +268,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     // opens in an in-app browser sheet and comes back through a deep link
     // (handled in components/native-app-bridge.tsx).
     if (isNativeApp()) {
+      // First choice: the phone's own Google account picker, no browser at all.
+      if (GOOGLE_WEB_CLIENT_ID) {
+        try {
+          const result = await nativeGoogleSignIn();
+          return result === "signed_in";
+        } catch (error) {
+          // Not set up or not available on this phone: fall back to the browser sheet.
+          captureIssue({ area: "auth", action: "native google sign-in", error });
+        }
+      }
       const { data, error } = await supabase.auth.signInWithOAuth({
         provider: "google",
         options: { redirectTo: APP_AUTH_CALLBACK, skipBrowserRedirect: true },
@@ -277,7 +289,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }
       const { Browser } = await import("@capacitor/browser");
       await Browser.open({ url: data.url });
-      return;
+      return false;
     }
 
     const base = authRedirectBase();
@@ -289,6 +301,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       captureIssue({ area: "auth", action: "sign in with google", error });
       throw error;
     }
+    return false;
   };
 
   const register: AuthContextValue["register"] = async ({ name, email, password, phone }) => {

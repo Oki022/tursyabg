@@ -9,7 +9,7 @@ import type { CapacitorConfig } from "@capacitor/cli";
  */
 const config: CapacitorConfig = {
   appId: "bg.tursya.app",
-  appName: "ТърсяБГ",
+  appName: "tursya.bg",
   // Only a fallback page; the app loads server.url.
   webDir: "www",
   // Lets the site know it runs in the app before any script loads
@@ -32,6 +32,17 @@ const config: CapacitorConfig = {
       launchAutoHide: true,
       launchShowDuration: 8000,
       launchFadeOutDuration: 250,
+    },
+    // Google sign-in with the phone's own account picker (Credential Manager).
+    // Apple stays on for the iPhone app later; the rest are not bundled.
+    SocialLogin: {
+      providers: {
+        google: true,
+        apple: true,
+        facebook: false,
+        twitter: false,
+      },
+      logLevel: 1,
     },
     PushNotifications: {
       presentationOptions: ["badge", "sound", "alert"],

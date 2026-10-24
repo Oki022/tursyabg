@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='utf-8'?>
 <resources>
-    <string name="app_name">ТърсяБГ</string>
-    <string name="title_activity_main">ТърсяБГ</string>
+    <string name="app_name">tursya.bg</string>
+    <string name="title_activity_main">tursya.bg</string>
     <string name="package_name">bg.tursya.app</string>
     <string name="custom_url_scheme">bg.tursya.app</string>
 </resources>

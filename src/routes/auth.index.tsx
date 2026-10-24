@@ -151,7 +151,8 @@ function AuthPage() {
 
   const handleSocial = async () => {
     try {
-      await loginSocial("google");
+      // In the app the phone's account picker signs in right away.
+      if (await loginSocial("google")) navigate({ to: redirect ?? "/" });
     } catch (err) {
       toast.error(authErrorMessage(err));
     }
