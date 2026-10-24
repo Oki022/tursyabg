@@ -43,7 +43,9 @@ export async function nativeGoogleSignIn(): Promise<NativeGoogleResult> {
   try {
     const res = await SocialLogin.login({
       provider: "google",
-      options: { scopes: ["email", "profile"], nonce: hashedNonce },
+      // No custom scopes: the ID token already has email and name, and scopes
+      // would need a modified MainActivity in the plugin.
+      options: { nonce: hashedNonce },
     });
     const result = res.result as { idToken?: string | null };
     idToken = result.idToken ?? null;
