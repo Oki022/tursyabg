@@ -32,6 +32,9 @@ const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 const PROVIDERS: Record<string, "google_play" | "app_store"> = {
   PLAY_STORE: "google_play",
   APP_STORE: "app_store",
+  // RevenueCat's own test store (no Google/Apple account needed): always a
+  // test purchase, kept out of the revenue report.
+  TEST_STORE: "google_play",
 };
 
 /** Constant-time comparison, so the secret cannot be guessed from timing. */
@@ -101,7 +104,7 @@ export const Route = createFileRoute("/api/public/payments/revenuecat")({
               _currency: event.currency ?? null,
               _commission_pct: event.commission_percentage ?? null,
               _purchased_at: event.purchased_at_ms ? new Date(event.purchased_at_ms).toISOString() : null,
-              _test_mode: event.environment === "SANDBOX",
+              _test_mode: event.environment === "SANDBOX" || event.store === "TEST_STORE",
             });
             if (error) throw new Error(error.message);
             const result = (data ?? {}) as { ok?: boolean; error?: string };
