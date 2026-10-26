@@ -1,4 +1,4 @@
-import { budgetParts, formatTaskBudget } from "@/lib/budget-range";
+import { BUDGET_RANGES, budgetParts, formatTaskBudget } from "@/lib/budget-range";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 import {
@@ -222,6 +222,13 @@ function TaskDetails() {
     );
   }
 
+  // Phone price line: the amount ("120 €", or the range "100–300 €" for a negotiable
+  // budget); nothing when the client did not give one ("Не знам").
+  const phonePrice = !task.budgetRange
+    ? `${task.budget} €`
+    : task.budgetRange === "unknown"
+      ? null
+      : (BUDGET_RANGES.find((r) => r.id === task.budgetRange)?.label ?? null);
   const cat = getCategory(task.category);
   const Icon = cat.icon;
   const subName = subcategoryName(task.category, task.subcategory);
@@ -511,21 +518,15 @@ function TaskDetails() {
             </div>
           </div>
 
-          {/* Phone: the price right under the title (desktop shows it in the card). */}
-          <div className="order-3 mt-1.5 lg:hidden">
-            <div className="flex flex-wrap items-center gap-2">
-              <span className={`font-bold text-foreground ${task.budgetRange ? "text-xl" : "text-2xl"}`}>
-                {budgetParts(task.budget, task.budgetRange).main}
-              </span>
-              {!task.budgetRange && (
-                <span className="rounded-full bg-primary-soft px-2.5 py-0.5 text-xs font-semibold text-primary">
-                  Фиксиран
-                </span>
-              )}
-            </div>
-            {budgetParts(task.budget, task.budgetRange).hint && (
-              <div className="text-sm text-muted-foreground">{budgetParts(task.budget, task.budgetRange).hint}</div>
+          {/* Phone: the price right under the title (desktop shows it in the card).
+              Brand colour and a small tag, so it never reads like a second title. */}
+          <div className="order-3 mt-1.5 flex flex-wrap items-center gap-2 lg:hidden">
+            {phonePrice && (
+              <span className="text-xl font-bold tabular-nums text-primary">{phonePrice}</span>
             )}
+            <span className="rounded-full bg-primary-soft px-2.5 py-0.5 text-xs font-semibold text-primary">
+              {task.budgetRange ? "По договаряне" : "Фиксиран"}
+            </span>
           </div>
 
           <section className="order-6 mt-5 rounded-2xl border border-border/60 bg-card p-4 shadow-sm sm:p-6 lg:mt-8 lg:rounded-3xl md:p-7">
