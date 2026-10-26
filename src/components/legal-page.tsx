@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 import { Link } from "@tanstack/react-router";
 import { ArrowLeft } from "lucide-react";
+import { COMPANY, SUPPORT_EMAIL } from "@/lib/company";
 
 export function LegalPage({
   title,
@@ -33,5 +34,25 @@ export function LegalSection({ title, children }: { title: string; children: Rea
       <h2 className="text-lg font-semibold text-foreground">{title}</h2>
       <div className="space-y-3 text-sm leading-relaxed text-muted-foreground">{children}</div>
     </section>
+  );
+}
+/** Who runs the platform (company details come from src/lib/company.ts). */
+export function CompanyDetails() {
+  if (!COMPANY) {
+    return (
+      <p>
+        Платформата се управлява от търговско дружество, регистрирано в България. Наименованието, ЕИК и
+        адресът на управление ще бъдат публикувани тук след вписването на дружеството в Търговския
+        регистър. До тогава можеш да се свържеш с нас на{" "}
+        <a className="underline" href={`mailto:${SUPPORT_EMAIL}`}>{SUPPORT_EMAIL}</a>.
+      </p>
+    );
+  }
+  return (
+    <p>
+      Платформата се управлява от <strong>{COMPANY.name}</strong>, ЕИК {COMPANY.eik}, със седалище и адрес на
+      управление {COMPANY.address}. Имейл:{" "}
+      <a className="underline" href={`mailto:${SUPPORT_EMAIL}`}>{SUPPORT_EMAIL}</a>.
+    </p>
   );
 }
