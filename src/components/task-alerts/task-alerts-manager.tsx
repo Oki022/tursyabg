@@ -56,7 +56,7 @@ export function TaskAlertsManager({
   };
 
   return (
-    <div className="grid gap-4">
+    <div className="grid grid-cols-[minmax(0,1fr)] gap-4">
       <div>
         <p className="mb-2 text-sm font-medium text-foreground">
           Твоите известия{list.length > 0 ? ` (${list.length}/${MAX_TASK_ALERTS})` : ""}
@@ -71,9 +71,9 @@ export function TaskAlertsManager({
           <ul className="max-h-48 divide-y divide-border/60 overflow-y-auto rounded-xl border border-border/60">
             {list.map((a) => (
               <li key={a.id} className="flex items-center justify-between gap-3 px-3 py-2">
-                <span className="flex min-w-0 items-center gap-2 text-sm text-foreground">
-                  <BellRing className="h-3.5 w-3.5 shrink-0 text-primary" />
-                  <span className="truncate">{taskAlertLabel(a, regionName)}</span>
+                <span className="flex min-w-0 items-start gap-2 text-sm text-foreground">
+                  <BellRing className="mt-0.5 h-3.5 w-3.5 shrink-0 text-primary" />
+                  <span className="min-w-0 [overflow-wrap:anywhere]">{taskAlertLabel(a, regionName)}</span>
                 </span>
                 <Button
                   type="button"
@@ -85,7 +85,7 @@ export function TaskAlertsManager({
                   aria-label={`Изтрий известието ${taskAlertLabel(a, regionName)}`}
                 >
                   <Trash2 className="h-4 w-4" />
-                  Изтрий
+                  <span className="hidden sm:inline">Изтрий</span>
                 </Button>
               </li>
             ))}
@@ -105,7 +105,7 @@ export function TaskAlertsManager({
           Ново известие
         </Button>
       ) : (
-        <div className={cn("grid gap-3 rounded-xl border border-border/60 p-3", inDialog ? "" : "bg-secondary/30")}>
+        <div className={cn("grid grid-cols-[minmax(0,1fr)] gap-3 rounded-xl border border-border/60 p-3", inDialog ? "" : "bg-secondary/30")}>
           <p className="text-sm font-medium text-foreground">Ново известие</p>
           <AlertFields draft={draft} onChange={setDraft} idPrefix={idPrefix} inDialog={inDialog} />
           <p className="text-sm text-muted-foreground">

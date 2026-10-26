@@ -62,8 +62,8 @@ export function AlertFields({
   }, [municipalities.length]);
 
   return (
-    <div className="grid gap-3">
-      <div className="grid gap-1.5">
+    <div className="grid grid-cols-[minmax(0,1fr)] gap-3">
+      <div className="grid grid-cols-[minmax(0,1fr)] gap-1.5">
         <Label htmlFor={`${idPrefix}-category`}>Категория</Label>
         <Select value={draft.category} onValueChange={(v) => onChange({ ...draft, category: v, subcategories: [] })}>
           <SelectTrigger id={`${idPrefix}-category`} className="h-10">
@@ -81,7 +81,7 @@ export function AlertFields({
       </div>
 
       {subOptions.length > 0 && (
-        <div className="grid gap-1.5">
+        <div className="grid grid-cols-[minmax(0,1fr)] gap-1.5">
           <span className="text-sm font-medium leading-none" id={`${idPrefix}-subs-label`}>
             Вид услуга (по избор)
           </span>
@@ -118,7 +118,7 @@ export function AlertFields({
       )}
 
       <div className="grid gap-3 sm:grid-cols-2">
-        <div className="grid gap-1.5">
+        <div className="grid grid-cols-[minmax(0,1fr)] gap-1.5">
           <Label htmlFor={`${idPrefix}-region`}>Област</Label>
           <Select
             value={draft.region}
@@ -143,7 +143,7 @@ export function AlertFields({
           </Select>
         </div>
 
-        <div className="grid gap-1.5">
+        <div className="grid grid-cols-[minmax(0,1fr)] gap-1.5">
           <Label htmlFor={`${idPrefix}-location`}>Община (по избор)</Label>
           <LocationCombobox
             id={`${idPrefix}-location`}
