@@ -185,6 +185,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setHasStoredSession(readStoredSessionHint());
   }, []);
 
+  // Visiting counts as activity: points expire only after 12 months without
+  // any (see migration 20261026120100_credit_expiry). The server writes at
+  // most once an hour; a failure here never matters to the user.
+  const userId = user?.id;
+  useEffect(() => {
+    if (!userId) return;
+    void supabase.rpc("touch_my_activity").then(
+      () => undefined,
+      () => undefined,
+    );
+  }, [userId]);
+
   useEffect(() => {
     let active = true;
     let syncVersion = 0;

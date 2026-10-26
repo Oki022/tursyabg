@@ -14,14 +14,15 @@ import {
   Siren,
   Crown,
   ArrowUpCircle,
+  Hourglass,
 } from "lucide-react";
 
 import { SettingsPageShell } from "@/components/settings-page-shell";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useAuth } from "@/lib/auth";
-import { useCreditBalance, useCreditPackages, useCreditTransactions } from "@/lib/credits-api";
-import { creditsLabel, formatEur } from "@/services/credits";
+import { useCreditBalance, useCreditPackages, useCreditTransactions, useMyCreditExpiry } from "@/lib/credits-api";
+import { creditsLabel, formatEur, POINTS_EXPIRY_NOTE } from "@/services/credits";
 import { getMyPayments, type Payment } from "@/services/payments";
 import { BuyCreditsDialog } from "@/components/credits/buy-credits-dialog";
 import { useHydrated } from "@/hooks/use-hydrated";
@@ -51,6 +52,7 @@ export const Route = createFileRoute("/_authenticated/settings/billing")({
 function SettingsBillingPage() {
   const { user } = useAuth();
   const balanceQuery = useCreditBalance(user?.id);
+  const expiry = useMyCreditExpiry(user?.id).data;
   const packagesQuery = useCreditPackages();
   const [page, setPage] = useState(0);
   const txQuery = useCreditTransactions(page);
@@ -90,6 +92,17 @@ function SettingsBillingPage() {
             <p className="mt-1 text-xs text-muted-foreground">
               Публикуването на задачи е безплатно. Точките се използват за отключване на контакти.
             </p>
+            {expiry?.enabled && expiry.bonusAmount > 0 && expiry.bonusExpiresAt && (
+              <p className="mt-2 inline-flex items-center gap-1.5 rounded-full bg-amber-500/10 px-2.5 py-1 text-xs font-medium text-amber-700 dark:text-amber-400">
+                <Hourglass className="h-3.5 w-3.5" aria-hidden="true" />
+                {expiry.bonusAmount} бонус точки изтичат на{" "}
+                {new Date(expiry.bonusExpiresAt).toLocaleDateString("bg-BG", {
+                  timeZone: "Europe/Sofia",
+                  day: "numeric",
+                  month: "long",
+                })}
+              </p>
+            )}
           </div>
           <Button asChild variant="outline" className="gap-2">
             <Link to="/unlocked">
@@ -138,7 +151,7 @@ function SettingsBillingPage() {
             [0, 1, 2, 3].map((i) => <div key={i} className="h-32 animate-pulse rounded-xl bg-muted" />)}
         </div>
         <p className="mt-3 text-xs text-muted-foreground">
-          {storeName ? `Плащане през ${storeName}.` : "Плащане с карта."} С покупката приемаш{" "}
+          {storeName ? `Плащане през ${storeName}.` : "Плащане с карта."} {POINTS_EXPIRY_NOTE} С покупката приемаш{" "}
           <Link to="/terms" className="underline hover:text-foreground">
             Общите условия
           </Link>{" "}
@@ -256,6 +269,7 @@ const TX_META: Record<string, { Icon: typeof Package; className: string }> = {
   unlock: { Icon: KeyRound, className: "text-amber-600" },
   refund: { Icon: RotateCcw, className: "text-emerald-600" },
   bonus: { Icon: Gift, className: "text-emerald-600" },
+  expire: { Icon: Hourglass, className: "text-muted-foreground" },
 };
 
 /** Иконите са същите като в диалога за промотиране и етикетите по задачите. */

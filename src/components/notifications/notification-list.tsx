@@ -28,6 +28,7 @@ import { BellRing,
   Star,
   Heart,
   Receipt,
+  Hourglass,
 } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { relativeTimeBg, type AppNotification, type NotificationType } from "@/services/notifications";
@@ -50,6 +51,7 @@ const ICONS: Partial<Record<NotificationType, React.ComponentType<{ className?: 
   task_freshness: RefreshCw,
   task_alert: BellRing,
   payment_completed: Receipt,
+  credits_expiring: Hourglass,
   refund_auto_approved: BadgeCheck,
   credits_adjusted: CoinsIcon,
   account_restored: ShieldCheck,

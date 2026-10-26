@@ -15,7 +15,7 @@ export type CreditPackage = {
 export type CreditTransaction = {
   id: string;
   amount: number;
-  type: "purchase" | "unlock" | "refund" | "bonus" | "promo_spend";
+  type: "purchase" | "unlock" | "refund" | "bonus" | "promo_spend" | "expire";
   taskId: string | null;
   counterpartyId: string | null;
   balanceAfter: number;
@@ -211,3 +211,30 @@ export async function getMyUnlockedTasks(): Promise<UnlockedTask[]> {
     taskDeleted: Boolean(r.tasks?.deleted_at),
   }));
 }
+
+export type CreditExpiry = {
+  enabled: boolean;
+  bonusAmount: number;
+  bonusExpiresAt: string | null;
+  bonusValidDays: number;
+  inactivityDays: number;
+};
+
+/** Bonus points that will expire, and the expiry rules (Баланс и плащания). */
+export async function getMyCreditExpiry(): Promise<CreditExpiry | null> {
+  const { data, error } = await supabase.rpc("my_credit_expiry");
+  if (error) throw error;
+  if (!data || typeof data !== "object") return null;
+  const d = data as Record<string, unknown>;
+  return {
+    enabled: d.enabled !== false,
+    bonusAmount: Number(d.bonus_amount ?? 0),
+    bonusExpiresAt: typeof d.bonus_expires_at === "string" ? d.bonus_expires_at : null,
+    bonusValidDays: Number(d.bonus_valid_days ?? 30),
+    inactivityDays: Number(d.inactivity_days ?? 365),
+  };
+}
+
+/** Shown before every purchase (sale terms must say this up front). */
+export const POINTS_EXPIRY_NOTE =
+  "Купените точки не изтичат, докато използваш профила си; изтичат само след 12 месеца без никаква активност.";

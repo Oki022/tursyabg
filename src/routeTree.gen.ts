@@ -62,6 +62,7 @@ import { Route as AuthenticatedSettingsSecurityRouteImport } from './routes/_aut
 import { Route as CityCityIndexRouteImport } from './routes/city.$city.index'
 import { Route as CityCityCategoryRouteImport } from './routes/city.$city.$category'
 import { Route as AuthenticatedTaskIdEditRouteImport } from './routes/_authenticated/task.$id.edit'
+import { Route as ApiPublicCronCreditExpiryEmailsRouteImport } from './routes/api/public/cron/credit-expiry-emails'
 import { Route as ApiPublicCronTaskAlertsRouteImport } from './routes/api/public/cron/task-alerts'
 import { Route as ApiPublicCronUnconfirmedRemindersRouteImport } from './routes/api/public/cron/unconfirmed-reminders'
 import { Route as ApiPublicMonitoringCronCheckRouteImport } from './routes/api/public/monitoring/cron-check'
@@ -341,6 +342,12 @@ const AuthenticatedTaskIdEditRoute = AuthenticatedTaskIdEditRouteImport.update({
   path: '/task/$id/edit',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const ApiPublicCronCreditExpiryEmailsRoute =
+  ApiPublicCronCreditExpiryEmailsRouteImport.update({
+    id: '/api/public/cron/credit-expiry-emails',
+    path: '/api/public/cron/credit-expiry-emails',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiPublicCronTaskAlertsRoute = ApiPublicCronTaskAlertsRouteImport.update({
   id: '/api/public/cron/task-alerts',
   path: '/api/public/cron/task-alerts',
@@ -429,6 +436,7 @@ export interface FileRoutesByFullPath {
   '/messages/': typeof AuthenticatedMessagesIndexRoute
   '/city/$city/': typeof CityCityIndexRoute
   '/task/$id/edit': typeof AuthenticatedTaskIdEditRoute
+  '/api/public/cron/credit-expiry-emails': typeof ApiPublicCronCreditExpiryEmailsRoute
   '/api/public/cron/task-alerts': typeof ApiPublicCronTaskAlertsRoute
   '/api/public/cron/unconfirmed-reminders': typeof ApiPublicCronUnconfirmedRemindersRoute
   '/api/public/monitoring/cron-check': typeof ApiPublicMonitoringCronCheckRoute
@@ -487,6 +495,7 @@ export interface FileRoutesByTo {
   '/messages': typeof AuthenticatedMessagesIndexRoute
   '/city/$city': typeof CityCityIndexRoute
   '/task/$id/edit': typeof AuthenticatedTaskIdEditRoute
+  '/api/public/cron/credit-expiry-emails': typeof ApiPublicCronCreditExpiryEmailsRoute
   '/api/public/cron/task-alerts': typeof ApiPublicCronTaskAlertsRoute
   '/api/public/cron/unconfirmed-reminders': typeof ApiPublicCronUnconfirmedRemindersRoute
   '/api/public/monitoring/cron-check': typeof ApiPublicMonitoringCronCheckRoute
@@ -549,6 +558,7 @@ export interface FileRoutesById {
   '/_authenticated/messages/': typeof AuthenticatedMessagesIndexRoute
   '/city/$city/': typeof CityCityIndexRoute
   '/_authenticated/task/$id/edit': typeof AuthenticatedTaskIdEditRoute
+  '/api/public/cron/credit-expiry-emails': typeof ApiPublicCronCreditExpiryEmailsRoute
   '/api/public/cron/task-alerts': typeof ApiPublicCronTaskAlertsRoute
   '/api/public/cron/unconfirmed-reminders': typeof ApiPublicCronUnconfirmedRemindersRoute
   '/api/public/monitoring/cron-check': typeof ApiPublicMonitoringCronCheckRoute
@@ -611,6 +621,7 @@ export interface FileRouteTypes {
     | '/messages/'
     | '/city/$city/'
     | '/task/$id/edit'
+    | '/api/public/cron/credit-expiry-emails'
     | '/api/public/cron/task-alerts'
     | '/api/public/cron/unconfirmed-reminders'
     | '/api/public/monitoring/cron-check'
@@ -669,6 +680,7 @@ export interface FileRouteTypes {
     | '/messages'
     | '/city/$city'
     | '/task/$id/edit'
+    | '/api/public/cron/credit-expiry-emails'
     | '/api/public/cron/task-alerts'
     | '/api/public/cron/unconfirmed-reminders'
     | '/api/public/monitoring/cron-check'
@@ -730,6 +742,7 @@ export interface FileRouteTypes {
     | '/_authenticated/messages/'
     | '/city/$city/'
     | '/_authenticated/task/$id/edit'
+    | '/api/public/cron/credit-expiry-emails'
     | '/api/public/cron/task-alerts'
     | '/api/public/cron/unconfirmed-reminders'
     | '/api/public/monitoring/cron-check'
@@ -764,6 +777,7 @@ export interface RootRouteChildren {
   TaskIdRoute: typeof TaskIdRoute
   UserIdRoute: typeof UserIdRoute
   AuthIndexRoute: typeof AuthIndexRoute
+  ApiPublicCronCreditExpiryEmailsRoute: typeof ApiPublicCronCreditExpiryEmailsRoute
   ApiPublicCronTaskAlertsRoute: typeof ApiPublicCronTaskAlertsRoute
   ApiPublicCronUnconfirmedRemindersRoute: typeof ApiPublicCronUnconfirmedRemindersRoute
   ApiPublicMonitoringCronCheckRoute: typeof ApiPublicMonitoringCronCheckRoute
@@ -1145,6 +1159,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedTaskIdEditRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/api/public/cron/credit-expiry-emails': {
+      id: '/api/public/cron/credit-expiry-emails'
+      path: '/api/public/cron/credit-expiry-emails'
+      fullPath: '/api/public/cron/credit-expiry-emails'
+      preLoaderRoute: typeof ApiPublicCronCreditExpiryEmailsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/cron/task-alerts': {
       id: '/api/public/cron/task-alerts'
       path: '/api/public/cron/task-alerts'
@@ -1301,6 +1322,7 @@ const rootRouteChildren: RootRouteChildren = {
   TaskIdRoute: TaskIdRoute,
   UserIdRoute: UserIdRoute,
   AuthIndexRoute: AuthIndexRoute,
+  ApiPublicCronCreditExpiryEmailsRoute: ApiPublicCronCreditExpiryEmailsRoute,
   ApiPublicCronTaskAlertsRoute: ApiPublicCronTaskAlertsRoute,
   ApiPublicCronUnconfirmedRemindersRoute:
     ApiPublicCronUnconfirmedRemindersRoute,

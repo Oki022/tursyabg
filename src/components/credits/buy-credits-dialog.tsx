@@ -3,7 +3,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { getProvider, type PaymentProvider } from "@/services/payments";
-import { creditsLabel, formatEur } from "@/services/credits";
+import { creditsLabel, formatEur, POINTS_EXPIRY_NOTE } from "@/services/credits";
 import { toast } from "sonner";
 import { StoreBuyButton } from "@/components/payments/store-buy-button";
 import { useHydrated } from "@/hooks/use-hydrated";
@@ -70,7 +70,7 @@ export function BuyCreditsDialog({
         )}
 
         <p className="text-xs text-muted-foreground">
-          С плащането приемаш{" "}
+          {POINTS_EXPIRY_NOTE} С плащането приемаш{" "}
           <Link to="/terms" className="underline hover:text-foreground">
             Общите условия
           </Link>

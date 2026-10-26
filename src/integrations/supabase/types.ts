@@ -2239,6 +2239,17 @@ export type Database = {
         Returns: string
       }
       export_my_data: { Args: never; Returns: Json }
+      credit_expiry_email_batch: {
+        Args: { _limit?: number }
+        Returns: {
+          amount: number
+          email: string
+          expires_at: string
+          full_name: string
+          kind: string
+          notice_id: string
+        }[]
+      }
       feed_tasks: {
         Args: {
           _category?: string
@@ -2317,6 +2328,7 @@ export type Database = {
         Args: { _new_task_id: string; _source_task_id: string }
         Returns: Json
       }
+      mark_credit_expiry_emailed: { Args: { _ids: string[] }; Returns: undefined }
       mark_unconfirmed_reminder: {
         Args: { _email: string; _stage: number; _user_id: string }
         Returns: undefined
@@ -2324,6 +2336,7 @@ export type Database = {
       mask_contacts: { Args: { input: string }; Returns: string }
       moderate_text: { Args: { _text: string }; Returns: Json }
       my_account_state: { Args: never; Returns: Json }
+      my_credit_expiry: { Args: never; Returns: Json }
       my_engagements: {
         Args: never
         Returns: {
@@ -2539,6 +2552,7 @@ export type Database = {
         }[]
       }
       unregister_push_device: { Args: { _token: string }; Returns: undefined }
+      touch_my_activity: { Args: never; Returns: undefined }
       unlock_task_contact: { Args: { _task_id: string }; Returns: Json }
       update_own_task: {
         Args: {
@@ -2623,6 +2637,7 @@ export type Database = {
         | "refund"
         | "bonus"
         | "promo_spend"
+        | "expire"
       engagement_status: "claimed" | "confirmed" | "rejected" | "expired"
       notification_type:
         | "new_message"
@@ -2660,6 +2675,7 @@ export type Database = {
         | "review_removed"
         | "task_alert"
         | "payment_completed"
+        | "credits_expiring"
       promo_type: "bump" | "urgent" | "top"
       refund_reason:
         | "fake_task"
@@ -2818,6 +2834,7 @@ export const Constants = {
         "refund",
         "bonus",
         "promo_spend",
+        "expire",
       ],
       engagement_status: ["claimed", "confirmed", "rejected", "expired"],
       notification_type: [
@@ -2856,6 +2873,7 @@ export const Constants = {
         "review_removed",
         "task_alert",
         "payment_completed",
+        "credits_expiring",
       ],
       promo_type: ["bump", "urgent", "top"],
       refund_reason: [
