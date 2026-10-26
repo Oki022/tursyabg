@@ -320,7 +320,7 @@ export function ChatThread({ conversationId }: { conversationId: string }) {
           e.preventDefault();
           void handleSend();
         }}
-        className="sticky bottom-0 z-10 flex shrink-0 items-center gap-2 border-t border-border/60 bg-background/95 px-3 py-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] backdrop-blur md:pb-3"
+        className="sticky bottom-0 z-10 flex shrink-0 items-center gap-2 border-t border-border/60 bg-background/95 px-3 py-3 backdrop-blur"
       >
         {conversation?.taskDeleted ? (
           <p className="w-full py-1 text-center text-sm text-muted-foreground">

@@ -21,7 +21,7 @@ export function MobileNav() {
       style={{ paddingBottom: "env(safe-area-inset-bottom)" }}
       aria-label="Мобилна навигация"
     >
-      <div className="flex w-full max-w-full items-end gap-1 px-2 py-1">
+      <div className="flex h-[4.5rem] w-full max-w-full items-end gap-1 px-2 py-1">
         {items.slice(0, 2).map((item) => (
           <NavItem key={item.to} {...item} />
         ))}
