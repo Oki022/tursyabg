@@ -380,18 +380,21 @@ function TaskDetails() {
     <div className="container mx-auto max-w-6xl px-4 py-6 md:py-10">
       {/* Phone: back on the left, favourite + share on the right (like photo apps),
           so the title below gets the full width. Desktop keeps them next to the title. */}
-      <div className="mb-5 flex items-center justify-between gap-3">
+      <div className="mb-4 flex items-center justify-between gap-3 lg:mb-5">
         <BackLink />
-        <div className="flex items-center gap-2 md:hidden">
+        <div className="flex items-center gap-2 lg:hidden">
           <FavouriteButton taskId={task.id} ownerId={task.userId} size="md" className="-m-0.5 [&>span]:h-9 [&>span]:w-9 [&>span]:border [&>span]:border-border/60 [&>span]:bg-card" />
           <ShareButton path={`/task/${task.id}`} title={task.title} iconOnly />
         </div>
       </div>
 
-      <div className="grid gap-8 lg:grid-cols-[minmax(0,1.75fr)_minmax(320px,0.8fr)]">
-        <div className="min-w-0">
-          <div className="group relative overflow-hidden rounded-3xl bg-muted shadow-xl shadow-primary/10 ring-1 ring-border/60">
-            <div className="relative h-[320px] w-full sm:h-[420px] lg:h-[520px]">
+      {/* Phone: the main column "dissolves" (display: contents) so its blocks and the
+          action card line up like a phone listing: photo, title, price, tags, button,
+          description, user. Desktop keeps the two columns as before. */}
+      <div className="grid grid-cols-[minmax(0,1fr)] lg:grid-cols-[minmax(0,1.75fr)_minmax(320px,0.8fr)] lg:gap-8">
+        <div className="contents lg:block lg:min-w-0">
+          <div className="group relative order-1 overflow-hidden rounded-2xl bg-muted shadow-sm ring-1 ring-border/60 sm:rounded-3xl lg:shadow-xl lg:shadow-primary/10">
+            <div className="relative h-[260px] w-full sm:h-[420px] lg:h-[520px]">
               {images.length === 0 && (
                 <TaskThumb
                   title={task.title}
@@ -461,43 +464,43 @@ function TaskDetails() {
             </div>
           </div>
 
-          <div className="mt-7 flex flex-wrap items-center gap-2">
-            <Badge variant="secondary" className="gap-1.5 rounded-full px-3 py-1">
+          <div className="order-4 mt-3 flex flex-wrap items-center gap-1.5 lg:mt-7 lg:gap-2">
+            <Badge variant="secondary" className="gap-1.5 rounded-full px-2.5 py-0.5 lg:px-3 lg:py-1">
               <Icon className="h-3.5 w-3.5" /> {cat.name}
               {subName && subName !== "Друго" && <span className="text-muted-foreground">· {subName}</span>}
             </Badge>
-            <span className="inline-flex items-center gap-1 rounded-full bg-secondary px-3 py-1 text-xs font-medium text-muted-foreground">
+            <span className="inline-flex items-center gap-1 rounded-full bg-secondary px-2.5 py-0.5 text-xs font-medium text-muted-foreground lg:px-3 lg:py-1">
               <Clock className="h-3.5 w-3.5" /> {task.postedAt}
             </span>
-            <span className="inline-flex items-center gap-1 rounded-full bg-secondary px-3 py-1 text-xs font-medium text-muted-foreground">
+            <span className="inline-flex items-center gap-1 rounded-full bg-secondary px-2.5 py-0.5 text-xs font-medium text-muted-foreground lg:px-3 lg:py-1">
               <MapPin className="h-3.5 w-3.5" /> {formatLocation(task.location)}
             </span>
             {task.contentEditedAt && (
-              <span className="inline-flex items-center gap-1 rounded-full bg-secondary px-3 py-1 text-xs font-medium text-muted-foreground">
+              <span className="inline-flex items-center gap-1 rounded-full bg-secondary px-2.5 py-0.5 text-xs font-medium text-muted-foreground lg:px-3 lg:py-1">
                 Редактирано: {editedLabel(task.contentEditedAt)}
               </span>
             )}
           </div>
 
           {isOwner && task.adminHiddenAt && (
-            <p className="mt-4 rounded-2xl border border-destructive/30 bg-destructive/10 px-4 py-3 text-sm text-destructive">
+            <p className="order-4 mt-4 rounded-2xl border border-destructive/30 bg-destructive/10 px-4 py-3 text-sm text-destructive">
               Задачата е скрита от администратор и не се показва публично. Не може да бъде активирана
               или публикувана отново. Ако смяташ, че има грешка, пиши ни през страницата Контакти.
             </p>
           )}
 
           {(hasTop || hasUrgent) && (
-            <div className="mt-4 flex flex-wrap items-center gap-2">
+            <div className="order-4 mt-3 flex flex-wrap items-center gap-2 lg:mt-4">
               {hasUrgent && <UrgentBadge className="px-3 py-1 text-[11px]" />}
               {hasTop && <TopBadge className="px-3 py-1 text-[11px]" />}
             </div>
           )}
 
-          <div className="mt-4 flex items-start justify-between gap-3">
-            <h1 className="min-w-0 break-words text-2xl font-bold leading-tight tracking-tight text-foreground sm:text-3xl md:text-4xl">
+          <div className="order-2 mt-4 flex items-start justify-between gap-3">
+            <h1 className="min-w-0 break-words text-xl font-bold leading-snug tracking-tight text-foreground sm:text-2xl lg:text-4xl lg:leading-tight">
               {task.title}
             </h1>
-            <div className="mt-1 hidden shrink-0 items-center gap-2 md:flex">
+            <div className="mt-1 hidden shrink-0 items-center gap-2 lg:flex">
               <FavouriteButton
                 taskId={task.id}
                 ownerId={task.userId}
@@ -508,9 +511,26 @@ function TaskDetails() {
             </div>
           </div>
 
-          <section className="mt-8 rounded-3xl border border-border/60 bg-card p-6 shadow-sm md:p-7">
-            <h2 className="text-lg font-semibold text-foreground">Описание</h2>
-            <p className="mt-3 whitespace-pre-line break-words text-[15px] leading-relaxed text-foreground/90">
+          {/* Phone: the price right under the title (desktop shows it in the card). */}
+          <div className="order-3 mt-1.5 lg:hidden">
+            <div className="flex flex-wrap items-center gap-2">
+              <span className={`font-bold text-foreground ${task.budgetRange ? "text-xl" : "text-2xl"}`}>
+                {budgetParts(task.budget, task.budgetRange).main}
+              </span>
+              {!task.budgetRange && (
+                <span className="rounded-full bg-primary-soft px-2.5 py-0.5 text-xs font-semibold text-primary">
+                  Фиксиран
+                </span>
+              )}
+            </div>
+            {budgetParts(task.budget, task.budgetRange).hint && (
+              <div className="text-sm text-muted-foreground">{budgetParts(task.budget, task.budgetRange).hint}</div>
+            )}
+          </div>
+
+          <section className="order-6 mt-5 rounded-2xl border border-border/60 bg-card p-4 shadow-sm sm:p-6 lg:mt-8 lg:rounded-3xl md:p-7">
+            <h2 className="text-base font-semibold text-foreground lg:text-lg">Описание</h2>
+            <p className="mt-2 whitespace-pre-line lg:mt-3 break-words text-[15px] leading-relaxed text-foreground/90">
               {task.description}
             </p>
           </section>
@@ -521,18 +541,25 @@ function TaskDetails() {
             <div className="min-w-0">{userBlock}</div>
             <div className="min-w-0">{locationBlock}</div>
           </section>
+
+          {/* Phone: who posted it and where, after the description. */}
+          <section className="order-7 mt-5 rounded-2xl border border-border/60 bg-card p-4 shadow-sm sm:p-6 lg:hidden">
+            <div className="min-w-0">{userBlock}</div>
+            <div className="mt-5 min-w-0 border-t border-border/60 pt-5">{locationBlock}</div>
+          </section>
         </div>
 
         <aside
-          className={`transition-[top] duration-300 lg:sticky lg:self-start ${
+          className={`order-5 mt-4 transition-[top] duration-300 lg:order-none lg:mt-0 lg:sticky lg:self-start ${
             headerHidden ? "lg:top-4" : "lg:top-24"
           }`}
         >
-          <div className="rounded-3xl bg-card p-6 shadow-2xl shadow-primary/15 ring-1 ring-border/60">
-            <div className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+          <div className="rounded-2xl bg-card p-4 shadow-sm ring-1 ring-border/60 sm:p-6 lg:rounded-3xl lg:shadow-2xl lg:shadow-primary/15">
+            {/* Desktop only: on phones the price is under the title. */}
+            <div className="hidden text-xs font-semibold uppercase tracking-wider text-muted-foreground lg:block">
               Бюджет
             </div>
-            <div className="mt-2 flex items-end justify-between gap-3">
+            <div className="mt-2 hidden items-end justify-between gap-3 lg:flex">
               <div className={`font-bold text-foreground ${task.budgetRange ? "text-3xl" : "text-4xl"}`}>
                 {budgetParts(task.budget, task.budgetRange).main}
               </div>
@@ -543,12 +570,12 @@ function TaskDetails() {
               )}
             </div>
             {budgetParts(task.budget, task.budgetRange).hint && (
-              <div className="mt-1 text-sm text-muted-foreground">
+              <div className="mt-1 hidden text-sm text-muted-foreground lg:block">
                 {budgetParts(task.budget, task.budgetRange).hint}
               </div>
             )}
 
-            <div className="mt-6 space-y-3">
+            <div className="space-y-3 lg:mt-6">
               {isOwner && (
                 <>
                   <Button size="lg" className="w-full gap-2" onClick={() => setPromoteOpen(true)}>
@@ -613,10 +640,6 @@ function TaskDetails() {
               <PromoteDialog taskId={task.id} open={promoteOpen} onOpenChange={setPromoteOpen} />
             )}
 
-            <div className="lg:hidden">
-              <div className="mt-6 border-t border-border/60 pt-5">{userBlock}</div>
-              <div className="mt-6 border-t border-border/60 pt-5">{locationBlock}</div>
-            </div>
           </div>
         </aside>
       </div>
