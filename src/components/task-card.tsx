@@ -35,7 +35,7 @@ export function TaskCard({ task }: { task: Task }) {
         <div className="pointer-events-none absolute left-0 top-0 right-12 p-1.5">
           <Badge
             variant="secondary"
-            className="min-w-0 w-auto max-w-full gap-1 rounded-full bg-background/90 px-1.5 py-0.5 text-[10px] font-medium leading-tight shadow-sm backdrop-blur sm:px-2 sm:text-[11px]"
+            className="min-w-0 w-auto max-w-full gap-1 rounded-full bg-background/90 px-1.5 py-0.5 text-[10px] font-medium leading-tight shadow-sm sm:px-2 sm:text-[11px]"
           >
             <Icon className="hidden h-3 w-3 shrink-0 sm:block" />
             <span className="truncate whitespace-nowrap">{cat.name}</span>

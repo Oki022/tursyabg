@@ -1,12 +1,12 @@
 import { useEffect, useRef, useState } from "react";
 import { Link } from "@tanstack/react-router";
-import { Bell } from "lucide-react";
+import { Bell, X } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
+import { Sheet, SheetClose, SheetContent, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useAuth } from "@/lib/auth";
@@ -33,19 +33,28 @@ function BellButton({ unread }: { unread: number }) {
 function PanelHeader({ withCloseSpace }: { withCloseSpace: boolean }) {
   return (
     <div
-      className={`flex shrink-0 items-center border-b border-border ${
-        withCloseSpace ? "min-h-16 px-5 py-4" : "min-h-11 px-3 py-2.5"
+      className={`flex shrink-0 items-center justify-between gap-3 border-b border-border ${
+        withCloseSpace ? "min-h-16 py-3 pl-5 pr-3" : "min-h-11 px-3 py-2.5"
       }`}
     >
       <span
         className={
           withCloseSpace
-            ? "pr-12 text-xl font-bold tracking-tight text-foreground"
+            ? "text-xl font-bold tracking-tight text-foreground"
             : "text-sm font-semibold"
         }
       >
         Известия
       </span>
+      {/* Phone panel: the close button sits on the same line as the title. */}
+      {withCloseSpace && (
+        <SheetClose
+          aria-label="Затвори известията"
+          className="grid h-10 w-10 shrink-0 place-items-center rounded-full text-muted-foreground transition hover:bg-secondary hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+        >
+          <X className="h-5 w-5" />
+        </SheetClose>
+      )}
     </div>
   );
 }
@@ -125,6 +134,7 @@ export function NotificationBell() {
         </SheetTrigger>
         <SheetContent
           side="right"
+          hideClose
           className="flex h-[100dvh] w-full max-w-full flex-col gap-0 p-0 pt-[env(safe-area-inset-top)] sm:max-w-md"
         >
           <SheetTitle className="sr-only">Известия</SheetTitle>

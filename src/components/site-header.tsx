@@ -47,12 +47,12 @@ export function SiteHeader() {
   return (
     <header
       className={cn(
-        "sticky top-0 z-40 w-full max-w-full border-b border-border/60 bg-background/80 backdrop-blur transition-transform duration-300 ease-out supports-[backdrop-filter]:bg-background/60 motion-reduce:transition-none",
+        "sticky top-0 z-40 w-full max-w-full border-b border-border/60 bg-background transition-transform duration-300 ease-out md:bg-background/80 md:backdrop-blur md:supports-[backdrop-filter]:bg-background/60 motion-reduce:transition-none",
         hidden && "md:-translate-y-full motion-reduce:translate-y-0",
       )}
       style={{ paddingTop: "env(safe-area-inset-top)" }}
     >
-      <div className="mx-auto flex h-16 w-full max-w-7xl items-center justify-between gap-1 px-2 sm:gap-2 sm:px-4 md:grid md:grid-cols-[1fr_auto_1fr]">
+      <div className="mx-auto flex h-16 w-full max-w-7xl [.native-app_&]:h-12 items-center justify-between gap-1 px-2 sm:gap-2 sm:px-4 md:grid md:grid-cols-[1fr_auto_1fr]">
         {/* In the app the logo is hidden (html.native-app is set before first paint). */}
         <Logo size="md" className="[.native-app_&]:hidden" />
         {!isHome && (

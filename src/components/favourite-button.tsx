@@ -51,7 +51,7 @@ export function FavouriteButton({ taskId, ownerId, className, size = "sm" }: Fav
     >
       <span
         className={cn(
-          "grid place-items-center rounded-full bg-background/90 shadow-sm backdrop-blur",
+          "grid place-items-center rounded-full bg-background/90 shadow-sm",
           inner,
         )}
       >

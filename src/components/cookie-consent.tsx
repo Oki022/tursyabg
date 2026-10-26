@@ -65,7 +65,7 @@ export function CookieConsent() {
         <div
           role="region"
           aria-label="Съгласие за бисквитки"
-          className="fixed inset-x-0 bottom-0 z-50 w-full max-w-full border-t border-border bg-background/95 backdrop-blur md:bottom-4 md:left-1/2 md:w-[min(46rem,calc(100%-2rem))] md:-translate-x-1/2 md:rounded-2xl md:border md:shadow-2xl"
+          className="fixed inset-x-0 bottom-0 z-50 w-full max-w-full border-t border-border bg-background/95 md:bottom-4 md:backdrop-blur md:left-1/2 md:w-[min(46rem,calc(100%-2rem))] md:-translate-x-1/2 md:rounded-2xl md:border md:shadow-2xl"
           style={{ paddingBottom: "calc(env(safe-area-inset-bottom) + 0.75rem)" }}
         >
           <div className="mx-auto flex w-full max-w-3xl flex-col gap-3 px-4 pt-4 md:pb-1">
