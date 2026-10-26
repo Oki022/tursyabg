@@ -491,7 +491,7 @@ function SettingsSecurityPage() {
           <h2 className="text-lg font-semibold text-foreground">Моите данни</h2>
         </div>
         <p className="mt-2 text-sm text-muted-foreground">
-          Изтегли копие на профила си, задачите, отзивите и историята на точките във формат JSON.
+          Изтегли копие на всички свои данни във формат JSON: профил, задачи, съобщения, отзиви, плащания, точки и настройки.
         </p>
         <Button
           variant="outline"
