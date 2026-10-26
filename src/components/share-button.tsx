@@ -12,11 +12,14 @@ export function ShareButton({
   title,
   text,
   className,
+  iconOnly = false,
 }: {
   path: string;
   title: string;
   text?: string;
   className?: string;
+  /** Round icon button (phone top bar), without the "Сподели" label. */
+  iconOnly?: boolean;
 }) {
   const url = absoluteUrl(path);
   const [open, setOpen] = useState(false);
@@ -50,9 +53,22 @@ export function ShareButton({
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverAnchor asChild>
-        <Button type="button" variant="outline" size="sm" className={className} onClick={onShare}>
-          <Share2 className="h-4 w-4" /> Сподели
-        </Button>
+        {iconOnly ? (
+          <Button
+            type="button"
+            variant="outline"
+            size="icon"
+            aria-label="Сподели"
+            className={`h-9 w-9 rounded-full border-border/60 bg-card text-muted-foreground shadow-sm ${className ?? ""}`}
+            onClick={onShare}
+          >
+            <Share2 className="h-4 w-4" />
+          </Button>
+        ) : (
+          <Button type="button" variant="outline" size="sm" className={className} onClick={onShare}>
+            <Share2 className="h-4 w-4" /> Сподели
+          </Button>
+        )}
       </PopoverAnchor>
       <PopoverContent align="end" className="w-72 space-y-3">
         <p className="text-sm font-medium text-foreground">Копирай линка</p>

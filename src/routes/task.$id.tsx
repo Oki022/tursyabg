@@ -196,7 +196,7 @@ function TaskDetails() {
             className="aspect-[3/2] w-full rounded-3xl object-cover"
           />
         )}
-        <h1 className="mt-6 break-words text-3xl font-bold tracking-tight text-foreground md:text-4xl">
+        <h1 className="mt-6 break-words text-2xl font-bold leading-tight tracking-tight text-foreground sm:text-3xl md:text-4xl">
           {seoTask.title}
         </h1>
         <p className="mt-2 text-sm text-muted-foreground">
@@ -378,7 +378,15 @@ function TaskDetails() {
 
   return (
     <div className="container mx-auto max-w-6xl px-4 py-6 md:py-10">
-      <BackLink className="mb-5" />
+      {/* Phone: back on the left, favourite + share on the right (like photo apps),
+          so the title below gets the full width. Desktop keeps them next to the title. */}
+      <div className="mb-5 flex items-center justify-between gap-3">
+        <BackLink />
+        <div className="flex items-center gap-2 md:hidden">
+          <FavouriteButton taskId={task.id} ownerId={task.userId} size="md" className="-m-0.5 [&>span]:h-9 [&>span]:w-9 [&>span]:border [&>span]:border-border/60 [&>span]:bg-card" />
+          <ShareButton path={`/task/${task.id}`} title={task.title} iconOnly />
+        </div>
+      </div>
 
       <div className="grid gap-8 lg:grid-cols-[minmax(0,1.75fr)_minmax(320px,0.8fr)]">
         <div className="min-w-0">
@@ -413,7 +421,7 @@ function TaskDetails() {
                   aria-label={`Отвори снимка ${active + 1} на цял екран`}
                   className="absolute inset-0 z-0 cursor-zoom-in transition-transform duration-150 active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-primary"
                 >
-                  <span className="pointer-events-none absolute right-4 top-4 grid h-10 w-10 place-items-center rounded-full bg-slate-900/60 text-white opacity-0 transition-opacity duration-200 group-hover:opacity-100 motion-reduce:transition-none">
+                  <span className="pointer-events-none absolute right-4 top-4 hidden h-10 w-10 place-items-center md:grid rounded-full bg-slate-900/60 text-white opacity-0 transition-opacity duration-200 group-hover:opacity-100 motion-reduce:transition-none">
                     <Maximize2 className="h-4 w-4" aria-hidden="true" />
                   </span>
                 </button>
@@ -486,10 +494,10 @@ function TaskDetails() {
           )}
 
           <div className="mt-4 flex items-start justify-between gap-3">
-            <h1 className="break-words text-3xl font-bold tracking-tight text-foreground md:text-4xl">
+            <h1 className="min-w-0 break-words text-2xl font-bold leading-tight tracking-tight text-foreground sm:text-3xl md:text-4xl">
               {task.title}
             </h1>
-            <div className="mt-1 flex shrink-0 items-center gap-2">
+            <div className="mt-1 hidden shrink-0 items-center gap-2 md:flex">
               <FavouriteButton
                 taskId={task.id}
                 ownerId={task.userId}
