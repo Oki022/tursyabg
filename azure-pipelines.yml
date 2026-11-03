@@ -1,8 +1,8 @@
 trigger: none
 
 schedules:
-  - cron: "0 6 * * *"        # Her gГјn 06:00 UTC
-    displayName: РЎРµРґРјРёС‡РЅРё E2E С‚РµСЃС‚РѕРІРµ
+  - cron: "0 6 * * *"        # every day 06:00 UTC
+    displayName: Daily E2E tests
     branches:
       include:
         - main
@@ -15,19 +15,31 @@ steps:
   - task: NodeTool@0
     inputs:
       versionSpec: '22.x'
-    displayName: 'РРЅСЃС‚Р°Р»РёСЂР°Р№ Node.js'
+    displayName: 'Install Node.js'
 
   - script: npm ci
-    displayName: 'РРЅСЃС‚Р°Р»РёСЂР°Р№ Р·Р°РІРёСЃРёРјРѕСЃС‚Рё'
+    displayName: 'Install dependencies'
 
   - script: npm run test:unit
-    displayName: 'РџСѓСЃРЅРё unit С‚РµСЃС‚РѕРІРµС‚Рµ'
+    displayName: 'Run unit tests'
+
+  # Safety: the tests must never run against the live Supabase project.
+  # (tests/load-env.ts checks this too; this step stops the run even earlier.)
+  - script: |
+      if [ -z "$SUPABASE_URL" ]; then echo "VITE_SUPABASE_URL is not set"; exit 1; fi
+      case "$SUPABASE_URL" in
+        *fznhblkjgdghpwsdgiit*) echo "VITE_SUPABASE_URL points at the LIVE project. Stopping."; exit 1;;
+      esac
+      echo "Test project OK"
+    displayName: 'Check: test project only'
+    env:
+      SUPABASE_URL: $(VITE_SUPABASE_URL)
 
   - script: npx playwright install --with-deps chromium
-    displayName: 'РРЅСЃС‚Р°Р»РёСЂР°Р№ Playwright Р±СЂР°СѓР·СЉСЂРё'
+    displayName: 'Install Playwright browsers'
 
   - script: npx playwright test --project=chromium --reporter=list,junit
-    displayName: 'РџСѓСЃРЅРё E2E С‚РµСЃС‚РѕРІРµС‚Рµ'
+    displayName: 'Run E2E and API tests'
     env:
       PLAYWRIGHT_JUNIT_OUTPUT_NAME: 'test-results/results.xml'
       VITE_SUPABASE_URL: $(VITE_SUPABASE_URL)
@@ -44,4 +56,4 @@ steps:
       testResultsFormat: 'JUnit'
       testResultsFiles: 'test-results/**/*.xml'
       testRunTitle: 'Playwright E2E'
-    displayName: 'РџСѓР±Р»РёРєСѓРІР°Р№ СЂРµР·СѓР»С‚Р°С‚РёС‚Рµ'
+    displayName: 'Publish test results'

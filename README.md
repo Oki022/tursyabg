@@ -78,3 +78,26 @@ cd <repository-name>
 npm i
 npm run dev
 ```
+
+## API tests
+
+**What:** Playwright API tests (`tests/api.spec.ts`, `tests/api-supabase.spec.ts`) call the backend over HTTP with Playwright's `request` context, without opening a browser. They cover:
+
+- **Auth:** a wrong password is refused (400).
+- **Row Level Security:** a signed-in user can read only their own private rows (profile, points history, phone); another user's rows come back empty; an admin can read them. A user cannot change their own points balance (403).
+- **Roles:** an admin-only database function refuses a normal user (403) and works for an admin.
+- **Input validation:** wrong or missing input returns the right status and error code (400 / 404 / 401).
+- **Public endpoints:** cron endpoints need a secret key, the Stripe webhook needs a valid signature, the contact form has a rate limit.
+- **Response time:** each checked call must answer within 3 seconds.
+
+**How to run:**
+
+```bash
+npx playwright test tests/api.spec.ts tests/api-supabase.spec.ts --project=chromium --reporter=list
+```
+
+They also run in the daily Azure DevOps pipeline together with the UI tests (JUnit results are published in the run).
+
+**Safety:** the tests run only against the separate test Supabase project. `tests/load-env.ts` and a pipeline step stop the run if the URL points at the live project. Passwords and keys come from `.env.test` (never committed) or pipeline secret variables.
+
+**Why:** the UI tests show that pages work; these tests show that the data layer itself is safe — that the database rules hold even when someone calls the API directly, bypassing the website.
