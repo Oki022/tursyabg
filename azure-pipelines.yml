@@ -84,4 +84,4 @@ steps:
       testResultsFormat: 'JUnit'
       testResultsFiles: 'test-results/**/*.xml'
       testRunTitle: 'Playwright E2E'
-    displayName: 'Publish test results'
+    displayName: 'Publish test results'
