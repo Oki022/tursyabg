@@ -1,0 +1,376 @@
+{
+  "stats": {
+    "startTime": "2026-11-04T11:18:08.268Z",
+    "duration": 2202.9179999999997,
+    "expected": 3,
+    "skipped": 1,
+    "unexpected": 1,
+    "flaky": 1
+  },
+  "errors": [],
+  "suites": [
+    {
+      "title": "api.spec.ts",
+      "file": "api.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Supabase API",
+          "file": "api.spec.ts",
+          "line": 2,
+          "column": 6,
+          "specs": [
+            {
+              "title": "wrong password is refused with 400",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 7,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-04T11:18:08.789Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "1ea1b1599cbc08f16936-91dcb1d9d04d992408a3",
+              "file": "api.spec.ts",
+              "line": 3,
+              "column": 7
+            },
+            {
+              "title": "user reads their own profile",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 6,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-04T11:18:08.839Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "1ea1b1599cbc08f16936-bc6b1da876340c90a02b",
+              "file": "api.spec.ts",
+              "line": 4,
+              "column": 7
+            },
+            {
+              "title": "user cannot change their own points balance",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 4,
+                      "error": {
+                        "message": "Error: PATCH /profiles credits\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m403\u001b[39m\nReceived: \u001b[31m200\u001b[39m",
+                        "stack": "Error: PATCH /profiles credits\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m403\u001b[39m\nReceived: \u001b[31m200\u001b[39m\n    at /work/tests/api.spec.ts:7:47",
+                        "location": {
+                          "file": "/work/tests/api.spec.ts",
+                          "column": 47,
+                          "line": 7
+                        },
+                        "snippet": "   5 |   test(\"user cannot change their own points balance\", async () => {\n   6 |     const status = 200; // pretend the protection broke\n>  7 |     expect(status, \"PATCH /profiles credits\").toBe(403);\n     |                                               ^\n   8 |   });\n   9 | });\n  10 |"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "/work/tests/api.spec.ts",
+                            "column": 47,
+                            "line": 7
+                          },
+                          "message": "Error: PATCH /profiles credits\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m403\u001b[39m\nReceived: \u001b[31m200\u001b[39m\n\n   5 |   test(\"user cannot change their own points balance\", async () => {\n   6 |     const status = 200; // pretend the protection broke\n>  7 |     expect(status, \"PATCH /profiles credits\").toBe(403);\n     |                                               ^\n   8 |   });\n   9 | });\n  10 |\n    at /work/tests/api.spec.ts:7:47"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-04T11:18:08.868Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "/work/test-results/api-Supabase-API-user-cannot-change-their-own-points-balance-chromium/error-context.md"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "/work/tests/api.spec.ts",
+                        "column": 47,
+                        "line": 7
+                      }
+                    },
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 8,
+                      "error": {
+                        "message": "Error: PATCH /profiles credits\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m403\u001b[39m\nReceived: \u001b[31m200\u001b[39m",
+                        "stack": "Error: PATCH /profiles credits\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m403\u001b[39m\nReceived: \u001b[31m200\u001b[39m\n    at /work/tests/api.spec.ts:7:47",
+                        "location": {
+                          "file": "/work/tests/api.spec.ts",
+                          "column": 47,
+                          "line": 7
+                        },
+                        "snippet": "   5 |   test(\"user cannot change their own points balance\", async () => {\n   6 |     const status = 200; // pretend the protection broke\n>  7 |     expect(status, \"PATCH /profiles credits\").toBe(403);\n     |                                               ^\n   8 |   });\n   9 | });\n  10 |"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "/work/tests/api.spec.ts",
+                            "column": 47,
+                            "line": 7
+                          },
+                          "message": "Error: PATCH /profiles credits\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m403\u001b[39m\nReceived: \u001b[31m200\u001b[39m\n\n   5 |   test(\"user cannot change their own points balance\", async () => {\n   6 |     const status = 200; // pretend the protection broke\n>  7 |     expect(status, \"PATCH /profiles credits\").toBe(403);\n     |                                               ^\n   8 |   });\n   9 | });\n  10 |\n    at /work/tests/api.spec.ts:7:47"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 1,
+                      "startTime": "2026-11-04T11:18:09.327Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "/work/test-results/api-Supabase-API-user-cannot-change-their-own-points-balance-chromium-retry1/error-context.md"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "/work/tests/api.spec.ts",
+                        "column": 47,
+                        "line": 7
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "1ea1b1599cbc08f16936-3b6f1aadb839de9cc581",
+              "file": "api.spec.ts",
+              "line": 5,
+              "column": 7
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "contact.spec.ts",
+      "file": "contact.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "contact form rejects an invalid email",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 2,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 9,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-04T11:18:09.848Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "c37ec27874a4649dbe8b-a0b8158c70bf06f09d03",
+          "file": "contact.spec.ts",
+          "line": 2,
+          "column": 5
+        },
+        {
+          "title": "contact form rate limit",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 2,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 7,
+                  "error": {
+                    "message": "Error: flaky on first try\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m1\u001b[39m\nReceived: \u001b[31m0\u001b[39m",
+                    "stack": "Error: flaky on first try\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m1\u001b[39m\nReceived: \u001b[31m0\u001b[39m\n    at /work/tests/contact.spec.ts:3:96",
+                    "location": {
+                      "file": "/work/tests/contact.spec.ts",
+                      "column": 96,
+                      "line": 3
+                    },
+                    "snippet": "  1 | import { expect, test } from \"@playwright/test\";\n  2 | test(\"contact form rejects an invalid email\", async () => { expect(true).toBe(true); });\n> 3 | test(\"contact form rate limit\", async ({}, info) => { expect(info.retry, \"flaky on first try\").toBe(1); });\n    |                                                                                                ^\n  4 | test.skip(\"admin export (needs E2E_ADMIN_PASSWORD)\", async () => {});\n  5 |"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "/work/tests/contact.spec.ts",
+                        "column": 96,
+                        "line": 3
+                      },
+                      "message": "Error: flaky on first try\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m1\u001b[39m\nReceived: \u001b[31m0\u001b[39m\n\n  1 | import { expect, test } from \"@playwright/test\";\n  2 | test(\"contact form rejects an invalid email\", async () => { expect(true).toBe(true); });\n> 3 | test(\"contact form rate limit\", async ({}, info) => { expect(info.retry, \"flaky on first try\").toBe(1); });\n    |                                                                                                ^\n  4 | test.skip(\"admin export (needs E2E_ADMIN_PASSWORD)\", async () => {});\n  5 |\n    at /work/tests/contact.spec.ts:3:96"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-04T11:18:09.922Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "/work/test-results/contact-contact-form-rate-limit-chromium/error-context.md"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "/work/tests/contact.spec.ts",
+                    "column": 96,
+                    "line": 3
+                  }
+                },
+                {
+                  "workerIndex": 3,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 6,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 1,
+                  "startTime": "2026-11-04T11:18:10.412Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "flaky"
+            }
+          ],
+          "id": "c37ec27874a4649dbe8b-f275820d18884c85cdf5",
+          "file": "contact.spec.ts",
+          "line": 3,
+          "column": 5
+        },
+        {
+          "title": "admin export (needs E2E_ADMIN_PASSWORD)",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [
+                {
+                  "type": "skip",
+                  "location": {
+                    "file": "/work/tests/contact.spec.ts",
+                    "line": 4,
+                    "column": 6
+                  }
+                }
+              ],
+              "expectedStatus": "skipped",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 3,
+                  "parallelIndex": 0,
+                  "status": "skipped",
+                  "duration": 0,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-04T11:18:10.456Z",
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "location": {
+                        "file": "/work/tests/contact.spec.ts",
+                        "line": 4,
+                        "column": 6
+                      }
+                    }
+                  ],
+                  "attachments": []
+                }
+              ],
+              "status": "skipped"
+            }
+          ],
+          "id": "c37ec27874a4649dbe8b-dcebde8ec727a586d57d",
+          "file": "contact.spec.ts",
+          "line": 4,
+          "column": 6
+        }
+      ]
+    }
+  ]
+}

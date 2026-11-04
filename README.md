@@ -105,3 +105,19 @@ They also run in the daily Azure DevOps pipeline together with the UI tests (JUn
 ### Postman
 
 `postman/tursya-api.postman_collection.json` holds three requests against the test project: sign in, read my own profile (RLS must return exactly one row) and try to change my own points balance (must be refused with 403 `PROTECTED_COLUMN`). Import it into Postman, create an environment with `supabase_url`, `anon_key`, `email` and `password` for the test project, then run the collection. The environment holds secrets and is never committed.
+
+## Automation (n8n)
+
+When the daily Azure pipeline finishes, it sends the Playwright JSON report to an n8n workflow. If any test failed, n8n posts a short summary to Telegram: counts, each failed test with the reason, flaky tests and a link to the run. If everything passed, nothing is sent.
+
+Workflow (`automation/n8n/playwright-failures-telegram.json`):
+
+1. **Webhook** receives the report (POST). The URL path is random and acts as the secret; it is stored in Azure as the secret variable `N8N_WEBHOOK_URL`.
+2. **Code** (JavaScript, same code as `automation/n8n/summarize-report.js`) walks the nested report, collects failed and flaky tests, strips terminal colour codes and builds the message. It returns no items when nothing failed, so the next node does not run.
+3. **Telegram** sends the message through a bot.
+
+The pipeline step is skipped when `N8N_WEBHOOK_URL` is not set and never fails the build.
+
+Secrets: the bot token lives in n8n credentials and is never exported. Before committing, the export is cleaned with `node automation/n8n/clean-export.mjs <download> automation/n8n/playwright-failures-telegram.json`, which replaces the webhook path and the chat ID with placeholders and refuses to save if anything private remains.
+
+To try it: import the workflow into n8n, set your own path, chat ID and Telegram credential, then POST `automation/n8n/sample-playwright-report.json` to the webhook.
