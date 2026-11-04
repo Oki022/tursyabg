@@ -38,10 +38,11 @@ steps:
   - script: npx playwright install --with-deps chromium
     displayName: 'Install Playwright browsers'
 
-  - script: npx playwright test --project=chromium --reporter=list,junit
+  - script: npx playwright test --project=chromium --reporter=list,junit,json
     displayName: 'Run E2E and API tests'
     env:
       PLAYWRIGHT_JUNIT_OUTPUT_NAME: 'test-results/results.xml'
+      PLAYWRIGHT_JSON_OUTPUT_FILE: 'test-results/results.json'
       VITE_SUPABASE_URL: $(VITE_SUPABASE_URL)
       VITE_SUPABASE_PUBLISHABLE_KEY: $(VITE_SUPABASE_PUBLISHABLE_KEY)
       # The dev server's server-side code reads these names (not the VITE_ ones).
@@ -52,6 +53,30 @@ steps:
       E2E_ADMIN_PASSWORD: $(E2E_ADMIN_PASSWORD)
       VITE_STRIPE_PUBLISHABLE_KEY: $(VITE_STRIPE_PUBLISHABLE_KEY)
       VITE_SITE_URL: 'http://localhost:8080'
+
+  # Sends the Playwright JSON report to n8n. n8n posts a short summary to Telegram when tests fail.
+  # Skipped when the secret variable N8N_WEBHOOK_URL is not set; never fails the build.
+  - script: |
+      case "$N8N_WEBHOOK_URL" in
+        ""|'$('*) echo "N8N_WEBHOOK_URL is not set, skipping"; exit 0;;
+      esac
+      REPORT=test-results/results.json
+      if [ ! -s "$REPORT" ]; then
+        echo '{"errors":[{"message":"No Playwright report: the test step stopped before writing results.json"}]}' > "$AGENT_TEMPDIRECTORY/report.json"
+        REPORT="$AGENT_TEMPDIRECTORY/report.json"
+      fi
+      curl -sS --max-time 20 -o /dev/null -w "n8n answered %{http_code}\n" \
+        -X POST "$N8N_WEBHOOK_URL" \
+        -H "Content-Type: application/json" \
+        -H "x-build-number: $(Build.BuildNumber)" \
+        -H "x-branch: $(Build.SourceBranchName)" \
+        -H "x-build-url: $(System.CollectionUri)$(System.TeamProject)/_build/results?buildId=$(Build.BuildId)" \
+        --data-binary @"$REPORT" || echo "n8n is not reachable, ignoring"
+    displayName: 'Notify n8n (test summary)'
+    condition: always()
+    continueOnError: true
+    env:
+      N8N_WEBHOOK_URL: $(N8N_WEBHOOK_URL)
 
   - task: PublishTestResults@2
     condition: always()
