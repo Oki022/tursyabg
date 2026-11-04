@@ -101,3 +101,7 @@ They also run in the daily Azure DevOps pipeline together with the UI tests (JUn
 **Safety:** the tests run only against the separate test Supabase project. `tests/load-env.ts` and a pipeline step stop the run if the URL points at the live project. Passwords and keys come from `.env.test` (never committed) or pipeline secret variables.
 
 **Why:** the UI tests show that pages work; these tests show that the data layer itself is safe — that the database rules hold even when someone calls the API directly, bypassing the website.
+
+### Postman
+
+`postman/tursya-api.postman_collection.json` holds three requests against the test project: sign in, read my own profile (RLS must return exactly one row) and try to change my own points balance (must be refused with 403 `PROTECTED_COLUMN`). Import it into Postman, create an environment with `supabase_url`, `anon_key`, `email` and `password` for the test project, then run the collection. The environment holds secrets and is never committed.

@@ -1,0 +1,170 @@
+{
+    "info":  {
+                 "_postman_id":  "83ad8aa3-6c7b-4c42-a00e-edba55e7a515",
+                 "name":  "tursya-api",
+                 "schema":  "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+                 "_exporter_id":  "59455456",
+                 "_collection_link":  "https://go.postman.co/collection/59455456-83ad8aa3-6c7b-4c42-a00e-edba55e7a515?source=collection_link"
+             },
+    "item":  [
+                 {
+                     "name":  "Sign in",
+                     "event":  [
+                                   {
+                                       "listen":  "test",
+                                       "script":  {
+                                                      "type":  "text/javascript",
+                                                      "exec":  [
+                                                                   "   pm.test(\"status 200\", () =\u003e pm.response.to.have.status(200));\r\n   pm.environment.set(\"access_token\", pm.response.json().access_token);"
+                                                               ]
+                                                  }
+                                   }
+                               ],
+                     "request":  {
+                                     "method":  "POST",
+                                     "header":  [
+                                                    {
+                                                        "key":  "apikey",
+                                                        "value":  "{{anon_key}}"
+                                                    }
+                                                ],
+                                     "body":  {
+                                                  "mode":  "raw",
+                                                  "raw":  "   { \"email\": \"{{email}}\", \"password\": \"{{password}}\" }",
+                                                  "options":  {
+                                                                  "raw":  {
+                                                                              "language":  "json"
+                                                                          }
+                                                              }
+                                              },
+                                     "url":  {
+                                                 "raw":  "{{supabase_url}}/auth/v1/token?grant_type=password",
+                                                 "host":  [
+                                                              "{{supabase_url}}"
+                                                          ],
+                                                 "path":  [
+                                                              "auth",
+                                                              "v1",
+                                                              "token"
+                                                          ],
+                                                 "query":  [
+                                                               {
+                                                                   "key":  "grant_type",
+                                                                   "value":  "password"
+                                                               }
+                                                           ]
+                                             }
+                                 },
+                     "response":  [
+
+                                  ]
+                 },
+                 {
+                     "name":  "My Profile",
+                     "event":  [
+                                   {
+                                       "listen":  "test",
+                                       "script":  {
+                                                      "type":  "text/javascript",
+                                                      "exec":  [
+                                                                   "   pm.test(\"status 200\", () =\u003e pm.response.to.have.status(200));\r\n   pm.test(\"only my own row (RLS)\", () =\u003e pm.expect(pm.response.json()).to.have.lengthOf(1));\r\n   pm.test(\"under 3 seconds\", () =\u003e pm.expect(pm.response.responseTime).to.be.below(3000));\r\n      pm.environment.set(\"user_id\", pm.response.json()[0].id);"
+                                                               ]
+                                                  }
+                                   }
+                               ],
+                     "request":  {
+                                     "method":  "GET",
+                                     "header":  [
+                                                    {
+                                                        "key":  "apikey",
+                                                        "value":  "{{anon_key}}"
+                                                    },
+                                                    {
+                                                        "key":  "Authorization",
+                                                        "value":  "Bearer {{access_token}}"
+                                                    }
+                                                ],
+                                     "url":  {
+                                                 "raw":  "{{supabase_url}}/rest/v1/profiles?select=id,credits",
+                                                 "host":  [
+                                                              "{{supabase_url}}"
+                                                          ],
+                                                 "path":  [
+                                                              "rest",
+                                                              "v1",
+                                                              "profiles"
+                                                          ],
+                                                 "query":  [
+                                                               {
+                                                                   "key":  "select",
+                                                                   "value":  "id,credits"
+                                                               }
+                                                           ]
+                                             }
+                                 },
+                     "response":  [
+
+                                  ]
+                 },
+                 {
+                     "name":  "Change my credits (must fail)",
+                     "event":  [
+                                   {
+                                       "listen":  "test",
+                                       "script":  {
+                                                      "type":  "text/javascript",
+                                                      "exec":  [
+                                                                   "   pm.test(\"refused with 403\", () =\u003e pm.response.to.have.status(403));\r\n   pm.test(\"protected column error\", () =\u003e pm.expect(pm.response.text()).to.include(\"PROTECTED_COLUMN\"));"
+                                                               ]
+                                                  }
+                                   }
+                               ],
+                     "request":  {
+                                     "method":  "PATCH",
+                                     "header":  [
+                                                    {
+                                                        "key":  "apikey",
+                                                        "value":  "{{anon_key}}"
+                                                    },
+                                                    {
+                                                        "key":  "Authorization",
+                                                        "value":  "Bearer {{access_token}}"
+                                                    },
+                                                    {
+                                                        "key":  "Prefer",
+                                                        "value":  "return=minimal"
+                                                    }
+                                                ],
+                                     "body":  {
+                                                  "mode":  "raw",
+                                                  "raw":  "   { \"credits\": 999999 }",
+                                                  "options":  {
+                                                                  "raw":  {
+                                                                              "language":  "json"
+                                                                          }
+                                                              }
+                                              },
+                                     "url":  {
+                                                 "raw":  "{{supabase_url}}/rest/v1/profiles?id=eq.{{user_id}}",
+                                                 "host":  [
+                                                              "{{supabase_url}}"
+                                                          ],
+                                                 "path":  [
+                                                              "rest",
+                                                              "v1",
+                                                              "profiles"
+                                                          ],
+                                                 "query":  [
+                                                               {
+                                                                   "key":  "id",
+                                                                   "value":  "eq.{{user_id}}"
+                                                               }
+                                                           ]
+                                             }
+                                 },
+                     "response":  [
+
+                                  ]
+                 }
+             ]
+}
