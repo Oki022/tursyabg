@@ -10,6 +10,7 @@ import { admin, CLIENT_EMAIL, PRO_EMAIL, userIdByEmail } from "./db";
  *    (profile, points history, phone), never another user's; staff (admin) can.
  *  - Protected data cannot be changed by the user (e.g. their own points balance).
  *  - Wrong or missing input gets the right error (status code + error code).
+ *  - Task lifetime functions are closed to visitors and to normal users where they must be.
  *  - Every call answers within a time limit.
  *
  * Runs only against the test project (tests/load-env.ts stops it for the live one).
@@ -213,6 +214,27 @@ test.describe("Supabase API", () => {
       const res = await api.post(`${REST}/rpc/export_my_data`, { headers: headers(), data: {} });
       expect(res.status()).toBe(401);
       expect((await res.json()).code).toBe("42501"); // permission denied
+    });
+  });
+
+  test.describe("task lifetime", () => {
+    test("anonymous visitor cannot keep a task live", async () => {
+      const res = await api.post(`${REST}/rpc/confirm_task_active`, {
+        headers: headers(),
+        data: { _task_id: "00000000-0000-0000-0000-000000000000" },
+      });
+      expect(res.status()).toBe(401);
+      expect((await res.json()).code).toBe("42501");
+    });
+
+    test("signed-in user cannot run the task expiry sweep", async () => {
+      // Only the scheduler (service role) may deactivate expired tasks.
+      const res = await api.post(`${REST}/rpc/sweep_expiry_notifications`, {
+        headers: headers(clientToken),
+        data: { _batch: 1 },
+      });
+      expect(res.status()).toBe(403);
+      expect((await res.json()).code).toBe("42501");
     });
   });
 });

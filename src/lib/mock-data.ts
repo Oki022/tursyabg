@@ -73,6 +73,10 @@ export type Task = {
   /** Last real content edit (title, description, budget, category, location). */
   contentEditedAt?: string | null;
   statusChangedAtIso?: string;
+  /** Set when the owner was asked "still open?" and has not answered yet. */
+  freshnessPromptAt?: string | null;
+  /** When the task stops being shown (30 days after posting or the last confirmation). */
+  expiresAtIso?: string;
 };
 
 export const UNKNOWN_CATEGORY: Category = {

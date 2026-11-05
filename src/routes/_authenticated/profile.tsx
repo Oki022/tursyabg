@@ -30,7 +30,7 @@ import { useOwnerPromotions } from "@/lib/promotions-api";
 import { PROMO_LABELS, remainingLabel, type TaskPromotion } from "@/services/promotions";
 import { PromoteDialog } from "@/components/promotions/promote-dialog";
 import { PromotedBadge, TopBadge, UrgentBadge } from "@/components/promotions/promo-badges";
-import { OwnerTaskControls } from "@/components/tasks/owner-task-controls";
+import { OwnerTaskControls, ReactivateTaskButton } from "@/components/tasks/owner-task-controls";
 import { DeleteTaskDialog } from "@/components/tasks/delete-task-dialog";
 import { CreditBalanceCard } from "@/components/credits/credit-balance-card";
 import { useFavouritesCount } from "@/lib/favourites-api";
@@ -420,6 +420,9 @@ function OwnerTaskCard({
         )}
         {repostable && !task.adminHiddenAt && (
           <>
+            {task.status === "inactive" && !task.repostedAt && (
+              <ReactivateTaskButton taskId={task.id} className="mt-2 h-7 w-full gap-1 text-[11px]" />
+            )}
             <Button asChild size="sm" variant="outline" className="mt-2 h-7 w-full gap-1 text-[11px]">
               <Link to="/post" search={{ repost: task.id }}>
                 <RotateCcw className="h-3 w-3" />

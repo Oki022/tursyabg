@@ -1,18 +1,52 @@
 import { useState } from "react";
 import { Link } from "@tanstack/react-router";
-import { CheckCircle2, HelpCircle, Info, Pencil, RefreshCw, Users } from "lucide-react";
+import { CalendarClock, CheckCircle2, HelpCircle, Info, Pencil, RefreshCw, Users } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { useConfirmTaskActive } from "@/lib/tasks-api";
 import { useMyEngagements } from "@/lib/reviews-api";
 import { CloseTaskDialog } from "@/components/tasks/close-task-dialog";
+import { errorBg } from "@/lib/errors";
+import { dayMonthBg, taskLifetimeNotice } from "@/lib/task-lifetime";
 import type { Task } from "@/lib/mock-data";
 
 const LIMIT_HELP =
   "Лимитът пази телефона ти от прекалено много обаждания. Само първите изпълнители могат да отключат контакта ти.";
 
-/** Owner-only controls: close the task when assigned, or confirm it is still open. */
+/** Keeps the task live 30 more days (also brings back an automatically deactivated one). */
+function useKeepTaskLive() {
+  const confirm = useConfirmTaskActive();
+  const keep = async (taskId: string, ok: string) => {
+    try {
+      await confirm.mutateAsync(taskId);
+      toast.success(ok);
+    } catch (e) {
+      const { title, description } = errorBg(e, { title: "Действието не беше изпълнено." });
+      toast.error(title, { description });
+    }
+  };
+  return { keep, pending: confirm.isPending };
+}
+
+/** "Активирай отново" for a closed or automatically deactivated task. */
+export function ReactivateTaskButton({ taskId, className }: { taskId: string; className?: string }) {
+  const { keep, pending } = useKeepTaskLive();
+  return (
+    <Button
+      variant="outline"
+      size="sm"
+      className={className}
+      disabled={pending}
+      onClick={() => void keep(taskId, "Задачата е активна отново за 30 дни.")}
+    >
+      <RefreshCw className="h-3.5 w-3.5 shrink-0" />
+      Активирай отново
+    </Button>
+  );
+}
+
+/** Owner-only controls: close the task, confirm it is still open, or switch it back on. */
 export function OwnerTaskControls({
   task,
   compact = false,
@@ -21,25 +55,20 @@ export function OwnerTaskControls({
   compact?: boolean;
   redirectAfterDelete?: "profile";
 }) {
-  const confirm = useConfirmTaskActive();
+  const { keep, pending: keeping } = useKeepTaskLive();
   const [closeOpen, setCloseOpen] = useState(false);
   const [assignOpen, setAssignOpen] = useState(false);
   const [dismissed, setDismissed] = useState(false);
   const unlockCount = task.unlockCount ?? 0;
   const maxUnlocks = task.maxUnlocks ?? 5;
   const isAssigned = task.status === "assigned";
+  const isInactive = task.status === "inactive";
   const adminHidden = Boolean(task.adminHiddenAt);
+  const notice = taskLifetimeNotice(task);
+  // A reposted task lives on as its copy; an admin-hidden one stays hidden.
+  const canReactivate = !adminHidden && !task.repostedAt;
   const { data: engagements = [] } = useMyEngagements(isAssigned);
   const hasEngagement = engagements.some((e) => e.taskId === task.id);
-
-  const run = async (fn: () => Promise<void>, ok: string) => {
-    try {
-      await fn();
-      toast.success(ok);
-    } catch {
-      toast.error("Действието не беше изпълнено.");
-    }
-  };
 
   const limitLine = (
     <div className="flex w-full min-w-0 items-center gap-1 text-[11px] text-muted-foreground">
@@ -97,21 +126,39 @@ export function OwnerTaskControls({
               />
             </div>
           )}
-          {!adminHidden && (
-          <Button
-            variant="outline"
-            size="sm"
-            className={`${btn} gap-1.5`}
-            disabled={confirm.isPending}
-            onClick={() => void run(() => confirm.mutateAsync(task.id), "Задачата е активна отново.")}
-          >
-            <RefreshCw className="h-3.5 w-3.5 shrink-0" />
-            Активирай отново
-          </Button>
-          )}
+          {canReactivate && <ReactivateTaskButton taskId={task.id} className={`${btn} gap-1.5`} />}
+        </div>
+      ) : isInactive ? (
+        <div className="w-full min-w-0 space-y-2">
+          <p className="text-[11px] leading-snug text-muted-foreground">
+            Задачата не е активна и изпълнителите не я виждат.
+          </p>
+          {canReactivate && <ReactivateTaskButton taskId={task.id} className={`${btn} gap-1.5`} />}
         </div>
       ) : (
-        <div className="w-full min-w-0">
+        <div className="w-full min-w-0 space-y-2">
+          {notice && (
+            <div className="min-w-0 space-y-1.5 rounded-xl border border-primary/30 bg-primary/5 p-2">
+              <p className="flex items-start gap-1.5 text-[12px] font-semibold leading-snug text-foreground">
+                <CalendarClock className="mt-0.5 h-3.5 w-3.5 shrink-0 text-primary" />
+                {notice.kind === "confirm" ? "Задачата още ли е актуална?" : "Задачата изтича скоро"}
+              </p>
+              <p className="text-[11px] leading-snug text-muted-foreground">
+                {notice.kind === "confirm"
+                  ? `Потвърди до ${dayMonthBg(notice.until)}, иначе ще я деактивираме.`
+                  : `Изтича на ${dayMonthBg(notice.until)}.`}
+              </p>
+              <Button
+                size="sm"
+                className={`${btn} gap-1.5`}
+                disabled={keeping}
+                onClick={() => void keep(task.id, "Готово. Задачата остава активна още 30 дни.")}
+              >
+                <CheckCircle2 className="h-3.5 w-3.5 shrink-0" />
+                {notice.kind === "confirm" ? "Да, още е актуална" : "Удължи с 30 дни"}
+              </Button>
+            </div>
+          )}
           <Button variant="outline" size="sm" className={`${btn} gap-1.5`} onClick={() => setCloseOpen(true)}>
             <CheckCircle2 className="h-3.5 w-3.5 shrink-0" />
             Затвори

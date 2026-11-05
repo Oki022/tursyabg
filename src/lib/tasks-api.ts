@@ -36,11 +36,13 @@ type Row = {
   admin_hidden_at?: string | null;
   reposted_at?: string | null;
   content_edited_at?: string | null;
+  freshness_prompt_at?: string | null;
+  expires_at?: string;
   task_images?: { image_url: string; sort_order: number }[] | null;
 };
 
 const SELECT =
-  "id, title, description, category, subcategory, budget, budget_range, city, neighborhood, status, unlock_cost, created_at, bumped_at, status_changed_at, view_count, unlock_count, max_unlocks, user_id, admin_hidden_at, reposted_at, content_edited_at, task_images(image_url, sort_order)";
+  "id, title, description, category, subcategory, budget, budget_range, city, neighborhood, status, unlock_cost, created_at, bumped_at, status_changed_at, view_count, unlock_count, max_unlocks, user_id, admin_hidden_at, reposted_at, content_edited_at, freshness_prompt_at, expires_at, task_images(image_url, sort_order)";
 
 export function timeAgoBg(iso: string) {
   const diff = Date.now() - new Date(iso).getTime();
@@ -87,6 +89,8 @@ function mapRow(row: Row, signed: Record<string, string>, names: Record<string, 
     adminHiddenAt: row.admin_hidden_at ?? null,
     repostedAt: row.reposted_at ?? null,
     contentEditedAt: row.content_edited_at ?? null,
+    freshnessPromptAt: row.freshness_prompt_at ?? null,
+    expiresAtIso: row.expires_at ?? undefined,
   };
 }
 
@@ -320,7 +324,10 @@ export function useCloseTask() {
   });
 }
 
-/** Owner confirms the task is still open, refreshes it in the feed. */
+/**
+ * Owner confirms the task is still open, or switches an automatically deactivated task
+ * back on. Keeps it live 30 more days; its place in the feed does not change.
+ */
 export function useConfirmTaskActive() {
   const queryClient = useQueryClient();
   return useMutation({

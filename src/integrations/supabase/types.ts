@@ -1733,6 +1733,7 @@ export type Database = {
           category_corrected_at: string | null
           subcategory: string | null
           city: string | null
+          confirmed_at: string | null
           content_edited_at: string | null
           created_at: string
           currency: string
@@ -1769,6 +1770,7 @@ export type Database = {
           category_corrected_at?: string | null
           subcategory?: string | null
           city?: string | null
+          confirmed_at?: string | null
           content_edited_at?: string | null
           created_at?: string
           currency?: string
@@ -1805,6 +1807,7 @@ export type Database = {
           category_corrected_at?: string | null
           subcategory?: string | null
           city?: string | null
+          confirmed_at?: string | null
           content_edited_at?: string | null
           created_at?: string
           currency?: string
