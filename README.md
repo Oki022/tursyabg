@@ -1,76 +1,79 @@
-# Tursyabg
+# ТърсяБГ · tursya.bg
 
-Build a modern, intuitive, and mobile-first Service Task Board web application. 
+A Bulgarian marketplace for local services. People post a task they need done (cleaning, repairs,
+moving, lessons…), and professionals unlock the client's contact details with points.
+Web app and an Android app (Capacitor; not yet published in Google Play), Bulgarian interface, prices in euro.
 
-CRITICAL REQUIREMENTS:
+**Live:** [tursya.bg](https://tursya.bg)
 
-1. ALL user-facing text, UI elements, and mock data MUST be in BULGARIAN.
+## Features
 
-2. The currency must be Euro (€), placed after the number (e.g., 50 €).
+- **Tasks:** posting with photos, automatic category suggestion, city and neighbourhood, budget or
+  "price to be agreed". A task is live for 30 days; after 14 days the owner is asked whether it is
+  still open.
+- **Contacts and points:** a professional unlocks a client's phone number with points (at most
+  5 professionals per task). Points are sold in packs: card payments on the web (Stripe), Google Play
+  in the app (RevenueCat). Bonus points expire after 30 days; all points expire after 12 months
+  without any activity, with a warning 7 days before.
+- **Messages, reviews and notifications:** in-app, email and push notifications, saved task alerts.
+- **Moderation:** automatic checks of photos and texts, manual review queue, reports, progressive
+  sanctions.
+- **Admin panel:** moderation, reports, refunds, revenue by month.
+- **Privacy (GDPR):** full data export as JSON, account deactivation, account deletion with a
+  14-day grace period.
 
-3. NO "Professional Directory". This is purely a Task Board. Customers post tasks, and Workers browse them.
+## Tech stack
 
-4. DO NOT use the word "Обява" (Ad/Listing). Use "Задача" (Task) or "Проект" (Project) instead to emphasize that this is about work/services, not selling items.
+| Area | Tools |
+|---|---|
+| Frontend | React 19, TanStack Start and Router, TypeScript, Tailwind CSS 4, shadcn/ui |
+| Backend | Supabase: PostgreSQL, Row Level Security, `SECURITY DEFINER` functions, triggers, `pg_cron`, Auth |
+| Payments | Stripe (web), RevenueCat with Google Play Billing (Android) |
+| Mobile | Capacitor 8 (Android) |
+| Hosting and services | Vercel, Cloudflare (DNS, R2 photo storage), Resend (email), Firebase Cloud Messaging (push), Sentry (errors), Sightengine (image checks) |
+| Testing and CI | Vitest, Playwright (UI and API tests), Azure DevOps daily pipeline, Postman, n8n |
 
-Core Concept: 
+## Security
 
-A platform where everyday people post tasks/projects they need done, and workers browse this feed to find tasks to execute.
+- Row Level Security on every table. Sensitive columns, such as a user's points balance, are
+  protected by database triggers, so they cannot be changed through the API even with a valid login.
+- Phone numbers are shown only after an unlock; phone numbers and emails typed into public texts
+  are masked automatically.
+- Admin-only functions check the staff role in the database, not only in the interface.
+- Tests run only against a separate test project; the test setup and the pipeline stop if they
+  point at the live project.
+- No passwords or keys in the repository: they live in Vercel, Azure secret variables and local,
+  ignored files.
 
-Design System & UI:
+## Tests
 
-- Clean, action-oriented, minimalist design (Tailwind CSS + Shadcn UI).
+38 Playwright tests (24 API tests without a browser, 14 UI tests) and Vitest unit tests.
+They run every day in an Azure DevOps pipeline against the test project.
 
-- Trustworthy colors (e.g., deep blue or slate with plenty of white space).
+```bash
+npm run test:unit                                    # unit tests
+npx playwright test --project=chromium --reporter=list   # UI and API tests (needs .env.test)
+```
 
-Key Features & Pages:
+## How it was built
 
-1. Homepage (Начална страница):
-
-- Hero headline: "Какво трябва да се свърши днес?" (What needs to be done today?) OR "Имаш задача за вършене?" (Have a task to do?).
-
-- Sub-headline: "Опиши задачата си и намери точния човек, който да я изпълни."
-
-- A prominent search bar to find tasks.
-
-- Two main CTA Buttons: "Възложи задача" (Assign a task / Post a task) and "Намери задачи" (Find tasks).
-
-- A "Recent Tasks" section (Последни задачи) showing 4-6 cards of newly posted work.
-
-2. Task Feed (Борса за задачи / Активни задачи - For workers):
-
-- A page listing all available tasks.
-
-- Task cards must display: Заглавие на задачата (Title), Категория (Category tag), Населено място (Location - Sofia, Plovdiv, Varna), Бюджет (Budget in €), and a "Кандидатствай" (Apply) or "Свържи се" (Contact) button.
-
-- Sidebar filters: Категория, Населено място.
-
-3. "Smart" Post a Task Form (Възложи задача):
-
-- Form fields: Какво трябва да се направи? (Title), Категория (Category dropdown), Подробности за задачата (Description), Бюджет (€), Населено място.
-
-- CRITICAL FEATURE (Auto-Categorization): Implement a simple React effect that auto-selects the Category based on keywords typed in the Title field. 
-
-  * Example logic: If user types "баня" (bathroom) or "плочки" (tiles), auto-select "Ремонти" (Renovations). If they type "чистене" (cleaning), auto-select "Почистване".
-
-- Show a subtle UI hint when auto-categorization happens (e.g., "Категорията е избрана автоматично според описанието").
-
-- Submit button: "Публикувай задачата".
-
-Please generate the complete frontend structure, routing, and interactive Bulgarian mock data. Use Lucide React icons for visual polish.
-
-This project was built with [Lovable](https://lovable.dev).
-
+The first version of the interface was generated with Lovable. Since then I have developed the
+product step by step with an AI coding assistant (Claude): data model and security rules, points and
+payments, moderation, notifications, the Android app, legal pages, tests and CI. I decide what to
+build, review and run every change, and test it before it goes live.
 
 ## Development
 
-Prefer working locally? You need Node.js and npm — [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating).
+Requirements: Node.js 22+ and npm.
 
-```sh
-git clone <this-repository-url>
-cd <repository-name>
-npm i
+```bash
+npm ci
 npm run dev
 ```
+
+The app reads its Supabase URL and publishable key from environment variables
+(`VITE_SUPABASE_URL`, `VITE_SUPABASE_PUBLISHABLE_KEY`). Tests read their own values from `.env.test`,
+which is never committed.
 
 ## API tests
 
@@ -80,6 +83,7 @@ npm run dev
 - **Row Level Security:** a signed-in user can read only their own private rows (profile, points history, phone); another user's rows come back empty; an admin can read them. A user cannot change their own points balance (403).
 - **Roles:** an admin-only database function refuses a normal user (403) and works for an admin.
 - **Input validation:** wrong or missing input returns the right status and error code (400 / 404 / 401).
+- **Task lifetime:** a visitor cannot keep a task live (401) and a signed-in user cannot run the expiry sweep (403).
 - **Public endpoints:** cron endpoints need a secret key, the Stripe webhook needs a valid signature, the contact form has a rate limit.
 - **Response time:** each checked call must answer within 3 seconds.
 
@@ -93,7 +97,7 @@ They also run in the daily Azure DevOps pipeline together with the UI tests (JUn
 
 **Safety:** the tests run only against the separate test Supabase project. `tests/load-env.ts` and a pipeline step stop the run if the URL points at the live project. Passwords and keys come from `.env.test` (never committed) or pipeline secret variables.
 
-**Why:** the UI tests show that pages work; these tests show that the data layer itself is safe — that the database rules hold even when someone calls the API directly, bypassing the website.
+**Why:** the UI tests show that pages work; these tests show that the data layer itself is safe: the database rules hold even when someone calls the API directly, bypassing the website.
 
 ### Postman
 
@@ -113,4 +117,11 @@ The pipeline step is skipped when `N8N_WEBHOOK_URL` is not set and never fails t
 
 Secrets: the bot token lives in n8n credentials and is never exported. Before committing, the export is cleaned with `node automation/n8n/clean-export.mjs <download> automation/n8n/playwright-failures-telegram.json`, which replaces the webhook path and the chat ID with placeholders and refuses to save if anything private remains.
 
+The workflow ran on an n8n Cloud trial instance; the exported workflow is kept here.
+
 To try it: import the workflow into n8n, set your own path, chat ID and Telegram credential, then POST `automation/n8n/sample-playwright-report.json` to the webhook.
+
+## Related
+
+[tursya-angular](https://github.com/Oki022/tursya-angular): a small Angular app on the same Supabase
+backend, built to learn Angular.
